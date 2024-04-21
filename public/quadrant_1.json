@@ -1,0 +1,818 @@
+[
+{
+    "pl_name": "BD+48 740 b",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "40.7425426",
+    "dec": "48.9300579",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "CI Tau c",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "68.4667685",
+    "dec": "22.8416192",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "EPIC 220674823 b",
+    "pl_rade": "1.816",
+    "pl_eqt": "",
+    "ra": "13.0800239",
+    "dec": "10.7947051",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "EPIC 220674823 c",
+    "pl_rade": "2.730",
+    "pl_eqt": "741",
+    "ra": "13.0800239",
+    "dec": "10.7947051",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "GJ 179 b",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "73.0245495",
+    "dec": "6.4752347",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "GU Psc b",
+    "pl_rade": "14.179",
+    "pl_eqt": "1050",
+    "ra": "18.1464850",
+    "dec": "17.0650029",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "HAT-P-15 b",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "66.2481420",
+    "dec": "39.4606020",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "HAT-P-16 b",
+    "pl_rade": "13.339",
+    "pl_eqt": "1571",
+    "ra": "9.5730343",
+    "dec": "42.4630961",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "HAT-P-19 b",
+    "pl_rade": "12.689",
+    "pl_eqt": "1010",
+    "ra": "9.5165832",
+    "dec": "34.7114025",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "HAT-P-25 b",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "48.4354731",
+    "dec": "25.1973548",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "HAT-P-28 b",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "13.0009159",
+    "dec": "34.7284020",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "HAT-P-29 b",
+    "pl_rade": "11.647",
+    "pl_eqt": "1164",
+    "ra": "33.1310921",
+    "dec": "51.7787754",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "HAT-P-32 b",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "31.0427614",
+    "dec": "46.6878512",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "HAT-P-51 b",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "21.0651251",
+    "dec": "32.8107000",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "HAT-P-53 b",
+    "pl_rade": "14.773",
+    "pl_eqt": "1778",
+    "ra": "21.8711012",
+    "dec": "38.9681137",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "HAT-P-62 b",
+    "pl_rade": "12.780",
+    "pl_eqt": "1424",
+    "ra": "74.5043816",
+    "dec": "48.3008551",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "HAT-P-70 b",
+    "pl_rade": "20.961",
+    "pl_eqt": "2562",
+    "ra": "74.5523332",
+    "dec": "9.9979794",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "HD 10442 b",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "25.4715240",
+    "dec": "2.7044193",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "HD 10697 b",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "26.2324076",
+    "dec": "20.0826974",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "HD 12648 b",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "34.7480718",
+    "dec": "85.7365329",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "HD 12661 c",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "31.1423525",
+    "dec": "25.4135632",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "HD 13908 b",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "34.5609102",
+    "dec": "65.5941901",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "HD 1502 b",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "4.8214389",
+    "dec": "14.0546830",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "HD 17092 b",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "41.5924261",
+    "dec": "49.6530375",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "HD 17156 b",
+    "pl_rade": "12.274",
+    "pl_eqt": "",
+    "ra": "42.4366123",
+    "dec": "71.7530882",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "HD 22781 b",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "55.2065581",
+    "dec": "31.8258855",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "HD 23596 b",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "57.0018601",
+    "dec": "40.5307308",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "HD 24040 b",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "57.5962104",
+    "dec": "17.4752873",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "HD 26161 b",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "62.4122255",
+    "dec": "31.6524346",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "HD 285968 b",
+    "pl_rade": "",
+    "pl_eqt": "450",
+    "ra": "70.7353853",
+    "dec": "18.9533580",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "HD 3167 b",
+    "pl_rade": "1.627",
+    "pl_eqt": "1777",
+    "ra": "8.7401487",
+    "dec": "4.3807215",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "HD 3167 c",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "8.7401487",
+    "dec": "4.3807215",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "HD 3167 e",
+    "pl_rade": "",
+    "pl_eqt": "375",
+    "ra": "8.7401487",
+    "dec": "4.3807215",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "HD 34445 b",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "79.4207483",
+    "dec": "7.3527156",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "HD 3651 b",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "9.8387218",
+    "dec": "21.2488844",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "HD 37124 c",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "84.2599947",
+    "dec": "20.7289784",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "HD 37605 b",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "85.0074276",
+    "dec": "6.0595116",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "HD 38529 c",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "86.6451363",
+    "dec": "1.1675866",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "HD 4203 b",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "11.1722288",
+    "dec": "20.4483925",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "HD 5319 c",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "13.7558096",
+    "dec": "0.7893425",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "HD 7924 b",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "20.4956562",
+    "dec": "76.7101475",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "HD 8673 b",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "21.5378455",
+    "dec": "34.5793389",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "HIP 14810 d",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "47.8092750",
+    "dec": "21.0971302",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "K2-113 b",
+    "pl_rade": "12.550",
+    "pl_eqt": "",
+    "ra": "19.4493823",
+    "dec": "6.8688469",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "K2-133 c",
+    "pl_rade": "1.480",
+    "pl_eqt": "",
+    "ra": "70.1493775",
+    "dec": "25.0098135",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "K2-136 c",
+    "pl_rade": "3.728",
+    "pl_eqt": "658",
+    "ra": "67.4128615",
+    "dec": "22.8825674",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "K2-149 b",
+    "pl_rade": "1.640",
+    "pl_eqt": "",
+    "ra": "9.8217519",
+    "dec": "7.2769939",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "K2-151 b",
+    "pl_rade": "1.350",
+    "pl_eqt": "",
+    "ra": "19.3047733",
+    "dec": "9.5012663",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "K2-155 b",
+    "pl_rade": "1.550",
+    "pl_eqt": "",
+    "ra": "65.4696140",
+    "dec": "21.3532633",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "K2-174 b",
+    "pl_rade": "2.590",
+    "pl_eqt": "",
+    "ra": "60.7929729",
+    "dec": "16.3471660",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "K2-178 b",
+    "pl_rade": "3.830",
+    "pl_eqt": "",
+    "ra": "52.8888524",
+    "dec": "22.4348186",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "K2-212 b",
+    "pl_rade": "2.570",
+    "pl_eqt": "",
+    "ra": "18.4241015",
+    "dec": "3.0970732",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "K2-216 b",
+    "pl_rade": "1.678",
+    "pl_eqt": "",
+    "ra": "11.4802354",
+    "dec": "6.3470302",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "K2-219 b",
+    "pl_rade": "1.470",
+    "pl_eqt": "",
+    "ra": "12.8452963",
+    "dec": "8.8675474",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "K2-222 b",
+    "pl_rade": "2.284",
+    "pl_eqt": "779",
+    "ra": "16.4625203",
+    "dec": "11.7537171",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "K2-25 b",
+    "pl_rade": "3.430",
+    "pl_eqt": "",
+    "ra": "63.2739346",
+    "dec": "15.2477027",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "K2-282 b",
+    "pl_rade": "2.820",
+    "pl_eqt": "1057",
+    "ra": "13.4321524",
+    "dec": "7.9952914",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "K2-29 b",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "62.6704220",
+    "dec": "24.4016558",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "K2-30 b",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "52.3420548",
+    "dec": "22.2993491",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "K2-370 b",
+    "pl_rade": "3.207",
+    "pl_eqt": "",
+    "ra": "67.8205302",
+    "dec": "19.8316901",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "K2-384 f",
+    "pl_rade": "2.222",
+    "pl_eqt": "",
+    "ra": "20.4998403",
+    "dec": "0.7509701",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "K2-387 b",
+    "pl_rade": "4.000",
+    "pl_eqt": "",
+    "ra": "19.4418282",
+    "dec": "11.3684915",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "K2-396 b",
+    "pl_rade": "1.579",
+    "pl_eqt": "",
+    "ra": "74.6928607",
+    "dec": "17.2690562",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "K2-77 b",
+    "pl_rade": "2.414",
+    "pl_eqt": "693",
+    "ra": "55.2285210",
+    "dec": "12.5724480",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "K2-80 b",
+    "pl_rade": "2.113",
+    "pl_eqt": "",
+    "ra": "59.0374860",
+    "dec": "13.5590288",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "K2-81 b",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "57.4854562",
+    "dec": "14.5020556",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "K2-84 c",
+    "pl_rade": "2.160",
+    "pl_eqt": "",
+    "ra": "55.8093566",
+    "dec": "16.6344396",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "K2-86 b",
+    "pl_rade": "1.960",
+    "pl_eqt": "",
+    "ra": "51.5531053",
+    "dec": "18.6355718",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "K2-89 b",
+    "pl_rade": "0.615",
+    "pl_eqt": "",
+    "ra": "57.0671234",
+    "dec": "20.4594885",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "K2-90 b",
+    "pl_rade": "2.600",
+    "pl_eqt": "502",
+    "ra": "59.1527391",
+    "dec": "22.4724517",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "KELT-1 b",
+    "pl_rade": "12.442",
+    "pl_eqt": "",
+    "ra": "0.3620995",
+    "dec": "39.3837953",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "LkCa 15 c",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "69.8241791",
+    "dec": "22.3508662",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "Qatar-5 b",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "7.0539375",
+    "dec": "42.0613451",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "TOI-1468 c",
+    "pl_rade": "2.064",
+    "pl_eqt": "338",
+    "ra": "16.6538724",
+    "dec": "19.2249195",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "TOI-1601 b",
+    "pl_rade": "13.888",
+    "pl_eqt": "1619",
+    "ra": "38.3615690",
+    "dec": "41.0134321",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "TOI-1669 b",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "45.9564744",
+    "dec": "83.5874273",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "TOI-1685 b",
+    "pl_rade": "1.920",
+    "pl_eqt": "965",
+    "ra": "68.5939529",
+    "dec": "43.0370395",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "TOI-2796 b",
+    "pl_rade": "15.084",
+    "pl_eqt": "797",
+    "ra": "84.1527191",
+    "dec": "0.8962788",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "TOI-3693 b",
+    "pl_rade": "12.897",
+    "pl_eqt": "765",
+    "ra": "15.6543938",
+    "dec": "51.3038918",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "TOI-4145 A b",
+    "pl_rade": "12.183",
+    "pl_eqt": "856",
+    "ra": "39.4297435",
+    "dec": "80.2673838",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "TOI-4603 b",
+    "pl_rade": "14.239",
+    "pl_eqt": "1637",
+    "ra": "83.8659288",
+    "dec": "21.2942417",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "TYC 3318-01333-1 b",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "45.5825716",
+    "dec": "49.7441421",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "Teegarden's Star c",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "43.2691449",
+    "dec": "16.8649024",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "V1298 Tau c",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "61.3316540",
+    "dec": "20.1570318",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "V1298 Tau e",
+    "pl_rade": "9.976",
+    "pl_eqt": "",
+    "ra": "61.3316540",
+    "dec": "20.1570318",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "WASP-1 b",
+    "pl_rade": "16.735",
+    "pl_eqt": "1830",
+    "ra": "5.1669536",
+    "dec": "31.9899732",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "WASP-1 b",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "5.1669536",
+    "dec": "31.9899732",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "WASP-11 b",
+    "pl_rade": "11.265",
+    "pl_eqt": "",
+    "ra": "47.3689472",
+    "dec": "30.6733817",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "WASP-118 b",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "19.5505861",
+    "dec": "2.7027847",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "WASP-156 b",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "32.7820850",
+    "dec": "2.4181937",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "WASP-181 b",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "26.7932253",
+    "dec": "3.1329325",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "WASP-32 b",
+    "pl_rade": "12.330",
+    "pl_eqt": "",
+    "ra": "3.9617073",
+    "dec": "1.2005122",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "WASP-33 b",
+    "pl_rade": "17.856",
+    "pl_eqt": "2782",
+    "ra": "36.7127375",
+    "dec": "37.5504441",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "WASP-71 b",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "29.2634506",
+    "dec": "0.7588247",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "WASP-76 b",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "26.6329360",
+    "dec": "2.7003890",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "WASP-82 b",
+    "pl_rade": "18.719",
+    "pl_eqt": "2190",
+    "ra": "72.6605916",
+    "dec": "1.8938365",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "WASP-93 b",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "9.4587443",
+    "dec": "51.2887780",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "XO-3 b",
+    "pl_rade": "13.641",
+    "pl_eqt": "",
+    "ra": "65.4695814",
+    "dec": "57.8172095",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "XO-3 b",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "65.4695814",
+    "dec": "57.8172095",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "eps Tau b",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "67.1546573",
+    "dec": "19.1802782",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "ups And b",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "24.1983534",
+    "dec": "41.4038147",
+    "sy_dist": "N/A"
+},
+{
+    "pl_name": "ups And d",
+    "pl_rade": "",
+    "pl_eqt": "",
+    "ra": "24.1983534",
+    "dec": "41.4038147",
+    "sy_dist": "N/A"
+}
+]
