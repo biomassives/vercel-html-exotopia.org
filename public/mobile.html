@@ -110,34 +110,33 @@
             }
         }
 
-
-let currentIntersect;
-
-function onTouchStart(event) {
-  event.preventDefault();
-  const touch = event.touches[0];
-  const mouse = new THREE.Vector2(
-    (touch.clientX / window.innerWidth) * 2 - 1,
-    -(touch.clientY / window.innerHeight) * 2 + 1
-  );
-
-  raycaster.setFromCamera(mouse, camera);
-  const intersects = raycaster.intersectObjects(regions);
-
-  if (intersects.length > 0) {
-    const intersect = intersects[0];
-    currentIntersect = intersect.object;
-    highlightObject(currentIntersect);
-    displayExoplanetInfo(currentIntersect);
-
-    // Recentering logic
-    const targetDistance = calculateTargetDistance(currentIntersect);
-    const targetPosition = currentIntersect.position.clone();
-    targetPosition.z += targetDistance; // Move target position closer
-    gsap.to(camera.position, { duration: 1.5, x: targetPosition.x, y: targetPosition.y, z: targetPosition.z });
-    controls.target = currentIntersect.position.clone(); // Center the clicked planet
-  }
-}
+        
+        
+        function onTouchStart(event) {
+          event.preventDefault();
+          const touch = event.touches[0];
+          const mouse = new THREE.Vector2(
+            (touch.clientX / window.innerWidth) * 2 - 1,
+            -(touch.clientY / window.innerHeight) * 2 + 1
+          );
+        
+          raycaster.setFromCamera(mouse, camera);
+          const intersects = raycaster.intersectObjects(regions);
+        
+          if (intersects.length > 0) {
+            const intersect = intersects[0];
+            currentIntersect = intersect.object;
+            highlightObject(currentIntersect);
+            displayExoplanetInfo(currentIntersect);
+        
+            // Recentering logic
+            const targetDistance = calculateTargetDistance(currentIntersect);
+            const targetPosition = currentIntersect.position.clone();
+            targetPosition.z += targetDistance; // Move target position closer
+            gsap.to(camera.position, { duration: 1.5, x: targetPosition.x, y: targetPosition.y, z: targetPosition.z });
+            controls.target = currentIntersect.position.clone(); // Center the clicked planet
+          }
+        }
 
       
         function loadExoplanetData(fileNames) {
