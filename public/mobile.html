@@ -114,57 +114,63 @@
         }
 
         
-        
-        function onTouchStart(event) { 
-            event.preventDefault(); 
-            const touch = event.touches[0]; 
-            const mouse = new THREE.Vector2( (touch.clientX / window.innerWidth) * 2 - 1, -(touch.clientY / window.innerHeight) * 2 + 1 );
-        
-        raycaster.setFromCamera(mouse, camera); 
-        const intersects = raycaster.intersectObjects(regions);
-        
-        if (intersects.length > 0) { 
-            const intersect = intersects[0]; 
-            currentIntersect = intersect.object; 
-            highlightObject(currentIntersect); 
-            displayExoplanetInfo(currentIntersect);
-        
+        function onTouchStart(event) {
+    event.preventDefault();
+    const touch = event.touches[0];
+    const mouse = new THREE.Vector2(
+        (touch.clientX / window.innerWidth) * 2 - 1,
+        -(touch.clientY / window.innerHeight) * 2 + 1
+    );
+
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects(regions);
+
+    if (intersects.length > 0) {
+        const intersect = intersects[0];
+        currentIntersect = intersect.object;
+        highlightObject(currentIntersect);
+        displayExoplanetInfo(currentIntersect);
+
         // Recentering logic
-        
         const targetDistance = calculateTargetDistance(currentIntersect);
         const targetPosition = currentIntersect.position.clone();
         targetPosition.z += targetDistance; // Move target position closer
         gsap.to(camera.position, { duration: 1.5, x: targetPosition.x, y: targetPosition.y, z: targetPosition.z });
         controls.target = currentIntersect.position.clone(); // Center the clicked planet
-        
-        
+
         // Save the current touch event
-        
         currentTouch = touch;
-        
-        } 
-        
-        function onTouchEnd(event) { if (currentIntersect && currentTouch) { 
-            const touch = currentTouch; 
-            const mouse = new THREE.Vector2( (touch.clientX / window.innerWidth) * 2 - 1, -(touch.clientY / window.innerHeight) * 2 + 1 );
-        
-        raycaster.setFromCamera(mouse, camera); const intersects = raycaster.intersectObjects(regions);
-        
-        if (intersects.length > 0) { const intersect = intersects[0]; if (intersect.object === currentIntersect) { 
-        // Restore the original color of the currentIntersect object 
-        restoreOriginalColor(currentIntersect); } }
-        
-        // Reset the currentIntersect and currentTouch variables 
-        currentIntersect = null; currentTouch = null; }
-        
-        // Add an event listener for the touchstart event 
-        document.addEventListener('touchstart', onTouchStart, false);
-        
-        // Add an event listener for the touch end event 
-        document.addEventListener('touchend', onTouchEnd, false);
-                                   }
+    }
+}
+
+function onTouchEnd(event) {
+    if (currentIntersect && currentTouch) {
+        const touch = currentTouch;
+        const mouse = new THREE.Vector2(
+            (touch.clientX / window.innerWidth) * 2 - 1,
+            -(touch.clientY / window.innerHeight) * 2 + 1
+        );
+
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObjects(regions);
+
+        if (intersects.length > 0) {
+            const intersect = intersects[0];
+            if (intersect.object === currentIntersect) {
+                // Restore the original color of the currentIntersect object
+                restoreOriginalColor(currentIntersect);
+            }
         }
 
+        // Reset the currentIntersect and currentTouch variables
+        currentIntersect = null;
+        currentTouch = null;
+    }
+}
+
+
+// Add an event listener for the touch end event
+document.addEventListener('touchend', onTouchEnd, false);
 
         function loadExoplanetData(fileNames) {
             let combinedData = [];
