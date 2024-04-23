@@ -37,6 +37,8 @@
             animate();
         });
 
+
+        
         function init() {
             const container = document.getElementById('container');
             scene = new THREE.Scene();
@@ -59,6 +61,7 @@
             window.addEventListener('resize', onWindowResize, false);
             document.addEventListener('mousemove', onMouseMove, false);
             document.addEventListener('click', onClick, false);
+            document.addEventListener('touchstart', onTouchStart, false);
         }
 
         let currentIntersect;
