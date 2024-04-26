@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Exotopia Interactive Exoplanet Visualization</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { margin: 0; overflow: hidden; }
+        canvas { display: block; background-color: black; }
+        #info { position: absolute; top: 10px; left: 10px; color: white; }
+        #infobox {
+            position: absolute;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+            color: white;
+            display: none;
+        }
+        #sidebar {
+            position: fixed;
+            left: -300px;
+            top: 0;
+            width: 250px;
+            height: 100%;
+            background: #333;
+            padding: 20px;
+            box-sizing: border-box;
+            transition: left 0.3s ease;
+            z-index: 100;
+        }
+        #sidebar a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 10px 0;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="container"></div>
+    <div id="info">Hover over an object</div>
+    <div id="infobox"></div>
+    <div id="sidebar">
+        <a id="exotopia-link">What is Exotopia?</a>
+        <a id="biodiversity-link">Biodiversity Projects</a>
+        <a id="earn-nfts-link">Earn NFTs</a>
+        <a id="methodology-link">Methodology</a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/three@0.125.2/build/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.125.2/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+    <script>
+        let scene, camera, renderer, controls;
+        let raycaster, INTERSECTED;
+        const regions = [];
+
+        const fileNames = ['quadrant_1.json', 'quadrant_2.json', 'quadrant_3.json', 'quadrant_4.json', 'quadrant_5.json', 'quadrant_6.json', 'quadrant_7.json', 'quadrant_8.json'];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            init();
+            loadExoplanetData(fileNames);  // Specify your data source here
+            animate();
+            setupHammerJS();
+        });
+
+        function init() {
+            const container = document.getElementById('container');
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 100;
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            container.appendChild(renderer.domElement);
+
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.rotateSpeed = 2.0;
+            controls.zoomSpeed = 1.2;
+            controls.panSpeed = 0.8;
+            controls.enableZoom = true;
+            controls.maxDistance = 500; // Maximum distance camera can zoom out
+            controls.minDistance = 100; // Minimum distance camera can zoom in
+
+            raycaster = new THREE.Raycaster();
+            window.addEventListener('resize', onWindowResize, false);
+        }
+
+        let currentIntersect;
+
+        function onMouseMove(event) {
+            event.preventDefault();
+            const mouse = new THREE.Vector2(
+                (event.clientX / window.innerWidth) * 2 - 1,
+                -(event.clientY / window.innerHeight) * 2 + 1
+            );
+
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(regions);
+
+            if (intersects.length > 0) {
+                if (currentIntersect !== intersects[0].object) {
+                    restoreOriginalColor(currentIntersect);
+                    currentIntersect = intersects[0].object;
+                    highlightObject(currentIntersect);
+                }
+                document.getElementById('infobox').style.display = 'block';
+                document.getElementById('infobox').style.left = `${event.clientX + 5}px`;
+                document.getElementById('infobox').style.top = `${event.clientY + 5}px`;
+                document.getElementById('infobox').innerHTML = currentIntersect.userData.description || 'No additional information';
+            } else {
+                restoreOriginalColor(currentIntersect);
+                currentIntersect = null;
+                document.getElementById('infobox').style.display = 'none';
+            }
+        }
+
+        function onClick(event) {
+            event.preventDefault();
+            const mouse = new THREE.Vector2(
+                (event.clientX / window.innerWidth) * 2 - 1,
+                -(event.clientY / window.innerHeight) * 2 + 1
+            );
+
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(regions);
+
+            if (intersects.length > 0) {
+                const intersect = intersects[0];
+                const targetDistance = calculateTargetDistance(intersect.object);
+                const targetPosition = intersect.object.position.clone();
+                targetPosition.z += targetDistance; // Move target position closer
+                gsap.to(camera.position, { duration: 1.5, x: targetPosition.x, y: targetPosition.y, z: targetPosition.z });
+                controls.target = intersect.object.position.clone(); // Center the clicked planet
+            }
+        }
+
+        function setupHammerJS() {
+            const hammer = new Hammer(document.getElementById('container'));
+            hammer.get('pan').set({ direction: Hammer.DIRECTION_ALL });
+            hammer.on('pan', function(event) {
+                // Pan the camera based on the movement
+                controls.pan(event.deltaX, -event.deltaY);
+            });
+
+            hammer.get('pinch').set({ enable: true });
+            hammer.on('pinch', function(event) {
+                // Zoom the camera based on the pinch gesture
+                controls.zoom(event.scale - 1);
+            });
+        }
+
+        function loadExoplanetData(fileNames) {
+            let combinedData = [];
+
+            function loadFile(index) {
+                if (index < fileNames.length) {
+                    fetch(fileNames[index])
+                        .then(response => response.json())
+                        .then(data => {
+                            combinedData = combinedData.concat(data);
+                            loadFile(index + 1);
+                        })
+                        .catch(err => console.error('Failed to load data:', err));
+                } else {
+                    createExoplanetVisuals(combinedData);
+                }
+            }
+
+            loadFile(0);
+        }
+
+        function createExoplanetVisuals(data) {
+            data.forEach(planet => {
+                if (planet.hasOwnProperty('pl_name')) {
+                    const name = planet.pl_name;
+                    let temperature = 'N/A';
+                    let radius = 5;
+
+                    if (planet.hasOwnProperty('pl_eqt') && planet.pl_eqt !== '') {
+                        temperature = planet.pl_eqt;
+                    }
+
+                    if (planet.hasOwnProperty('pl_rade')) {
+                        radius = planet.pl_rade;
+                    }
+
+                    const geometry = new THREE.SphereGeometry(radius, 32, 32);
+                    const color = new THREE.Color().setHSL(Math.random(), 1, 0.5);
+
+                    const material = new THREE.MeshStandardMaterial({ color, emissive: color });
+                    const exoplanet = new THREE.Mesh(geometry, material);
+                    exoplanet.position.set(
+                        Math.random() * 800 - 400,
+                        Math.random() * 800 - 400,
+                        Math.random() * 800 - 400
+                    );
+                    exoplanet.userData = {
+                        description: `Name: ${name}, Temp: ${temperature}K`
+                    };
+                    exoplanet.originalColor = color.clone(); // Store original color
+                    scene.add(exoplanet);
+                    regions.push(exoplanet);
+                } else {
+                    console.warn('Missing properties in planet object:', planet);
+                }
+            });
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        function highlightObject(object) {
+            if (object.material.emissive) {
+                object.currentHex = object.material.emissive.getHex();
+                object.material.emissive.setHex(0xff0000); // Turn red on mouseover
+            }
+        }
+
+        function restoreOriginalColor(object) {
+            if (object && object.material.emissive) {
+                object.material.emissive.setHex(object.currentHex);
+            }
+        }
+
+        function calculateTargetDistance(object) {
+            const objectSize = object.geometry.parameters.radius;
+            const cameraDistance = controls.object.position.distanceTo(object.position);
+            const scaleFactor = 2.5; // Adjust this value as needed
+
+            let targetDistance = objectSize * scaleFactor;
+
+            // Limit the zoom level
+            const minZoom = 20; // Minimum zoom level in scene units
+            const maxZoom = 300; // Maximum zoom level in scene units
+
+            if (targetDistance < minZoom) {
+                targetDistance = minZoom;
+            } else if (targetDistance > maxZoom) {
+                targetDistance = maxZoom;
+            }
+
+            return targetDistance;
+        }
+
+        // Function to show overlay
+        function showOverlay(content) {
+            const overlay = document.createElement('div');
+            overlay.id = 'overlay';
+            overlay.style.position = 'fixed';
+            overlay.style.top = '0';
+            overlay.style.left = '0';
+            overlay.style.width = '100%';
+            overlay.style.height = '100%';
+            overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+            overlay.style.display = 'flex';
+            overlay.style.alignItems = 'center';
+            overlay.style.justifyContent = 'center';
+            overlay.style.zIndex = '99';
+
+            const contentDiv = document.createElement('div');
+            contentDiv.style.backgroundColor = '#333';
+            contentDiv.style.padding = '20px';
+            contentDiv.style.borderRadius = '5px';
+            contentDiv.style.color = 'white';
+            contentDiv.innerHTML = content;
+
+            overlay.appendChild(contentDiv);
+            document.body.appendChild(overlay);
+
+            // Close overlay when clicking outside
+            overlay.addEventListener('click', function(event) {
+                if (event.target === overlay) {
+                    overlay.remove();
+                }
+            });
+        }
+
+        // Event listeners for sidebar links
+        document.getElementById('exotopia-link').addEventListener('click', function() {
+            showOverlay('Exotopia is a...'); // Replace with actual content
+        });
+
+        document.getElementById('biodiversity-link').addEventListener('click', function() {
+            showOverlay('Biodiversity projects...'); // Replace with actual content
+        });
+
+        document.getElementById('earn-nfts-link').addEventListener('click', function() {
+            showOverlay('Earn NFTs...'); // Replace with actual content
+        });
+
+        document.getElementById('methodology-link').addEventListener('click', function() {
+            showOverlay('Methodology...'); // Replace with actual content
+        });
+
+    </script>
+</body>
+</html>
