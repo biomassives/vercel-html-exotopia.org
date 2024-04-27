@@ -2,9 +2,10 @@
 <html>
 <head>
     <title>Exotopia Interactive Exoplanet Visualization</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { margin: 0; }
-        canvas { display: block; }
+        body { margin: 0; overflow: hidden; }
+        canvas { display: block; background-color: black; }
         #info { position: absolute; top: 10px; left: 10px; color: white; }
         #infobox {
             position: absolute;
@@ -24,6 +25,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.125.2/build/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.125.2/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
     <script>
         let scene, camera, renderer, controls;
         let raycaster, INTERSECTED;
@@ -35,6 +37,8 @@
             init();
             loadExoplanetData(fileNames);  // Specify your data source here
             animate();
+            setupHammerJS();
+            setupMouseEvents();
         });
 
         function init() {
@@ -48,6 +52,8 @@
             container.appendChild(renderer.domElement);
 
             controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true; // Add damping for smooth panning
+            controls.dampingFactor = 0.25; // Adjust damping factor as needed
             controls.rotateSpeed = 2.0;
             controls.zoomSpeed = 1.2;
             controls.panSpeed = 0.8;
@@ -57,8 +63,6 @@
 
             raycaster = new THREE.Raycaster();
             window.addEventListener('resize', onWindowResize, false);
-            document.addEventListener('mousemove', onMouseMove, false);
-            document.addEventListener('click', onClick, false);
         }
 
         let currentIntersect;
@@ -107,6 +111,56 @@
                 targetPosition.z += targetDistance; // Move target position closer
                 gsap.to(camera.position, { duration: 1.5, x: targetPosition.x, y: targetPosition.y, z: targetPosition.z });
                 controls.target = intersect.object.position.clone(); // Center the clicked planet
+            }
+        }
+
+        function onTouchStart(event) {
+            event.preventDefault();
+            const touch = event.touches[0];
+            const mouse = new THREE.Vector2(
+                (touch.clientX / window.innerWidth) * 2 - 1,
+                -(touch.clientY / window.innerHeight) * 2 + 1
+            );
+
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(regions);
+
+            if (intersects.length > 0) {
+                const intersect = intersects[0];
+                currentIntersect = intersect.object;
+                highlightObject(currentIntersect);
+                displayExoplanetInfo(currentIntersect);
+
+                // Recentering logic
+                const targetDistance = calculateTargetDistance(currentIntersect);
+                const targetPosition = currentIntersect.position.clone();
+                targetPosition.z += targetDistance; // Move target position closer
+                gsap.to(camera.position, { duration: 1.5, x: targetPosition.x, y: targetPosition.y, z: targetPosition.z });
+                controls.target = currentIntersect.position.clone(); // Center the clicked planet
+            }
+        }
+
+        function onTouchEnd(event) {
+            if (currentIntersect) {
+                const touch = event.changedTouches[0];
+                const mouse = new THREE.Vector2(
+                    (touch.clientX / window.innerWidth) * 2 - 1,
+                    -(touch.clientY / window.innerHeight) * 2 + 1
+                );
+
+                raycaster.setFromCamera(mouse, camera);
+                const intersects = raycaster.intersectObjects(regions);
+
+                if (intersects.length > 0) {
+                    const intersect = intersects[0];
+                    if (intersect.object === currentIntersect) {
+                        // Restore the original color of the currentIntersect object
+                        restoreOriginalColor(currentIntersect);
+                    }
+                }
+
+                // Reset the currentIntersect variable
+                currentIntersect = null;
             }
         }
 
@@ -210,6 +264,37 @@
             }
 
             return targetDistance;
+        }
+
+        // Hammer.js setup
+        function setupHammerJS() {
+            const hammer = new Hammer(document.getElementById('container'));
+            hammer.on('tap', function(event) {
+                const mouse = new THREE.Vector2(
+                    (event.center.x / window.innerWidth) * 2 - 1,
+                    -(event.center.y / window.innerHeight) * 2 + 1
+                );
+
+                raycaster.setFromCamera(mouse, camera);
+                const intersects = raycaster.intersectObjects(regions);
+
+                if (intersects.length > 0) {
+                    const intersect = intersects[0];
+                    const targetDistance = calculateTargetDistance(intersect.object);
+                    const targetPosition = intersect.object.position.clone();
+                    targetPosition.z += targetDistance; // Move target position closer
+                    gsap.to(camera.position, { duration: 1.5, x: targetPosition.x, y: targetPosition.y, z: targetPosition.z });
+                    controls.target = intersect.object.position.clone(); // Center the clicked planet
+                }
+            });
+        }
+
+        // Mouse event setup
+        function setupMouseEvents() {
+            document.addEventListener('mousemove', onMouseMove, false);
+            document.addEventListener('click', onClick, false);
+            document.addEventListener('touchstart', onTouchStart, false);
+            document.addEventListener('touchend', onTouchEnd, false);
         }
     </script>
 </body>
