@@ -7,7 +7,6 @@
         body {
             margin: 0;
             overflow: hidden;
-            font-family: Arial, sans-serif;
         }
 
         canvas {
@@ -39,28 +38,10 @@
             color: white;
             text-decoration: none;
             margin-bottom: 10px;
-            position: relative;
         }
 
         #sidebar a:hover {
             color: #ccc;
-        }
-
-        #sidebar a .overlay {
-            position: absolute;
-            top: 0;
-            left: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 5px;
-            display: none;
-            z-index: 1;
-            white-space: nowrap;
-        }
-
-        #sidebar a:hover .overlay {
-            display: block;
         }
 
         .hamburger {
@@ -133,6 +114,52 @@
             color: white;
             display: none;
         }
+
+        /* Accordion styles */
+        .accordion {
+            background-color: #333;
+            color: white;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 15px;
+            transition: 0.4s;
+        }
+
+        .accordion.active, .accordion:hover {
+            background-color: #555;
+        }
+
+        .panel {
+            padding: 0 18px;
+            display: none;
+            background-color: white;
+            overflow: hidden;
+        }
+
+        /* Overlay styles */
+        .overlay {
+            position: absolute;
+            left: 100%;
+            top: 0;
+            width: 250px;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            transition: left 0.3s ease-in-out;
+        }
+
+        a:hover .overlay {
+            left: calc(100% - 250px);
+        }
+
+        a:hover {
+            background-color: #555;
+        }
+
     </style>
 </head>
 <body>
@@ -142,131 +169,73 @@
 <div id="sidebar">
     <div id="hamburger-button" class="hamburger" onclick="toggleSidebar()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 12h18M3 6h18M3 18h18"></path>
+            <path d="M18 6L6 18M6 6l12 12"></path>
         </svg>
     </div>
     <a href="#">
         Checkin
         <div class="overlay">
-          
-        Please use this checkin tool to share progress reports on your project .
-          
+            Please use this checkin tool to share progress reports on your project.
         </div>
     </a>
     <a href="#">
         Reports
         <div class="overlay">
-        
-        These reports are helpful in keeping organized , taking to the media , networking with other organization, and for compensating volunteers by allowing them to own proportionate amounts of biodiversity credits.
-          
+            These reports are helpful in keeping organized, talking to the media, networking with other organizations, and for compensating volunteers by allowing them to own proportionate amounts of biodiversity credits.
         </div>
     </a>
     <a href="#">
         Review
         <div class="overlay">
-          
-          
-        Reviewing existing or potential projects is a good way to earn rewards while giving back to your communty. The Eco Ops project has been designed such that people can participate at different levels based in their expertise , time available , and interests. We encourage all users to participate in revising the work of others by researching their topic , interviewing participants , beneficiaries , and community members.
-        
-        
+            Reviewing existing or potential projects is a good way to earn rewards while giving back to your community. The Eco Ops project has been designed such that people can participate at different levels based on their expertise, time available, and interests. We encourage all users to participate in revising the work of others by researching their topic, interviewing participants, beneficiaries, and community members.
         </div>
     </a>
     <a href="#">
         Earnings
         <div class="overlay">
-          
-Participants earn NFT rewards which can be sold on the WorldBridger.One (WB1) aftermarket. Unique collectible tokens are generated for each checkin or review performed.  The tokens generated here by Eco Ops users on the Exotopia platform can be considered common, rare , very rare, or extremely rare.  Token rarity can be better understood at WB1 , and we encourage you to take a look there to investigate further there where you can review the current token floor price index based on different rarity attributes.         
-        
+            Participants earn NFT rewards which can be sold on the WorldBridger.One (WB1) aftermarket. Unique collectible tokens are generated for each checkin or review performed. The tokens generated here by Eco Ops users on the Exotopia platform can be considered common, rare, very rare, or extremely rare. Token rarity can be better understood at WB1, and we encourage you to take a look there to investigate further where you can review the current token floor price index based on different rarity attributes.
         </div>
     </a>
     <a href="#">
         Biodiversity Credits
         <div class="overlay">
-          
-          
-      
-         We have designed our biodiversity credit system such that tokens can be used to support projects which have beneficial effects on biodiversity resilience through changing climate , modern urbanization , and geopolitical conditions.
-          <blockquote>
-             Please refer people , companies , and projects here so that projects you believe in can grow and succeed.
-          </blockquote>
-        
-        
+            We have designed our biodiversity credit system such that tokens can be used to support projects which have beneficial effects on biodiversity resilience through changing climate, modern urbanization, and geopolitical conditions.
+            <blockquote>
+                Please refer people, companies, and projects here so that projects you believe in can grow and succeed.
+            </blockquote>
         </div>
     </a>
     <a href="#">
         Projects
         <div class="overlay">
-          
-          
-          <h1>Plant Care Activities</h1>
-          
-          <ul>
-              <li>Making plant insect sprays</li>
-              <li>Mixing soil for mineralization & higher plant nutrient content using bones, hoods, horns, feathers</li>
-              <li>Making plant nutrient mixtures in the form of compost teas and foliar feeding sprays</li>
-              <li>Negotiation with food cafeterias / food producers to divert organic waste for compost production</li>
-              <li>Advocacy & negotiation to increase public sentiment and support for recycling, composting, and toxics reduction/ management</li>
-              <li>Production and redistribution of soil fertility amendments</li>
-              <li>Seed saving, seed preservation, and with native plant & organic farming companion & natural insecticide / natural fertilizer emphasis</li>
-              <li>Individual gardens providing tree seedlings, soil amendments, and valuable plant sticks</li>
-              <li>Collaborations to support plant nurseries</li>
-              <li>Documenting long term care for trees & biodiversity zones</li>
-              <li>Poetry and art</li>
-          </ul>
-          
-          <p>Groups Involved:</p>
-          
-          <ul>
-              <li>Thika Technical College group</li>
-              <li>University of New Mexico group</li>
-              <li>Machakos/Kojaido Eco Club groups</li>
-              <li>Front Range Colorado group</li>
-          </ul>
-
-          
-<button class="accordion">Brokering and Managing New Composting, Recycling, and Upcycling Business Relationships</button>
-<div class="panel">
-    <ul>
-        <li>Identifying potential business partners for composting, recycling, and upcycling</li>
-        <li>Negotiating terms and agreements with business partners</li>
-        <li>Developing strategies for managing relationships with partners</li>
-        <li>Monitoring and evaluating the effectiveness of business relationships</li>
-        <li>Facilitating communication between stakeholders</li>
-        <li>Implementing sustainable practices in business relationships</li>
-    </ul>
-</div>
-
-<button class="accordion">Community Education and Work Toward Increased Visibility, Partnerships, and Public Literacy on Important Climate Tipping Point Issues and Social Tipping Points</button>
-<div class="panel">
-    <p>Paul Beckwith's YouTube podcast covers important climate tipping point issues and social tipping points. The activities include:</p>
-    <ul>
-        <li>Organizing workshops and seminars on climate change and social tipping points</li>
-        <li>Creating educational materials and resources</li>
-        <li>Collaborating with local schools and universities</li>
-        <li>Engaging with community organizations and local government</li>
-        <li>Advocating for policy changes</li>
-        <li>Increasing public awareness through social media and outreach events</li>
-    </ul>
-</div>
-
-
-
-   </div>
+            <h1>Plant Care Activities</h1>
+            <ul>
+                <li>Making plant insect sprays</li>
+                <li>Mixing soil for mineralization & higher plant nutrient content using bones, hoods, horns, feathers</li>
+                <li>Making plant nutrient mixtures in the form of compost teas and foliar feeding sprays</li>
+                <li>Negotiation with food cafeterias / food producers to bring in non-prepackaged plant-based foods for sale</li>
+                <li>Coordinate with other community organizations to bring in professional soils and growing mediums</li>
+                <li>Coordinate with other community organizations to teach practical low-cost growing</li>
+                <li>Coordinate with other community organizations to teach advanced plant growing techniques</li>
+                <li>Coordinate with other community organizations to learn about native plant biology and ecology</li>
+            </ul>
+        </div>
     </a>
     <a href="#">
         Methodologies
         <div class="overlay">
-          
-          This project relies on a decentralized file storage called IPFS, this network is similar to bot torrent in that many machines are used to store data in a decentralized manner , providing a CID address for uploaded files. CID addresses are used like http addresses but do not require a specific host to maintain availability . IPFS ( interplanetary file storage ) is common for NFT projects and ‘pinning’ is done to ensure file availability . Exotopia uses nft.storage API for its pinning and upload service . 
-
-          
+            In this section, users can submit proposals and updates on methodologies, lessons learned, and potential partnerships. Many resources and funding opportunities exist that can be aligned with individual projects. Having a clear plan in this section can help Eco Ops staff connect the appropriate people with the right resources.
         </div>
     </a>
     <a href="#">
         Earth Map
-        <div class="overlay">Earth Map description</div>
+        <div class="overlay">
+            <h2>The Great Pacific Garbage Patch</h2>
+            <p>The Great Pacific Garbage Patch, also known as the Pacific trash vortex, is a gyre of marine debris particles in the central North Pacific Ocean. It's located roughly between 135°W to 155°W and 35°N and 42°N. The patch extends over an indeterminate area, with estimates ranging very widely depending on the method used to measure. The patch is characterized by exceptionally high concentrations of pelagic plastics, chemical sludge, and other debris that have been trapped by the currents of the North Pacific Gyre.</p>
+        </div>
     </a>
 </div>
+<button class="close-button" onclick="toggleSidebar()">×</button>
 <div class="kitty-cat-ipsum">
     <p> Kitty ipsum dolor sit amet, shed everywhere shed everywhere stretching attack your ankles chase the red dot, hairball run catnip eat the grass tired now. </p>
 </div>
@@ -290,9 +259,7 @@ Participants earn NFT rewards which can be sold on the WorldBridger.One (WB1) af
             }
         });
     }
-</script>
-    
-<script>
+
     let sidebarVisible = false;
 
     function toggleSidebar() {
@@ -314,6 +281,7 @@ Participants earn NFT rewards which can be sold on the WorldBridger.One (WB1) af
     let raycaster, INTERSECTED;
     const regions = [];
     const fileNames = ['quadrant_1.json', 'quadrant_2.json', 'quadrant_3.json', 'quadrant_4.json', 'quadrant_5.json', 'quadrant_6.json', 'quadrant_7.json', 'quadrant_8.json'];
+
     document.addEventListener('DOMContentLoaded', function () {
         init();
         loadExoplanetData(fileNames);  // Specify your data source here
@@ -321,6 +289,7 @@ Participants earn NFT rewards which can be sold on the WorldBridger.One (WB1) af
         setupHammerJS();
         setupMouseEvents();
     });
+
     function init() {
         const container = document.getElementById('container');
         scene = new THREE.Scene();
@@ -340,55 +309,13 @@ Participants earn NFT rewards which can be sold on the WorldBridger.One (WB1) af
         controls.minDistance = 100; // Minimum distance camera can zoom in
         raycaster = new THREE.Raycaster();
         window.addEventListener('resize', onWindowResize, false);
-    }
+    }  
     let currentIntersect;
     function onMouseMove(event) {
         event.preventDefault();
         const mouse = new THREE.Vector2(
             (event.clientX / window.innerWidth) * 2 - 1,
             -(event.clientY / window.innerHeight) * 2 + 1
-        );
-        raycaster.setFromCamera(mouse, camera);
-        const intersects = raycaster.intersectObjects(regions);
-        if (intersects.length > 0) {
-            if (currentIntersect !== intersects[0].object) {
-                restoreOriginalColor(currentIntersect);
-                currentIntersect = intersects[0].object;
-                highlightObject(currentIntersect);
-            }
-            document.getElementById('infobox').style.display = 'block';
-            document.getElementById('infobox').style.left = `${event.clientX + 5}px`;
-            document.getElementById('infobox').style.top = `${event.clientY + 5}px`;
-            document.getElementById('infobox').innerHTML = currentIntersect.userData.description || 'No additional information';
-        } else {
-            restoreOriginalColor(currentIntersect);
-            currentIntersect = null;
-            document.getElementById('infobox').style.display = 'none';
-        }
-    }
-    function onClick(event) {
-        event.preventDefault();
-        const mouse = new THREE.Vector2(
-            (event.clientX / window.innerWidth) * 2 - 1,
-            -(event.clientY / window.innerHeight) * 2 + 1
-        );
-        raycaster.setFromCamera(mouse, camera);
-        const intersects = raycaster.intersectObjects(regions);
-        if (intersects.length > 0) {
-            const intersect = intersects[0];
-            const targetDistance = calculateTargetDistance(intersect.object);
-            const targetPosition = intersect.object.position.clone();
-            targetPosition.z += targetDistance; // Move target position closer
-            gsap.to(camera.position, {duration: 1.5, x: targetPosition.x, y: targetPosition.y, z: targetPosition.z});
-            controls.target = intersect.object.position.clone(); // Center the clicked planet
-        }
-    }
-    function onTouchStart(event) {
-        event.preventDefault();
-        const touch = event.touches[0];
-        const mouse = new THREE.Vector2(
-            (touch.clientX / window.innerWidth) * 2 - 1,
-            -(touch.clientY / window.innerHeight) * 2 + 1
         );
         raycaster.setFromCamera(mouse, camera);
         const intersects = raycaster.intersectObjects(regions);
@@ -405,6 +332,7 @@ Participants earn NFT rewards which can be sold on the WorldBridger.One (WB1) af
             controls.target = currentIntersect.position.clone(); // Center the clicked planet
         }
     }
+
     function onTouchEnd(event) {
         if (currentIntersect) {
             const touch = event.changedTouches[0];
@@ -425,6 +353,7 @@ Participants earn NFT rewards which can be sold on the WorldBridger.One (WB1) af
             currentIntersect = null;
         }
     }
+
     function loadExoplanetData(fileNames) {
         let combinedData = [];
         function loadFile(index) {
@@ -442,6 +371,7 @@ Participants earn NFT rewards which can be sold on the WorldBridger.One (WB1) af
         }
         loadFile(0);
     }
+
     function createExoplanetVisuals(data) {
         data.forEach(planet => {
             if (planet.hasOwnProperty('pl_name')) {
@@ -474,46 +404,32 @@ Participants earn NFT rewards which can be sold on the WorldBridger.One (WB1) af
             }
         });
     }
+
     function onWindowResize() {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
     }
+
     function animate() {
         requestAnimationFrame(animate);
         controls.update();
         renderer.render(scene, camera);
     }
+
     function highlightObject(object) {
         if (object.material.emissive) {
             object.currentHex = object.material.emissive.getHex();
             object.material.emissive.setHex(0xff0000); // Turn red on mouseover
         }
     }
+
     function restoreOriginalColor(object) {
         if (object && object.material.emissive) {
             object.material.emissive.setHex(object.currentHex);
         }
     }
 
-function calculateTargetDistance(object) {
-    const objectSize = object.geometry.parameters.radius;
-    const cameraDistance = controls.object.position.distanceTo(object.position);
-    const scaleFactor = 2.5; // Adjust this value as needed
-    let targetDistance = objectSize * scaleFactor;
-    // Limit the zoom level
-    const minZoom = 20; // Minimum zoom level in scene units
-    const maxZoom = 300; // Maximum zoom level in scene units
-    if (targetDistance < minZoom) {
-        targetDistance = minZoom;
-    } else if (targetDistance > maxZoom) {
-        targetDistance = maxZoom;
-    }
-    return targetDistance;
-}
-
-
-  
     function calculateTargetDistance(object) {
         const objectSize = object.geometry.parameters.radius;
         const cameraDistance = controls.object.position.distanceTo(object.position);
@@ -524,34 +440,39 @@ function calculateTargetDistance(object) {
         const maxZoom = 300; // Maximum zoom level in scene units
         if (targetDistance < minZoom) {
             targetDistance = minZoom;
-        } else if {
-
-
-                
-                raycaster.setFromCamera(mouse, camera);
-                const intersects = raycaster.intersectObjects(regions);
-                if (intersects.length > 0) {
-                    const intersect = intersects[0];
-                    const targetDistance = calculateTargetDistance(intersect.object);
-                    const targetPosition = intersect.object.position.clone();
-                    targetPosition.z += targetDistance; // Move target position closer
-                    gsap.to(camera.position, {duration: 1.5, x: targetPosition.x, y: targetPosition.y, z: targetPosition.z});
-                    controls.target = intersect.object.position.clone(); // Center the clicked planet
-                }
-            });
+        } else if (targetDistance > maxZoom) {
+            targetDistance = maxZoom;
         }
+        return targetDistance;
     }
+
+    // Hammer.js setup
+    function setupHammerJS() {
+        const hammer = new Hammer(document.getElementById('container'));
+        hammer.on('tap', function (event) {
+            const mouse = new THREE.Vector2(
+                (event.center.x / window.innerWidth) * 2 - 1,
+                -(event.center.y / window.innerHeight) * 2 + 1
+            );
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(regions);
+            if (intersects.length > 0) {
+                const intersect = intersects[0];
+                const targetDistance = calculateTargetDistance(intersect.object);
+                const targetPosition = intersect.object.position.clone();
+                targetPosition.z += targetDistance; // Move target position closer
+                gsap.to(camera.position, {duration: 1.5, x: targetPosition.x, y: targetPosition.y, z: targetPosition.z});
+                controls.target = intersect.object.position.clone(); // Center the clicked planet
+            }
+        });
+    }
+
     // Mouse event setup
     function setupMouseEvents() {
         document.addEventListener('mousemove', onMouseMove, false);
         document.addEventListener('click', onClick, false);
         document.addEventListener('touchstart', onTouchStart, false);
         document.addEventListener('touchend', onTouchEnd, false);
-    }
-
-    function toggleSidebar() {
-        document.getElementById('sidebar').classList.toggle('show');
-        document.getElementById('info').style.display = 'block';
     }
 </script>
 </body>
