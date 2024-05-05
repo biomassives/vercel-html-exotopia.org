@@ -195,7 +195,7 @@ Participants earn NFT rewards which can be sold on the WorldBridger.One (WB1) af
     </a>
     <a href="#">
         Projects
-        <div class="overlay">P
+        <div class="overlay">
           
           
           <h1>Plant Care Activities</h1>
@@ -249,22 +249,7 @@ Participants earn NFT rewards which can be sold on the WorldBridger.One (WB1) af
     </ul>
 </div>
 
-<script>
-    var acc = document.getElementsByClassName("accordion");
-    var i;
 
-    for (i = 0; i < acc.length; i++) {
-        acc[i].addEventListener("click", function() {
-            this.classList.toggle("active");
-            var panel = this.nextElementSibling;
-            if (panel.style.maxHeight) {
-                panel.style.maxHeight = null;
-            } else {
-                panel.style.maxHeight = panel.scrollHeight + "px";
-            }
-        });
-    }
-</script>
 
    </div>
     </a>
@@ -289,6 +274,24 @@ Participants earn NFT rewards which can be sold on the WorldBridger.One (WB1) af
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.125.2/examples/js/controls/OrbitControls.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+
+<script>
+    var acc = document.getElementsByClassName("accordion");
+    var i;
+
+    for (i = 0; i < acc.length; i++) {
+        acc[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var panel = this.nextElementSibling;
+            if (panel.style.maxHeight) {
+                panel.style.maxHeight = null;
+            } else {
+                panel.style.maxHeight = panel.scrollHeight + "px";
+            }
+        });
+    }
+</script>
+    
 <script>
     let sidebarVisible = false;
 
