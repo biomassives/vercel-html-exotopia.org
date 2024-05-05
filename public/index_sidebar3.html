@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Exotopia Interactive Exoplanet Visualization</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+
+        canvas {
+            display: block;
+            background-color: black;
+        }
+
+        #sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        #sidebar.show {
+            transform: translateX(0);
+        }
+
+        #sidebar a {
+            color: white;
+            text-decoration: none;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        #sidebar a:hover {
+            color: #ccc;
+        }
+
+        #sidebar a .overlay {
+            position: absolute;
+            top: 0;
+            left: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            display: none;
+            z-index: 1;
+            white-space: nowrap;
+        }
+
+        #sidebar a:hover .overlay {
+            display: block;
+        }
+
+        .hamburger {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            background-color: rgba(255, 255, 255, 0.5);
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 1;
+        }
+
+        .hamburger svg {
+            width: 20px;
+            height: 20px;
+            fill: #fff;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            color: white;
+            font-size: 24px;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .close-button:hover {
+            transform: scale(1.2);
+        }
+
+        .kitty-cat-ipsum {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            padding: 20px;
+            box-sizing: border-box;
+            display: none;
+        }
+
+        #info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+        }
+
+        #infobox {
+            position: absolute;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+            color: white;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div id="container"></div>
+<div id="info">Hover over an object</div>
+<div id="infobox"></div>
+<div id="sidebar">
+    <div id="hamburger-button" class="hamburger" onclick="toggleSidebar()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 12h18M3 6h18M3 18h18"></path>
+        </svg>
+    </div>
+    <a href="#">
+        Checkin
+        <div class="overlay">
+          
+        Please use this checkin tool to share progress reports on your project .
+          
+        </div>
+    </a>
+    <a href="#">
+        Reports
+        <div class="overlay">
+        
+        These reports are helpful in keeping organized , taking to the media , networking with other organization, and for compensating volunteers by allowing them to own proportionate amounts of biodiversity credits.
+          
+        </div>
+    </a>
+    <a href="#">
+        Review
+        <div class="overlay">
+          
+          
+        Reviewing existing or potential projects is a good way to earn rewards while giving back to your communty. The Eco Ops project has been designed such that people can participate at different levels based in their expertise , time available , and interests. We encourage all users to participate in revising the work of others by researching their topic , interviewing participants , beneficiaries , and community members.
+        
+        
+        </div>
+    </a>
+    <a href="#">
+        Earnings
+        <div class="overlay">
+          
+Participants earn NFT rewards which can be sold on the WorldBridger.One (WB1) aftermarket. Unique collectible tokens are generated for each checkin or review performed.  The tokens generated here by Eco Ops users on the Exotopia platform can be considered common, rare , very rare, or extremely rare.  Token rarity can be better understood at WB1 , and we encourage you to take a look there to investigate further there where you can review the current token floor price index based on different rarity attributes.         
+        
+        </div>
+    </a>
+    <a href="#">
+        Biodiversity Credits
+        <div class="overlay">
+          
+          
+      
+         We have designed our biodiversity credit system such that tokens can be used to support projects which have beneficial effects on biodiversity resilience through changing climate , modern urbanization , and geopolitical conditions.
+          <blockquote>
+             Please refer people , companies , and projects here so that projects you believe in can grow and succeed.
+          </blockquote>
+        
+        
+        </div>
+    </a>
+    <a href="#">
+        Projects
+        <div class="overlay">P
+          
+          
+          <h1>Plant Care Activities</h1>
+          
+          <ul>
+              <li>Making plant insect sprays</li>
+              <li>Mixing soil for mineralization & higher plant nutrient content using bones, hoods, horns, feathers</li>
+              <li>Making plant nutrient mixtures in the form of compost teas and foliar feeding sprays</li>
+              <li>Negotiation with food cafeterias / food producers to divert organic waste for compost production</li>
+              <li>Advocacy & negotiation to increase public sentiment and support for recycling, composting, and toxics reduction/ management</li>
+              <li>Production and redistribution of soil fertility amendments</li>
+              <li>Seed saving, seed preservation, and with native plant & organic farming companion & natural insecticide / natural fertilizer emphasis</li>
+              <li>Individual gardens providing tree seedlings, soil amendments, and valuable plant sticks</li>
+              <li>Collaborations to support plant nurseries</li>
+              <li>Documenting long term care for trees & biodiversity zones</li>
+              <li>Poetry and art</li>
+          </ul>
+          
+          <p>Groups Involved:</p>
+          
+          <ul>
+              <li>Thika Technical College group</li>
+              <li>University of New Mexico group</li>
+              <li>Machakos/Kojaido Eco Club groups</li>
+              <li>Front Range Colorado group</li>
+          </ul>
+
+          
+<button class="accordion">Brokering and Managing New Composting, Recycling, and Upcycling Business Relationships</button>
+<div class="panel">
+    <ul>
+        <li>Identifying potential business partners for composting, recycling, and upcycling</li>
+        <li>Negotiating terms and agreements with business partners</li>
+        <li>Developing strategies for managing relationships with partners</li>
+        <li>Monitoring and evaluating the effectiveness of business relationships</li>
+        <li>Facilitating communication between stakeholders</li>
+        <li>Implementing sustainable practices in business relationships</li>
+    </ul>
+</div>
+
+<button class="accordion">Community Education and Work Toward Increased Visibility, Partnerships, and Public Literacy on Important Climate Tipping Point Issues and Social Tipping Points</button>
+<div class="panel">
+    <p>Paul Beckwith's YouTube podcast covers important climate tipping point issues and social tipping points. The activities include:</p>
+    <ul>
+        <li>Organizing workshops and seminars on climate change and social tipping points</li>
+        <li>Creating educational materials and resources</li>
+        <li>Collaborating with local schools and universities</li>
+        <li>Engaging with community organizations and local government</li>
+        <li>Advocating for policy changes</li>
+        <li>Increasing public awareness through social media and outreach events</li>
+    </ul>
+</div>
+
+<script>
+    var acc = document.getElementsByClassName("accordion");
+    var i;
+
+    for (i = 0; i < acc.length; i++) {
+        acc[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var panel = this.nextElementSibling;
+            if (panel.style.maxHeight) {
+                panel.style.maxHeight = null;
+            } else {
+                panel.style.maxHeight = panel.scrollHeight + "px";
+            }
+        });
+    }
+</script>
+
+   </div>
+    </a>
+    <a href="#">
+        Methodologies
+        <div class="overlay">
+          
+          This project relies on a decentralized file storage called IPFS, this network is similar to bot torrent in that many machines are used to store data in a decentralized manner , providing a CID address for uploaded files. CID addresses are used like http addresses but do not require a specific host to maintain availability . IPFS ( interplanetary file storage ) is common for NFT projects and ‘pinning’ is done to ensure file availability . Exotopia uses nft.storage API for its pinning and upload service . 
+
+          
+        </div>
+    </a>
+    <a href="#">
+        Earth Map
+        <div class="overlay">Earth Map description</div>
+    </a>
+</div>
+<div class="kitty-cat-ipsum">
+    <p> Kitty ipsum dolor sit amet, shed everywhere shed everywhere stretching attack your ankles chase the red dot, hairball run catnip eat the grass tired now. </p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/three@0.125.2/build/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.125.2/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+<script>
+    let sidebarVisible = false;
+
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        sidebar.classList.toggle('show');
+        sidebarVisible = !sidebarVisible;
+
+        const hamburgerButton = document.getElementById('hamburger-button');
+        const svg = hamburgerButton.querySelector('svg');
+
+        if (sidebarVisible) {
+            svg.innerHTML = '<path d="M18 6L6 18M6 6l12 12"></path>'; // Change to X
+        } else {
+            svg.innerHTML = '<path d="M3 12h18M3 6h18M3 18h18"></path>'; // Change to hamburger
+        }
+    }
+
+    let scene, camera, renderer, controls;
+    let raycaster, INTERSECTED;
+    const regions = [];
+    const fileNames = ['quadrant_1.json', 'quadrant_2.json', 'quadrant_3.json', 'quadrant_4.json', 'quadrant_5.json', 'quadrant_6.json', 'quadrant_7.json', 'quadrant_8.json'];
+    document.addEventListener('DOMContentLoaded', function () {
+        init();
+        loadExoplanetData(fileNames);  // Specify your data source here
+        animate();
+        setupHammerJS();
+        setupMouseEvents();
+    });
+    function init() {
+        const container = document.getElementById('container');
+        scene = new THREE.Scene();
+        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 100;
+        renderer = new THREE.WebGLRenderer({antialias: true});
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        container.appendChild(renderer.domElement);
+        controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true; // Add damping for smooth panning
+        controls.dampingFactor = 0.25; // Adjust damping factor as needed
+        controls.rotateSpeed = 2.0;
+        controls.zoomSpeed = 1.2;
+        controls.panSpeed = 0.8;
+        controls.enableZoom = true;
+        controls.maxDistance = 500; // Maximum distance camera can zoom out
+        controls.minDistance = 100; // Minimum distance camera can zoom in
+        raycaster = new THREE.Raycaster();
+        window.addEventListener('resize', onWindowResize, false);
+    }
+    let currentIntersect;
+    function onMouseMove(event) {
+        event.preventDefault();
+        const mouse = new THREE.Vector2(
+            (event.clientX / window.innerWidth) * 2 - 1,
+            -(event.clientY / window.innerHeight) * 2 + 1
+        );
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObjects(regions);
+        if (intersects.length > 0) {
+            if (currentIntersect !== intersects[0].object) {
+                restoreOriginalColor(currentIntersect);
+                currentIntersect = intersects[0].object;
+                highlightObject(currentIntersect);
+            }
+            document.getElementById('infobox').style.display = 'block';
+            document.getElementById('infobox').style.left = `${event.clientX + 5}px`;
+            document.getElementById('infobox').style.top = `${event.clientY + 5}px`;
+            document.getElementById('infobox').innerHTML = currentIntersect.userData.description || 'No additional information';
+        } else {
+            restoreOriginalColor(currentIntersect);
+            currentIntersect = null;
+            document.getElementById('infobox').style.display = 'none';
+        }
+    }
+    function onClick(event) {
+        event.preventDefault();
+        const mouse = new THREE.Vector2(
+            (event.clientX / window.innerWidth) * 2 - 1,
+            -(event.clientY / window.innerHeight) * 2 + 1
+        );
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObjects(regions);
+        if (intersects.length > 0) {
+            const intersect = intersects[0];
+            const targetDistance = calculateTargetDistance(intersect.object);
+            const targetPosition = intersect.object.position.clone();
+            targetPosition.z += targetDistance; // Move target position closer
+            gsap.to(camera.position, {duration: 1.5, x: targetPosition.x, y: targetPosition.y, z: targetPosition.z});
+            controls.target = intersect.object.position.clone(); // Center the clicked planet
+        }
+    }
+    function onTouchStart(event) {
+        event.preventDefault();
+        const touch = event.touches[0];
+        const mouse = new THREE.Vector2(
+            (touch.clientX / window.innerWidth) * 2 - 1,
+            -(touch.clientY / window.innerHeight) * 2 + 1
+        );
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObjects(regions);
+        if (intersects.length > 0) {
+            const intersect = intersects[0];
+            currentIntersect = intersect.object;
+            highlightObject(currentIntersect);
+            displayExoplanetInfo(currentIntersect);
+            // Recentering logic
+            const targetDistance = calculateTargetDistance(currentIntersect);
+            const targetPosition = currentIntersect.position.clone();
+            targetPosition.z += targetDistance; // Move target position closer
+            gsap.to(camera.position, {duration: 1.5, x: targetPosition.x, y: targetPosition.y, z: targetPosition.z});
+            controls.target = currentIntersect.position.clone(); // Center the clicked planet
+        }
+    }
+    function onTouchEnd(event) {
+        if (currentIntersect) {
+            const touch = event.changedTouches[0];
+            const mouse = new THREE.Vector2(
+                (touch.clientX / window.innerWidth) * 2 - 1,
+                -(touch.clientY / window.innerHeight) * 2 + 1
+            );
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(regions);
+            if (intersects.length > 0) {
+                const intersect = intersects[0];
+                if (intersect.object === currentIntersect) {
+                    // Restore the original color of the currentIntersect object
+                    restoreOriginalColor(currentIntersect);
+                }
+            }
+            // Reset the currentIntersect variable
+            currentIntersect = null;
+        }
+    }
+    function loadExoplanetData(fileNames) {
+        let combinedData = [];
+        function loadFile(index) {
+            if (index < fileNames.length) {
+                fetch(fileNames[index])
+                    .then(response => response.json())
+                    .then(data => {
+                        combinedData = combinedData.concat(data);
+                        loadFile(index + 1);
+                    })
+                    .catch(err => console.error('Failed to load data:', err));
+            } else {
+                createExoplanetVisuals(combinedData);
+            }
+        }
+        loadFile(0);
+    }
+    function createExoplanetVisuals(data) {
+        data.forEach(planet => {
+            if (planet.hasOwnProperty('pl_name')) {
+                const name = planet.pl_name;
+                let temperature = 'N/A';
+                let radius = 5;
+                if (planet.hasOwnProperty('pl_eqt') && planet.pl_eqt !== '') {
+                    temperature = planet.pl_eqt;
+                }
+                if (planet.hasOwnProperty('pl_rade')) {
+                    radius = planet.pl_rade;
+                }
+                const geometry = new THREE.SphereGeometry(radius, 32, 32);
+                const color = new THREE.Color().setHSL(Math.random(), 1, 0.5);
+                const material = new THREE.MeshStandardMaterial({color, emissive: color});
+                const exoplanet = new THREE.Mesh(geometry, material);
+                exoplanet.position.set(
+                    Math.random() * 800 - 400,
+                    Math.random() * 800 - 400,
+                    Math.random() * 800 - 400
+                );
+                exoplanet.userData = {
+                    description: `Name: ${name}, Temp: ${temperature}K`
+                };
+                exoplanet.originalColor = color.clone(); // Store original color
+                scene.add(exoplanet);
+                regions.push(exoplanet);
+            } else {
+                console.warn('Missing properties in planet object:', planet);
+            }
+        });
+    }
+    function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+    function animate() {
+        requestAnimationFrame(animate);
+        controls.update();
+        renderer.render(scene, camera);
+    }
+    function highlightObject(object) {
+        if (object.material.emissive) {
+            object.currentHex = object.material.emissive.getHex();
+            object.material.emissive.setHex(0xff0000); // Turn red on mouseover
+        }
+    }
+    function restoreOriginalColor(object) {
+        if (object && object.material.emissive) {
+            object.material.emissive.setHex(object.currentHex);
+        }
+    }
+
+function calculateTargetDistance(object) {
+    const objectSize = object.geometry.parameters.radius;
+    const cameraDistance = controls.object.position.distanceTo(object.position);
+    const scaleFactor = 2.5; // Adjust this value as needed
+    let targetDistance = objectSize * scaleFactor;
+    // Limit the zoom level
+    const minZoom = 20; // Minimum zoom level in scene units
+    const maxZoom = 300; // Maximum zoom level in scene units
+    if (targetDistance < minZoom) {
+        targetDistance = minZoom;
+    } else if (targetDistance > maxZoom) {
+        targetDistance = maxZoom;
+    }
+    return targetDistance;
+}
+
+
+  
+    function calculateTargetDistance(object) {
+        const objectSize = object.geometry.parameters.radius;
+        const cameraDistance = controls.object.position.distanceTo(object.position);
+        const scaleFactor = 2.5; // Adjust this value as needed
+        let targetDistance = objectSize * scaleFactor;
+        // Limit the zoom level
+        const minZoom = 20; // Minimum zoom level in scene units
+        const maxZoom = 300; // Maximum zoom level in scene units
+        if (targetDistance < minZoom) {
+            targetDistance = minZoom;
+        } else if {
+
+
+                
+                raycaster.setFromCamera(mouse, camera);
+                const intersects = raycaster.intersectObjects(regions);
+                if (intersects.length > 0) {
+                    const intersect = intersects[0];
+                    const targetDistance = calculateTargetDistance(intersect.object);
+                    const targetPosition = intersect.object.position.clone();
+                    targetPosition.z += targetDistance; // Move target position closer
+                    gsap.to(camera.position, {duration: 1.5, x: targetPosition.x, y: targetPosition.y, z: targetPosition.z});
+                    controls.target = intersect.object.position.clone(); // Center the clicked planet
+                }
+            });
+        }
+    }
+    // Mouse event setup
+    function setupMouseEvents() {
+        document.addEventListener('mousemove', onMouseMove, false);
+        document.addEventListener('click', onClick, false);
+        document.addEventListener('touchstart', onTouchStart, false);
+        document.addEventListener('touchend', onTouchEnd, false);
+    }
+
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('show');
+        document.getElementById('info').style.display = 'block';
+    }
+</script>
+</body>
+</html>
