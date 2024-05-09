@@ -168,33 +168,8 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
-    document.addEventListener('DOMContentLoaded', function () {
-        init();
-        loadExoplanetData(fileNames);  // Specify your data source here
-        animate();
-        setupHammerJS();
-        setupMouseEvents();
-    
-        // Parse URL parameters and focus on the specified planet if 'planet' parameter is present
-        const planetParam = getParameterByName('planet');
-        console.log('Planet parameter:', planetParam); // Add this line to log the planetParam
-        if (planetParam) {
-            console.log('Planet parameter detected in URL:', planetParam);
-            // Log the regions array to see if the planet names are stored correctly
-            console.log('Regions array:', regions); // Add this line to log the regions array
-            // Find the planet by name and focus on it
-            const planetToFocus = regions.find(planet => planet.userData.description.includes(planetParam));
-            if (planetToFocus) {
-                focusOnPlanet(planetToFocus);
-            } else {
-                console.error('Planet not found:', planetParam);
-            }
-        }
-    });
 
 
-
-    
 
     // Function to parse URL parameters
     function getParameterByName(name, url) {
@@ -204,6 +179,9 @@ document.addEventListener('DOMContentLoaded', function () {
             results = regex.exec(url);
         if (!results) return null;
         if (!results[2]) return '';
+
+            console.log('decodeURIComponent:', results[2].replace(/\+/g ); // Log the regions array
+
         return decodeURIComponent(results[2].replace(/\+/g, ' '));
     }
 
