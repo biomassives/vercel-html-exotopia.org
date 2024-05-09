@@ -178,6 +178,93 @@
         window.addEventListener('resize', onWindowResize, false);
     }
     let currentIntersect;
+
+    // Function to parse URL parameters
+    function getParameterByName(name, url) {
+        if (!url) url = window.location.href;
+        name = name.replace(/[\[\]]/g, '\\$&');
+        const regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, ' '));
+    }
+
+    // Check if 'planet' parameter is present in the URL
+    const planetParam = getParameterByName('planet');
+    if (planetParam) {
+        // Find the planet by name and focus on it
+        const planetToFocus = regions.find(planet => planet.userData.description.includes(planetParam));
+        if (planetToFocus) {
+            focusOnPlanet(planetToFocus);
+        } else {
+            console.error('Planet not found:', planetParam);
+        }
+    }
+
+
+
+
+    function focusOnPlanet(planet) {
+        const targetDistance = calculateTargetDistance(planet);
+        const targetPosition = planet.position.clone();
+        targetPosition.z += targetDistance; // Move target position closer
+
+        // Initial position for the camera (start from the loading circle)
+        const initialPosition = { x: camera.position.x, y: camera.position.y, z: camera.position.z };
+
+        // Final position for the camera (orbiting around the planet)
+        const finalPosition = { x: targetPosition.x, y: targetPosition.y, z: targetPosition.z + 50 }; // Adjust the Z distance as needed
+
+        // Initial lookAt position (look at the planet)
+        const initialLookAt = { x: controls.target.x, y: controls.target.y, z: controls.target.z };
+
+        // Final lookAt position (look at the planet from a slightly tilted angle)
+        const finalLookAt = { x: planet.position.x, y: planet.position.y, z: planet.position.z };
+
+        // Animate the camera to the final position
+        gsap.to(camera.position, {
+            duration: 2, // Adjust duration as needed
+            x: finalPosition.x,
+            y: finalPosition.y,
+            z: finalPosition.z,
+            onUpdate: function () {
+                // Update the lookAt position as the camera moves
+                controls.target.set(initialLookAt.x + (finalLookAt.x - initialLookAt.x) * this.progress(),
+                                    initialLookAt.y + (finalLookAt.y - initialLookAt.y) * this.progress(),
+                                    initialLookAt.z + (finalLookAt.z - initialLookAt.z) * this.progress());
+            },
+            onComplete: function() {
+                // Rotate the camera around the planet
+                gsap.to(camera.position, {
+                    duration: 10, // Adjust duration as needed
+                    repeat: -1, // Infinite rotation
+                    ease: "linear",
+                    y: finalPosition.y + 20, // Orbiting radius
+                    onUpdate: function() {
+                        // Update the camera position
+                        controls.target.set(finalLookAt.x, finalLookAt.y, finalLookAt.z);
+                        controls.update(); // Update controls
+                    }
+                });
+            }
+        });
+
+        // Animate the opacity of the loading screen
+        gsap.to('.kitty-cat-ipsum', {
+            duration: 1,
+            opacity: 0,
+            onComplete: function() {
+                // Hide loading screen after animation
+                document.querySelector('.kitty-cat-ipsum').style.display = 'none';
+            }
+        });
+    }
+
+
+
+
+    
     function onMouseMove(event) {
         event.preventDefault();
         const mouse = new THREE.Vector2(
