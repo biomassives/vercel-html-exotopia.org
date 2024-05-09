@@ -143,17 +143,45 @@
     const regions = [];
     const fileNames = ['quadrant_1.json', 'quadrant_2.json', 'quadrant_3.json', 'quadrant_4.json', 'quadrant_5.json', 'quadrant_6.json', 'quadrant_7.json', 'quadrant_8.json'];
 
+document.addEventListener('DOMContentLoaded', function () {
+    init();
+    loadExoplanetData(fileNames);  // Specify your data source here
+    animate();
+    setupHammerJS();
+    setupMouseEvents();
+
+    // Parse URL parameters and focus on the specified planet if 'planet' parameter is present
+    const planetParam = getParameterByName('planet');
+    console.log('Planet parameter:', planetParam); // Log the planetParam to see what planet is requested
+    if (planetParam) {
+        console.log('Planet parameter detected in URL:', planetParam);
+        // Log the regions array to see if the planet names are stored correctly
+        console.log('Regions array:', regions); // Log the regions array
+        // Find the planet by name and focus on it
+        const planetToFocus = regions.find(planet => planet.userData.description.includes(planetParam));
+        if (planetToFocus) {
+            focusOnPlanet(planetToFocus);
+        } else {
+            console.error('Planet not found:', planetParam);
+        }
+    }
+});
+
+
     document.addEventListener('DOMContentLoaded', function () {
         init();
         loadExoplanetData(fileNames);  // Specify your data source here
         animate();
         setupHammerJS();
         setupMouseEvents();
-
+    
         // Parse URL parameters and focus on the specified planet if 'planet' parameter is present
         const planetParam = getParameterByName('planet');
+        console.log('Planet parameter:', planetParam); // Add this line to log the planetParam
         if (planetParam) {
             console.log('Planet parameter detected in URL:', planetParam);
+            // Log the regions array to see if the planet names are stored correctly
+            console.log('Regions array:', regions); // Add this line to log the regions array
             // Find the planet by name and focus on it
             const planetToFocus = regions.find(planet => planet.userData.description.includes(planetParam));
             if (planetToFocus) {
@@ -163,6 +191,10 @@
             }
         }
     });
+
+
+
+    
 
     // Function to parse URL parameters
     function getParameterByName(name, url) {
