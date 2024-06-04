@@ -27,26 +27,42 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.125.2/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
     <script>
-        // Data Processing Functions
-        function loadExoplanetData(fileNames) {
-            let combinedData = [];
+        const fileNames = [
+            'quadrant_1.json', 'quadrant_2.json', 'quadrant_3.json', 'quadrant_4.json',
+            'quadrant_5.json', 'quadrant_6.json', 'quadrant_7.json', 'quadrant_8.json'
+        ];
 
-            function loadFile(index) {
-                if (index < fileNames.length) {
-                    fetch(fileNames[index])
-                        .then(response => response.json())
-                        .then(data => {
-                            combinedData = combinedData.concat(data);
-                            loadFile(index + 1);
-                        })
-                        .catch(err => console.error('Failed to load data:', err));
-                } else {
-                    createExoplanetVisuals(combinedData);
-                }
-            }
+        // Placeholder points for rendering before data is loaded
+        const placeholderPoints = [
+            { pl_name: 'Placeholder 1', pl_eqt: '1000', pl_rade: '5' },
+            { pl_name: 'Placeholder 2', pl_eqt: '1200', pl_rade: '7' },
+            { pl_name: 'Placeholder 3', pl_eqt: '800', pl_rade: '4' }
+        ];
 
-            loadFile(0);
-        }
+        document.addEventListener('DOMContentLoaded', function() {
+            init();
+            createExoplanetVisuals(placeholderPoints); // Render placeholder points
+            loadExoplanetData(fileNames);  // Load all JSON files
+            animate();
+            setupHammerJS();
+            setupMouseEvents();
+        });
+ 
+      function loadExoplanetData(fileNames) {
+    const promises = fileNames.map(fileName => {
+        return fetch(fileName)
+            .then(response => response.json())
+            .catch(err => console.error('Failed to load data:', err));
+    });
+
+    Promise.all(promises)
+        .then(data => {
+            const combinedData = data.flat(); // Combine data from all files into a single array
+            createExoplanetVisuals(combinedData);
+        })
+        .catch(err => console.error('Failed to load data:', err));
+}
+
 
         function createExoplanetVisuals(data) {
             data.forEach(planet => {
