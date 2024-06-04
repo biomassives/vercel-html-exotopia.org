@@ -39,30 +39,38 @@
             { pl_name: 'Placeholder 3', pl_eqt: '800', pl_rade: '4' }
         ];
 
-        document.addEventListener('DOMContentLoaded', function() {
+        // Define the main function
+        function main() {
             init();
             createExoplanetVisuals(placeholderPoints); // Render placeholder points
             loadExoplanetData(fileNames);  // Load all JSON files
             animate();
             setupHammerJS();
             setupMouseEvents();
-        });
+        }
+
+        // Entry point
+        main(); // Call the main function directly
+
+        function loadExoplanetData(fileNames) {
+            const promises = fileNames.map(fileName => {
+                return fetch(fileName)
+                    .then(response => response.json())
+                    .catch(err => console.error('Failed to load data:', err));
+            });
+
+            Promise.all(promises)
+                .then(data => {
+                    const combinedData = data.flat(); // Combine data from all files into a single array
+                    createExoplanetVisuals(combinedData);
+                })
+                .catch(err => console.error('Failed to load data:', err));
+        }
+
+
+
+
  
-      function loadExoplanetData(fileNames) {
-    const promises = fileNames.map(fileName => {
-        return fetch(fileName)
-            .then(response => response.json())
-            .catch(err => console.error('Failed to load data:', err));
-    });
-
-    Promise.all(promises)
-        .then(data => {
-            const combinedData = data.flat(); // Combine data from all files into a single array
-            createExoplanetVisuals(combinedData);
-        })
-        .catch(err => console.error('Failed to load data:', err));
-}
-
 
         function createExoplanetVisuals(data) {
             data.forEach(planet => {
