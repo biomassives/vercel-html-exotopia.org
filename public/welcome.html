@@ -65,50 +65,52 @@
                 })
                 .catch(err => console.error('Failed to load data:', err));
         }
+function createExoplanetVisuals(data) {
+    data.forEach(planet => {
+        if (planet.hasOwnProperty('pl_name') && planet.hasOwnProperty('star_name') && planet.hasOwnProperty('star_sy_dist')) {
+            const name = planet.pl_name;
+            const starName = planet.star_name;
+            let temperature = 'N/A';
+            let radius = 5;
 
-        function createExoplanetVisuals(data) {
-            data.forEach(planet => {
-                if (planet.hasOwnProperty('pl_name') && planet.hasOwnProperty('star_name')) {
-                    const name = planet.pl_name;
-                    const starName = planet.star_name;
-                    let temperature = 'N/A';
-                    let radius = 5;
+            if (planet.hasOwnProperty('pl_eqt') && planet.pl_eqt !== '') {
+                temperature = planet.pl_eqt;
+            }
 
-                    if (planet.hasOwnProperty('pl_eqt') && planet.pl_eqt !== '') {
-                        temperature = planet.pl_eqt;
-                    }
+            if (planet.hasOwnProperty('pl_rade')) {
+                radius = planet.pl_rade;
+            }
 
-                    if (planet.hasOwnProperty('pl_rade')) {
-                        radius = planet.pl_rade;
-                    }
+            // Check if distance is provided and is a valid number
+            if (planet.hasOwnProperty('star_sy_dist') && !isNaN(parseFloat(planet.star_sy_dist))) {
+                // Calculate position based on star's distance
+                const distance = parseFloat(planet.star_sy_dist);
+                const position = new THREE.Vector3(
+                    Math.random() * 800 - 400,
+                    Math.random() * 800 - 400,
+                    -distance * 10  // Adjust scale as needed
+                );
 
-                    // Calculate position based on star's distance
-                    const distance = parseFloat(planet.star_sy_dist); // Parse distance from string to float
-                    const position = new THREE.Vector3(
-                        Math.random() * 800 - 400,
-                        Math.random() * 800 - 400,
-                        -distance * 10  // Adjust scale as needed
-                    );
+                const geometry = new THREE.SphereGeometry(radius, 32, 32);
+                const color = new THREE.Color().setHSL(Math.random(), 1, 0.5);
 
-                    const geometry = new THREE.SphereGeometry(radius, 32, 32);
-                    const color = new THREE.Color().setHSL(Math.random(), 1, 0.5);
-
-                    const material = new THREE.MeshStandardMaterial({ color, emissive: color });
-                    const exoplanet = new THREE.Mesh(geometry, material);
-                    exoplanet.position.copy(position);
-                    exoplanet.userData = {
-                        description: `Name: ${name}, Temp: ${temperature}K`
-                    };
-                    exoplanet.originalColor = color.clone(); // Store original color
-                    scene.add(exoplanet);
-                    regions.push(exoplanet);
-                } else {
-                    console.warn('Missing properties in planet object:', planet);
-                }
-            });
+                const material = new THREE.MeshStandardMaterial({ color, emissive: color });
+                const exoplanet = new THREE.Mesh(geometry, material);
+                exoplanet.position.copy(position);
+                exoplanet.userData = {
+                    description: `Name: ${name}, Temp: ${temperature}K`
+                };
+                exoplanet.originalColor = color.clone(); // Store original color
+                scene.add(exoplanet);
+                regions.push(exoplanet);
+            } else {
+                console.warn('Invalid or missing star_sy_dist for planet:', planet);
+            }
+        } else {
+            console.warn('Missing required properties in planet object:', planet);
         }
-
-
+    });
+}
 
 
 
