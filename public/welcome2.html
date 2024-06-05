@@ -197,38 +197,38 @@
 
         loadFile(0);
     }
+function createExoplanetVisuals(data) {
+    data.forEach(planet => {
+        if (planet.hasOwnProperty('pl_name') && planet.hasOwnProperty('star_name') && planet.hasOwnProperty('star_sy_dist')) {
+            const name = planet.pl_name;
+            const starName = planet.star_name;
+            let temperature = 'N/A';
+            let radius = 5;
 
-    function createExoplanetVisuals(data) {
-        data.forEach(planet => {
-            if (planet.hasOwnProperty('pl_name')) {
-                const name = planet.pl_name;
-                let temperature = 'N/A';
-                let radius = 5;
+            if (planet.hasOwnProperty('pl_eqt') && planet.pl_eqt !== '') {
+                temperature = planet.pl_eqt;
+            }
 
-                if (planet.hasOwnProperty('pl_eqt') && planet.pl_eqt !== '') {
-                    temperature = planet.pl_eqt;
-                }
+            if (planet.hasOwnProperty('pl_rade')) {
+                radius = planet.pl_rade;
+            }
 
-                if (planet.hasOwnProperty('pl_rade')) {
-                    radius = planet.pl_rade;
-                }
+            // Check if distance is provided and is a valid number
+            if (planet.hasOwnProperty('star_sy_dist') && !isNaN(parseFloat(planet.star_sy_dist))) {
+                // Calculate position based on star's distance
+                const distance = parseFloat(planet.star_sy_dist);
+                const position = new THREE.Vector3(
+                    Math.random() * 800 - 400,
+                    Math.random() * 800 - 400,
+                    -distance * 10  // Adjust scale as needed
+                );
 
                 const geometry = new THREE.SphereGeometry(radius, 32, 32);
                 const color = new THREE.Color().setHSL(Math.random(), 1, 0.5);
 
                 const material = new THREE.MeshStandardMaterial({ color, emissive: color });
                 const exoplanet = new THREE.Mesh(geometry, material);
-                const distance = parseFloat(planet.st_dist); // Parse distance from string to float
-
-                // Find the appropriate distance range and assign corresponding sphere
-                const sphereIndex = distanceRanges.findIndex(range => distance >= range.min && distance < range.max);
-                const sphereRadius = 10 + sphereIndex * 5; // Adjust radius based on sphereIndex
-                exoplanet.position.set(
-                    Math.random() * 800 - 400,
-                    Math.random() * 800 - 400,
-                    Math.random() * 800 - 400
-                );
-                exoplanet.scale.set(sphereRadius, sphereRadius, sphereRadius); // Set scale based on radius
+                exoplanet.position.copy(position);
                 exoplanet.userData = {
                     description: `Name: ${name}, Temp: ${temperature}K`
                 };
@@ -236,10 +236,13 @@
                 scene.add(exoplanet);
                 regions.push(exoplanet);
             } else {
-                console.warn('Missing properties in planet object:', planet);
+                console.warn('Invalid or missing star_sy_dist for planet:', planet);
             }
-        });
-    }
+        } else {
+            console.warn('Missing required properties in planet object:', planet);
+        }
+    });
+}
 
     function onWindowResize() {
         camera.aspect = window.innerWidth / window.innerHeight;
