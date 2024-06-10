@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join Us - Registration Form</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <main class="registration-form">
+        <h1>Join Us</h1>
+        <p>Register to be part of the change in the world with the Kenya Sustainable Community Development Hub.</p><br>
+        <form action="submit_registration.php" method="post">
+            <div class="form-group">
+                <label for="fullName">Full Name:</label>
+                <input type="text" id="fullName" name="fullName" required placeholder="Type Your Name"><br>
+            </div><br>
+
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required placeholder=" Type Your Email"><br>
+            </div><br>
+
+            <div class="form-group">
+                <label for="phone">Phone Number:</label>
+                <input type="tel" id="phone" name="phone" placeholder="Add Phone Number"><br>
+            </div><br>
+
+            <div class="form-group">
+                <label for="organization">Organization (if any):</label><br>
+                <input type="text" id="organization" name="organization"><br>
+            </div><br>
+
+            <div class="form-group">
+                <label for="interests">Interests:</label>
+                <textarea id="interests" name="interests" rows="4" placeholder="Share your interests..."></textarea><br>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Register">
+            </div>
+        </form>
+    </main>
+</body>
+</html>
