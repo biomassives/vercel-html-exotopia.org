@@ -78,8 +78,8 @@
 </style>
 </head>
 <body>
-  
-    <div id="tsparticles"></div>
+    <div id="tsparticles" data-theme="light"></div>
+    <div id="tsparticles" data-theme="dark-confetti"></div>
     <section>
       <div class="content">
         <h1>Kenya Sustainable Community Development Hub</h1>
@@ -188,6 +188,53 @@
       </div>
     </section>
 
+    <section>
+        <h1>Solutions to the Climate Crisis</h1>
+    </section>
+
+  
+        <section>
+            <h2>Renewable Energy Transition</h2>
+            <p>Shift towards renewable energy sources such as solar, wind, and geothermal. This reduces reliance on fossil fuels, lowers greenhouse gas emissions, and can be particularly effective in Kenya, which has abundant renewable resources.</p>
+        </section>
+        <section>
+            <h2>Afforestation and Reforestation</h2>
+            <p>Planting trees and restoring forests can sequester carbon dioxide, enhance biodiversity, and stabilize local climates. Initiatives could include community tree-planting drives and rehabilitation of degraded lands.</p>
+        </section>
+        <section>
+            <h2>Sustainable Agriculture</h2>
+            <p>Promote agricultural practices that increase productivity while being environmentally friendly. Techniques such as agroforestry, conservation tillage, and organic farming can improve soil health and reduce emissions.</p>
+        </section>
+        <section>
+            <h2>Water Conservation</h2>
+            <p>Implement water-saving techniques to ensure efficient use of water resources. Rainwater harvesting, drip irrigation, and wastewater treatment can play a significant role in water management.</p>
+        </section>
+        <section>
+            <h2>Waste Reduction and Recycling</h2>
+            <p>Encourage waste reduction through recycling programs, composting, and sustainable packaging. This helps to lower the amount of waste in landfills, which are a significant source of methane emissions.</p>
+        </section>
+        <section>
+            <h2>Green Infrastructure</h2>
+            <p>Develop infrastructure that is energy-efficient and environmentally sustainable. Green buildings, eco-friendly transportation networks, and smart city designs can reduce the carbon footprint of urban areas.</p>
+        </section>
+        <section>
+            <h2>Climate Education and Awareness</h2>
+            <p>Educate communities about the impacts of climate change and the importance of sustainability. Knowledge empowers individuals to make informed decisions and advocate for policy changes.</p>
+        </section>
+        <section>
+            <h2>Policy Advocacy</h2>
+            <p>Work with local and national governments to advocate for policies that support climate action. This includes regulations on emissions, incentives for green technology, and support for climate resilience in vulnerable communities.</p>
+        </section>
+        <section>
+            <h2>Community Health Initiatives</h2>
+            <p>Address the health impacts of climate change by improving access to healthcare, promoting disease prevention, and ensuring communities are prepared for climate-related health challenges.</p>
+        </section>
+        <section>
+            <h2>International Collaboration</h2>
+            <p>Partner with global organizations to share knowledge, resources, and best practices. International cooperation can accelerate progress and provide support for climate adaptation and mitigation efforts.</p>
+        </section>
+      
+    </section>
 
   
 <script src='https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js'></script>
@@ -195,6 +242,100 @@
 <script src='https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js'></script>
 <script src='https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js'></script>
 <script  src="script.js"></script>
+<script>
+// Define a Theme interface
+interface Theme {
+  particles: {
+    color: { value: string }; // Particle color
+    shape: { type: string };   // Particle shape (e.g., circle, triangle)
+    size: { value: number };    // Particle size
+  };
+}
+
+// Define some example themes
+const lightTheme: Theme = {
+  particles: {
+    color: { value: "#ffffff" }, // White particles
+    shape: { type: "circle" },
+    size: { value: 3 },
+  },
+};
+
+const darkTheme: Theme = {
+  particles: {
+    color: { value: "#222222" }, // Black particles
+    shape: { type: "triangle" },
+    size: { value: 5 },
+  },
+};
+
+// Update particles based on selected theme
+function updateParticles(theme: Theme) {
+  tsParticles.loadParticles("tsparticles", theme); // Update particles configuration
+}
+
+// User interaction to switch themes (replace with your UI logic)
+document.getElementById("theme-switcher").addEventListener("change", (event) => {
+  const selectedTheme = event.target.value; // Get selected theme value
+  if (selectedTheme === "light") {
+    updateParticles(lightTheme);
+  } else if (selectedTheme === "dark") {
+    updateParticles(darkTheme);
+  }
+});
+
+const container = document.getElementById("tsparticles");
+const theme = container.dataset.theme;
+
+let themeConfig;
+switch (theme) {
+  case "light":
+    themeConfig = {
+      particles: {
+        color: { value: "#ffffff" },
+      },
+    };
+    break;
+  case "dark-confetti":
+    themeConfig = {
+      particles: {
+        color: { value: ["#ff0000", "#00ff00", "#0000ff"] }, // Multicolored particles
+        shape: { type: "polygon", polygon: { nbSides: 5 } }, // Confetti shape
+      },
+    };
+    break;
+  default:
+    // Handle default theme
+}
+function updateTheme(theme: string) {
+  let particleConfig;
+  let backgroundColor;
+
+  switch (theme) {
+    case "light":
+      particleConfig = {
+        // Light particle configuration
+      };
+      backgroundColor = "#f0f0f0";
+      break;
+    case "dark":
+      particleConfig = {
+        // Dark particle configuration
+      };
+      backgroundColor = "#222222";
+      break;
+    default:
+      // Handle default theme
+  }
+
+  document.body.style.backgroundColor = backgroundColor;
+  tsParticles.loadParticles("tsparticles", particleConfig);
+}
+
+
+  
+  
+</script>
 
 </body>
 </html>
