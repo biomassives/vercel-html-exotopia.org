@@ -267,10 +267,10 @@
 
             loadFile(0);
         }
-
 function createExoplanetVisuals(data) {
     const maxRadius = 5; // Maximum allowed radius for a star system sphere
-    const scaleFactor = 10; // Scale factor for distances to spread them out
+    const defaultDistance = 10; // Default distance if `sy_dist` is "N/A"
+    const scaleFactor = 50; // Scale factor for distances to spread them out
 
     console.log("Total planets data:", data.length); // Log total data length
 
@@ -295,7 +295,7 @@ function createExoplanetVisuals(data) {
 
             // Convert RA and DEC to radians
             const phi = parseFloat(planet.dec) * (Math.PI / 180); // Declination to radians
-            const theta = parseFloat(planet.ra) * (Math.PI / 180); // Right ascension to radians
+            const theta = parseFloat(planet.ra) * (Math.PI / 12); // Right ascension to radians
 
             // Calculate 3D position using spherical coordinates
             const x = distance * Math.cos(phi) * Math.cos(theta);
