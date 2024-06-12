@@ -267,6 +267,79 @@
 
             loadFile(0);
         }
+
+function createExoplanetVisuals(data) {
+    const maxRadius = 5; // Maximum allowed radius for a star system sphere
+    const scaleFactor = 10; // Scale factor for distances to spread them out
+    let missingPropertiesCount = 0; // Initialize counter for planets with missing properties
+
+    console.log("Total planets data:", data.length); // Log total data length
+
+    data.forEach(planet => {
+        if (planet.pl_name && planet.sy_dist !== 'N/A' && planet.ra && planet.dec) {
+            const name = planet.pl_name;
+            let temperature = 'N/A';
+            let radius = 2; // Default radius
+
+            if (planet.pl_eqt) {
+                temperature = planet.pl_eqt;
+            }
+
+            if (planet.pl_rade) {
+                radius = Math.min(planet.pl_rade / 2, maxRadius); // Reduce radius size and cap it
+            }
+
+            // Use `sy_dist` to determine distance
+            let distance = parseFloat(planet.sy_dist) * scaleFactor;
+
+            console.log(`Distance for ${name}: ${distance}`);
+
+            // Convert RA and DEC to radians
+            const phi = parseFloat(planet.dec) * (Math.PI / 180); // Declination to radians
+            const theta = parseFloat(planet.ra) * (Math.PI / 12); // Right ascension to radians
+
+            // Calculate 3D position using spherical coordinates
+            const x = distance * Math.cos(phi) * Math.cos(theta);
+            const y = distance * Math.cos(phi) * Math.sin(theta);
+            const z = distance * Math.sin(phi);
+
+            console.log(`Planet: ${name}, Position: (${x.toFixed(2)}, ${y.toFixed(2)}, ${z.toFixed(2)})`); // Log each planet's position
+
+            const geometry = new THREE.SphereGeometry(radius, 32, 32);
+            const color = new THREE.Color().setHSL(Math.random(), 1, 0.5);
+
+            const material = new THREE.MeshStandardMaterial({ color, emissive: color });
+            const exoplanet = new THREE.Mesh(geometry, material);
+            exoplanet.position.set(x, y, z);
+            exoplanet.userData = {
+                description: `Name: ${name}, Temp: ${temperature}K`,
+                isDefault: distance === defaultDistance // Mark as default if using default distance
+            };
+            exoplanet.originalColor = color.clone(); // Store original color
+            scene.add(exoplanet);
+            regions.push(exoplanet);
+
+            // Add a clone to the mini-map
+            const miniMapExoplanet = exoplanet.clone();
+            miniMapScene.add(miniMapExoplanet);
+        } else {
+            missingPropertiesCount++;
+            console.warn('Missing properties in planet object:', planet);
+        }
+    });
+
+    // Log the count of planets with missing properties
+    console.log(`Total planets with missing properties: ${missingPropertiesCount}`);
+
+    // Update the metric for the number of star systems loaded
+    metricElement.innerText = `Star Systems Loaded: ${regions.length}`;
+}
+
+
+
+        
+
+        /*
 function createExoplanetVisuals(data) {
     const maxRadius = 5; // Maximum allowed radius for a star system sphere
     const defaultDistance = 10; // Default distance if `sy_dist` is "N/A"
