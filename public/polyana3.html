@@ -19,101 +19,96 @@
 <body>
     <div class="info" id="info"></div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script></script>
-</body>
-</html>
+    <script>
 
 
-
-
-
-document.addEventListener("DOMContentLoaded", function() {
-    fetch('data.json')
-        .then(response => response.json())
-        .then(data => {
-            displaySystemInfo(data);
-            create3DVisualization(data);
-        })
-        .catch(error => console.error('Error loading the JSON data:', error));
-});
-
-function displaySystemInfo(data) {
-    const infoDiv = document.getElementById('info');
-    const system = data["Kepler-1105"];
-    let infoHtml = `<h1>${system.star.name} Star System</h1>`;
-    infoHtml += `<h2>Star: ${system.star.name}</h2>`;
-    infoHtml += `<p>Mass: ${system.star.mass} M☉</p>`;
-    infoHtml += `<p>Radius: ${system.star.radius} R☉</p>`;
-    infoHtml += `<p>Temperature: ${system.star.temperature} K</p>`;
-    infoHtml += `<p>Distance: ${system.star.distance} light years</p>`;
-    
-    infoHtml += `<h3>Planets:</h3>`;
-    system.planets.forEach((planet, index) => {
-        infoHtml += `<h4>Planet ${index + 1}: ${planet.name}</h4>`;
-        infoHtml += `<p>Radius: ${planet.radius} R⊕</p>`;
-        infoHtml += `<p>Orbital Period: ${planet.orbital_period} days</p>`;
-        infoHtml += `<p>Semi-Major Axis: ${planet.semi_major_axis} AU</p>`;
-        infoHtml += `<p>Temperature: ${planet.temperature} K</p>`;
-        infoHtml += `<p>Discovery Year: ${planet.discovery_year}</p>`;
-    });
-
-    infoDiv.innerHTML = infoHtml;
-}
-
-function create3DVisualization(data) {
-    const system = data["Kepler-1105"];
-
-    // Basic Three.js setup
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
-
-    // Star
-    const starGeometry = new THREE.SphereGeometry(1, 32, 32);
-    const starMaterial = new THREE.MeshBasicMaterial({ color: 0xffdd44 });
-    const star = new THREE.Mesh(starGeometry, starMaterial);
-    scene.add(star);
-
-    // Planets
-    const planetMaterials = [
-        new THREE.MeshBasicMaterial({ color: 0x44aa88 }),
-        new THREE.MeshBasicMaterial({ color: 0x88cc44 }),
-        new THREE.MeshBasicMaterial({ color: 0x4444aa }),
-        new THREE.MeshBasicMaterial({ color: 0xcc4444 })
-    ];
-
-    system.planets.forEach((planet, index) => {
-        const planetGeometry = new THREE.SphereGeometry(planet.radius / 10 || 0.1, 32, 32);
-        const planetMaterial = planetMaterials[index % planetMaterials.length];
-        const planetMesh = new THREE.Mesh(planetGeometry, planetMaterial);
-
-        const semiMajorAxis = parseFloat(planet.semi_major_axis) || (index + 1) * 0.1;
-        planetMesh.position.x = semiMajorAxis * 10;
-
-        scene.add(planetMesh);
-    });
-
-    camera.position.z = 20;
-
-    // Animation loop
-    function animate() {
-        requestAnimationFrame(animate);
-        star.rotation.y += 0.001;
-        scene.children.forEach((child, index) => {
-            if (index > 0) {
-                child.rotation.y += 0.002;
-                child.position.x = Math.cos(Date.now() * 0.001 + index) * 10;
-                child.position.z = Math.sin(Date.now() * 0.001 + index) * 10;
-            }
+        
+        document.addEventListener("DOMContentLoaded", function() {
+            fetch('data.json')
+                .then(response => response.json())
+                .then(data => {
+                    displaySystemInfo(data);
+                    create3DVisualization(data);
+                })
+                .catch(error => console.error('Error loading the JSON data:', error));
         });
-        renderer.render(scene, camera);
-    }
-
-    animate();
-}
+        
+        function displaySystemInfo(data) {
+            const infoDiv = document.getElementById('info');
+            const system = data["Kepler-1105"];
+            let infoHtml = `<h1>${system.star.name} Star System</h1>`;
+            infoHtml += `<h2>Star: ${system.star.name}</h2>`;
+            infoHtml += `<p>Mass: ${system.star.mass} M☉</p>`;
+            infoHtml += `<p>Radius: ${system.star.radius} R☉</p>`;
+            infoHtml += `<p>Temperature: ${system.star.temperature} K</p>`;
+            infoHtml += `<p>Distance: ${system.star.distance} light years</p>`;
+            
+            infoHtml += `<h3>Planets:</h3>`;
+            system.planets.forEach((planet, index) => {
+                infoHtml += `<h4>Planet ${index + 1}: ${planet.name}</h4>`;
+                infoHtml += `<p>Radius: ${planet.radius} R⊕</p>`;
+                infoHtml += `<p>Orbital Period: ${planet.orbital_period} days</p>`;
+                infoHtml += `<p>Semi-Major Axis: ${planet.semi_major_axis} AU</p>`;
+                infoHtml += `<p>Temperature: ${planet.temperature} K</p>`;
+                infoHtml += `<p>Discovery Year: ${planet.discovery_year}</p>`;
+            });
+        
+            infoDiv.innerHTML = infoHtml;
+        }
+        
+        function create3DVisualization(data) {
+            const system = data["Kepler-1105"];
+        
+            // Basic Three.js setup
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+        
+            // Star
+            const starGeometry = new THREE.SphereGeometry(1, 32, 32);
+            const starMaterial = new THREE.MeshBasicMaterial({ color: 0xffdd44 });
+            const star = new THREE.Mesh(starGeometry, starMaterial);
+            scene.add(star);
+        
+            // Planets
+            const planetMaterials = [
+                new THREE.MeshBasicMaterial({ color: 0x44aa88 }),
+                new THREE.MeshBasicMaterial({ color: 0x88cc44 }),
+                new THREE.MeshBasicMaterial({ color: 0x4444aa }),
+                new THREE.MeshBasicMaterial({ color: 0xcc4444 })
+            ];
+        
+            system.planets.forEach((planet, index) => {
+                const planetGeometry = new THREE.SphereGeometry(planet.radius / 10 || 0.1, 32, 32);
+                const planetMaterial = planetMaterials[index % planetMaterials.length];
+                const planetMesh = new THREE.Mesh(planetGeometry, planetMaterial);
+        
+                const semiMajorAxis = parseFloat(planet.semi_major_axis) || (index + 1) * 0.1;
+                planetMesh.position.x = semiMajorAxis * 10;
+        
+                scene.add(planetMesh);
+            });
+        
+            camera.position.z = 20;
+        
+            // Animation loop
+            function animate() {
+                requestAnimationFrame(animate);
+                star.rotation.y += 0.001;
+                scene.children.forEach((child, index) => {
+                    if (index > 0) {
+                        child.rotation.y += 0.002;
+                        child.position.x = Math.cos(Date.now() * 0.001 + index) * 10;
+                        child.position.z = Math.sin(Date.now() * 0.001 + index) * 10;
+                    }
+                });
+                renderer.render(scene, camera);
+            }
+        
+            animate();
+        }
 </script>
 </body>
 </html>
-
