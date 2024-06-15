@@ -32,6 +32,8 @@
         const starSystems = [];
         const planetOrbits = [];
         let followingPlanet = null;
+        let orbitingPlanet = null;
+        let orbitingAngle = 0;
 
         const starSystemsData = {
             "HD 102956": {
@@ -140,7 +142,7 @@
                 if (nearbySystemName !== systemName) {
                     const nearbySystem = data[nearbySystemName];
                     const nearbyStarData = nearbySystem.star;
-                    const nearbyStar = createStar(nearbyStarData, nearbyIndex, Object.keys(data).length, STAR_RADIUS, nearbySystemName);
+                    const nearbyStar = createStar(nearbyStarData, nearbyIndex, Object.keys(data).length, STAR_RADIUS);
                     nearbyStar.position.set(
                         Math.random() * 400 - 200,
                         Math.random() * 400 - 200,
@@ -248,7 +250,8 @@
                     gsap.to(camera.position, { duration: 1.5, x: targetPosition.x, y: targetPosition.y, z: targetPosition.z });
                     controls.target = intersect.object.position.clone();
                     if (intersect.object.originalColor) {
-                        followingPlanet = intersect.object; // Set the clicked planet as the one to follow
+                        orbitingPlanet = intersect.object; // Set the clicked planet as the one to orbit
+                        orbitingAngle = 0; // Reset the orbiting angle
                     }
                 }
             }
@@ -270,13 +273,14 @@
                     orbit.starPosition.z + orbit.orbitRadius * Math.sin(orbit.angle)
                 );
             });
-            if (followingPlanet) {
+            if (orbitingPlanet) {
+                orbitingAngle += 0.01; // Adjust orbiting speed
                 camera.position.set(
-                    followingPlanet.position.x + 5,
-                    followingPlanet.position.y + 5,
-                    followingPlanet.position.z + 15
+                    orbitingPlanet.position.x + 10 * Math.cos(orbitingAngle),
+                    orbitingPlanet.position.y + 10 * Math.sin(orbitingAngle),
+                    orbitingPlanet.position.z + 5
                 );
-                controls.target = followingPlanet.position;
+                controls.target = orbitingPlanet.position;
             }
             controls.update();
             renderer.render(scene, camera);
@@ -323,7 +327,8 @@
                         gsap.to(camera.position, { duration: 1.5, x: targetPosition.x, y: targetPosition.y, z: targetPosition.z });
                         controls.target = intersect.object.position.clone();
                         if (intersect.object.originalColor) {
-                            followingPlanet = intersect.object; // Set the clicked planet as the one to follow
+                            orbitingPlanet = intersect.object; // Set the clicked planet as the one to orbit
+                            orbitingAngle = 0; // Reset the orbiting angle
                         }
                     }
                 }
