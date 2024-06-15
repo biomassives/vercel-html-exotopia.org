@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Exotopia Star System Visualization</title>
+    <title>Exotopia Interactive Exoplanet Visualization - Details</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body { margin: 0; overflow: hidden; }
@@ -140,27 +140,35 @@
                     const nearbySystem = data[nearbySystemName];
                     const nearbyStarData = nearbySystem.star;
                     const nearbyStar = createStar(nearbyStarData, nearbyIndex, Object.keys(data).length, STAR_RADIUS, nearbySystemName);
-                    nearbyStar.position.add(star.position); // Position nearby stars relative to the main star
+                    nearbyStar.position.set(
+                        Math.random() * 400 - 200,
+                        Math.random() * 400 - 200,
+                        Math.random() * 400 - 200
+                    );
+                    nearbyStar.userData.systemName = nearbySystemName; // Link to the detailed view
                     starSystems.push(nearbyStar);
                     scene.add(nearbyStar);
-
                     nearbyIndex++;
                 }
             }
         }
 
-        function createStar(data, index, totalStars, STAR_RADIUS, systemName) {
+        function createStar(data, index = 0, totalStars = 1, STAR_RADIUS = 1, systemName = "") {
             const geometry = new THREE.SphereGeometry(3, 32, 32); // Adjusted star size
             const material = new THREE.MeshStandardMaterial({ color: 0xffff00, emissive: 0xffff00 });
             const star = new THREE.Mesh(geometry, material);
 
-            const phi = Math.acos(-1 + (2 * index) / totalStars);
-            const theta = Math.sqrt(totalStars * Math.PI) * phi;
+            if (totalStars > 1) {
+                const phi = Math.acos(-1 + (2 * index) / totalStars);
+                const theta = Math.sqrt(totalStars * Math.PI) * phi;
+                star.position.setFromSphericalCoords(STAR_RADIUS, phi, theta);
+            } else {
+                star.position.set(0, 0, 0);
+            }
 
-            star.position.setFromSphericalCoords(STAR_RADIUS, phi, theta);
             star.userData = {
                 description: `Name: ${data.name}, Temp: ${data.temperature}K, Radius: ${data.radius} R☉, Distance: ${data.distance} light years`,
-                systemName: systemName // Add the system name to userData
+                systemName: systemName
             };
 
             return star;
