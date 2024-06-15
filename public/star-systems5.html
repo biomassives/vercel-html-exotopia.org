@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Exotopia Interactive Exoplanet Visualization</title>
+    <title>Exotopia Star System Visualization</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body { margin: 0; overflow: hidden; }
@@ -74,11 +74,18 @@
         };
 
         document.addEventListener('DOMContentLoaded', function() {
-            init();
-            loadStarSystems(starSystemsData);
-            animate();
-            setupHammerJS();
-            setupMouseEvents();
+            const urlParams = new URLSearchParams(window.location.search);
+            const systemName = urlParams.get('system');
+
+            if (systemName && starSystemsData[systemName]) {
+                init();
+                loadStarSystemDetails(systemName, starSystemsData);
+                animate();
+                setupHammerJS();
+                setupMouseEvents();
+            } else {
+                alert('Invalid star system!');
+            }
         });
 
         function init() {
@@ -105,19 +112,40 @@
             window.addEventListener('resize', onWindowResize, false);
         }
 
-        function loadStarSystems(data) {
-            const STAR_RADIUS = 200; // Radius of the sphere on which stars are positioned
-            const totalStars = Object.keys(data).length;
-            let index = 0;
+        function loadStarSystemDetails(systemName, data) {
+            const system = data[systemName];
+            const starData = system.star;
+            const star = createStar(starData);
+            starSystems.push(star);
+            scene.add(star);
 
-            for (const systemName in data) {
-                const system = data[systemName];
-                const starData = system.star;
-                const star = createStar(starData, index, totalStars, STAR_RADIUS, systemName);
-                starSystems.push(star);
-                scene.add(star);
+            const planetsData = system.planets;
+            const orbitRadius = 15; // Base radius for the first planet's orbit
+            planetsData.forEach((planetData, planetIndex) => {
+                const planet = createPlanet(planetData, planetIndex);
+                const orbit = createOrbit(planet, star.position, orbitRadius + (planetIndex * 5));
+                planetOrbits.push(orbit);
+                planet.userData = {
+                    description: `Name: ${planetData.name}, Temp: ${planetData.temperature || 'N/A'}K, Distance: ${planetData.semi_major_axis || 'N/A'} AU`
+                };
+                scene.add(planet);
+                starSystems.push(planet);
+            });
 
-                index++;
+            // Add nearby star systems
+            let nearbyIndex = 0;
+            const STAR_RADIUS = 100; // Adjusted for nearby systems display
+            for (const nearbySystemName in data) {
+                if (nearbySystemName !== systemName) {
+                    const nearbySystem = data[nearbySystemName];
+                    const nearbyStarData = nearbySystem.star;
+                    const nearbyStar = createStar(nearbyStarData, nearbyIndex, Object.keys(data).length, STAR_RADIUS, nearbySystemName);
+                    nearbyStar.position.add(star.position); // Position nearby stars relative to the main star
+                    starSystems.push(nearbyStar);
+                    scene.add(nearbyStar);
+
+                    nearbyIndex++;
+                }
             }
         }
 
