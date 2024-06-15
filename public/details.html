@@ -31,6 +31,7 @@
         let raycaster, INTERSECTED;
         const starSystems = [];
         const planetOrbits = [];
+        let followingPlanet = null;
 
         const starSystemsData = {
             "HD 102956": {
@@ -246,6 +247,9 @@
                     targetPosition.z += targetDistance;
                     gsap.to(camera.position, { duration: 1.5, x: targetPosition.x, y: targetPosition.y, z: targetPosition.z });
                     controls.target = intersect.object.position.clone();
+                    if (intersect.object.originalColor) {
+                        followingPlanet = intersect.object; // Set the clicked planet as the one to follow
+                    }
                 }
             }
         }
@@ -266,6 +270,14 @@
                     orbit.starPosition.z + orbit.orbitRadius * Math.sin(orbit.angle)
                 );
             });
+            if (followingPlanet) {
+                camera.position.set(
+                    followingPlanet.position.x + 5,
+                    followingPlanet.position.y + 5,
+                    followingPlanet.position.z + 15
+                );
+                controls.target = followingPlanet.position;
+            }
             controls.update();
             renderer.render(scene, camera);
         }
@@ -310,6 +322,9 @@
                         targetPosition.z += targetDistance;
                         gsap.to(camera.position, { duration: 1.5, x: targetPosition.x, y: targetPosition.y, z: targetPosition.z });
                         controls.target = intersect.object.position.clone();
+                        if (intersect.object.originalColor) {
+                            followingPlanet = intersect.object; // Set the clicked planet as the one to follow
+                        }
                     }
                 }
             });
