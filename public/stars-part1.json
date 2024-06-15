@@ -1,0 +1,1059 @@
+{
+   "HD 102956" : {
+      "star" : {
+         "coordinates" : {
+            "ra" : "177.8436988",
+            "dec" : "57.6406584"
+         },
+         "spectral_type" : "",
+         "radius" : "4.40",
+         "distance" : "121.8900000",
+         "name" : "HD 102956",
+         "mass" : "1.68",
+         "temperature" : "5054.00"
+      },
+      "planets" : [
+         {
+            "name" : "HD 102956 b",
+            "orbital_period" : "6.49500000",
+            "discovery_method" : "Radial Velocity",
+            "temperature" : "",
+            "semi_major_axis" : "0.081000",
+            "discovery_year" : "2010",
+            "mass" : "305.10000",
+            "radius" : ""
+         },
+         {
+            "orbital_period" : "6.49470000",
+            "name" : "HD 102956 b",
+            "temperature" : "",
+            "discovery_method" : "Radial Velocity",
+            "mass" : "305.11680",
+            "discovery_year" : "2010",
+            "semi_major_axis" : "0.080700",
+            "radius" : ""
+         },
+         {
+            "radius" : "",
+            "name" : "HD 102956 b",
+            "orbital_period" : "6.49480000",
+            "mass" : "292.40360",
+            "discovery_year" : "2010",
+            "semi_major_axis" : "0.080000",
+            "discovery_method" : "Radial Velocity",
+            "temperature" : ""
+         }
+      ]
+   },
+   "Kepler-1580" : {
+      "planets" : [
+         {
+            "orbital_period" : "56.64445200",
+            "name" : "Kepler-1580 b",
+            "temperature" : "733",
+            "discovery_method" : "Transit",
+            "semi_major_axis" : "0.323000",
+            "discovery_year" : "2016",
+            "mass" : "",
+            "radius" : "2.440"
+         },
+         {
+            "mass" : "",
+            "discovery_year" : "2016",
+            "semi_major_axis" : "",
+            "discovery_method" : "Transit",
+            "temperature" : "",
+            "orbital_period" : "56.64942477",
+            "name" : "Kepler-1580 b",
+            "radius" : ""
+         },
+         {
+            "radius" : "1.190",
+            "orbital_period" : "56.64492790",
+            "name" : "Kepler-1580 b",
+            "mass" : "",
+            "discovery_year" : "2016",
+            "semi_major_axis" : "0.287500",
+            "discovery_method" : "Transit",
+            "temperature" : "550"
+         },
+         {
+            "radius" : "1.190",
+            "name" : "Kepler-1580 b",
+            "orbital_period" : "56.64492790",
+            "discovery_year" : "2016",
+            "semi_major_axis" : "0.287500",
+            "mass" : "",
+            "temperature" : "550",
+            "discovery_method" : "Transit"
+         },
+         {
+            "radius" : "",
+            "orbital_period" : "56.64445200",
+            "name" : "Kepler-1580 b",
+            "mass" : "",
+            "discovery_year" : "2016",
+            "semi_major_axis" : "",
+            "temperature" : "",
+            "discovery_method" : "Transit"
+         },
+         {
+            "discovery_year" : "2016",
+            "mass" : "",
+            "semi_major_axis" : "",
+            "discovery_method" : "Transit",
+            "temperature" : "",
+            "name" : "Kepler-1580 b",
+            "orbital_period" : "56.64676651",
+            "radius" : ""
+         },
+         {
+            "radius" : "2.629",
+            "name" : "Kepler-1580 b",
+            "orbital_period" : "",
+            "discovery_method" : "Transit",
+            "temperature" : "",
+            "semi_major_axis" : "",
+            "discovery_year" : "2016",
+            "mass" : ""
+         },
+         {
+            "name" : "Kepler-1580 b",
+            "orbital_period" : "56.64492790",
+            "temperature" : "",
+            "discovery_method" : "Transit",
+            "discovery_year" : "2016",
+            "semi_major_axis" : "",
+            "mass" : "",
+            "radius" : "2.110"
+         },
+         {
+            "name" : "Kepler-1580 b",
+            "orbital_period" : "56.64492790",
+            "discovery_year" : "2016",
+            "semi_major_axis" : "0.287500",
+            "mass" : "",
+            "discovery_method" : "Transit",
+            "temperature" : "550",
+            "radius" : "1.190"
+         }
+      ],
+      "star" : {
+         "distance" : "1002.0200000",
+         "name" : "Kepler-1580",
+         "coordinates" : {
+            "ra" : "285.9687099",
+            "dec" : "41.3635264"
+         },
+         "radius" : "2.29",
+         "spectral_type" : "",
+         "temperature" : "6237.00",
+         "mass" : "1.40"
+      }
+   },
+   "TOI-1288" : {
+      "star" : {
+         "temperature" : "5307.00",
+         "mass" : "1.46",
+         "distance" : "114.8650000",
+         "name" : "TOI-1288",
+         "coordinates" : {
+            "ra" : "313.1670294",
+            "dec" : "65.6087833"
+         },
+         "spectral_type" : "",
+         "radius" : "0.97"
+      },
+      "planets" : [
+         {
+            "orbital_period" : "2.69998000",
+            "name" : "TOI-1288 b",
+            "discovery_year" : "2022",
+            "mass" : "",
+            "semi_major_axis" : "0.042900",
+            "temperature" : "",
+            "discovery_method" : "Transit",
+            "radius" : "5.080"
+         },
+         {
+            "radius" : "5.240",
+            "name" : "TOI-1288 b",
+            "orbital_period" : "2.69983500",
+            "temperature" : "1266",
+            "discovery_method" : "Transit",
+            "discovery_year" : "2022",
+            "mass" : "42.00000",
+            "semi_major_axis" : ""
+         },
+         {
+            "radius" : "5.027",
+            "orbital_period" : "2.69983160",
+            "name" : "TOI-1288 b",
+            "semi_major_axis" : "",
+            "discovery_year" : "2022",
+            "mass" : "",
+            "temperature" : "1380",
+            "discovery_method" : "Transit"
+         },
+         {
+            "temperature" : "",
+            "discovery_method" : "Radial Velocity",
+            "semi_major_axis" : "",
+            "discovery_year" : "2022",
+            "mass" : "84.00000",
+            "orbital_period" : "443.00000000",
+            "name" : "TOI-1288 c",
+            "radius" : ""
+         }
+      ]
+   },
+   "TOI-172" : {
+      "planets" : [
+         {
+            "radius" : "10.817",
+            "orbital_period" : "9.47725000",
+            "name" : "TOI-172 b",
+            "discovery_method" : "Transit",
+            "temperature" : "1198",
+            "discovery_year" : "2019",
+            "semi_major_axis" : "0.091400",
+            "mass" : "1722.63860"
+         },
+         {
+            "radius" : "",
+            "orbital_period" : "9.47693600",
+            "name" : "TOI-172 b",
+            "discovery_year" : "2019",
+            "mass" : "",
+            "semi_major_axis" : "",
+            "discovery_method" : "Transit",
+            "temperature" : ""
+         },
+         {
+            "name" : "TOI-172 b",
+            "orbital_period" : "9.47686000",
+            "discovery_year" : "2019",
+            "semi_major_axis" : "",
+            "mass" : "",
+            "temperature" : "993",
+            "discovery_method" : "Transit",
+            "radius" : "9.809"
+         }
+      ],
+      "star" : {
+         "temperature" : "5645.00",
+         "mass" : "1.13",
+         "distance" : "342.8310000",
+         "name" : "TOI-172",
+         "coordinates" : {
+            "ra" : "316.6318791",
+            "dec" : "-26.6928654"
+         },
+         "radius" : "1.78",
+         "spectral_type" : ""
+      }
+   },
+   "Kepler-1542" : {
+      "planets" : [
+         {
+            "temperature" : "1277",
+            "discovery_method" : "Transit",
+            "mass" : "",
+            "discovery_year" : "2016",
+            "semi_major_axis" : "0.046600",
+            "orbital_period" : "3.95116882",
+            "name" : "Kepler-1542 b",
+            "radius" : "0.950"
+         },
+         {
+            "radius" : "0.760",
+            "orbital_period" : "3.95116882",
+            "name" : "Kepler-1542 b",
+            "discovery_year" : "2016",
+            "mass" : "",
+            "semi_major_axis" : "",
+            "temperature" : "",
+            "discovery_method" : "Transit"
+         },
+         {
+            "name" : "Kepler-1542 b",
+            "orbital_period" : "3.95116882",
+            "mass" : "",
+            "discovery_year" : "2016",
+            "semi_major_axis" : "0.046600",
+            "temperature" : "1277",
+            "discovery_method" : "Transit",
+            "radius" : "0.950"
+         },
+         {
+            "radius" : "",
+            "temperature" : "",
+            "discovery_method" : "Transit",
+            "mass" : "",
+            "discovery_year" : "2016",
+            "semi_major_axis" : "",
+            "name" : "Kepler-1542 b",
+            "orbital_period" : "3.95118639"
+         },
+         {
+            "semi_major_axis" : "0.046600",
+            "discovery_year" : "2016",
+            "mass" : "",
+            "discovery_method" : "Transit",
+            "temperature" : "1277",
+            "orbital_period" : "3.95116882",
+            "name" : "Kepler-1542 b",
+            "radius" : "0.950"
+         },
+         {
+            "radius" : "0.926",
+            "name" : "Kepler-1542 b",
+            "orbital_period" : "",
+            "discovery_year" : "2016",
+            "mass" : "",
+            "semi_major_axis" : "",
+            "temperature" : "",
+            "discovery_method" : "Transit"
+         },
+         {
+            "radius" : "0.830",
+            "discovery_year" : "2016",
+            "mass" : "",
+            "semi_major_axis" : "0.047900",
+            "discovery_method" : "Transit",
+            "temperature" : "1160",
+            "orbital_period" : "3.95116635",
+            "name" : "Kepler-1542 b"
+         },
+         {
+            "name" : "Kepler-1542 b",
+            "orbital_period" : "3.95116635",
+            "discovery_method" : "Transit",
+            "temperature" : "",
+            "discovery_year" : "2016",
+            "mass" : "",
+            "semi_major_axis" : "",
+            "radius" : ""
+         },
+         {
+            "name" : "Kepler-1542 c",
+            "orbital_period" : "2.89223998",
+            "mass" : "",
+            "discovery_year" : "2016",
+            "semi_major_axis" : "0.038900",
+            "discovery_method" : "Transit",
+            "temperature" : "1287",
+            "radius" : "0.700"
+         },
+         {
+            "radius" : "0.830",
+            "name" : "Kepler-1542 c",
+            "orbital_period" : "2.89223021",
+            "temperature" : "1417",
+            "discovery_method" : "Transit",
+            "mass" : "",
+            "discovery_year" : "2016",
+            "semi_major_axis" : "0.037900"
+         },
+         {
+            "orbital_period" : "2.89223021",
+            "name" : "Kepler-1542 c",
+            "discovery_year" : "2016",
+            "semi_major_axis" : "0.037900",
+            "mass" : "",
+            "temperature" : "1417",
+            "discovery_method" : "Transit",
+            "radius" : "0.830"
+         },
+         {
+            "radius" : "0.830",
+            "discovery_year" : "2016",
+            "semi_major_axis" : "0.037900",
+            "mass" : "",
+            "temperature" : "1417",
+            "discovery_method" : "Transit",
+            "orbital_period" : "2.89223021",
+            "name" : "Kepler-1542 c"
+         },
+         {
+            "radius" : "0.650",
+            "discovery_year" : "2016",
+            "mass" : "",
+            "semi_major_axis" : "",
+            "temperature" : "",
+            "discovery_method" : "Transit",
+            "name" : "Kepler-1542 c",
+            "orbital_period" : "2.89223021"
+         },
+         {
+            "discovery_method" : "Transit",
+            "temperature" : "",
+            "semi_major_axis" : "",
+            "discovery_year" : "2016",
+            "mass" : "",
+            "name" : "Kepler-1542 c",
+            "orbital_period" : "2.89222871",
+            "radius" : ""
+         },
+         {
+            "radius" : "0.776",
+            "name" : "Kepler-1542 c",
+            "orbital_period" : "",
+            "semi_major_axis" : "",
+            "discovery_year" : "2016",
+            "mass" : "",
+            "discovery_method" : "Transit",
+            "temperature" : ""
+         },
+         {
+            "radius" : "",
+            "orbital_period" : "2.89223998",
+            "name" : "Kepler-1542 c",
+            "temperature" : "",
+            "discovery_method" : "Transit",
+            "discovery_year" : "2016",
+            "semi_major_axis" : "",
+            "mass" : ""
+         },
+         {
+            "radius" : "",
+            "discovery_method" : "Transit",
+            "temperature" : "",
+            "mass" : "",
+            "discovery_year" : "2016",
+            "semi_major_axis" : "",
+            "orbital_period" : "5.99218093",
+            "name" : "Kepler-1542 d"
+         },
+         {
+            "radius" : "0.870",
+            "name" : "Kepler-1542 d",
+            "orbital_period" : "5.99273738",
+            "discovery_method" : "Transit",
+            "temperature" : "",
+            "discovery_year" : "2016",
+            "mass" : "",
+            "semi_major_axis" : ""
+         },
+         {
+            "radius" : "1.007",
+            "temperature" : "",
+            "discovery_method" : "Transit",
+            "mass" : "",
+            "discovery_year" : "2016",
+            "semi_major_axis" : "",
+            "orbital_period" : "",
+            "name" : "Kepler-1542 d"
+         },
+         {
+            "discovery_method" : "Transit",
+            "temperature" : "1111",
+            "semi_major_axis" : "0.061600",
+            "discovery_year" : "2016",
+            "mass" : "",
+            "orbital_period" : "5.99273738",
+            "name" : "Kepler-1542 d",
+            "radius" : "1.030"
+         },
+         {
+            "mass" : "",
+            "discovery_year" : "2016",
+            "semi_major_axis" : "0.063200",
+            "discovery_method" : "Transit",
+            "temperature" : "1010",
+            "orbital_period" : "5.99273265",
+            "name" : "Kepler-1542 d",
+            "radius" : "0.910"
+         },
+         {
+            "orbital_period" : "5.99273738",
+            "name" : "Kepler-1542 d",
+            "temperature" : "1111",
+            "discovery_method" : "Transit",
+            "discovery_year" : "2016",
+            "semi_major_axis" : "0.061600",
+            "mass" : "",
+            "radius" : "1.030"
+         },
+         {
+            "radius" : "",
+            "name" : "Kepler-1542 d",
+            "orbital_period" : "5.99273265",
+            "discovery_year" : "2016",
+            "semi_major_axis" : "",
+            "mass" : "",
+            "discovery_method" : "Transit",
+            "temperature" : ""
+         },
+         {
+            "discovery_method" : "Transit",
+            "temperature" : "1173",
+            "discovery_year" : "2016",
+            "mass" : "",
+            "semi_major_axis" : "0.055300",
+            "name" : "Kepler-1542 e",
+            "orbital_period" : "5.10115756",
+            "radius" : "0.940"
+         },
+         {
+            "discovery_year" : "2016",
+            "semi_major_axis" : "",
+            "mass" : "",
+            "discovery_method" : "Transit",
+            "temperature" : "",
+            "orbital_period" : "5.10110666",
+            "name" : "Kepler-1542 e",
+            "radius" : ""
+         },
+         {
+            "discovery_year" : "2016",
+            "mass" : "",
+            "semi_major_axis" : "",
+            "discovery_method" : "Transit",
+            "temperature" : "",
+            "orbital_period" : "",
+            "name" : "Kepler-1542 e",
+            "radius" : "0.941"
+         },
+         {
+            "radius" : "0.760",
+            "semi_major_axis" : "",
+            "discovery_year" : "2016",
+            "mass" : "",
+            "temperature" : "",
+            "discovery_method" : "Transit",
+            "orbital_period" : "5.10115756",
+            "name" : "Kepler-1542 e"
+         },
+         {
+            "radius" : "0.940",
+            "semi_major_axis" : "0.055300",
+            "discovery_year" : "2016",
+            "mass" : "",
+            "discovery_method" : "Transit",
+            "temperature" : "1173",
+            "name" : "Kepler-1542 e",
+            "orbital_period" : "5.10115756"
+         },
+         {
+            "temperature" : "1065",
+            "discovery_method" : "Transit",
+            "discovery_year" : "2016",
+            "semi_major_axis" : "0.056700",
+            "mass" : "",
+            "name" : "Kepler-1542 e",
+            "orbital_period" : "5.10110666",
+            "radius" : "0.850"
+         },
+         {
+            "radius" : "",
+            "name" : "Kepler-1542 e",
+            "orbital_period" : "5.10115269",
+            "temperature" : "",
+            "discovery_method" : "Transit",
+            "discovery_year" : "2016",
+            "mass" : "",
+            "semi_major_axis" : ""
+         }
+      ],
+      "star" : {
+         "name" : "Kepler-1542",
+         "distance" : "399.1140000",
+         "radius" : "1.19",
+         "spectral_type" : "",
+         "coordinates" : {
+            "dec" : "42.6544651",
+            "ra" : "285.7284757"
+         },
+         "temperature" : "5731.00",
+         "mass" : "0.87"
+      }
+   },
+   "Kepler-697" : {
+      "star" : {
+         "name" : "Kepler-697",
+         "distance" : "1277.3300000",
+         "spectral_type" : "",
+         "radius" : "0.88",
+         "coordinates" : {
+            "ra" : "283.8643937",
+            "dec" : "41.3463859"
+         },
+         "temperature" : "5513.00",
+         "mass" : "0.92"
+      },
+      "planets" : [
+         {
+            "temperature" : "",
+            "discovery_method" : "Transit",
+            "discovery_year" : "2016",
+            "mass" : "",
+            "semi_major_axis" : "",
+            "orbital_period" : "3.70987065",
+            "name" : "Kepler-697 b",
+            "radius" : "4.130"
+         },
+         {
+            "radius" : "",
+            "discovery_year" : "2016",
+            "semi_major_axis" : "",
+            "mass" : "",
+            "discovery_method" : "Transit",
+            "temperature" : "",
+            "name" : "Kepler-697 b",
+            "orbital_period" : "3.70987078"
+         },
+         {
+            "radius" : "3.960",
+            "name" : "Kepler-697 b",
+            "orbital_period" : "3.70987065",
+            "semi_major_axis" : "0.046200",
+            "discovery_year" : "2016",
+            "mass" : "",
+            "temperature" : "1056",
+            "discovery_method" : "Transit"
+         },
+         {
+            "name" : "Kepler-697 b",
+            "orbital_period" : "3.70987710",
+            "discovery_method" : "Transit",
+            "temperature" : "",
+            "discovery_year" : "2016",
+            "semi_major_axis" : "",
+            "mass" : "",
+            "radius" : ""
+         },
+         {
+            "discovery_year" : "2016",
+            "semi_major_axis" : "",
+            "mass" : "",
+            "temperature" : "",
+            "discovery_method" : "Transit",
+            "orbital_period" : "3.70986822",
+            "name" : "Kepler-697 b",
+            "radius" : ""
+         },
+         {
+            "radius" : "3.960",
+            "discovery_method" : "Transit",
+            "temperature" : "1056",
+            "discovery_year" : "2016",
+            "mass" : "",
+            "semi_major_axis" : "0.046200",
+            "orbital_period" : "3.70987065",
+            "name" : "Kepler-697 b"
+         },
+         {
+            "name" : "Kepler-697 b",
+            "orbital_period" : "3.70987065",
+            "temperature" : "1056",
+            "discovery_method" : "Transit",
+            "discovery_year" : "2016",
+            "semi_major_axis" : "0.046200",
+            "mass" : "",
+            "radius" : "3.960"
+         },
+         {
+            "radius" : "3.600",
+            "name" : "Kepler-697 b",
+            "orbital_period" : "3.70988400",
+            "semi_major_axis" : "0.045000",
+            "discovery_year" : "2016",
+            "mass" : "",
+            "temperature" : "1028",
+            "discovery_method" : "Transit"
+         },
+         {
+            "name" : "Kepler-697 b",
+            "orbital_period" : "",
+            "discovery_method" : "Transit",
+            "temperature" : "",
+            "mass" : "",
+            "discovery_year" : "2016",
+            "semi_major_axis" : "",
+            "radius" : "4.629"
+         },
+         {
+            "temperature" : "1151",
+            "discovery_method" : "Transit",
+            "discovery_year" : "2016",
+            "semi_major_axis" : "0.047100",
+            "mass" : "",
+            "name" : "Kepler-697 b",
+            "orbital_period" : "3.70987078",
+            "radius" : "4.350"
+         }
+      ]
+   },
+   "Kepler-1855" : {
+      "star" : {
+         "mass" : "0.28",
+         "temperature" : "3339.00",
+         "coordinates" : {
+            "ra" : "283.4018628",
+            "dec" : "41.5161554"
+         },
+         "spectral_type" : "",
+         "radius" : "0.29",
+         "distance" : "",
+         "name" : "Kepler-1855"
+      },
+      "planets" : [
+         {
+            "radius" : "0.590",
+            "orbital_period" : "0.72733043",
+            "name" : "Kepler-1855 b",
+            "semi_major_axis" : "0.010300",
+            "discovery_year" : "2021",
+            "mass" : "",
+            "temperature" : "779",
+            "discovery_method" : "Transit"
+         },
+         {
+            "temperature" : "",
+            "discovery_method" : "Transit",
+            "semi_major_axis" : "",
+            "discovery_year" : "2021",
+            "mass" : "",
+            "orbital_period" : "0.72733098",
+            "name" : "Kepler-1855 b",
+            "radius" : "1.216"
+         },
+         {
+            "radius" : "0.670",
+            "name" : "Kepler-1855 b",
+            "orbital_period" : "0.72733175",
+            "temperature" : "849",
+            "discovery_method" : "Transit",
+            "discovery_year" : "2021",
+            "semi_major_axis" : "0.011500",
+            "mass" : ""
+         },
+         {
+            "discovery_method" : "Transit",
+            "temperature" : "1001",
+            "discovery_year" : "2021",
+            "mass" : "",
+            "semi_major_axis" : "0.013000",
+            "orbital_period" : "0.72731500",
+            "name" : "Kepler-1855 b",
+            "radius" : "1.020"
+         },
+         {
+            "orbital_period" : "0.72733043",
+            "name" : "Kepler-1855 b",
+            "discovery_method" : "Transit",
+            "temperature" : "779",
+            "mass" : "",
+            "discovery_year" : "2021",
+            "semi_major_axis" : "0.010300",
+            "radius" : "0.590"
+         },
+         {
+            "radius" : "0.590",
+            "name" : "Kepler-1855 b",
+            "orbital_period" : "0.72733043",
+            "semi_major_axis" : "0.010300",
+            "discovery_year" : "2021",
+            "mass" : "",
+            "temperature" : "779",
+            "discovery_method" : "Transit"
+         },
+         {
+            "mass" : "",
+            "discovery_year" : "2021",
+            "semi_major_axis" : "",
+            "discovery_method" : "Transit",
+            "temperature" : "",
+            "orbital_period" : "0.72733175",
+            "name" : "Kepler-1855 b",
+            "radius" : ""
+         }
+      ]
+   },
+   "Kepler-1690" : {
+      "planets" : [
+         {
+            "discovery_method" : "Transit",
+            "temperature" : "",
+            "discovery_year" : "2020",
+            "semi_major_axis" : "",
+            "mass" : "",
+            "orbital_period" : "234.63454522",
+            "name" : "Kepler-1690 b",
+            "radius" : ""
+         },
+         {
+            "radius" : "3.300",
+            "orbital_period" : "234.63560000",
+            "name" : "Kepler-1690 b",
+            "discovery_year" : "2020",
+            "mass" : "",
+            "semi_major_axis" : "0.721000",
+            "temperature" : "294",
+            "discovery_method" : "Transit"
+         },
+         {
+            "radius" : "2.510",
+            "semi_major_axis" : "0.714300",
+            "discovery_year" : "2020",
+            "mass" : "",
+            "discovery_method" : "Transit",
+            "temperature" : "273",
+            "orbital_period" : "234.63537900",
+            "name" : "Kepler-1690 b"
+         },
+         {
+            "name" : "Kepler-1690 b",
+            "orbital_period" : "234.63565200",
+            "discovery_method" : "Transit",
+            "temperature" : "",
+            "discovery_year" : "2020",
+            "semi_major_axis" : "",
+            "mass" : "",
+            "radius" : ""
+         },
+         {
+            "mass" : "",
+            "discovery_year" : "2020",
+            "semi_major_axis" : "0.709700",
+            "temperature" : "267",
+            "discovery_method" : "Transit",
+            "name" : "Kepler-1690 b",
+            "orbital_period" : "234.63565200",
+            "radius" : "2.560"
+         },
+         {
+            "radius" : "2.510",
+            "temperature" : "273",
+            "discovery_method" : "Transit",
+            "discovery_year" : "2020",
+            "mass" : "",
+            "semi_major_axis" : "0.714300",
+            "orbital_period" : "234.63537900",
+            "name" : "Kepler-1690 b"
+         },
+         {
+            "discovery_year" : "2020",
+            "mass" : "",
+            "semi_major_axis" : "",
+            "discovery_method" : "Transit",
+            "temperature" : "",
+            "name" : "Kepler-1690 b",
+            "orbital_period" : "234.63600000",
+            "radius" : "2.811"
+         },
+         {
+            "name" : "Kepler-1690 b",
+            "orbital_period" : "234.63537900",
+            "mass" : "",
+            "discovery_year" : "2020",
+            "semi_major_axis" : "0.714300",
+            "discovery_method" : "Transit",
+            "temperature" : "273",
+            "radius" : "2.510"
+         }
+      ],
+      "star" : {
+         "coordinates" : {
+            "ra" : "288.1566649",
+            "dec" : "41.8779417"
+         },
+         "spectral_type" : "",
+         "radius" : "0.86",
+         "distance" : "703.7890000",
+         "name" : "Kepler-1690",
+         "mass" : "0.94",
+         "temperature" : "5404.00"
+      }
+   },
+   "Kepler-836" : {
+      "star" : {
+         "distance" : "980.0350000",
+         "name" : "Kepler-836",
+         "coordinates" : {
+            "dec" : "45.7043964",
+            "ra" : "287.4527659"
+         },
+         "spectral_type" : "",
+         "radius" : "1.02",
+         "temperature" : "6244.00",
+         "mass" : "1.08"
+      },
+      "planets" : [
+         {
+            "radius" : "2.680",
+            "name" : "Kepler-836 b",
+            "orbital_period" : "11.36112327",
+            "discovery_method" : "Transit",
+            "temperature" : "871",
+            "semi_major_axis" : "0.101600",
+            "discovery_year" : "2016",
+            "mass" : ""
+         },
+         {
+            "radius" : "2.597",
+            "orbital_period" : "",
+            "name" : "Kepler-836 b",
+            "discovery_year" : "2016",
+            "mass" : "",
+            "semi_major_axis" : "",
+            "temperature" : "",
+            "discovery_method" : "Transit"
+         },
+         {
+            "radius" : "",
+            "discovery_year" : "2016",
+            "mass" : "",
+            "semi_major_axis" : "",
+            "discovery_method" : "Transit",
+            "temperature" : "",
+            "name" : "Kepler-836 b",
+            "orbital_period" : "11.36117633"
+         },
+         {
+            "radius" : "2.600",
+            "temperature" : "869",
+            "discovery_method" : "Transit",
+            "discovery_year" : "2016",
+            "semi_major_axis" : "0.101300",
+            "mass" : "",
+            "orbital_period" : "11.36113254",
+            "name" : "Kepler-836 b"
+         },
+         {
+            "name" : "Kepler-836 b",
+            "orbital_period" : "11.36116800",
+            "temperature" : "871",
+            "discovery_method" : "Transit",
+            "discovery_year" : "2016",
+            "semi_major_axis" : "0.103000",
+            "mass" : "",
+            "radius" : "2.900"
+         },
+         {
+            "radius" : "2.730",
+            "discovery_method" : "Transit",
+            "temperature" : "",
+            "discovery_year" : "2016",
+            "mass" : "",
+            "semi_major_axis" : "",
+            "name" : "Kepler-836 b",
+            "orbital_period" : "11.36112327"
+         },
+         {
+            "radius" : "",
+            "name" : "Kepler-836 b",
+            "orbital_period" : "11.36112650",
+            "discovery_method" : "Transit",
+            "temperature" : "",
+            "semi_major_axis" : "",
+            "discovery_year" : "2016",
+            "mass" : ""
+         },
+         {
+            "name" : "Kepler-836 b",
+            "orbital_period" : "11.36112327",
+            "discovery_method" : "Transit",
+            "temperature" : "871",
+            "discovery_year" : "2016",
+            "mass" : "",
+            "semi_major_axis" : "0.101600",
+            "radius" : "2.680"
+         },
+         {
+            "discovery_method" : "Transit",
+            "temperature" : "871",
+            "semi_major_axis" : "0.101600",
+            "discovery_year" : "2016",
+            "mass" : "",
+            "name" : "Kepler-836 b",
+            "orbital_period" : "11.36112327",
+            "radius" : "2.680"
+         },
+         {
+            "radius" : "",
+            "discovery_year" : "2016",
+            "semi_major_axis" : "",
+            "mass" : "",
+            "discovery_method" : "Transit",
+            "temperature" : "",
+            "name" : "Kepler-836 b",
+            "orbital_period" : "11.36113254"
+         }
+      ]
+   },
+   "HD 22496" : {
+      "star" : {
+         "mass" : "0.68",
+         "temperature" : "4385.00",
+         "radius" : "0.67",
+         "spectral_type" : "",
+         "coordinates" : {
+            "dec" : "-48.4178173",
+            "ra" : "53.7565398"
+         },
+         "name" : "HD 22496",
+         "distance" : "13.5956000"
+      },
+      "planets" : [
+         {
+            "radius" : "",
+            "mass" : "5.57000",
+            "discovery_year" : "2021",
+            "semi_major_axis" : "0.051000",
+            "discovery_method" : "Radial Velocity",
+            "temperature" : "573",
+            "orbital_period" : "5.09071000",
+            "name" : "HD 22496 b"
+         }
+      ]
+   },
+   "LP 890-9" : {
+      "planets" : [
+         {
+            "radius" : "1.320",
+            "name" : "LP 890-9 b",
+            "orbital_period" : "2.72990250",
+            "discovery_year" : "2022",
+            "mass" : "13.20000",
+            "semi_major_axis" : "0.018750",
+            "temperature" : "396",
+            "discovery_method" : "Transit"
+         },
+         {
+            "radius" : "1.351",
+            "name" : "LP 890-9 b",
+            "orbital_period" : "2.72990489",
+            "discovery_method" : "Transit",
+            "temperature" : "362",
+            "mass" : "",
+            "discovery_year" : "2022",
+            "semi_major_axis" : ""
+         },
+         {
+            "discovery_year" : "2022",
+            "semi_major_axis" : "0.039840",
+            "mass" : "25.30000",
+            "discovery_method" : "Transit",
+            "temperature" : "272",
+            "orbital_period" : "8.45746300",
+            "name" : "LP 890-9 c",
+            "radius" : "1.367"
+         }
+      ],
+      "star" : {
+         "coordinates" : {
+            "dec" : "-28.3157909",
+            "ra" : "64.1309096"
+         },
+         "radius" : "0.16",
+         "spectral_type" : "M6 V",
+         "distance" : "32.4298000",
+         "name" : "LP 890-9",
+         "mass" : "0.12",
+         "temperature" : "2850.00"
+      }
+     }
+}
+   }
