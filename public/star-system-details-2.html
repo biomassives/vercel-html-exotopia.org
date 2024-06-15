@@ -73,31 +73,34 @@
             window.addEventListener('resize', onWindowResize, false);
         }
 
-        function loadInitialStarSystems(systemName) {
-            fetch(initialDataFile)
-                .then(response => response.json())
-                .then(data => {
-                    if (systemName && data[systemName]) {
-                        loadStarSystemDetails(systemName, data);
-                    } else {
-                        alert('Invalid star system!');
-                    }
-                    pollAdditionalDataFiles();
-                })
-                .catch(err => console.error('Failed to load initial data:', err));
+        async function loadInitialStarSystems(systemName) {
+            try {
+                const response = await fetch(initialDataFile);
+                const data = await response.json();
+
+                if (systemName && data[systemName]) {
+                    loadStarSystemDetails(systemName, data);
+                } else {
+                    alert('Invalid star system!');
+                }
+                pollAdditionalDataFiles();
+            } catch (err) {
+                console.error('Failed to load initial data:', err);
+            }
         }
 
-        function pollAdditionalDataFiles() {
+        async function pollAdditionalDataFiles() {
             if (currentDataFileIndex < additionalDataFiles.length) {
                 const dataFile = additionalDataFiles[currentDataFileIndex];
-                fetch(dataFile)
-                    .then(response => response.json())
-                    .then(data => {
-                        addAdditionalStarSystems(data);
-                        currentDataFileIndex++;
-                        pollAdditionalDataFiles(); // Recursively load next data file
-                    })
-                    .catch(err => console.error('Failed to load additional data:', err));
+                try {
+                    const response = await fetch(dataFile);
+                    const data = await response.json();
+                    addAdditionalStarSystems(data);
+                    currentDataFileIndex++;
+                    pollAdditionalDataFiles(); // Recursively load next data file
+                } catch (err) {
+                    console.error(`Failed to load data from ${dataFile}:`, err);
+                }
             }
         }
 
