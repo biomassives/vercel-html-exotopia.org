@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eco Ops Program Flowchart</title>
+  <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@9.1.1/dist/mermaid.min.js"></script>
+  <style>
+    /* Optional styling for the flowchart container */
+    .flowchart-container {
+      border: 1px solid #ddd;
+      padding: 1rem;
+      border-radius: 4px;
+      margin-bottom: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <main class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-4">Eco Ops Program Flowchart</h1>
+    <div class="flowchart-container">
+      <div id="mermaid-flowchart"></div>
+    </div>
+
+    <script>
+      const code = `
+graph LR
+
+subgraph Earn & Use NFTs
+    A[User performs eco-friendly action (planting trees, picking up trash)] --> B{Logs action in Eco Ops app & earns points}
+    B --> C{Points accumulate towards thresholds or special events}
+        C --> D[Not enough points] --> B{Continue performing actions}
+        C --> E[Threshold reached OR Special event]
+    E --> F{NFT minted & awarded to user (Tracks environmental impact - e.g., trees planted, CO2 offset)}
+    F --> G{User keeps NFT or sells on Eco Ops marketplace (Tron, Algorand, Cardano, Tezos, Polygon, Polkadot)}
+        G --> H[Funds deposited in secure Eco Ops escrow wallet (Chosen blockchain)]
+            H --> I{User selects conversion option}
+                I --> J[Convert to fiat currency (Exchange with KYC/AML)] --> K{Funds transferred to bank account} --> L[Use fiat for eco-friendly actions (public transport, sustainable products)]
+                I --> M[Convert to crypto for spending card (Supported blockchain provider)] --> N{Connect Eco Ops wallet to provider} --> O{Funds loaded onto crypto debit card} --> L[Use crypto card for eco-friendly actions (subject to merchant acceptance)]
+end
+
+subgraph Participate in Ecocity.com Projects (NFT as Login)
+    P[User with NFT chooses to participate] --> Q[Review project details (description, location, funding goals, timeline, team)]
+        Q --> R[Project not aligned with user's interests] --> S[Exit]
+        Q --> T[Project aligns with user's interests]
+            T --> U[Decide to support the project]
+                U --> V[Donate using NFT (contributes to project directly)] --> W[Project receives funds & progresses]
+                U --> X[Convert NFT or points to fiat/crypto & donate] --> K{Funds transferred to project} --> W[Project receives funds & progresses]
+
+    **Eco Project Management Features**
+        W --> X[Project leader utilizes Eco Ops project management tools]
+            X --> Y[Create & assign tasks to volunteers]
+                Y --> Z[Volunteers receive task notifications & access project details]
+                Y --> AA[Track volunteer progress & project completion rate]
+            X --> AB[Manage project budget & funding allocation]
+                AB --> AC[Track spending against allocated funds]
+                AB --> AD[Request additional funding through Eco Ops platform (optional)]
+            X --> AE[Communicate project updates & milestones to stakeholders]
+                AE --> AF[Share updates via Eco Ops platform (newsfeed, messaging)]
+                AE --> AG[Export project reports for external communication]
+end
+
+subgraph Participate in Exotopia.org's Ecoplanet Model (NFT as Login)
+    Y[User with NFT chooses to participate] --> Z[Access Exotopia training modules (beginner, intermediate, advanced)]
+        Z --> AA[Complete training module & earn badge] --> Y{Access more modules or projects}
+        Z --> AB[Incomplete training module] --> Z{Retry module or seek help resources}
+    Y --> AC[Choose a small volunteer project (clean-up, planting, data collection)]
+        AC --> AD[Perform project tasks & log actions in Eco Ops app] --> B{Earns additional points & contributes to project goals}
+        AC --> AE[Project requires specific skills/training] --> Z{Access relevant training modules}
+    Y --> AF[Advocate for biodiversity within Exotopia]
+        AF --> AG[Create awareness campaigns (social media, petitions)] --> AH[Increased awareness & potential policy changes]
+    Y --> AI[Become a more effective volunteer]
+        AI --> Z{Access additional training modules (leadership, project management)}
+        AI --> AJ[Participate in more complex projects (habitat restoration, education initiatives)]
+end
+
+A --> Earn & Use NFTs
+P & Y --> [Participate in...(Ecocity.com/Exotopia.org)]
+`;
+
+      mermaid.initialize({ startOnLoad: true });
+      mermaid.mermaidAPI.render("mermaid-flowchart", code);
+    </script>
+  </main>
+</body>
+</html>
