@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Exotopia Interactive Exoplanet Visualization</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { margin: 0; overflow: hidden; }
+        canvas { display: block; background-color: black; }
+        #info { position: absolute; top: 10px; left: 10px; color: white; }
+        #infobox {
+            position: absolute;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+            color: white;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="container"></div>
+    <div id="info">Hover over an object</div>
+    <div id="infobox"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/three@0.125.2/build/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.125.2/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+    <script>
+        let scene, camera, renderer, controls;
+        let raycaster, INTERSECTED;
+        const regions = [];
+        const starSystems = []; // This should be loaded with the JSON data
+
+        const fileNames = ['quadrant_1.json', 'quadrant_2.json', 'quadrant_3.json', 'quadrant_4.json', 'quadrant_5.json', 'quadrant_6.json', 'quadrant_7.json', 'quadrant_8.json'];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            init();
+            loadExoplanetData(fileNames);
+            animate();
+            setupHammerJS();
+            setupMouseEvents();
+        });
+
+        function init() {
+            const container = document.getElementById('container');
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 10000);
+            camera.position.set(0, 0, 1000);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            container.appendChild(renderer.domElement);
+
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.screenSpacePanning = false;
+            controls.minDistance = 10;
+            controls.maxDistance = 5000;
+
+            raycaster = new THREE.Raycaster();
+            window.addEventListener('resize', onWindowResize, false);
+
+            addCoordinateAxes();
+            addStarfield();
+        }
+
+        function raDecToXYZ(ra, dec, distance) {
+            const phi = (90 - dec) * (Math.PI / 180);
+            const theta = ra * (Math.PI / 180);
+            const x = distance * Math.sin(phi) * Math.cos(theta);
+            const y = distance * Math.sin(phi) * Math.sin(theta);
+            const z = distance * Math.cos(phi);
+            return new THREE.Vector3(x, y, z);
+        }
+
+        function createExoplanetVisuals(data) {
+            let skippedCount = 0;
+            data.forEach(system => {
+                if (system.position && system.position.ra !== undefined && system.position.dec !== undefined && system.position.distance !== undefined) {
+                    const position = raDecToXYZ(system.position.ra, system.position.dec, system.position.distance * 10);
+                    const geometry = new THREE.SphereGeometry(5, 32, 32); // Star system size
+                    const color = new THREE.Color().setHSL(Math.random(), 1, 0.5);
+                    const material = new THREE.MeshStandardMaterial({ color, emissive: color });
+                    const systemMesh = new THREE.Mesh(geometry, material);
+                    systemMesh.position.copy(position);
+                    systemMesh.userData = {
+                        systemName: system.system_name,
+                        description: `System: ${system.system_name}`
+                    };
+                    systemMesh.originalColor = color.clone();
+                    scene.add(systemMesh);
+                    regions.push(systemMesh);
+                } else {
+                    skippedCount++;
+                    console.warn('Skipping system due to missing position data:', system.system_name || 'Unnamed');
+                }
+            });
+            console.log(`Visualization complete. Skipped ${skippedCount} systems due to missing or invalid data.`);
+        }
+
+        function addCoordinateAxes() {
+            const axesHelper = new THREE.AxesHelper(1000);
+            scene.add(axesHelper);
+        }
+
+        function addStarfield() {
+            const starGeometry = new THREE.BufferGeometry();
+            const starMaterial = new THREE.PointsMaterial({color: 0xFFFFFF});
+
+            const starVertices = [];
+            for (let i = 0; i < 10000; i++) {
+                const x = (Math.random() - 0.5) * 2000;
+                const y = (Math.random() - 0.5) * 2000;
+                const z = (Math.random() - 0.5) * 2000;
+                starVertices.push(x, y, z);
+            }
+
+            starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+            const starField = new THREE.Points(starGeometry, starMaterial);
+            scene.add(starField);
+        }
+
+        function calculateTargetDistance(object) {
+            if (!object.geometry || !object.geometry.parameters) {
+                return 100; // Default target distance
+            }
+
+            const objectSize = object.geometry.parameters.radius;
+            const scaleFactor = 50; // Adjust this value as needed
+
+            let targetDistance = objectSize * scaleFactor;
+
+            // Limit the zoom level
+            const minZoom = 10;
+            const maxZoom = 1000;
+
+            return Math.max(minZoom, Math.min(maxZoom, targetDistance));
+        }
+
+        function onMouseMove(event) {
+            event.preventDefault();
+            const mouse = new THREE.Vector2();
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(scene.children, true);
+            if (intersects.length > 0) {
+                if (INTERSECTED != intersects[0].object) {
+                    if (INTERSECTED) restoreOriginalColor(INTERSECTED);
+                    INTERSECTED = intersects[0].object;
+                    highlightObject(INTERSECTED);
+                    document.getElementById('infobox').style.display = 'block';
+                    document.getElementById('infobox').innerHTML = INTERSECTED.userData.description;
+                }
+            } else {
+                if (INTERSECTED) restoreOriginalColor(INTERSECTED);
+                INTERSECTED = null;
+                document.getElementById('infobox').style.display = 'none';
+            }
+        }
+
+        function onClick(event) {
+            event.preventDefault();
+            const mouse = new THREE.Vector2();
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(scene.children, true);
+            if (intersects.length > 0) {
+                const selectedObject = intersects[0].object;
+                const targetDistance = calculateTargetDistance(selectedObject);
+                
+                gsap.to(camera.position, {
+                    duration: 2,
+                    x: selectedObject.position.x,
+                    y: selectedObject.position.y,
+                    z: selectedObject.position.z + targetDistance,
+                    onUpdate: function() {
+                        camera.lookAt(selectedObject.position);
+                        controls.update();
+                    },
+                    onComplete: function() {
+                        loadSystemDetails(selectedObject.userData.systemName);
+                    }
+                });
+            }
+        }
+
+        function onTouchStart(event) {
+            event.preventDefault();
+            if (event.touches.length > 1) {
+                onClick(event.touches[0]);
+            }
+        }
+
+        function onTouchEnd(event) {
+            event.preventDefault();
+        }
+
+        function loadExoplanetData(fileNames) {
+            fileNames.forEach(fileName => {
+                fetch(fileName)
+                    .then(response => response.json())
+                    .then(data => {
+                        starSystems.push(...data);
+                        createExoplanetVisuals(data);
+                    })
+                    .catch(error => console.error('Error loading exoplanet data:', error));
+            });
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        function highlightObject(object) {
+            if (object.material && object.material.emissive) {
+                object.material.emissive.setHex(0xff0000);
+            }
+        }
+
+        function restoreOriginalColor(object) {
+            if (object.material && object.material.emissive && object.originalColor) {
+                object.material.emissive.copy(object.originalColor);
+            }
+        }
+
+        function setupHammerJS() {
+            const hammer = new Hammer(document.body);
+            hammer.get('pinch').set({ enable: true });
+            hammer.on('pinch', function(event) {
+                controls.dollyIn(event.scale);
+                controls.update();
+            });
+        }
+
+        function setupMouseEvents() {
+            document.addEventListener('mousemove', onMouseMove, false);
+            document.addEventListener('click', onClick, false);
+            document.addEventListener('touchstart', onTouchStart, false);
+            document.addEventListener('touchend', onTouchEnd, false);
+        }
+
+        function loadSystemDetails(systemName) {
+            const systemData = starSystems.find(system => system.system_name === systemName);
+
+            if (systemData && systemData.planets) {
+                clearPreviousDetails();
+                systemData.planets.forEach(planet => {
+                    const position = raDecToXYZ(planet.ra, planet.dec, planet.distance * 10);
+                    const geometry = new THREE.SphereGeometry(planet.radius, 32, 32);
+                    const color = new THREE.Color().setHSL(Math.random(), 1, 0.5);
+                    const material = new THREE.MeshStandardMaterial({ color, emissive: color });
+                    const planetMesh = new THREE.Mesh(geometry, material);
+                    planetMesh.position.copy(position);
+                    planetMesh.userData = {
+                        description: `Name: ${planet.name}, Temp: ${planet.temperature}K, Distance: ${planet.distance} parsecs`
+                    };
+                    scene.add(planetMesh);
+                    regions.push(planetMesh);
+                });
+            }
+        }
+
+        function clearPreviousDetails() {
+            regions.forEach(region => scene.remove(region));
+            regions.length = 0;
+        }
+    </script>
+</body>
+</html>
