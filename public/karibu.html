@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Kenya Sustainable Community Development Hub</title>
+  <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css'>
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css'>
+  <link rel="stylesheet" href="style.css">
+  <style>
+            .overlay {
+          position: fixed;
+          width: 100%;
+          height: 100%;
+          top: 0;
+          left: 0;
+          background-color: rgba(0,0,0,0.9);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          z-index: 1000;
+      }
+      .overlay-content {
+          background-color: #1a1a1a;
+          padding: 20px;
+          border-radius: 10px;
+          text-align: center;
+          color: white;
+          max-width: 80%;
+      }
+      #startExploring {
+          background-color: #4CAF50;
+          border: none;
+          color: white;
+          padding: 15px 32px;
+          text-align: center;
+          text-decoration: none;
+          display: inline-block;
+          font-size: 16px;
+          margin: 4px 2px;
+          cursor: pointer;
+          border-radius: 5px;
+      }  
+
+    
+      #form {
+        position: relative;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+      }
+
+      input {
+        padding-inline-end: 10px;
+        padding-inline-start: 10px;
+        background-color: transparent;
+        outline: transparent;
+        border: 0;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+        margin-right: 10px;
+        transition: all 0.3s ease-in;
+        -webkit-transition: all 0.3s ease-in;
+      }
+
+      input::placeholder {
+        color: rgb(117, 152, 242);
+        opacity: 0.5;
+        font-weight: 500;
+      }
+
+      input[type="email"] {
+        color: rgba(255, 255, 255, 0.7);
+        font-weight: 500;
+        font-size: 1rem;
+      }
+
+      input[type="email"]:focus {
+        border: transparent;
+        outline: 2px dotted rgb(117, 152, 242);
+        outline-offset: -3px;
+      }
+
+      .btn {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 3px;
+        max-width: max-content;
+        background: linear-gradient(
+          90deg,
+          rgb(118, 167, 63) 0%,
+          rgb(51, 143, 118) 40%,
+          rgb(55, 141, 167) 50%,
+          rgb(117, 152, 242) 70%,
+          rgb(144, 118, 236) 100%
+        );
+        background-size: 200%;
+        background-position: left;
+        color: #fff;
+        font-size: 1.2rem;
+        font-weight: 500;
+        border: 0;
+        padding: 12px 16px;
+        border-radius: 5px;
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.5),
+          inset 0px 2px 2px rgba(255, 255, 255, 0.2);
+        cursor: pointer;
+        transition: all 0.3s ease-in;
+      }
+
+      .btn:hover {
+        background-position: right;
+      }
+
+      /* Hamburger menu styles */
+      .menu-icon {
+        display: none;
+        cursor: pointer;
+        font-size: 1.5rem;
+        color: #fff;
+      }
+
+      .menu-icon.active + .nav-links {
+        display: block;
+      }
+
+      .nav-links {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 50px;
+        right: 20px;
+        background: rgba(0, 0, 0, 0.8);
+        padding: 10px;
+        border-radius: 5px;
+      }
+
+      .nav-links a {
+        color: #fff;
+        text-decoration: none;
+        padding: 10px;
+        text-align: center;
+      }
+
+      .nav-links a:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      @media (max-width: 768px) {
+        .menu-icon {
+          display: block;
+        }
+      }
+
+      section {
+        display: none;
+      }
+
+      section.active {
+        display: block;
+      }
+  </style>
+</head>
+<body>
+    <div id="tsparticles" data-theme="light"></div>
+    <div id="tsparticles" data-theme="dark-confetti"></div>
+    
+    <!-- Hamburger Menu -->
+    <div class="menu-icon" id="menu-icon">
+      &#9776;
+    </div>
+    <div class="nav-links" id="nav-links">
+      <a href="#section1" class="nav-link">Renewable Energy Transition</a>
+      <a href="#section2" class="nav-link">Afforestation and Reforestation</a>
+      <a href="#section3" class="nav-link">Sustainable Agriculture</a>
+      <a href="#section4" class="nav-link">Water Conservation</a>
+      <a href="#section5" class="nav-link">Waste Reduction and Recycling</a>
+      <a href="#section6" class="nav-link">Green Infrastructure</a>
+      <a href="#section7" class="nav-link">Climate Education and Awareness</a>
+      <a href="#section8" class="nav-link">Policy Advocacy</a>
+      <a href="#section9" class="nav-link">Community Health Initiatives</a>
+      <a href="#section10" class="nav-link">International Collaboration</a>
+    </div>
+
+    <section id="section1">
+      <h2>Renewable Energy Transition</h2>
+      <p>Shift towards renewable energy sources such as solar, wind, and geothermal. This reduces reliance on fossil fuels, lowers greenhouse gas emissions, and can be particularly effective in Kenya, which has abundant renewable resources.</p>
+    </section>
+    <section id="section2">
+      <h2>Afforestation and Reforestation</h2>
+      <p>Planting trees and restoring forests can sequester carbon dioxide, enhance biodiversity, and stabilize local climates. Initiatives could include community tree-planting drives and rehabilitation of degraded lands.</p>
+    </section>
+    <section id="section3">
+      <h2>Sustainable Agriculture</h2>
+      <p>Promote agricultural practices that increase productivity while being environmentally friendly. Techniques such as agroforestry, conservation tillage, and organic farming can improve soil health and reduce emissions.</p>
+    </section>
+    <section id="section4">
+      <h2>Water Conservation</h2>
+      <p>Implement water-saving techniques to ensure efficient use of water resources. Rainwater harvesting, drip irrigation, and wastewater treatment can play a significant role in water management.</p>
+    </section>
+    <section id="section5">
+      <h2>Waste Reduction and Recycling</h2>
+      <p>Encourage waste reduction through recycling programs, composting, and sustainable packaging. This helps to lower the amount of waste in landfills, which are a significant source of methane emissions.</p>
+    </section>
+    <section id="section6">
+      <h2>Green Infrastructure</h2>
+      <p>Develop infrastructure that is energy-efficient and environmentally sustainable. Green buildings, eco-friendly transportation networks, and smart city designs can reduce the carbon footprint of urban areas.</p>
+    </section>
+    <section id="section7">
+      <h2>Climate Education and Awareness</h2>
+      <p>Educate communities about the impacts of climate change and the importance of sustainability. Knowledge empowers individuals to make informed decisions and advocate for policy changes.</p>
+    </section>
+    <section id="section8">
+      <h2>Policy Advocacy</h2>
+      <p>Work with local and national governments to advocate for policies that support climate action. This includes regulations on emissions, incentives for green technology, and support for climate resilience in vulnerable communities.</p>
+    </section>
+    <section id="section9">
+      <h2>Community Health Initiatives</h2>
+      <p>Address the health impacts of climate change by improving access to healthcare, promoting disease prevention, and ensuring communities are prepared for climate-related health challenges.</p>
+    </section>
+    <section id="section10">
+      <h2>International Collaboration</h2>
+      <p>Partner with global organizations to share knowledge, resources, and best practices. International cooperation can accelerate progress and provide support for climate adaptation and mitigation efforts.</p>
+    </section>
+  
+
+
+<div id="welcomeOverlay" class="overlay">
+    <div class="overlay-content">
+        <h1>Welcome to Exotopia</h1>
+        <p>Explore the interactive exoplanet visualization. Click and drag to rotate, scroll to zoom, and hover over planets for more information.</p>
+        <button id="startExploring">Start Exploring</button>
+    </div>
+</div>
+<script src='https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/tsparticles@1.26.0/dist/tsparticles.min.js'></script>
+<script src='https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js'></script>
+<script src='https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js'></script>
+<script  src="script.js"></script>
+<script>
+  // Hamburger menu functionality
+  document.getElementById("menu-icon").addEventListener("click", function() {
+    this.classList.toggle("active");
+    document.getElementById("nav-links").classList.toggle("active");
+  });
+
+  // Section navigation functionality
+  document.querySelectorAll(".nav-link").forEach(link => {
+    link.addEventListener("click", function(e) {
+      e.preventDefault();
+      document.querySelectorAll("section").forEach(section => {
+        section.classList.remove("active");
+      });
+      document.querySelector(this.getAttribute("href")).classList.add("active");
+    });
+  });
+
+  // Set the first section as active by default
+  document.querySelector("section").classList.add("active");
+</script>
+  
+</body>
+</html>
