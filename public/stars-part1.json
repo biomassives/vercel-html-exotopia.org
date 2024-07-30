@@ -1041,19 +1041,6 @@
             "name" : "LP 890-9 c",
             "radius" : "1.367"
          }
-      ],
-      "star" : {
-         "coordinates" : {
-            "dec" : "-28.3157909",
-            "ra" : "64.1309096"
-         },
-         "radius" : "0.16",
-         "spectral_type" : "M6 V",
-         "distance" : "32.4298000",
-         "name" : "LP 890-9",
-         "mass" : "0.12",
-         "temperature" : "2850.00"
-      }
-     }
-}
+      ]
    }
+}
