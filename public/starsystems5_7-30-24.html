@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Exotopia Interactive Exoplanet Visualization</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { margin: 0; overflow: hidden; }
+        canvas { display: block; background-color: black; }
+        #info { position: absolute; top: 10px; left: 10px; color: white; }
+        #infobox {
+            position: absolute;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+            color: white;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="container"></div>
+    <div id="info">Hover over an object</div>
+    <div id="infobox"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+    <script>
+        window.addEventListener('load', function() {
+            let scene, camera, renderer, controls;
+            let raycaster, INTERSECTED;
+            const regions = [];
+
+            const fileNames = ['quadrant_1.json', 'quadrant_2.json', 'quadrant_3.json', 'quadrant_4.json', 'quadrant_5.json', 'quadrant_6.json', 'quadrant_7.json', 'quadrant_8.json'];
+
+            init();
+            loadExoplanetData(fileNames);
+            animate();
+            setupHammerJS();
+            setupMouseEvents();
+
+            function init() {
+                console.log('Initializing scene...');
+                const container = document.getElementById('container');
+                scene = new THREE.Scene();
+                camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
+                camera.position.z = 500;
+
+                renderer = new THREE.WebGLRenderer({ antialias: true });
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                container.appendChild(renderer.domElement);
+
+                if (typeof THREE.OrbitControls === 'function') {
+                    controls = new THREE.OrbitControls(camera, renderer.domElement);
+                    controls.enableDamping = true;
+                    controls.dampingFactor = 0.25;
+                    controls.rotateSpeed = 0.5;
+                    controls.zoomSpeed = 1.2;
+                    controls.panSpeed = 0.8;
+                    controls.enableZoom = true;
+                    controls.maxDistance = 1000;
+                    controls.minDistance = 100;
+                    console.log('OrbitControls initialized');
+                } else {
+                    console.warn('OrbitControls not available. Camera controls will be disabled.');
+                }
+
+                // Add lighting
+                const ambientLight = new THREE.AmbientLight(0x404040); // soft white light
+                scene.add(ambientLight);
+
+                const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+                directionalLight.position.set(1, 1, 1);
+                scene.add(directionalLight);
+
+                raycaster = new THREE.Raycaster();
+                window.addEventListener('resize', onWindowResize, false);
+                console.log('Scene initialized');
+            }
+
+            function loadExoplanetData(fileNames) {
+                console.log('Loading exoplanet data...');
+                let combinedData = [];
+
+                function loadFile(index) {
+                    if (index < fileNames.length) {
+                        console.log(`Loading file: ${fileNames[index]}`);
+                        fetch(fileNames[index])
+                            .then(response => response.json())
+                            .then(data => {
+                                console.log(`Loaded data from ${fileNames[index]}:`, data);
+                                combinedData = combinedData.concat(data);
+                                loadFile(index + 1);
+                            })
+                            .catch(err => {
+                                console.error(`Failed to load data from ${fileNames[index]}:`, err);
+                                loadFile(index + 1);
+                            });
+                    } else {
+                        console.log('All data loaded. Total planets:', combinedData.length);
+                        createExoplanetVisuals(combinedData);
+                    }
+                }
+
+                loadFile(0);
+            }
+
+            function createExoplanetVisuals(data) {
+                console.log('Creating exoplanet visuals...');
+                data.forEach(planet => {
+                    if (planet.hasOwnProperty('pl_name') && planet.hasOwnProperty('ra') && planet.hasOwnProperty('dec')) {
+                        const name = planet.pl_name;
+                        let temperature = planet.pl_eqt !== "" ? parseFloat(planet.pl_eqt) : 'N/A';
+                        let radius = planet.pl_rade !== "" ? parseFloat(planet.pl_rade) : 1;
+
+                        // Scale radius for visualization
+                        const scaleFactor = 2;
+                        const visualRadius = Math.max(0.5, Math.min(5, radius * scaleFactor));
+
+                        const geometry = new THREE.SphereGeometry(visualRadius, 32, 32);
+                        const color = new THREE.Color().setHSL(Math.random(), 1, 0.5);
+                        const material = new THREE.MeshStandardMaterial({ color, emissive: color });
+                        const exoplanet = new THREE.Mesh(geometry, material);
+
+                        const ra = parseFloat(planet.ra);
+                        const dec = parseFloat(planet.dec);
+                        const phi = THREE.MathUtils.degToRad(90 - dec);
+                        const theta = THREE.MathUtils.degToRad(ra);
+                        const distance = 400;
+
+                        exoplanet.position.set(
+                            distance * Math.sin(phi) * Math.cos(theta),
+                            distance * Math.cos(phi),
+                            distance * Math.sin(phi) * Math.sin(theta)
+                        );
+
+                        exoplanet.userData = {
+                            description: `Name: ${name}, Temp: ${temperature}K, Radius: ${radius} Earth radii`
+                        };
+                        exoplanet.originalColor = color.clone();
+                        scene.add(exoplanet);
+                        regions.push(exoplanet);
+                    }
+                });
+
+                if (regions.length === 0) {
+                    console.warn('No exoplanets with valid RA and Dec were found in the data.');
+                } else {
+                    console.log(`Created ${regions.length} exoplanets.`);
+                }
+            }
+
+            function onMouseMove(event) {
+                event.preventDefault();
+                const mouse = new THREE.Vector2(
+                    (event.clientX / window.innerWidth) * 2 - 1,
+                    -(event.clientY / window.innerHeight) * 2 + 1
+                );
+
+                raycaster.setFromCamera(mouse, camera);
+                const intersects = raycaster.intersectObjects(regions);
+
+                if (intersects.length > 0) {
+                    if (INTERSECTED !== intersects[0].object) {
+                        if (INTERSECTED) INTERSECTED.material.emissive.setHex(INTERSECTED.currentHex);
+                        INTERSECTED = intersects[0].object;
+                        INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
+                        INTERSECTED.material.emissive.setHex(0xff0000);
+                    }
+                    document.getElementById('infobox').style.display = 'block';
+                    document.getElementById('infobox').style.left = `${event.clientX + 5}px`;
+                    document.getElementById('infobox').style.top = `${event.clientY + 5}px`;
+                    document.getElementById('infobox').innerHTML = INTERSECTED.userData.description;
+                } else {
+                    if (INTERSECTED) INTERSECTED.material.emissive.setHex(INTERSECTED.currentHex);
+                    INTERSECTED = null;
+                    document.getElementById('infobox').style.display = 'none';
+                }
+            }
+
+            function onClick(event) {
+                // Implementation for click event (if needed)
+            }
+
+            function onWindowResize() {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            }
+
+            function animate() {
+                requestAnimationFrame(animate);
+                if (controls) controls.update();
+                renderer.render(scene, camera);
+            }
+
+            function setupHammerJS() {
+                const hammer = new Hammer(document.getElementById('container'));
+                hammer.on('tap', function(event) {
+                    // Implementation for tap event (if needed)
+                });
+            }
+
+            function setupMouseEvents() {
+                document.addEventListener('mousemove', onMouseMove, false);
+                document.addEventListener('click', onClick, false);
+            }
+        });
+    </script>
+</body>
+</html>
