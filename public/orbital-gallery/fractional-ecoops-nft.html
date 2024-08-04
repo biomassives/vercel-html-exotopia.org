@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eco Ops Fractional NFT Portal</title>
+<style>
+  body {
+    margin: 0;
+    font-family: 'Courier New', monospace;
+    background-color: #0a0a0a;
+    color: #00ff00;
+    overflow: hidden;
+  }
+
+  .bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+  }
+
+  .pixel {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-color: #001100;
+    transition: background-color 2s;
+  }
+
+  .sparkle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background-color: #ffffff;
+    opacity: 0.5;
+    transition: all 1s;
+  }
+
+  .content-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+
+  .nft-container {
+    background-color: rgba(17, 17, 17, 0.8);
+    border: 2px solid #00ff00;
+    box-shadow: 0 0 10px #00ff00;
+    padding: 20px;
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+  }
+
+  .tokenImage {
+    width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+    border: 1px solid #00ff00;
+  }
+
+  .price {
+    font-size: 24px;
+    margin: 20px 0;
+  }
+
+  .fraction-slider {
+    width: 100%;
+    margin: 20px 0;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 15px;
+    background: #000;
+    outline: none;
+    opacity: 0.7;
+    transition: opacity .2s;
+  }
+
+  .fraction-slider:hover {
+    opacity: 1;
+  }
+
+  .fraction-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    background: #00ff00;
+    cursor: pointer;
+  }
+
+  .fraction-slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    background: #00ff00;
+    cursor: pointer;
+  }
+
+  .buy-button {
+    background-color: #00ff00;
+    color: #000;
+    border: none;
+    padding: 10px 20px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .buy-button:hover {
+    background-color: #00cc00;
+  }
+
+  .fraction-info {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #00cc00;
+  }
+
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1001;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+  }
+
+  .modal-content {
+    background-color: #1a1a1a;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #00ff00;
+    width: 80%;
+    max-width: 500px;
+    color: #00ff00;
+  }
+
+  .close {
+    color: #00ff00;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .close:hover {
+    color: #00cc00;
+  }
+
+  #paymentStatus {
+    margin-top: 10px;
+    color: #00ff00;
+  }
+</style>
+</head>
+<body>
+  <div class="bg" id="pixelBackground"></div>
+
+  <div class="content-wrapper">
+    <div class="nft-container">
+      <img class="tokenImage" src="/api/placeholder/300/300" alt="Eco Ops NFT">
+      <h2>Eco Ops Fractional NFT</h2>
+      <p>Support Eco Initiatives with Fractional Ownership</p>
+      <div class="price">Total Price: <span id="totalPrice">0.25</span> SOL</div>
+      <input type="range" min="1" max="100" value="50" class="fraction-slider" id="fractionSlider">
+      <p>Fraction to purchase: <span id="fractionValue">50</span>%</p>
+      <div class="price">Your Price: <span id="fractionPrice">0.125</span> SOL</div>
+      <button class="buy-button" id="buyButton">Buy Fraction</button>
+      <div class="fraction-info" id="fractionInfo"></div>
+    </div>
+  </div>
+
+  <div id="paymentModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Mock Payment</h2>
+      <p>Amount to pay: <span id="modalPaymentAmount"></span> SOL</p>
+      <button id="confirmPayment">Confirm Payment</button>
+      <div id="paymentStatus"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
+  <script>
+    // Background animation
+    const bg = document.getElementById('pixelBackground');
+    const pixelCount = 100;
+    const sparkleCount = 200;
+
+    function createPixel(size, className) {
+      const element = document.createElement('div');
+      element.classList.add(className);
+      element.style.width = `${size}px`;
+      element.style.height = `${size}px`;
+      element.style.left = `${Math.random() * 100}vw`;
+      element.style.top = `${Math.random() * 100}vh`;
+      return element;
+    }
+
+    for (let i = 0; i < pixelCount; i++) {
+      bg.appendChild(createPixel(20, 'pixel'));
+    }
+
+    for (let i = 0; i < sparkleCount; i++) {
+      bg.appendChild(createPixel(2, 'sparkle'));
+    }
+
+    function animatePixels() {
+      const pixels = document.querySelectorAll('.pixel');
+      pixels.forEach(pixel => {
+        pixel.style.backgroundColor = `rgb(0, ${Math.floor(Math.random() * 255)}, 0)`;
+      });
+    }
+
+    function animateSparkles() {
+      const now = new Date();
+      const seconds = now.getSeconds();
+      const minutes = now.getMinutes();
+      const hours = now.getHours();
+      
+      const sparkles = document.querySelectorAll('.sparkle');
+      sparkles.forEach((sparkle, index) => {
+        const hue = (index * 3 + seconds * 6) % 360;
+        const saturation = 50 + Math.sin(index * 0.1 + minutes * 0.1) * 50;
+        const lightness = 50 + Math.cos(index * 0.1 + hours * 0.1) * 50;
+        sparkle.style.backgroundColor = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+        sparkle.style.opacity = 0.3 + Math.random() * 0.7;
+        sparkle.style.transform = `translate(${Math.sin(index + seconds) * 5}px, ${Math.cos(index + seconds) * 5}px)`;
+      });
+    }
+
+    setInterval(animatePixels, 2000);
+    setInterval(animateSparkles, 100);
+
+    // Fractional purchase logic
+    const slider = document.getElementById('fractionSlider');
+    const fractionValue = document.getElementById('fractionValue');
+    const totalPriceElement = document.getElementById('totalPrice');
+    const fractionPriceElement = document.getElementById('fractionPrice');
+    const buyButton = document.getElementById('buyButton');
+    const fractionInfo = document.getElementById('fractionInfo');
+    const paymentModal = document.getElementById('paymentModal');
+    const modalPaymentAmount = document.getElementById('modalPaymentAmount');
+    const confirmPaymentButton = document.getElementById('confirmPayment');
+    const paymentStatus = document.getElementById('paymentStatus');
+    const closeButton = document.getElementsByClassName('close')[0];
+
+    const totalPrice = 0.25; // Total price in SOL
+
+    function updateFractionInfo(fraction) {
+      const fractionPrice = (totalPrice * fraction / 100).toFixed(3);
+      fractionValue.textContent = fraction;
+      fractionPriceElement.textContent = fractionPrice;
+      modalPaymentAmount.textContent = fractionPrice;
+      
+      // Update fraction info
+      const remainingFraction = 100 - fraction;
+      const remainingPrice = (totalPrice - fractionPrice).toFixed(3);
+      fractionInfo.innerHTML = `
+        You will own ${fraction}% of this NFT.<br>
+        Remaining for sale: ${remainingFraction}% (${remainingPrice} SOL)<br>
+        Total owners: ${Math.min(fraction, 1) + Math.min(remainingFraction, 1)}
+      `;
+
+      // Visual feedback on the button
+      buyButton.style.transform = `scale(${1 + fraction/200})`;
+    }
+
+    slider.addEventListener('input', function() {
+      updateFractionInfo(this.value);
+    });
+
+    buyButton.addEventListener('click', function() {
+      paymentModal.style.display = "block";
+    });
+
+    closeButton.onclick = function() {
+      paymentModal.style.display = "none";
+    }
+
+    window.onclick = function(event) {
+      if (event.target == paymentModal) {
+        paymentModal.style.display = "none";
+      }
+    }
+
+    confirmPaymentButton.addEventListener('click', async function() {
+      const fraction = slider.value;
+      const price = (totalPrice * fraction / 100).toFixed(3);
+      paymentStatus.textContent = "Processing payment...";
+
+      try {
+        const response = await fetch('/api/process-payment', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ amount: price, fraction: fraction }),
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          paymentStatus.textContent = "Payment successful! NFT fraction purchased.";
+          setTimeout(() => {
+            paymentModal.style.display = "none";
+            paymentStatus.textContent = "";
+          }, 3000);
+        } else {
+          paymentStatus.textContent = "Payment failed. Please try again.";
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        paymentStatus.textContent = "An error occurred. Please try again later.";
+      }
+    });
+
+    // Initialize with default values
+    updateFractionInfo(50);
+  </script>
+</body>
+</html>
