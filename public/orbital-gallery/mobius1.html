@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eco Ops 3D NFT Portal - Möbius Strip with Colored Triangles</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+            background-color: #000;
+        }
+        #threeCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+        #updateColorBtn {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="threeCanvas"></canvas>
+    <button id="updateColorBtn">Update Colors</button>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Three.js setup
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({canvas: document.getElementById('threeCanvas'), antialias: true});
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+
+        // Create Möbius strip
+        const mobiusGeometry = new THREE.BufferGeometry();
+        const vertices = [];
+        const triangles = [];
+        const colors = [];
+
+        const radius = 10;
+        const numTriangles = 52;
+
+        for (let i = 0; i < numTriangles; i++) {
+            const t = i / numTriangles;
+            const angle = t * Math.PI * 2;
+            const twist = t * Math.PI;
+
+            // Create three vertices for each triangle
+            for (let j = 0; j < 3; j++) {
+                const u = j / 2;
+                const x = (radius + u * Math.cos(twist)) * Math.cos(angle);
+                const y = (radius + u * Math.cos(twist)) * Math.sin(angle);
+                const z = u * Math.sin(twist);
+
+                vertices.push(x, y, z);
+
+                // Add random color for each vertex
+                colors.push(Math.random(), Math.random(), Math.random());
+            }
+
+            // Create triangle
+            const startIndex = i * 3;
+            triangles.push(startIndex, startIndex + 1, startIndex + 2);
+        }
+
+        mobiusGeometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+        mobiusGeometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+        mobiusGeometry.setIndex(triangles);
+        mobiusGeometry.computeVertexNormals();
+
+        const mobiusMaterial = new THREE.MeshPhongMaterial({
+            vertexColors: true,
+            side: THREE.DoubleSide,
+            shininess: 50
+        });
+
+        const mobiusStrip = new THREE.Mesh(mobiusGeometry, mobiusMaterial);
+        scene.add(mobiusStrip);
+
+        // Add lighting
+        const ambientLight = new THREE.AmbientLight(0x404040);
+        scene.add(ambientLight);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+        directionalLight.position.set(1, 1, 1);
+        scene.add(directionalLight);
+
+        camera.position.z = 30;
+
+        // Animation
+        function animate() {
+            requestAnimationFrame(animate);
+            mobiusStrip.rotation.x += 0.005;
+            mobiusStrip.rotation.y += 0.005;
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // Event listener for window resize
+        window.addEventListener('resize', onWindowResize);
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // Function to update triangle colors
+        function updateColors() {
+            const colors = mobiusGeometry.attributes.color.array;
+            for (let i = 0; i < colors.length; i += 3) {
+                colors[i] = Math.random();
+                colors[i + 1] = Math.random();
+                colors[i + 2] = Math.random();
+            }
+            mobiusGeometry.attributes.color.needsUpdate = true;
+        }
+
+        // Add color update button functionality
+        document.getElementById('updateColorBtn').addEventListener('click', updateColors);
+    </script>
+</body>
+</html>
