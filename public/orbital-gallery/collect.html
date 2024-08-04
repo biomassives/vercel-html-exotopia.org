@@ -1,0 +1,89 @@
+// Event listeners for navigation
+        document.getElementById('prevBtn').addEventListener('click', function() {
+            currentNFT = (currentNFT - 1 + nfts.length) % nfts.length;
+            updateNFT();
+        });
+
+        document.getElementById('nextBtn').addEventListener('click', function() {
+            currentNFT = (currentNFT + 1) % nfts.length;
+            updateNFT();
+        });
+
+        // Purchase modal functionality
+        const modal = document.getElementById('purchaseModal');
+        const purchaseBtn = document.getElementById('purchaseBtn');
+        const closeBtn = document.getElementsByClassName('close')[0];
+        const emailOption = document.getElementById('emailOption');
+        const walletOption = document.getElementById('walletOption');
+        const emailInput = document.getElementById('emailInput');
+        const chainSelect = document.getElementById('chainSelect');
+        const walletInput = document.getElementById('walletInput');
+        const confirmPurchaseBtn = document.getElementById('confirmPurchase');
+
+        purchaseBtn.onclick = function() {
+            modal.style.display = "block";
+            document.getElementById('modalNftTitle').textContent = nfts[currentNFT].title;
+        }
+
+        closeBtn.onclick = function() {
+            modal.style.display = "none";
+            resetPurchaseOptions();
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+                resetPurchaseOptions();
+            }
+        }
+
+        emailOption.onclick = function() {
+            emailInput.style.display = "block";
+            walletInput.style.display = "none";
+            chainSelect.style.display = "none";
+            confirmPurchaseBtn.style.display = "block";
+        }
+
+        walletOption.onclick = function() {
+            emailInput.style.display = "none";
+            walletInput.style.display = "block";
+            chainSelect.style.display = "block";
+            confirmPurchaseBtn.style.display = "block";
+        }
+
+        confirmPurchaseBtn.onclick = function() {
+            let purchaseMethod, purchaseDetails;
+            if (emailInput.style.display === "block") {
+                purchaseMethod = "Email";
+                purchaseDetails = emailInput.value;
+            } else {
+                purchaseMethod = "Wallet";
+                purchaseDetails = `${chainSelect.value}: ${walletInput.value}`;
+            }
+            alert(`Thank you for your purchase of "${nfts[currentNFT].title}"!\nMethod: ${purchaseMethod}\nDetails: ${purchaseDetails}\n\nIn a real implementation, this would process the transaction and deliver the NFT.`);
+            modal.style.display = "none";
+            resetPurchaseOptions();
+        }
+
+        function resetPurchaseOptions() {
+            emailInput.style.display = "none";
+            walletInput.style.display = "none";
+            chainSelect.style.display = "none";
+            confirmPurchaseBtn.style.display = "none";
+            emailInput.value = "";
+            walletInput.value = "";
+            chainSelect.selectedIndex = 0;
+        }
+
+        // Initialize the first NFT
+        updateNFT();
+
+        // Resize handler
+        window.addEventListener('resize', function() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
