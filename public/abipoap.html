@@ -1,0 +1,56 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claim Exotopia POAP Token</title>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.6.9/dist/ethers.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/web3modal@1.9.4/dist/index.min.js"></script>
+</head>
+<body>
+    <h1>Claim Your Exotopia POAP Token</h1>
+    <button id="connectWallet">Connect Wallet</button>
+    <button id="claimToken" disabled>Claim POAP</button>
+
+    <script>
+        // Contract ABI (replace with your contract's ABI)
+        const contractABI = [
+            // Minimal ABI for POAP claiming
+            "function claimFreePOAP() public"
+        ];
+
+        // Contract Address (replace with your deployed contract address)
+        const contractAddress = "0xYourContractAddressHere";
+
+        let provider;
+        let signer;
+        let contract;
+
+        // Set up Web3Modal for wallet connection
+        const web3Modal = new Web3Modal();
+
+        document.getElementById("connectWallet").addEventListener("click", async () => {
+            const instance = await web3Modal.connect();
+            provider = new ethers.providers.Web3Provider(instance);
+            signer = provider.getSigner();
+            document.getElementById("claimToken").disabled = false;
+
+            // Set up the contract with signer (so user can interact with it)
+            contract = new ethers.Contract(contractAddress, contractABI, signer);
+        });
+
+        document.getElementById("claimToken").addEventListener("click", async () => {
+            try {
+                // Call the claimFreePOAP function to mint the POAP
+                const tx = await contract.claimFreePOAP();
+                await tx.wait(); // Wait for transaction to be mined
+                alert("POAP Token claimed successfully!");
+            } catch (error) {
+                console.error(error);
+                alert("Error claiming POAP token");
+            }
+        });
+    </script>
+</body>
+</html>
