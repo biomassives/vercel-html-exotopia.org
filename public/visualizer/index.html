@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>E8 Neuron Projection</title>
+  <style>
+    body { margin: 0; background: #000; color: white; overflow: hidden; }
+    #caption { position: absolute; top: 10px; left: 10px; font-family: sans-serif; z-index: 1; }
+  </style>
+</head>
+<body>
+  <div id="caption">🧠 E8 Projection - Quasi-Crystal Neuron Layer</div>
+  <script type="module">
+    import * as THREE from 'https://cdn.skypack.dev/three@0.152.2';
+
+    // Scene setup
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 100);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+    camera.position.z = 5;
+
+    const goldenAngle = Math.PI * (3 - Math.sqrt(5)); // π(3 - √5)
+    const neuronCount = 200;
+    const baseRadius = 1.5;
+    const neurons = [];
+    const neuronGeometry = new THREE.SphereGeometry(0.03, 8, 8);
+    const lines = [];
+
+    const litColor = new THREE.Color(0xff33cc);
+    const baseColor = new THREE.Color(0x00ffff);
+
+    const neuronMaterial = new THREE.MeshBasicMaterial({ color: baseColor });
+    const neuronGroup = new THREE.Group();
+
+    // 🔬 Golden angle distribution on a sphere (quasi-spherical E8 projection approximation)
+    function generateGoldenAnglePoints(n) {
+      const points = [];
+      for (let i = 0; i < n; i++) {
+        const y = 1 - (i / (n - 1)) * 2; // from 1 to -1
+        const r = Math.sqrt(1 - y * y); // project to circle
+        const theta = i * goldenAngle;
+        const x = Math.cos(theta) * r;
+        const z = Math.sin(theta) * r;
+        points.push(new THREE.Vector3(x, y, z).multiplyScalar(baseRadius));
+      }
+      return points;
+    }
+
+    // 🧠 Lissajous tone modulation: glow intensity varies using sin(bt) + cos(at)
+    function lissajousMod(t, a = 3, b = 2) {
+      return 0.5 + 0.5 * (Math.sin(b * t) * Math.cos(a * t));
+    }
+
+    const neuronPoints = generateGoldenAnglePoints(neuronCount);
+    neuronPoints.forEach(pos => {
+      const mesh = new THREE.Mesh(neuronGeometry, neuronMaterial.clone());
+      mesh.position.copy(pos);
+      neuronGroup.add(mesh);
+      neurons.push({ mesh, links: [], active: false, decay: 0 });
+    });
+
+    // 🔗 Link each neuron to nearest 3 using dot product
+    for (let i = 0; i < neuronCount; i++) {
+      const a = neuronPoints[i];
+      const dists = neuronPoints.map((b, j) => ({ j, d: a.distanceTo(b) }))
+        .filter(obj => obj.j !== i)
+        .sort((x, y) => x.d - y.d)
+        .slice(0, 3);
+      neurons[i].links = dists.map(obj => obj.j);
+    }
+
+    // Draw line segments (neuron pathways)
+    const lineMaterial = new THREE.LineBasicMaterial({ vertexColors: true });
+    const lineGeometry = new THREE.BufferGeometry();
+    const positions = [];
+    const colors = [];
+
+    neurons.forEach((n, i) => {
+      n.links.forEach(j => {
+        const a = neuronPoints[i];
+        const b = neuronPoints[j];
+        positions.push(...a.toArray(), ...b.toArray());
+        colors.push(...baseColor.toArray(), ...baseColor.toArray());
+      });
+    });
+
+    lineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    lineGeometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+    const lineSegments = new THREE.LineSegments(lineGeometry, lineMaterial);
+    scene.add(neuronGroup);
+    scene.add(lineSegments);
+
+    // Chain reaction logic
+    const active = new Set([0]); // initial activation
+    function propagate() {
+      const next = new Set();
+      for (const index of active) {
+        neurons[index].active = true;
+        neurons[index].decay = 1.0;
+        neurons[index].links.forEach(j => {
+          if (Math.random() < 0.5) next.add(j);
+        });
+      }
+      active.clear();
+      next.forEach(n => active.add(n));
+    }
+
+    // 🔄 Animation Loop
+    let t = 0;
+    function animate() {
+      requestAnimationFrame(animate);
+      t += 0.01;
+
+      // Rotate via quaternion for quasi-E8 spin
+      const q1 = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0.618, 0.5).normalize(), 0.002);
+      neuronGroup.quaternion.multiply(q1);
+
+      // Pulse neurons
+      neurons.forEach((n, i) => {
+        const m = n.mesh.material;
+        if (n.active) {
+          const tone = lissajousMod(t + i * 0.01);
+          m.color.setRGB(litColor.r * tone, litColor.g * tone, litColor.b * tone);
+          n.decay -= 0.01;
+          if (n.decay <= 0) {
+            n.active = false;
+            m.color.copy(baseColor);
+          }
+        }
+      });
+
+      // Update line colors based on activity
+      const colAttr = lineGeometry.getAttribute('color');
+      let idx = 0;
+      neurons.forEach((n, i) => {
+        n.links.forEach(j => {
+          const activeVal = neurons[i].active || neurons[j].active ? 1.0 : 0.1;
+          const c = litColor.clone().multiplyScalar(activeVal);
+          colAttr.setXYZ(idx, c.r, c.g, c.b);
+          colAttr.setXYZ(idx + 1, c.r, c.g, c.b);
+          idx += 2;
+        });
+      });
+      colAttr.needsUpdate = true;
+
+      if (Math.floor(t * 10) % 5 === 0) propagate();
+      renderer.render(scene, camera);
+    }
+
+    animate();
+  </script>
+</body>
+</html>
