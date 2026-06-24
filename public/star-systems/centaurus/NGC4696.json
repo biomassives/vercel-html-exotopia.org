@@ -1,0 +1,154 @@
+{
+  "galaxy_id": "NGC4696",
+  "galaxy_name": "NGC4696",
+  "galaxy_hubble": "cD",
+  "cluster": "Centaurus Cluster",
+  "cluster_slug": "centaurus",
+  "cluster_dist_mpc": 46.0,
+  "environment": {
+    "description": "NGC4696 (cD) situated in the dense cluster core, subject to strong ICM ram pressure. ICM stress 0.26; host population Teff ≈ 4413 K, Fe/H +0.23. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 4 star system(s), 4 planet(s) generated. Observational anchor: Chandra/Hubble.",
+    "radiation_factor": 1.79,
+    "metallicity_feh": 0.228,
+    "agn": false,
+    "cooling_flow": true,
+    "ram_pressure": false,
+    "merger": false
+  },
+  "placement_notes": {
+    "v1": "NGC4696 (cD) situated in the dense cluster core, subject to strong ICM ram pressure. ICM stress 0.26; host population Teff ≈ 4413 K, Fe/H +0.23. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 4 star system(s), 4 planet(s) generated. Observational anchor: Chandra/Hubble.",
+    "open_questions": [],
+    "nft_zones": [
+      "core-zone-chandra-hubble"
+    ]
+  },
+  "generation": "v1-procedural",
+  "provenance": {
+    "script": "generate_cluster_starsystems.py",
+    "algorithm_version": "1.0",
+    "architecture_version": "1.0",
+    "seed_source": "NGC4696",
+    "generated_at": "2026-05-26T17:52:05.896323+00:00",
+    "inputs": {
+      "cluster_zone": "core",
+      "icm_stress": 0.264,
+      "metallicity_fe_h": 0.228,
+      "planet_bias": "ancient_cold_rocky",
+      "star_teff_k": 4413,
+      "max_orbit_au": 2.3,
+      "gas_giant_prob": 0.1,
+      "anchor_telescope": "Chandra/Hubble",
+      "estimated_planets": 2
+    },
+    "observatory_report": "NGC4696 (cD) situated in the dense cluster core, subject to strong ICM ram pressure. ICM stress 0.26; host population Teff ≈ 4413 K, Fe/H +0.23. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 4 star system(s), 4 planet(s) generated. Observational anchor: Chandra/Hubble."
+  },
+  "star_systems": [
+    {
+      "id": "ngc4696-s001",
+      "label": "NGC4696 — Prime",
+      "spectral_type": "K7V",
+      "mass_sol": 0.646,
+      "feh": 0.204,
+      "age_gyr": 11.4,
+      "luminosity_sol": 0.17398,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Core zone; ICM stress 0.26; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "ngc4696-s001-b",
+          "label": "NGC4696 1 B",
+          "type": "hot_rocky",
+          "radius_earth": 1.23,
+          "mass_earth": 1.49,
+          "period_days": 7.5,
+          "semi_major_au": 0.065,
+          "eq_temp_k": 645,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "ngc4696-s002",
+      "label": "NGC4696 — Beta",
+      "spectral_type": "K7V",
+      "mass_sol": 0.646,
+      "feh": 0.213,
+      "age_gyr": 12.1,
+      "luminosity_sol": 0.17398,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Core zone; ICM stress 0.26; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "ngc4696-s002-b",
+          "label": "NGC4696 2 B",
+          "type": "hot_rocky",
+          "radius_earth": 1.25,
+          "mass_earth": 0.36,
+          "period_days": 7.5,
+          "semi_major_au": 0.065,
+          "eq_temp_k": 645,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "ngc4696-s003",
+      "label": "NGC4696 — Gamma",
+      "spectral_type": "K7V",
+      "mass_sol": 0.646,
+      "feh": 0.235,
+      "age_gyr": 11.7,
+      "luminosity_sol": 0.17398,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Core zone; ICM stress 0.26; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "ngc4696-s003-b",
+          "label": "NGC4696 3 B",
+          "type": "hot_rocky",
+          "radius_earth": 0.96,
+          "mass_earth": 1.22,
+          "period_days": 7.5,
+          "semi_major_au": 0.065,
+          "eq_temp_k": 645,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "ngc4696-s004",
+      "label": "NGC4696 — Delta",
+      "spectral_type": "K7V",
+      "mass_sol": 0.646,
+      "feh": 0.211,
+      "age_gyr": 11.9,
+      "luminosity_sol": 0.17398,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Core zone; ICM stress 0.26; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "ngc4696-s004-b",
+          "label": "NGC4696 4 B",
+          "type": "gas_giant",
+          "radius_earth": 10.45,
+          "mass_earth": 188.16,
+          "period_days": 7.5,
+          "semi_major_au": 0.065,
+          "eq_temp_k": 645,
+          "atmosphere": "h2_he_ch4",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 4274,
+    "seed": 1619
+  }
+}

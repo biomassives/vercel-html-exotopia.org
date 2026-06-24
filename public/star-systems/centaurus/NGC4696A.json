@@ -1,0 +1,126 @@
+{
+  "galaxy_id": "NGC4696A",
+  "galaxy_name": "NGC4696A",
+  "galaxy_hubble": "S0",
+  "cluster": "Centaurus Cluster",
+  "cluster_slug": "centaurus",
+  "cluster_dist_mpc": 46.0,
+  "environment": {
+    "description": "NGC4696A (S0) situated in the cluster outskirts, where ICM stripping is moderate. ICM stress 0.08; host population Teff ≈ 5567 K, Fe/H +0.16. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 2 star system(s), 4 planet(s) generated. Observational anchor: HST/ATLAS.",
+    "radiation_factor": 1.24,
+    "metallicity_feh": 0.158,
+    "agn": false,
+    "cooling_flow": false,
+    "ram_pressure": false,
+    "merger": false
+  },
+  "placement_notes": {
+    "v1": "NGC4696A (S0) situated in the cluster outskirts, where ICM stripping is moderate. ICM stress 0.08; host population Teff ≈ 5567 K, Fe/H +0.16. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 2 star system(s), 4 planet(s) generated. Observational anchor: HST/ATLAS.",
+    "open_questions": [],
+    "nft_zones": [
+      "outskirts-zone-hst-atlas"
+    ]
+  },
+  "generation": "v1-procedural",
+  "provenance": {
+    "script": "generate_cluster_starsystems.py",
+    "algorithm_version": "1.0",
+    "architecture_version": "1.0",
+    "seed_source": "NGC4696A",
+    "generated_at": "2026-05-26T17:52:05.900365+00:00",
+    "inputs": {
+      "cluster_zone": "outskirts",
+      "icm_stress": 0.079,
+      "metallicity_fe_h": 0.158,
+      "planet_bias": "ancient_cold_rocky",
+      "star_teff_k": 5567,
+      "max_orbit_au": 47.8,
+      "gas_giant_prob": 0.22,
+      "anchor_telescope": "HST/ATLAS",
+      "estimated_planets": 4
+    },
+    "observatory_report": "NGC4696A (S0) situated in the cluster outskirts, where ICM stripping is moderate. ICM stress 0.08; host population Teff ≈ 5567 K, Fe/H +0.16. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 2 star system(s), 4 planet(s) generated. Observational anchor: HST/ATLAS."
+  },
+  "star_systems": [
+    {
+      "id": "ngc4696a-s001",
+      "label": "NGC4696A — Prime",
+      "spectral_type": "G5V",
+      "mass_sol": 0.976,
+      "feh": 0.167,
+      "age_gyr": 9.0,
+      "luminosity_sol": 0.90789,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Outskirts zone; ICM stress 0.08; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "ngc4696a-s001-b",
+          "label": "NGC4696A 1 B",
+          "type": "hot_rocky",
+          "radius_earth": 0.79,
+          "mass_earth": 3.24,
+          "period_days": 11.2,
+          "semi_major_au": 0.097,
+          "eq_temp_k": 798,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "ngc4696a-s001-c",
+          "label": "NGC4696A 1 C",
+          "type": "hot_rocky",
+          "radius_earth": 1.04,
+          "mass_earth": 2.49,
+          "period_days": 27.6,
+          "semi_major_au": 0.1773,
+          "eq_temp_k": 590,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "ngc4696a-s002",
+      "label": "NGC4696A — Beta",
+      "spectral_type": "G7V",
+      "mass_sol": 0.936,
+      "feh": 0.172,
+      "age_gyr": 8.3,
+      "luminosity_sol": 0.76714,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Outskirts zone; ICM stress 0.08; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "ngc4696a-s002-b",
+          "label": "NGC4696A 2 B",
+          "type": "hot_rocky",
+          "radius_earth": 0.87,
+          "mass_earth": 0.92,
+          "period_days": 10.7,
+          "semi_major_au": 0.093,
+          "eq_temp_k": 781,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "ngc4696a-s002-c",
+          "label": "NGC4696A 2 C",
+          "type": "hot_rocky",
+          "radius_earth": 0.98,
+          "mass_earth": 2.76,
+          "period_days": 25.7,
+          "semi_major_au": 0.1666,
+          "eq_temp_k": 584,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 1052,
+    "seed": 2139
+  }
+}

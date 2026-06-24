@@ -1,0 +1,180 @@
+{
+  "galaxy_id": "bcg-00",
+  "galaxy_name": "bcg-00",
+  "galaxy_hubble": "cD",
+  "cluster": "Hydra-A Cluster",
+  "cluster_slug": "hydra-a",
+  "cluster_dist_mpc": 237.0,
+  "environment": {
+    "description": "bcg-00 (cD) situated in the dense cluster core, subject to strong ICM ram pressure. ICM stress 0.27; host population Teff ≈ 4444 K, Fe/H -0.02. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 5 star system(s), 5 planet(s) generated. Observational anchor: Chandra/Hubble.",
+    "radiation_factor": 1.81,
+    "metallicity_feh": -0.017,
+    "agn": false,
+    "cooling_flow": false,
+    "ram_pressure": false,
+    "merger": false
+  },
+  "placement_notes": {
+    "v1": "bcg-00 (cD) situated in the dense cluster core, subject to strong ICM ram pressure. ICM stress 0.27; host population Teff ≈ 4444 K, Fe/H -0.02. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 5 star system(s), 5 planet(s) generated. Observational anchor: Chandra/Hubble.",
+    "open_questions": [],
+    "nft_zones": [
+      "core-zone-chandra-hubble"
+    ]
+  },
+  "generation": "v1-procedural",
+  "provenance": {
+    "script": "generate_cluster_starsystems.py",
+    "algorithm_version": "1.0",
+    "architecture_version": "1.0",
+    "seed_source": "bcg-00",
+    "generated_at": "2026-05-26T17:52:07.547649+00:00",
+    "inputs": {
+      "cluster_zone": "core",
+      "icm_stress": 0.271,
+      "metallicity_fe_h": -0.017,
+      "planet_bias": "ancient_cold_rocky",
+      "star_teff_k": 4444,
+      "max_orbit_au": 3.0,
+      "gas_giant_prob": 0.103,
+      "anchor_telescope": "Chandra/Hubble",
+      "estimated_planets": 1
+    },
+    "observatory_report": "bcg-00 (cD) situated in the dense cluster core, subject to strong ICM ram pressure. ICM stress 0.27; host population Teff ≈ 4444 K, Fe/H -0.02. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 5 star system(s), 5 planet(s) generated. Observational anchor: Chandra/Hubble."
+  },
+  "star_systems": [
+    {
+      "id": "bcg-00-s001",
+      "label": "bcg-00 — Prime",
+      "spectral_type": "K5V",
+      "mass_sol": 0.739,
+      "feh": -0.031,
+      "age_gyr": 12.1,
+      "luminosity_sol": 0.29905,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Core zone; ICM stress 0.27; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "bcg-00-s001-b",
+          "label": "BCG-00 1 B",
+          "type": "rocky_barren",
+          "radius_earth": 0.95,
+          "mass_earth": 1.28,
+          "period_days": 8.4,
+          "semi_major_au": 0.073,
+          "eq_temp_k": 697,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "bcg-00-s002",
+      "label": "bcg-00 — Beta",
+      "spectral_type": "K5V",
+      "mass_sol": 0.739,
+      "feh": -0.038,
+      "age_gyr": 11.7,
+      "luminosity_sol": 0.29905,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Core zone; ICM stress 0.27; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "bcg-00-s002-b",
+          "label": "BCG-00 2 B",
+          "type": "hot_rocky",
+          "radius_earth": 0.92,
+          "mass_earth": 2.89,
+          "period_days": 8.4,
+          "semi_major_au": 0.073,
+          "eq_temp_k": 697,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "bcg-00-s003",
+      "label": "bcg-00 — Gamma",
+      "spectral_type": "K5V",
+      "mass_sol": 0.739,
+      "feh": -0.012,
+      "age_gyr": 11.9,
+      "luminosity_sol": 0.29905,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Core zone; ICM stress 0.27; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "bcg-00-s003-b",
+          "label": "BCG-00 3 B",
+          "type": "hot_rocky",
+          "radius_earth": 1.0,
+          "mass_earth": 0.51,
+          "period_days": 8.4,
+          "semi_major_au": 0.073,
+          "eq_temp_k": 697,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "bcg-00-s004",
+      "label": "bcg-00 — Delta",
+      "spectral_type": "K5V",
+      "mass_sol": 0.739,
+      "feh": -0.021,
+      "age_gyr": 11.0,
+      "luminosity_sol": 0.29905,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Core zone; ICM stress 0.27; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "bcg-00-s004-b",
+          "label": "BCG-00 4 B",
+          "type": "rocky_barren",
+          "radius_earth": 1.2,
+          "mass_earth": 1.79,
+          "period_days": 8.4,
+          "semi_major_au": 0.073,
+          "eq_temp_k": 697,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "bcg-00-s005",
+      "label": "bcg-00 — Epsilon",
+      "spectral_type": "K7V",
+      "mass_sol": 0.64,
+      "feh": -0.033,
+      "age_gyr": 11.0,
+      "luminosity_sol": 0.16732,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Core zone; ICM stress 0.27; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "bcg-00-s005-b",
+          "label": "BCG-00 5 B",
+          "type": "hot_rocky",
+          "radius_earth": 0.71,
+          "mass_earth": 1.48,
+          "period_days": 7.6,
+          "semi_major_au": 0.065,
+          "eq_temp_k": 639,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 4255,
+    "seed": 1313
+  }
+}

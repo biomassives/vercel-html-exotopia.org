@@ -1,0 +1,154 @@
+{
+  "galaxy_id": "proc-0106",
+  "galaxy_name": "proc-0106",
+  "galaxy_hubble": "Sa",
+  "cluster": "Hydra-A Cluster",
+  "cluster_slug": "hydra-a",
+  "cluster_dist_mpc": 237.0,
+  "environment": {
+    "description": "proc-0106 (Sa) situated in the dense cluster core, subject to strong ICM ram pressure. ICM stress 0.27; host population Teff ≈ 6083 K, Fe/H -0.08. Architecture favours rocky short-period planets — tightly-packed inner system, orbital compression from ICM drag. 4 star system(s), 4 planet(s) generated. Observational anchor: Chandra/Hubble.",
+    "radiation_factor": 1.81,
+    "metallicity_feh": -0.077,
+    "agn": false,
+    "cooling_flow": false,
+    "ram_pressure": false,
+    "merger": false
+  },
+  "placement_notes": {
+    "v1": "proc-0106 (Sa) situated in the dense cluster core, subject to strong ICM ram pressure. ICM stress 0.27; host population Teff ≈ 6083 K, Fe/H -0.08. Architecture favours rocky short-period planets — tightly-packed inner system, orbital compression from ICM drag. 4 star system(s), 4 planet(s) generated. Observational anchor: Chandra/Hubble.",
+    "open_questions": [],
+    "nft_zones": [
+      "core-zone-chandra-hubble"
+    ]
+  },
+  "generation": "v1-procedural",
+  "provenance": {
+    "script": "generate_cluster_starsystems.py",
+    "algorithm_version": "1.0",
+    "architecture_version": "1.0",
+    "seed_source": "proc-0106",
+    "generated_at": "2026-05-26T17:52:07.870532+00:00",
+    "inputs": {
+      "cluster_zone": "core",
+      "icm_stress": 0.271,
+      "metallicity_fe_h": -0.077,
+      "planet_bias": "rocky_short_period",
+      "star_teff_k": 6083,
+      "max_orbit_au": 6.5,
+      "gas_giant_prob": 0.114,
+      "anchor_telescope": "Chandra/Hubble",
+      "estimated_planets": 1
+    },
+    "observatory_report": "proc-0106 (Sa) situated in the dense cluster core, subject to strong ICM ram pressure. ICM stress 0.27; host population Teff ≈ 6083 K, Fe/H -0.08. Architecture favours rocky short-period planets — tightly-packed inner system, orbital compression from ICM drag. 4 star system(s), 4 planet(s) generated. Observational anchor: Chandra/Hubble."
+  },
+  "star_systems": [
+    {
+      "id": "proc-0106-s001",
+      "label": "proc-0106 — Prime",
+      "spectral_type": "G2V",
+      "mass_sol": 1.027,
+      "feh": -0.074,
+      "age_gyr": 11.5,
+      "luminosity_sol": 1.11171,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Core zone; ICM stress 0.27; bias: rocky_short_period",
+      "planets": [
+        {
+          "id": "proc-0106-s001-b",
+          "label": "PROC-0106 1 B",
+          "type": "rocky_barren",
+          "radius_earth": 0.56,
+          "mass_earth": 0.84,
+          "period_days": 4.9,
+          "semi_major_au": 0.057,
+          "eq_temp_k": 1095,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "proc-0106-s002",
+      "label": "proc-0106 — Beta",
+      "spectral_type": "G2V",
+      "mass_sol": 1.027,
+      "feh": -0.063,
+      "age_gyr": 11.4,
+      "luminosity_sol": 1.11171,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Core zone; ICM stress 0.27; bias: rocky_short_period",
+      "planets": [
+        {
+          "id": "proc-0106-s002-b",
+          "label": "PROC-0106 2 B",
+          "type": "rocky_barren",
+          "radius_earth": 0.95,
+          "mass_earth": 1.89,
+          "period_days": 4.9,
+          "semi_major_au": 0.057,
+          "eq_temp_k": 1095,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "proc-0106-s003",
+      "label": "proc-0106 — Gamma",
+      "spectral_type": "G2V",
+      "mass_sol": 1.027,
+      "feh": -0.09,
+      "age_gyr": 11.2,
+      "luminosity_sol": 1.11171,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Core zone; ICM stress 0.27; bias: rocky_short_period",
+      "planets": [
+        {
+          "id": "proc-0106-s003-b",
+          "label": "PROC-0106 3 B",
+          "type": "rocky_barren",
+          "radius_earth": 1.22,
+          "mass_earth": 0.16,
+          "period_days": 4.9,
+          "semi_major_au": 0.057,
+          "eq_temp_k": 1095,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "proc-0106-s004",
+      "label": "proc-0106 — Delta",
+      "spectral_type": "F9V",
+      "mass_sol": 1.136,
+      "feh": -0.056,
+      "age_gyr": 10.5,
+      "luminosity_sol": 1.66825,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Core zone; ICM stress 0.27; bias: rocky_short_period",
+      "planets": [
+        {
+          "id": "proc-0106-s004-b",
+          "label": "PROC-0106 4 B",
+          "type": "rocky_barren",
+          "radius_earth": 0.88,
+          "mass_earth": 0.51,
+          "period_days": 5.7,
+          "semi_major_au": 0.065,
+          "eq_temp_k": 1135,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 1702,
+    "seed": 2795
+  }
+}

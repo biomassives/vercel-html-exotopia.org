@@ -1,0 +1,167 @@
+{
+  "galaxy_id": "NGC4486",
+  "galaxy_name": "M87 — NGC 4486",
+  "galaxy_hubble": "cD",
+  "cluster": "Virgo Cluster",
+  "cluster_slug": "virgo",
+  "cluster_dist_mpc": 16.5,
+  "environment": {
+    "description": "cD BCG of Virgo A subcluster; 6.5 billion solar mass black hole; relativistic jet; strong X-ray/radio radiation field",
+    "radiation_factor": 4.2,
+    "metallicity_feh": 0.28,
+    "agn": true,
+    "cooling_flow": false,
+    "ram_pressure": false,
+    "merger": false
+  },
+  "placement_notes": {
+    "v0": "Three systems placed at large stellocentric radii (> 20 kpc analog equivalent) in M87 outer stellar halo, beyond the direct influence radius of the jet. All systems are metal-rich (BCG stellar population), old, K/M host stars. AGN radiation factor elevated — inner planets barren/lava; outer planets may retain thin atmospheres. No water-bearing worlds expected inside this galaxy.",
+    "open_questions": [
+      "Does the M87 jet precess? If so, jet-irradiated zones shift over Myr timescales",
+      "Stellar halo age ~13 Gyr — are there surviving planetary systems from pre-AGN epoch?",
+      "X-ray cavities around M87 at 1-3 kpc — what is radiation environment at r > 20 kpc?"
+    ],
+    "nft_zones": [
+      "outer-halo-perpendicular-to-jet (lowest radiation zone)",
+      "intermediate-halo-south (moderate radiation)"
+    ]
+  },
+  "generation": "v0-hand",
+  "star_systems": [
+    {
+      "id": "m87-s001",
+      "label": "Virgo Station Alpha — M87 Outer Halo",
+      "spectral_type": "K3V",
+      "mass_sol": 0.78,
+      "feh": 0.24,
+      "age_gyr": 12.5,
+      "luminosity_sol": 0.35,
+      "coord_system": "exo-surface-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Outer halo perpendicular to jet; reduced AGN irradiance; old metal-rich K-dwarf",
+      "planets": [
+        {
+          "id": "m87-s001-b",
+          "label": "Virgo Alpha I",
+          "type": "lava_world",
+          "radius_earth": 1.4,
+          "mass_earth": 3.5,
+          "period_days": 11.2,
+          "semi_major_au": 0.066,
+          "eq_temp_k": 2200,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical",
+          "notes": "Inner orbit — stripped by AGN UV flux; surface lava ocean"
+        },
+        {
+          "id": "m87-s001-c",
+          "label": "Virgo Alpha II",
+          "type": "rocky_barren",
+          "radius_earth": 1.0,
+          "mass_earth": 1.1,
+          "period_days": 82,
+          "semi_major_au": 0.36,
+          "eq_temp_k": 530,
+          "atmosphere": "trace",
+          "settlement_tier": "theoretical",
+          "notes": "Elevated surface X-ray flux from BCG halo; atmospheric stripping ongoing"
+        },
+        {
+          "id": "m87-s001-d",
+          "label": "Virgo Alpha III",
+          "type": "mini_neptune",
+          "radius_earth": 2.8,
+          "mass_earth": 10.5,
+          "period_days": 620,
+          "semi_major_au": 1.52,
+          "eq_temp_k": 190,
+          "atmosphere": "h2_he",
+          "settlement_tier": "theoretical",
+          "notes": "H/He atmosphere partially shielded by own magnetosphere; outer HZ access possible on moons"
+        }
+      ]
+    },
+    {
+      "id": "m87-s002",
+      "label": "Virgo Station Beta — M87 South Halo",
+      "spectral_type": "M1V",
+      "mass_sol": 0.54,
+      "feh": 0.2,
+      "age_gyr": 13.0,
+      "luminosity_sol": 0.07,
+      "coord_system": "exo-surface-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Old metal-rich M-dwarf; south of jet axis; reduced radiation cone",
+      "planets": [
+        {
+          "id": "m87-s002-b",
+          "label": "Virgo Beta I",
+          "type": "rocky_barren",
+          "radius_earth": 0.92,
+          "mass_earth": 0.82,
+          "period_days": 21,
+          "semi_major_au": 0.082,
+          "eq_temp_k": 298,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical",
+          "notes": "Tidally locked; terminator band marginally habitable; AGN flux elevated vs normal M-dwarf HZ"
+        },
+        {
+          "id": "m87-s002-c",
+          "label": "Virgo Beta II",
+          "type": "ice_world",
+          "radius_earth": 0.68,
+          "mass_earth": 0.3,
+          "period_days": 95,
+          "semi_major_au": 0.24,
+          "eq_temp_k": 102,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "m87-s003",
+      "label": "Virgo Station Gamma — M87 Halo North",
+      "spectral_type": "K5V",
+      "mass_sol": 0.71,
+      "feh": 0.3,
+      "age_gyr": 12.8,
+      "luminosity_sol": 0.21,
+      "coord_system": "exo-surface-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "High-metallicity K-dwarf; north of jet; AGN radiation exposure moderate",
+      "planets": [
+        {
+          "id": "m87-s003-b",
+          "label": "Virgo Gamma I",
+          "type": "rocky_barren",
+          "radius_earth": 1.1,
+          "mass_earth": 1.6,
+          "period_days": 38,
+          "semi_major_au": 0.18,
+          "eq_temp_k": 340,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "m87-s003-c",
+          "label": "Virgo Gamma II",
+          "type": "super_earth",
+          "radius_earth": 1.7,
+          "mass_earth": 6.2,
+          "period_days": 290,
+          "semi_major_au": 0.88,
+          "eq_temp_k": 188,
+          "atmosphere": "thick_co2",
+          "settlement_tier": "theoretical",
+          "notes": "Thick CO2 greenhouse; very old; high metallicity may support mineralogical complexity"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 2910,
+    "seed": 1603
+  }
+}

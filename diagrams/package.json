@@ -1,0 +1,14 @@
+{
+  "name": "fd2920434115b8ee",
+  "main": "fd2920434115b8ee@187.js",
+  "version": "187.0.0",
+  "homepage": "https://observablehq.com/d/fd2920434115b8ee",
+  "author": {
+    "name": "G. Willson",
+    "url": "https://observablehq.com/@biomassives"
+  },
+  "type": "module",
+  "peerDependencies": {
+    "@observablehq/runtime": "4 - 5"
+  }
+}

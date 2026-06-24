@@ -1,0 +1,128 @@
+{
+  "galaxy_id": "M32",
+  "galaxy_name": "M32 — NGC 221",
+  "galaxy_hubble": "E",
+  "cluster": "Andromeda Group",
+  "cluster_slug": "andromeda-group",
+  "cluster_dist_mpc": 0.77,
+  "environment": {
+    "description": "M32 (E) situated in the infall region at the cluster periphery, largely ICM-free. ICM stress 0.00; host population Teff ≈ 4189 K, Fe/H +0.22. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 3 star system(s), 3 planet(s) generated. Observational anchor: HST/ATLAS.",
+    "radiation_factor": 1.0,
+    "metallicity_feh": 0.218,
+    "agn": false,
+    "cooling_flow": false,
+    "ram_pressure": false,
+    "merger": false
+  },
+  "placement_notes": {
+    "v1": "M32 (E) situated in the infall region at the cluster periphery, largely ICM-free. ICM stress 0.00; host population Teff ≈ 4189 K, Fe/H +0.22. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 3 star system(s), 3 planet(s) generated. Observational anchor: HST/ATLAS.",
+    "open_questions": [],
+    "nft_zones": [
+      "infall-zone-hst-atlas"
+    ]
+  },
+  "generation": "v1-procedural",
+  "provenance": {
+    "script": "generate_cluster_starsystems.py",
+    "algorithm_version": "1.0",
+    "architecture_version": "1.0",
+    "seed_source": "M32",
+    "generated_at": "2026-05-26T17:52:05.312464+00:00",
+    "inputs": {
+      "cluster_zone": "infall",
+      "icm_stress": 0.0,
+      "metallicity_fe_h": 0.218,
+      "planet_bias": "ancient_cold_rocky",
+      "star_teff_k": 4189,
+      "max_orbit_au": 49.9,
+      "gas_giant_prob": 0.22,
+      "anchor_telescope": "HST/ATLAS",
+      "estimated_planets": 2
+    },
+    "observatory_report": "M32 (E) situated in the infall region at the cluster periphery, largely ICM-free. ICM stress 0.00; host population Teff ≈ 4189 K, Fe/H +0.22. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 3 star system(s), 3 planet(s) generated. Observational anchor: HST/ATLAS."
+  },
+  "star_systems": [
+    {
+      "id": "m32-s001",
+      "label": "M32 — NGC 221 — Prime",
+      "spectral_type": "K7V",
+      "mass_sol": 0.646,
+      "feh": 0.223,
+      "age_gyr": 7.2,
+      "luminosity_sol": 0.1737,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Infall zone; ICM stress 0.00; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "m32-s001-b",
+          "label": "M32 1 B",
+          "type": "hot_rocky",
+          "radius_earth": 1.24,
+          "mass_earth": 2.31,
+          "period_days": 7.5,
+          "semi_major_au": 0.065,
+          "eq_temp_k": 645,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "m32-s002",
+      "label": "M32 — NGC 221 — Beta",
+      "spectral_type": "K7V",
+      "mass_sol": 0.646,
+      "feh": 0.202,
+      "age_gyr": 6.5,
+      "luminosity_sol": 0.1737,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Infall zone; ICM stress 0.00; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "m32-s002-b",
+          "label": "M32 2 B",
+          "type": "hot_rocky",
+          "radius_earth": 0.96,
+          "mass_earth": 1.05,
+          "period_days": 7.5,
+          "semi_major_au": 0.065,
+          "eq_temp_k": 645,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "m32-s003",
+      "label": "M32 — NGC 221 — Gamma",
+      "spectral_type": "M0V",
+      "mass_sol": 0.525,
+      "feh": 0.229,
+      "age_gyr": 6.4,
+      "luminosity_sol": 0.0757,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Infall zone; ICM stress 0.00; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "m32-s003-b",
+          "label": "M32 3 B",
+          "type": "hot_rocky",
+          "radius_earth": 1.15,
+          "mass_earth": 1.6,
+          "period_days": 6.9,
+          "semi_major_au": 0.057,
+          "eq_temp_k": 559,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 1500,
+    "seed": 329
+  }
+}

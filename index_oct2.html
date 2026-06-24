@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <title>Exotopia Interactive Exoplanet Visualization</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ 
+    <style>
+        body { margin: 0; overflow: hidden; }
+        canvas { display: block; background-color: black; }
+        #info { position: absolute; top: 10px; left: 10px; color: white; }
+        #infobox {
+            position: absolute;
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.72);
+            border: 1px solid rgba(100, 160, 255, 0.3);
+            border-radius: 5px;
+            color: #e8f4ff;
+            font: 13px/1.5 monospace;
+            max-width: 360px;
+            pointer-events: none;
+            display: none;
+        }
+    
+    </style>
+    <!-- main_oct2.js loads Three.js, OrbitControls, GSAP, and Hammer itself
+         via dynamic script injection, then calls initApp(). No other
+         script tags needed here. -->
+    <script src="main_oct2.js"></script>
+</head>
+<body>
+    <div id="container"></div>
+    <div id="info">Hover over an object</div>
+    <div id="infobox"></div>
+</body>
+</html>

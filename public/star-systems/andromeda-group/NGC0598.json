@@ -1,0 +1,176 @@
+{
+  "galaxy_id": "NGC0598",
+  "galaxy_name": "M33 — Triangulum Galaxy",
+  "galaxy_hubble": "Sa",
+  "cluster": "Andromeda Group",
+  "cluster_slug": "andromeda-group",
+  "cluster_dist_mpc": 0.77,
+  "environment": {
+    "description": "Face-on spiral; lower metallicity than M31; active star formation; no bulge-driven effects",
+    "radiation_factor": 1.0,
+    "metallicity_feh": -0.08,
+    "agn": false,
+    "cooling_flow": false,
+    "ram_pressure": false,
+    "merger": false
+  },
+  "placement_notes": {
+    "v0": "Three systems in active spiral arm region. M33 has lower metallicity than M31 and is highly star-forming — G and F hosts with diverse planet types. One system near central bar region (metal-enriched); one in outer low-density disk.",
+    "open_questions": [
+      "M33 has a very faint nucleus — is AGN activity truly absent?",
+      "High SFR environment — should some systems be flagged as \"forming\" rather than stable?"
+    ],
+    "nft_zones": [
+      "inner-bar-zone (higher metallicity)",
+      "mid-arm-zone (active star formation)"
+    ]
+  },
+  "generation": "v0-hand",
+  "star_systems": [
+    {
+      "id": "m33-s001",
+      "label": "Triangulum Station Alpha",
+      "spectral_type": "G8V",
+      "mass_sol": 0.92,
+      "feh": -0.05,
+      "age_gyr": 5.4,
+      "luminosity_sol": 0.72,
+      "coord_system": "exo-surface-v1",
+      "settlement_tier": "frontier",
+      "environment_note": "Mid-disk Solar-type star; active HII region proximity",
+      "planets": [
+        {
+          "id": "m33-s001-b",
+          "label": "Triangulum I",
+          "type": "rocky_barren",
+          "radius_earth": 0.9,
+          "mass_earth": 0.78,
+          "period_days": 72,
+          "semi_major_au": 0.33,
+          "eq_temp_k": 580,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "m33-s001-c",
+          "label": "Triangulum II",
+          "type": "super_earth",
+          "radius_earth": 1.5,
+          "mass_earth": 4.4,
+          "period_days": 320,
+          "semi_major_au": 1.01,
+          "eq_temp_k": 264,
+          "atmosphere": "n2_co2",
+          "settlement_tier": "candidate",
+          "notes": "Cool temperate super-earth; near outer HZ edge; may support liquid water"
+        },
+        {
+          "id": "m33-s001-d",
+          "label": "Triangulum III",
+          "type": "mini_neptune",
+          "radius_earth": 3.1,
+          "mass_earth": 13.5,
+          "period_days": 920,
+          "semi_major_au": 2.25,
+          "eq_temp_k": 148,
+          "atmosphere": "h2_he",
+          "settlement_tier": "frontier"
+        }
+      ]
+    },
+    {
+      "id": "m33-s002",
+      "label": "Triangulum Station Beta",
+      "spectral_type": "K5V",
+      "mass_sol": 0.7,
+      "feh": -0.12,
+      "age_gyr": 8.0,
+      "luminosity_sol": 0.22,
+      "coord_system": "exo-surface-v1",
+      "settlement_tier": "frontier",
+      "environment_note": "Older K-dwarf; outer spiral arm; lower metallicity system",
+      "planets": [
+        {
+          "id": "m33-s002-b",
+          "label": "Triangulum Outer I",
+          "type": "rocky_barren",
+          "radius_earth": 0.78,
+          "mass_earth": 0.5,
+          "period_days": 22,
+          "semi_major_au": 0.11,
+          "eq_temp_k": 445,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "m33-s002-c",
+          "label": "Triangulum Outer II",
+          "type": "ocean_world",
+          "radius_earth": 1.1,
+          "mass_earth": 1.4,
+          "period_days": 142,
+          "semi_major_au": 0.48,
+          "eq_temp_k": 268,
+          "atmosphere": "n2_h2o",
+          "settlement_tier": "candidate",
+          "notes": "Shallow ocean world in K-dwarf HZ; may have active tectonics"
+        }
+      ]
+    },
+    {
+      "id": "m33-s003",
+      "label": "Triangulum Central Bar Station",
+      "spectral_type": "G2V",
+      "mass_sol": 0.99,
+      "feh": 0.05,
+      "age_gyr": 6.1,
+      "luminosity_sol": 0.98,
+      "coord_system": "exo-surface-v1",
+      "settlement_tier": "candidate",
+      "environment_note": "Near-Solar twin in inner bar region; slightly elevated metallicity",
+      "planets": [
+        {
+          "id": "m33-s003-b",
+          "label": "Triangulum Bar I",
+          "type": "rocky_barren",
+          "radius_earth": 1.0,
+          "mass_earth": 1.0,
+          "period_days": 88,
+          "semi_major_au": 0.41,
+          "eq_temp_k": 550,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "m33-s003-c",
+          "label": "Triangulum Bar II — Triam",
+          "type": "super_earth",
+          "radius_earth": 1.35,
+          "mass_earth": 3.1,
+          "period_days": 365,
+          "semi_major_au": 1.0,
+          "eq_temp_k": 285,
+          "atmosphere": "n2_o2",
+          "settlement_tier": "candidate",
+          "notes": "Named Triam — near-Earth analogue; Solar-twin host; highest habitability score in M33"
+        },
+        {
+          "id": "m33-s003-d",
+          "label": "Triangulum Bar III",
+          "type": "gas_giant",
+          "radius_earth": 10.5,
+          "mass_earth": 310,
+          "period_days": 3800,
+          "semi_major_au": 5.2,
+          "eq_temp_k": 82,
+          "atmosphere": "h2_he",
+          "settlement_tier": "frontier"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 2000,
+    "seed": 1612
+  }
+}

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPFS Uploader</title>
+</head>
+<body>
+    <h1>IPFS Upload Form</h1>
+    <form id="uploadForm">
+        <input type="text" id="title" placeholder="Title" required><br>
+        <textarea id="description" placeholder="Description" required></textarea><br>
+        <input type="text" id="user" placeholder="User" required><br>
+        <input type="date" id="date" required><br>
+        <input type="text" id="location" placeholder="Location (optional)"><br>
+        <input type="file" id="image1" accept="image/*" required><br>
+        <input type="file" id="image2" accept="image/*"><br>
+        <button type="submit">Upload to IPFS</button>
+    </form>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+                  
+            async function uploadToIPFS(file) {
+                      const apiKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDZhRmQ5M0JiNzQwM2RlQ2Y4NGVmRWRCRjlBNUFkNWM5RUQ1YjhFRjQiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY0NzU1NTQ4NTA4MSwibmFtZSI6Inlvb2NhdHMifQ.aZot4G1rrH-ED9tXIV9VAa3OCS87g6nBQEM1paBiIxI'; // Replace with your NFT.storage API key                  
+                      // Prepare the file for uploading
+                      const formData = new FormData();
+                      formData.append('file', file);
+                  
+                      try {
+                          // Make the request to nft.storage
+                          const response = await fetch('https://api.nft.storage/upload', {
+                              method: 'POST',
+                              headers: {
+                                  'Authorization': `Bearer ${apiKey}`,
+                              },
+                              body: formData,
+                          });
+                  
+                          // Check if the request was successful
+                          if (!response.ok) {
+                              throw new Error(`Failed to upload file to IPFS. Status: ${response.status}`);
+                          }
+                  
+                          // Parse the JSON response to get the CID
+                          const data = await response.json();
+                          return data.value.cid; // The CID of the uploaded file
+                      } catch (error) {
+                          console.error('Error uploading file to IPFS:', error);
+                          throw error; // Rethrow the error to handle it in the calling function
+                      }
+                  
+                  
+                  
+                  
+                  
+              
+                // Implement the IPFS upload logic here.
+                // This function should return the CID of the uploaded file.
+                // For demonstration, let's assume it returns a fake CID.
+                return `fakeCID-${Math.random().toString(36).substr(2, 9)}`;
+            }
+
+            const title = document.getElementById('title').value;
+            const description = document.getElementById('description').value;
+            const user = document.getElementById('user').value;
+            const date = document.getElementById('date').value;
+            const location = document.getElementById('location').value;
+            const image1 = document.getElementById('image1').files[0];
+            const image2 = document.getElementById('image2').files.length > 0 ? document.getElementById('image2').files[0] : null;
+
+            // Upload images and wait for their CIDs
+            const cidPromises = [uploadToIPFS(image1)];
+            if (image2) cidPromises.push(uploadToIPFS(image2));
+
+            const cids = await Promise.all(cidPromises);
+
+            // Prepare the metadata file
+            const metadata = {
+                title,
+                description,
+                user,
+                date,
+                location,
+                imageCIDs: cids
+            };
+
+            // Convert metadata object to a Blob for IPFS upload
+            const metadataBlob = new Blob([JSON.stringify(metadata)], {type : 'application/json'});
+
+            // Upload metadata and retrieve CID
+            const metadataCID = await uploadToIPFS(metadataBlob);
+
+            console.log('Metadata CID:', metadataCID);
+            alert(`Upload successful! Metadata CID: ${metadataCID}`);
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+
+

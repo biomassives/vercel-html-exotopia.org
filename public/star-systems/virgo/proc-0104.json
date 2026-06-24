@@ -1,0 +1,204 @@
+{
+  "galaxy_id": "proc-0104",
+  "galaxy_name": "proc-0104",
+  "galaxy_hubble": "Sb",
+  "cluster": "Virgo Cluster",
+  "cluster_slug": "virgo",
+  "cluster_dist_mpc": 16.5,
+  "environment": {
+    "description": "proc-0104 (Sb) situated in the infall region at the cluster periphery, largely ICM-free. ICM stress 0.02; host population Teff ≈ 6770 K, Fe/H +0.13. Architecture favours wide-orbit gas giants with potential moon settlement zones. 5 star system(s), 7 planet(s) generated. Observational anchor: JWST.",
+    "radiation_factor": 1.05,
+    "metallicity_feh": 0.127,
+    "agn": false,
+    "cooling_flow": false,
+    "ram_pressure": false,
+    "merger": false
+  },
+  "placement_notes": {
+    "v1": "proc-0104 (Sb) situated in the infall region at the cluster periphery, largely ICM-free. ICM stress 0.02; host population Teff ≈ 6770 K, Fe/H +0.13. Architecture favours wide-orbit gas giants with potential moon settlement zones. 5 star system(s), 7 planet(s) generated. Observational anchor: JWST.",
+    "open_questions": [],
+    "nft_zones": [
+      "infall-zone-jwst"
+    ]
+  },
+  "generation": "v1-procedural",
+  "provenance": {
+    "script": "generate_cluster_starsystems.py",
+    "algorithm_version": "1.0",
+    "architecture_version": "1.0",
+    "seed_source": "proc-0104",
+    "generated_at": "2026-05-26T17:52:11.112795+00:00",
+    "inputs": {
+      "cluster_zone": "infall",
+      "icm_stress": 0.018,
+      "metallicity_fe_h": 0.127,
+      "planet_bias": "jovian_wide",
+      "star_teff_k": 6770,
+      "max_orbit_au": 73.1,
+      "gas_giant_prob": 0.65,
+      "anchor_telescope": "JWST",
+      "estimated_planets": 7
+    },
+    "observatory_report": "proc-0104 (Sb) situated in the infall region at the cluster periphery, largely ICM-free. ICM stress 0.02; host population Teff ≈ 6770 K, Fe/H +0.13. Architecture favours wide-orbit gas giants with potential moon settlement zones. 5 star system(s), 7 planet(s) generated. Observational anchor: JWST."
+  },
+  "star_systems": [
+    {
+      "id": "proc-0104-s001",
+      "label": "proc-0104 — Prime",
+      "spectral_type": "F5V",
+      "mass_sol": 1.327,
+      "feh": 0.143,
+      "age_gyr": 7.0,
+      "luminosity_sol": 3.09812,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Infall zone; ICM stress 0.02; bias: jovian_wide",
+      "planets": [
+        {
+          "id": "proc-0104-s001-b",
+          "label": "PROC-0104 1 B",
+          "type": "hot_rocky",
+          "radius_earth": 0.78,
+          "mass_earth": 0.54,
+          "period_days": 35.7,
+          "semi_major_au": 0.233,
+          "eq_temp_k": 700,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "proc-0104-s001-c",
+          "label": "PROC-0104 1 C",
+          "type": "terran",
+          "radius_earth": 1.35,
+          "mass_earth": 1.01,
+          "period_days": 122.0,
+          "semi_major_au": 0.5291,
+          "eq_temp_k": 464,
+          "atmosphere": "n2_o2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "proc-0104-s002",
+      "label": "proc-0104 — Beta",
+      "spectral_type": "F5V",
+      "mass_sol": 1.327,
+      "feh": 0.145,
+      "age_gyr": 6.2,
+      "luminosity_sol": 3.09812,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Infall zone; ICM stress 0.02; bias: jovian_wide",
+      "planets": [
+        {
+          "id": "proc-0104-s002-b",
+          "label": "PROC-0104 2 B",
+          "type": "rocky_barren",
+          "radius_earth": 0.6,
+          "mass_earth": 2.05,
+          "period_days": 35.7,
+          "semi_major_au": 0.233,
+          "eq_temp_k": 700,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "proc-0104-s002-c",
+          "label": "PROC-0104 2 C",
+          "type": "gas_giant",
+          "radius_earth": 12.56,
+          "mass_earth": 288.39,
+          "period_days": 131.3,
+          "semi_major_au": 0.5557,
+          "eq_temp_k": 453,
+          "atmosphere": "h2_he_ch4",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "proc-0104-s003",
+      "label": "proc-0104 — Gamma",
+      "spectral_type": "F5V",
+      "mass_sol": 1.327,
+      "feh": 0.124,
+      "age_gyr": 7.2,
+      "luminosity_sol": 3.09812,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Infall zone; ICM stress 0.02; bias: jovian_wide",
+      "planets": [
+        {
+          "id": "proc-0104-s003-b",
+          "label": "PROC-0104 3 B",
+          "type": "gas_giant",
+          "radius_earth": 11.02,
+          "mass_earth": 128.78,
+          "period_days": 35.7,
+          "semi_major_au": 0.233,
+          "eq_temp_k": 700,
+          "atmosphere": "h2_he_ch4",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "proc-0104-s004",
+      "label": "proc-0104 — Delta",
+      "spectral_type": "F5V",
+      "mass_sol": 1.327,
+      "feh": 0.113,
+      "age_gyr": 6.9,
+      "luminosity_sol": 3.09812,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Infall zone; ICM stress 0.02; bias: jovian_wide",
+      "planets": [
+        {
+          "id": "proc-0104-s004-b",
+          "label": "PROC-0104 4 B",
+          "type": "hot_rocky",
+          "radius_earth": 1.05,
+          "mass_earth": 0.77,
+          "period_days": 35.7,
+          "semi_major_au": 0.233,
+          "eq_temp_k": 700,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "proc-0104-s005",
+      "label": "proc-0104 — Epsilon",
+      "spectral_type": "F5V",
+      "mass_sol": 1.327,
+      "feh": 0.128,
+      "age_gyr": 8.1,
+      "luminosity_sol": 3.09812,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Infall zone; ICM stress 0.02; bias: jovian_wide",
+      "planets": [
+        {
+          "id": "proc-0104-s005-b",
+          "label": "PROC-0104 5 B",
+          "type": "rocky_barren",
+          "radius_earth": 0.96,
+          "mass_earth": 2.09,
+          "period_days": 35.7,
+          "semi_major_au": 0.233,
+          "eq_temp_k": 700,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 2475,
+    "seed": 2777
+  }
+}

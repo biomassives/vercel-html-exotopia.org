@@ -1,0 +1,126 @@
+{
+  "galaxy_id": "NGC3315",
+  "galaxy_name": "NGC3315",
+  "galaxy_hubble": "E",
+  "cluster": "Hydra Cluster",
+  "cluster_slug": "hydra",
+  "cluster_dist_mpc": 59.0,
+  "environment": {
+    "description": "NGC3315 (E) situated in the infall region at the cluster periphery, largely ICM-free. ICM stress 0.02; host population Teff ≈ 3878 K, Fe/H +0.10. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 2 star system(s), 4 planet(s) generated. Observational anchor: HST/ATLAS.",
+    "radiation_factor": 1.07,
+    "metallicity_feh": 0.102,
+    "agn": false,
+    "cooling_flow": false,
+    "ram_pressure": false,
+    "merger": false
+  },
+  "placement_notes": {
+    "v1": "NGC3315 (E) situated in the infall region at the cluster periphery, largely ICM-free. ICM stress 0.02; host population Teff ≈ 3878 K, Fe/H +0.10. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 2 star system(s), 4 planet(s) generated. Observational anchor: HST/ATLAS.",
+    "open_questions": [],
+    "nft_zones": [
+      "infall-zone-hst-atlas"
+    ]
+  },
+  "generation": "v1-procedural",
+  "provenance": {
+    "script": "generate_cluster_starsystems.py",
+    "algorithm_version": "1.0",
+    "architecture_version": "1.0",
+    "seed_source": "NGC3315",
+    "generated_at": "2026-05-26T17:52:08.010984+00:00",
+    "inputs": {
+      "cluster_zone": "infall",
+      "icm_stress": 0.024,
+      "metallicity_fe_h": 0.102,
+      "planet_bias": "ancient_cold_rocky",
+      "star_teff_k": 3878,
+      "max_orbit_au": 79.8,
+      "gas_giant_prob": 0.22,
+      "anchor_telescope": "HST/ATLAS",
+      "estimated_planets": 4
+    },
+    "observatory_report": "NGC3315 (E) situated in the infall region at the cluster periphery, largely ICM-free. ICM stress 0.02; host population Teff ≈ 3878 K, Fe/H +0.10. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 2 star system(s), 4 planet(s) generated. Observational anchor: HST/ATLAS."
+  },
+  "star_systems": [
+    {
+      "id": "ngc3315-s001",
+      "label": "NGC3315 — Prime",
+      "spectral_type": "M0V",
+      "mass_sol": 0.522,
+      "feh": 0.106,
+      "age_gyr": 6.3,
+      "luminosity_sol": 0.07432,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Infall zone; ICM stress 0.02; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "ngc3315-s001-b",
+          "label": "NGC3315 1 B",
+          "type": "rocky_barren",
+          "radius_earth": 0.56,
+          "mass_earth": 1.01,
+          "period_days": 6.7,
+          "semi_major_au": 0.056,
+          "eq_temp_k": 562,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "ngc3315-s001-c",
+          "label": "NGC3315 1 C",
+          "type": "super_earth",
+          "radius_earth": 1.96,
+          "mass_earth": 9.9,
+          "period_days": 12.5,
+          "semi_major_au": 0.0849,
+          "eq_temp_k": 456,
+          "atmosphere": "n2_co2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "ngc3315-s002",
+      "label": "NGC3315 — Beta",
+      "spectral_type": "M2V",
+      "mass_sol": 0.402,
+      "feh": 0.108,
+      "age_gyr": 7.2,
+      "luminosity_sol": 0.02822,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Infall zone; ICM stress 0.02; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "ngc3315-s002-b",
+          "label": "NGC3315 2 B",
+          "type": "rocky_barren",
+          "radius_earth": 1.09,
+          "mass_earth": 1.75,
+          "period_days": 6.4,
+          "semi_major_au": 0.05,
+          "eq_temp_k": 466,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "ngc3315-s002-c",
+          "label": "NGC3315 2 C",
+          "type": "rocky_barren",
+          "radius_earth": 0.72,
+          "mass_earth": 1.36,
+          "period_days": 15.6,
+          "semi_major_au": 0.0903,
+          "eq_temp_k": 347,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 1480,
+    "seed": 1545
+  }
+}

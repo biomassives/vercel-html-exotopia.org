@@ -1,0 +1,190 @@
+{
+  "galaxy_id": "proc-0049",
+  "galaxy_name": "proc-0049",
+  "galaxy_hubble": "Sa",
+  "cluster": "Hydra Cluster",
+  "cluster_slug": "hydra",
+  "cluster_dist_mpc": 59.0,
+  "environment": {
+    "description": "proc-0049 (Sa) situated in the cluster outskirts, where ICM stripping is moderate. ICM stress 0.07; host population Teff ≈ 5819 K, Fe/H +0.07. Architecture favours mixed architecture — inner rocky worlds alongside outer ice giants or mini-Neptunes. 4 star system(s), 7 planet(s) generated. Observational anchor: JWST.",
+    "radiation_factor": 1.21,
+    "metallicity_feh": 0.072,
+    "agn": false,
+    "cooling_flow": false,
+    "ram_pressure": false,
+    "merger": false
+  },
+  "placement_notes": {
+    "v1": "proc-0049 (Sa) situated in the cluster outskirts, where ICM stripping is moderate. ICM stress 0.07; host population Teff ≈ 5819 K, Fe/H +0.07. Architecture favours mixed architecture — inner rocky worlds alongside outer ice giants or mini-Neptunes. 4 star system(s), 7 planet(s) generated. Observational anchor: JWST.",
+    "open_questions": [],
+    "nft_zones": [
+      "outskirts-zone-jwst"
+    ]
+  },
+  "generation": "v1-procedural",
+  "provenance": {
+    "script": "generate_cluster_starsystems.py",
+    "algorithm_version": "1.0",
+    "architecture_version": "1.0",
+    "seed_source": "proc-0049",
+    "generated_at": "2026-05-26T17:52:08.097114+00:00",
+    "inputs": {
+      "cluster_zone": "outskirts",
+      "icm_stress": 0.071,
+      "metallicity_fe_h": 0.072,
+      "planet_bias": "mixed",
+      "star_teff_k": 5819,
+      "max_orbit_au": 43.9,
+      "gas_giant_prob": 0.4,
+      "anchor_telescope": "JWST",
+      "estimated_planets": 7
+    },
+    "observatory_report": "proc-0049 (Sa) situated in the cluster outskirts, where ICM stripping is moderate. ICM stress 0.07; host population Teff ≈ 5819 K, Fe/H +0.07. Architecture favours mixed architecture — inner rocky worlds alongside outer ice giants or mini-Neptunes. 4 star system(s), 7 planet(s) generated. Observational anchor: JWST."
+  },
+  "star_systems": [
+    {
+      "id": "proc-0049-s001",
+      "label": "proc-0049 — Prime",
+      "spectral_type": "G2V",
+      "mass_sol": 1.033,
+      "feh": 0.069,
+      "age_gyr": 9.2,
+      "luminosity_sol": 1.13853,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Outskirts zone; ICM stress 0.07; bias: mixed",
+      "planets": [
+        {
+          "id": "proc-0049-s001-b",
+          "label": "PROC-0049 1 B",
+          "type": "rocky_barren",
+          "radius_earth": 1.23,
+          "mass_earth": 0.79,
+          "period_days": 12.1,
+          "semi_major_au": 0.104,
+          "eq_temp_k": 815,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "proc-0049-s001-c",
+          "label": "PROC-0049 1 C",
+          "type": "rocky_barren",
+          "radius_earth": 1.04,
+          "mass_earth": 1.75,
+          "period_days": 33.6,
+          "semi_major_au": 0.2062,
+          "eq_temp_k": 579,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "proc-0049-s002",
+      "label": "proc-0049 — Beta",
+      "spectral_type": "G5V",
+      "mass_sol": 0.973,
+      "feh": 0.062,
+      "age_gyr": 8.7,
+      "luminosity_sol": 0.89554,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Outskirts zone; ICM stress 0.07; bias: mixed",
+      "planets": [
+        {
+          "id": "proc-0049-s002-b",
+          "label": "PROC-0049 2 B",
+          "type": "hot_rocky",
+          "radius_earth": 1.06,
+          "mass_earth": 1.17,
+          "period_days": 11.2,
+          "semi_major_au": 0.097,
+          "eq_temp_k": 795,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "proc-0049-s002-c",
+          "label": "PROC-0049 2 C",
+          "type": "hot_rocky",
+          "radius_earth": 1.09,
+          "mass_earth": 3.05,
+          "period_days": 22.5,
+          "semi_major_au": 0.1546,
+          "eq_temp_k": 630,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "proc-0049-s003",
+      "label": "proc-0049 — Gamma",
+      "spectral_type": "F9V",
+      "mass_sol": 1.143,
+      "feh": 0.049,
+      "age_gyr": 8.1,
+      "luminosity_sol": 1.7085,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Outskirts zone; ICM stress 0.07; bias: mixed",
+      "planets": [
+        {
+          "id": "proc-0049-s003-b",
+          "label": "PROC-0049 3 B",
+          "type": "rocky_barren",
+          "radius_earth": 1.29,
+          "mass_earth": 0.82,
+          "period_days": 13.8,
+          "semi_major_au": 0.118,
+          "eq_temp_k": 847,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "proc-0049-s003-c",
+          "label": "PROC-0049 3 C",
+          "type": "gas_giant",
+          "radius_earth": 9.46,
+          "mass_earth": 278.7,
+          "period_days": 37.2,
+          "semi_major_au": 0.2281,
+          "eq_temp_k": 609,
+          "atmosphere": "h2_he_ch4",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "proc-0049-s004",
+      "label": "proc-0049 — Delta",
+      "spectral_type": "G5V",
+      "mass_sol": 0.973,
+      "feh": 0.048,
+      "age_gyr": 9.1,
+      "luminosity_sol": 0.89554,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Outskirts zone; ICM stress 0.07; bias: mixed",
+      "planets": [
+        {
+          "id": "proc-0049-s004-b",
+          "label": "PROC-0049 4 B",
+          "type": "hot_rocky",
+          "radius_earth": 0.84,
+          "mass_earth": 2.49,
+          "period_days": 11.2,
+          "semi_major_au": 0.097,
+          "eq_temp_k": 795,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 1922,
+    "seed": 2847
+  }
+}

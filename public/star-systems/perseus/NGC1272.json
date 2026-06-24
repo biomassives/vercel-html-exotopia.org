@@ -1,0 +1,123 @@
+{
+  "galaxy_id": "NGC1272",
+  "galaxy_name": "NGC 1272",
+  "galaxy_hubble": "E",
+  "cluster": "Perseus Cluster",
+  "cluster_slug": "perseus",
+  "cluster_dist_mpc": 73.0,
+  "environment": {
+    "description": "Giant elliptical in Perseus core; second brightest galaxy; hot ICM environment; no AGN; old metal-rich population",
+    "radiation_factor": 2.2,
+    "metallicity_feh": 0.24,
+    "agn": false,
+    "cooling_flow": false,
+    "ram_pressure": false,
+    "merger": false
+  },
+  "placement_notes": {
+    "v0": "Two systems in NGC1272 stellar body. Quiescent giant elliptical — no AGN. Hot Perseus ICM provides elevated background X-ray irradiance (radiation_factor 2.2). Old metal-rich K/M host stars; rocky worlds expected. Best non-AGN system in Perseus core for frontier settlement tier.",
+    "open_questions": [
+      "NGC1272 may host a dwarf satellite — does it perturb outer orbits?"
+    ],
+    "nft_zones": [
+      "core-elliptical-zone (best frontier candidate in Perseus)"
+    ]
+  },
+  "generation": "v0-hand",
+  "star_systems": [
+    {
+      "id": "ngc1272-s001",
+      "label": "Perseus NGC1272 Station Alpha",
+      "spectral_type": "K2V",
+      "mass_sol": 0.82,
+      "feh": 0.22,
+      "age_gyr": 12.0,
+      "luminosity_sol": 0.44,
+      "coord_system": "exo-surface-v1",
+      "settlement_tier": "frontier",
+      "environment_note": "Old metal-rich K-dwarf; no AGN; elevated ICM background radiation",
+      "planets": [
+        {
+          "id": "ngc1272-s001-b",
+          "label": "NGC1272 Alpha I",
+          "type": "rocky_barren",
+          "radius_earth": 0.92,
+          "mass_earth": 0.82,
+          "period_days": 58,
+          "semi_major_au": 0.25,
+          "eq_temp_k": 520,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "ngc1272-s001-c",
+          "label": "NGC1272 Alpha II",
+          "type": "super_earth",
+          "radius_earth": 1.5,
+          "mass_earth": 4.5,
+          "period_days": 360,
+          "semi_major_au": 0.98,
+          "eq_temp_k": 248,
+          "atmosphere": "n2_co2",
+          "settlement_tier": "frontier",
+          "notes": "Best frontier candidate in Perseus core; quiescent K-dwarf host; elevated but survivable ICM flux"
+        },
+        {
+          "id": "ngc1272-s001-d",
+          "label": "NGC1272 Alpha III",
+          "type": "mini_neptune",
+          "radius_earth": 2.7,
+          "mass_earth": 10.2,
+          "period_days": 950,
+          "semi_major_au": 2.2,
+          "eq_temp_k": 148,
+          "atmosphere": "h2_he",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "ngc1272-s002",
+      "label": "Perseus NGC1272 Station Beta",
+      "spectral_type": "M2V",
+      "mass_sol": 0.48,
+      "feh": 0.18,
+      "age_gyr": 11.5,
+      "luminosity_sol": 0.05,
+      "coord_system": "exo-surface-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Old metal-rich M-dwarf; compact HZ system; ICM radiation elevated",
+      "planets": [
+        {
+          "id": "ngc1272-s002-b",
+          "label": "NGC1272 Beta I",
+          "type": "rocky_barren",
+          "radius_earth": 0.85,
+          "mass_earth": 0.65,
+          "period_days": 20,
+          "semi_major_au": 0.079,
+          "eq_temp_k": 265,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical",
+          "notes": "Tidally locked; terminator band temp 250-280 K; ICM X-ray flux elevated vs Solar neighbourhood"
+        },
+        {
+          "id": "ngc1272-s002-c",
+          "label": "NGC1272 Beta II",
+          "type": "ice_world",
+          "radius_earth": 0.62,
+          "mass_earth": 0.25,
+          "period_days": 78,
+          "semi_major_au": 0.2,
+          "eq_temp_k": 108,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 1302,
+    "seed": 1547
+  }
+}

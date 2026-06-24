@@ -1,0 +1,128 @@
+{
+  "galaxy_id": "ESO137-006",
+  "galaxy_name": "ESO137-006",
+  "galaxy_hubble": "cD",
+  "cluster": "Norma Cluster",
+  "cluster_slug": "norma",
+  "cluster_dist_mpc": 65.0,
+  "environment": {
+    "description": "ESO137-006 (cD) situated in the dense cluster core, subject to strong ICM ram pressure. ICM stress 0.48; host population Teff ≈ 3709 K, Fe/H +0.19. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 3 star system(s), 3 planet(s) generated. Observational anchor: Chandra.",
+    "radiation_factor": 2.44,
+    "metallicity_feh": 0.19,
+    "agn": false,
+    "cooling_flow": true,
+    "ram_pressure": true,
+    "merger": false
+  },
+  "placement_notes": {
+    "v1": "ESO137-006 (cD) situated in the dense cluster core, subject to strong ICM ram pressure. ICM stress 0.48; host population Teff ≈ 3709 K, Fe/H +0.19. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 3 star system(s), 3 planet(s) generated. Observational anchor: Chandra.",
+    "open_questions": [],
+    "nft_zones": [
+      "core-zone-chandra"
+    ]
+  },
+  "generation": "v1-procedural",
+  "provenance": {
+    "script": "generate_cluster_starsystems.py",
+    "algorithm_version": "1.0",
+    "architecture_version": "1.0",
+    "seed_source": "ESO137-006",
+    "generated_at": "2026-05-26T17:52:08.274511+00:00",
+    "inputs": {
+      "cluster_zone": "core",
+      "icm_stress": 0.479,
+      "metallicity_fe_h": 0.19,
+      "planet_bias": "ancient_cold_rocky",
+      "star_teff_k": 3709,
+      "max_orbit_au": 2.9,
+      "gas_giant_prob": 0.1,
+      "anchor_telescope": "Chandra",
+      "estimated_planets": 2
+    },
+    "observatory_report": "ESO137-006 (cD) situated in the dense cluster core, subject to strong ICM ram pressure. ICM stress 0.48; host population Teff ≈ 3709 K, Fe/H +0.19. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 3 star system(s), 3 planet(s) generated. Observational anchor: Chandra."
+  },
+  "star_systems": [
+    {
+      "id": "eso137-006-s001",
+      "label": "ESO137-006 — Prime",
+      "spectral_type": "M2V",
+      "mass_sol": 0.403,
+      "feh": 0.205,
+      "age_gyr": 11.6,
+      "luminosity_sol": 0.02845,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Core zone; ICM stress 0.48; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "eso137-006-s001-b",
+          "label": "ESO137-006 1 B",
+          "type": "rocky_barren",
+          "radius_earth": 0.69,
+          "mass_earth": 0.22,
+          "period_days": 6.4,
+          "semi_major_au": 0.05,
+          "eq_temp_k": 467,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "eso137-006-s002",
+      "label": "ESO137-006 — Beta",
+      "spectral_type": "M0V",
+      "mass_sol": 0.524,
+      "feh": 0.209,
+      "age_gyr": 11.7,
+      "luminosity_sol": 0.07536,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Core zone; ICM stress 0.48; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "eso137-006-s002-b",
+          "label": "ESO137-006 2 B",
+          "type": "hot_rocky",
+          "radius_earth": 0.99,
+          "mass_earth": 1.35,
+          "period_days": 6.7,
+          "semi_major_au": 0.056,
+          "eq_temp_k": 564,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "eso137-006-s003",
+      "label": "ESO137-006 — Gamma",
+      "spectral_type": "M2V",
+      "mass_sol": 0.403,
+      "feh": 0.203,
+      "age_gyr": 12.0,
+      "luminosity_sol": 0.02845,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Core zone; ICM stress 0.48; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "eso137-006-s003-b",
+          "label": "ESO137-006 3 B",
+          "type": "rocky_barren",
+          "radius_earth": 0.85,
+          "mass_earth": 0.87,
+          "period_days": 6.4,
+          "semi_major_au": 0.05,
+          "eq_temp_k": 467,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 3683,
+    "seed": 2924
+  }
+}

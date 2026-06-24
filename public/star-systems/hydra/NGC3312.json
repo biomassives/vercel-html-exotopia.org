@@ -1,0 +1,128 @@
+{
+  "galaxy_id": "NGC3312",
+  "galaxy_name": "NGC3312",
+  "galaxy_hubble": "Sb",
+  "cluster": "Hydra Cluster",
+  "cluster_slug": "hydra",
+  "cluster_dist_mpc": 59.0,
+  "environment": {
+    "description": "NGC3312 (Sb) situated in the inner cluster region, within significant ICM influence. ICM stress 0.17; host population Teff ≈ 4775 K, Fe/H +0.10. Architecture favours mixed architecture — inner rocky worlds alongside outer ice giants or mini-Neptunes. 3 star system(s), 3 planet(s) generated. Observational anchor: Chandra/Hubble.",
+    "radiation_factor": 1.5,
+    "metallicity_feh": 0.102,
+    "agn": false,
+    "cooling_flow": false,
+    "ram_pressure": false,
+    "merger": false
+  },
+  "placement_notes": {
+    "v1": "NGC3312 (Sb) situated in the inner cluster region, within significant ICM influence. ICM stress 0.17; host population Teff ≈ 4775 K, Fe/H +0.10. Architecture favours mixed architecture — inner rocky worlds alongside outer ice giants or mini-Neptunes. 3 star system(s), 3 planet(s) generated. Observational anchor: Chandra/Hubble.",
+    "open_questions": [],
+    "nft_zones": [
+      "inner-zone-chandra-hubble"
+    ]
+  },
+  "generation": "v1-procedural",
+  "provenance": {
+    "script": "generate_cluster_starsystems.py",
+    "algorithm_version": "1.0",
+    "architecture_version": "1.0",
+    "seed_source": "NGC3312",
+    "generated_at": "2026-05-26T17:52:08.009703+00:00",
+    "inputs": {
+      "cluster_zone": "inner",
+      "icm_stress": 0.165,
+      "metallicity_fe_h": 0.102,
+      "planet_bias": "mixed",
+      "star_teff_k": 4775,
+      "max_orbit_au": 17.8,
+      "gas_giant_prob": 0.4,
+      "anchor_telescope": "Chandra/Hubble",
+      "estimated_planets": 2
+    },
+    "observatory_report": "NGC3312 (Sb) situated in the inner cluster region, within significant ICM influence. ICM stress 0.17; host population Teff ≈ 4775 K, Fe/H +0.10. Architecture favours mixed architecture — inner rocky worlds alongside outer ice giants or mini-Neptunes. 3 star system(s), 3 planet(s) generated. Observational anchor: Chandra/Hubble."
+  },
+  "star_systems": [
+    {
+      "id": "ngc3312-s001",
+      "label": "NGC3312 — Prime",
+      "spectral_type": "K5V",
+      "mass_sol": 0.743,
+      "feh": 0.089,
+      "age_gyr": 9.4,
+      "luminosity_sol": 0.30479,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Inner zone; ICM stress 0.17; bias: mixed",
+      "planets": [
+        {
+          "id": "ngc3312-s001-b",
+          "label": "NGC3312 1 B",
+          "type": "hot_rocky",
+          "radius_earth": 0.68,
+          "mass_earth": 2.04,
+          "period_days": 8.4,
+          "semi_major_au": 0.073,
+          "eq_temp_k": 700,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "ngc3312-s002",
+      "label": "NGC3312 — Beta",
+      "spectral_type": "K5V",
+      "mass_sol": 0.743,
+      "feh": 0.12,
+      "age_gyr": 10.8,
+      "luminosity_sol": 0.30479,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Inner zone; ICM stress 0.17; bias: mixed",
+      "planets": [
+        {
+          "id": "ngc3312-s002-b",
+          "label": "NGC3312 2 B",
+          "type": "hot_rocky",
+          "radius_earth": 1.09,
+          "mass_earth": 1.39,
+          "period_days": 8.4,
+          "semi_major_au": 0.073,
+          "eq_temp_k": 700,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "ngc3312-s003",
+      "label": "NGC3312 — Gamma",
+      "spectral_type": "K5V",
+      "mass_sol": 0.743,
+      "feh": 0.111,
+      "age_gyr": 11.0,
+      "luminosity_sol": 0.30479,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Inner zone; ICM stress 0.17; bias: mixed",
+      "planets": [
+        {
+          "id": "ngc3312-s003-b",
+          "label": "NGC3312 3 B",
+          "type": "rocky_barren",
+          "radius_earth": 0.7,
+          "mass_earth": 2.13,
+          "period_days": 8.4,
+          "semi_major_au": 0.073,
+          "eq_temp_k": 700,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 2273,
+    "seed": 1524
+  }
+}

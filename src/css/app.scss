@@ -1,0 +1,99 @@
+// ── Exotopia global styles ───────────────────────────────────────────────────
+// Space-dark theme overrides on top of Quasar dark mode
+
+:root {
+  --space-bg:        #05080f;
+  --space-surface:   #0a0f1e;
+  --space-card:      #111827;
+  --space-border:    rgba(100, 160, 255, 0.18);
+  --space-glow:      rgba(100, 160, 255, 0.08);
+  --star-white:      #e8f4ff;
+  --star-blue:       #9bb0ff;
+  --text-dim:        #6b7a99;
+  --accent-cyan:     #31ccec;
+  --accent-purple:   #9c27b0;
+}
+
+// Quasar body background
+body {
+  background: var(--space-bg);
+}
+
+// ── Scrollbars ───────────────────────────────────────────────────────────────
+::-webkit-scrollbar             { width: 6px; height: 6px; }
+::-webkit-scrollbar-track       { background: var(--space-surface); }
+::-webkit-scrollbar-thumb       { background: #2a3560; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #3a4580; }
+
+// ── Glass card ────────────────────────────────────────────────────────────────
+.glass-card {
+  background:    rgba(10, 15, 30, 0.72) !important;
+  border:        1px solid var(--space-border) !important;
+  backdrop-filter: blur(12px);
+}
+
+// ── Overlay panels (used by surface view, galaxy view) ───────────────────────
+.space-overlay {
+  position:  absolute;
+  background: rgba(5, 8, 15, 0.78);
+  border:    1px solid var(--space-border);
+  border-radius: 6px;
+  backdrop-filter: blur(8px);
+  color: var(--star-white);
+  font-family: 'Roboto Mono', monospace;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+// ── Canvas fills ─────────────────────────────────────────────────────────────
+.three-canvas {
+  display:  block;
+  width:    100%;
+  height:   100%;
+  position: absolute;
+  top: 0; left: 0;
+  outline: none;
+}
+
+// ── Visualization overlay pages ───────────────────────────────────────────────
+// Used by CosmicPage, GalaxyPage, SurfaceViewPage.
+// The shared Three.js canvas in MainLayout renders behind these transparent pages.
+// The page itself is the click/drag/raycast surface (see @click="onClick" etc. in
+// each page) — it must stay pointer-events:auto, or clicks on "empty" scene regions
+// (anywhere a UI panel doesn't sit — most of the screen) fall through to
+// q-page-container and never reach the handler. Panels that need to swallow clicks
+// before they reach the scene (e.g. WelcomeOverlay) use @click.stop locally.
+.viz-overlay-page {
+  background: transparent !important;
+  position:   relative;
+  height:     calc(100vh - 44px);
+  overflow:   hidden;
+}
+
+// ── Fade transition (used in overlays) ───────────────────────────────────────
+.fade-enter-active,
+.fade-leave-active { transition: opacity 0.25s ease; }
+.fade-enter-from,
+.fade-leave-to     { opacity: 0; }
+
+// ── Legend dot ───────────────────────────────────────────────────────────────
+.legend-dot {
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+// ── Quasar layout adjustments ─────────────────────────────────────────────────
+.q-drawer {
+  background: var(--space-surface) !important;
+  border-right: 1px solid var(--space-border) !important;
+}
+
+.q-header {
+  background: rgba(5, 8, 15, 0.92) !important;
+  border-bottom: 1px solid var(--space-border) !important;
+  backdrop-filter: blur(12px);
+}
+
+.q-page {
+  background: var(--space-bg);
+}

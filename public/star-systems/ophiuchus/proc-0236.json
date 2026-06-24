@@ -1,0 +1,112 @@
+{
+  "galaxy_id": "proc-0236",
+  "galaxy_name": "proc-0236",
+  "galaxy_hubble": "dE",
+  "cluster": "Ophiuchus Cluster",
+  "cluster_slug": "ophiuchus",
+  "cluster_dist_mpc": 120.0,
+  "environment": {
+    "description": "proc-0236 (dE) situated in the inner cluster region, within significant ICM influence. ICM stress 0.45; host population Teff ≈ 12372 K, Fe/H +0.00. Architecture favours mixed architecture — inner rocky worlds alongside outer ice giants or mini-Neptunes. 1 star system(s), 4 planet(s) generated. Observational anchor: Chandra/Hubble.",
+    "radiation_factor": 2.35,
+    "metallicity_feh": 0.0,
+    "agn": false,
+    "cooling_flow": false,
+    "ram_pressure": true,
+    "merger": false
+  },
+  "placement_notes": {
+    "v1": "proc-0236 (dE) situated in the inner cluster region, within significant ICM influence. ICM stress 0.45; host population Teff ≈ 12372 K, Fe/H +0.00. Architecture favours mixed architecture — inner rocky worlds alongside outer ice giants or mini-Neptunes. 1 star system(s), 4 planet(s) generated. Observational anchor: Chandra/Hubble.",
+    "open_questions": [],
+    "nft_zones": [
+      "inner-zone-chandra-hubble"
+    ]
+  },
+  "generation": "v1-procedural",
+  "provenance": {
+    "script": "generate_cluster_starsystems.py",
+    "algorithm_version": "1.0",
+    "architecture_version": "1.0",
+    "seed_source": "proc-0236",
+    "generated_at": "2026-05-26T17:52:09.423969+00:00",
+    "inputs": {
+      "cluster_zone": "inner",
+      "icm_stress": 0.45,
+      "metallicity_fe_h": 0.0,
+      "planet_bias": "mixed",
+      "star_teff_k": 12372,
+      "max_orbit_au": 14.0,
+      "gas_giant_prob": 0.4,
+      "anchor_telescope": "Chandra/Hubble",
+      "estimated_planets": 4
+    },
+    "observatory_report": "proc-0236 (dE) situated in the inner cluster region, within significant ICM influence. ICM stress 0.45; host population Teff ≈ 12372 K, Fe/H +0.00. Architecture favours mixed architecture — inner rocky worlds alongside outer ice giants or mini-Neptunes. 1 star system(s), 4 planet(s) generated. Observational anchor: Chandra/Hubble."
+  },
+  "star_systems": [
+    {
+      "id": "proc-0236-s001",
+      "label": "proc-0236 — Prime",
+      "spectral_type": "A7V",
+      "mass_sol": 1.8,
+      "feh": 0.005,
+      "age_gyr": 10.3,
+      "luminosity_sol": 10.4976,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Inner zone; ICM stress 0.45; bias: mixed",
+      "planets": [
+        {
+          "id": "proc-0236-s001-b",
+          "label": "PROC-0236 1 B",
+          "type": "rocky_barren",
+          "radius_earth": 1.08,
+          "mass_earth": 0.5,
+          "period_days": 30.8,
+          "semi_major_au": 0.234,
+          "eq_temp_k": 947,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "proc-0236-s001-c",
+          "label": "PROC-0236 1 C",
+          "type": "hot_rocky",
+          "radius_earth": 0.92,
+          "mass_earth": 0.65,
+          "period_days": 51.4,
+          "semi_major_au": 0.3292,
+          "eq_temp_k": 799,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "proc-0236-s001-d",
+          "label": "PROC-0236 1 D",
+          "type": "rocky_barren",
+          "radius_earth": 1.12,
+          "mass_earth": 1.0,
+          "period_days": 102.8,
+          "semi_major_au": 0.5223,
+          "eq_temp_k": 634,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "proc-0236-s001-e",
+          "label": "PROC-0236 1 E",
+          "type": "gas_giant",
+          "radius_earth": 9.87,
+          "mass_earth": 201.42,
+          "period_days": 217.8,
+          "semi_major_au": 0.8617,
+          "eq_temp_k": 493,
+          "atmosphere": "h2_he_ch4",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 301,
+    "seed": 2826
+  }
+}

@@ -1,0 +1,150 @@
+{
+  "galaxy_id": "NGC4621",
+  "galaxy_name": "M59",
+  "galaxy_hubble": "E",
+  "cluster": "Virgo Cluster",
+  "cluster_slug": "virgo",
+  "cluster_dist_mpc": 16.5,
+  "environment": {
+    "description": "NGC4621 (E) situated in the infall region at the cluster periphery, largely ICM-free. ICM stress 0.02; host population Teff ≈ 4178 K, Fe/H +0.19. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 2 star system(s), 6 planet(s) generated. Observational anchor: HST/ATLAS.",
+    "radiation_factor": 1.05,
+    "metallicity_feh": 0.187,
+    "agn": false,
+    "cooling_flow": false,
+    "ram_pressure": false,
+    "merger": false
+  },
+  "placement_notes": {
+    "v1": "NGC4621 (E) situated in the infall region at the cluster periphery, largely ICM-free. ICM stress 0.02; host population Teff ≈ 4178 K, Fe/H +0.19. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 2 star system(s), 6 planet(s) generated. Observational anchor: HST/ATLAS.",
+    "open_questions": [],
+    "nft_zones": [
+      "infall-zone-hst-atlas"
+    ]
+  },
+  "generation": "v1-procedural",
+  "provenance": {
+    "script": "generate_cluster_starsystems.py",
+    "algorithm_version": "1.0",
+    "architecture_version": "1.0",
+    "seed_source": "NGC4621",
+    "generated_at": "2026-05-26T17:51:34.789192+00:00",
+    "inputs": {
+      "cluster_zone": "infall",
+      "icm_stress": 0.018,
+      "metallicity_fe_h": 0.187,
+      "planet_bias": "ancient_cold_rocky",
+      "star_teff_k": 4178,
+      "max_orbit_au": 95.4,
+      "gas_giant_prob": 0.22,
+      "anchor_telescope": "HST/ATLAS",
+      "estimated_planets": 6
+    },
+    "observatory_report": "NGC4621 (E) situated in the infall region at the cluster periphery, largely ICM-free. ICM stress 0.02; host population Teff ≈ 4178 K, Fe/H +0.19. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 2 star system(s), 6 planet(s) generated. Observational anchor: HST/ATLAS."
+  },
+  "star_systems": [
+    {
+      "id": "ngc4621-s001",
+      "label": "M59 — Prime",
+      "spectral_type": "M0V",
+      "mass_sol": 0.524,
+      "feh": 0.184,
+      "age_gyr": 7.0,
+      "luminosity_sol": 0.07533,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "frontier",
+      "environment_note": "Infall zone; ICM stress 0.02; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "ngc4621-s001-b",
+          "label": "NGC4621 1 B",
+          "type": "hot_rocky",
+          "radius_earth": 1.24,
+          "mass_earth": 0.48,
+          "period_days": 6.7,
+          "semi_major_au": 0.056,
+          "eq_temp_k": 563,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "ngc4621-s001-c",
+          "label": "NGC4621 1 C",
+          "type": "rocky_barren",
+          "radius_earth": 0.68,
+          "mass_earth": 0.68,
+          "period_days": 16.3,
+          "semi_major_au": 0.1015,
+          "eq_temp_k": 418,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "ngc4621-s001-d",
+          "label": "NGC4621 1 D",
+          "type": "super_earth",
+          "radius_earth": 1.3,
+          "mass_earth": 6.38,
+          "period_days": 40.3,
+          "semi_major_au": 0.1854,
+          "eq_temp_k": 309,
+          "atmosphere": "thick_n2_co2",
+          "settlement_tier": "frontier"
+        }
+      ]
+    },
+    {
+      "id": "ngc4621-s002",
+      "label": "M59 — Beta",
+      "spectral_type": "K7V",
+      "mass_sol": 0.645,
+      "feh": 0.203,
+      "age_gyr": 6.8,
+      "luminosity_sol": 0.17285,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Infall zone; ICM stress 0.02; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "ngc4621-s002-b",
+          "label": "NGC4621 2 B",
+          "type": "hot_rocky",
+          "radius_earth": 0.74,
+          "mass_earth": 3.46,
+          "period_days": 7.5,
+          "semi_major_au": 0.065,
+          "eq_temp_k": 644,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "ngc4621-s002-c",
+          "label": "NGC4621 2 C",
+          "type": "rocky_barren",
+          "radius_earth": 0.67,
+          "mass_earth": 0.53,
+          "period_days": 18.5,
+          "semi_major_au": 0.1182,
+          "eq_temp_k": 477,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "ngc4621-s002-d",
+          "label": "NGC4621 2 D",
+          "type": "rocky_barren",
+          "radius_earth": 0.66,
+          "mass_earth": 2.35,
+          "period_days": 45.1,
+          "semi_major_au": 0.2141,
+          "eq_temp_k": 354,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 1485,
+    "seed": 1542
+  }
+}

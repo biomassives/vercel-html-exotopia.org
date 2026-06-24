@@ -1,0 +1,140 @@
+{
+  "galaxy_id": "NGC4921",
+  "galaxy_name": "NGC4921",
+  "galaxy_hubble": "Sa",
+  "cluster": "Coma Cluster",
+  "cluster_slug": "coma",
+  "cluster_dist_mpc": 99.0,
+  "environment": {
+    "description": "NGC4921 (Sa) situated in the infall region at the cluster periphery, largely ICM-free. ICM stress 0.06; host population Teff ≈ 5182 K, Fe/H -0.04. Architecture favours wide-orbit gas giants with potential moon settlement zones. 3 star system(s), 4 planet(s) generated. Observational anchor: JWST.",
+    "radiation_factor": 1.18,
+    "metallicity_feh": -0.038,
+    "agn": false,
+    "cooling_flow": false,
+    "ram_pressure": false,
+    "merger": false
+  },
+  "placement_notes": {
+    "v1": "NGC4921 (Sa) situated in the infall region at the cluster periphery, largely ICM-free. ICM stress 0.06; host population Teff ≈ 5182 K, Fe/H -0.04. Architecture favours wide-orbit gas giants with potential moon settlement zones. 3 star system(s), 4 planet(s) generated. Observational anchor: JWST.",
+    "open_questions": [],
+    "nft_zones": [
+      "infall-zone-jwst"
+    ]
+  },
+  "generation": "v1-procedural",
+  "provenance": {
+    "script": "generate_cluster_starsystems.py",
+    "algorithm_version": "1.0",
+    "architecture_version": "1.0",
+    "seed_source": "NGC4921",
+    "generated_at": "2026-05-26T17:52:06.255705+00:00",
+    "inputs": {
+      "cluster_zone": "infall",
+      "icm_stress": 0.059,
+      "metallicity_fe_h": -0.038,
+      "planet_bias": "jovian_wide",
+      "star_teff_k": 5182,
+      "max_orbit_au": 82.1,
+      "gas_giant_prob": 0.657,
+      "anchor_telescope": "JWST",
+      "estimated_planets": 4
+    },
+    "observatory_report": "NGC4921 (Sa) situated in the infall region at the cluster periphery, largely ICM-free. ICM stress 0.06; host population Teff ≈ 5182 K, Fe/H -0.04. Architecture favours wide-orbit gas giants with potential moon settlement zones. 3 star system(s), 4 planet(s) generated. Observational anchor: JWST."
+  },
+  "star_systems": [
+    {
+      "id": "ngc4921-s001",
+      "label": "NGC4921 — Prime",
+      "spectral_type": "K2V",
+      "mass_sol": 0.829,
+      "feh": -0.049,
+      "age_gyr": 7.4,
+      "luminosity_sol": 0.4717,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Infall zone; ICM stress 0.06; bias: jovian_wide",
+      "planets": [
+        {
+          "id": "ngc4921-s001-b",
+          "label": "NGC4921 1 B",
+          "type": "gas_giant",
+          "radius_earth": 9.57,
+          "mass_earth": 178.86,
+          "period_days": 18.8,
+          "semi_major_au": 0.13,
+          "eq_temp_k": 585,
+          "atmosphere": "h2_he_ch4",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "ngc4921-s001-c",
+          "label": "NGC4921 1 C",
+          "type": "terran",
+          "radius_earth": 1.23,
+          "mass_earth": 1.95,
+          "period_days": 61.4,
+          "semi_major_au": 0.2862,
+          "eq_temp_k": 394,
+          "atmosphere": "n2_o2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "ngc4921-s002",
+      "label": "NGC4921 — Beta",
+      "spectral_type": "G9V",
+      "mass_sol": 0.889,
+      "feh": -0.059,
+      "age_gyr": 7.6,
+      "luminosity_sol": 0.62362,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Infall zone; ICM stress 0.06; bias: jovian_wide",
+      "planets": [
+        {
+          "id": "ngc4921-s002-b",
+          "label": "NGC4921 2 B",
+          "type": "gas_giant",
+          "radius_earth": 8.48,
+          "mass_earth": 237.24,
+          "period_days": 20.3,
+          "semi_major_au": 0.14,
+          "eq_temp_k": 605,
+          "atmosphere": "h2_he_ch4",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "ngc4921-s003",
+      "label": "NGC4921 — Gamma",
+      "spectral_type": "K2V",
+      "mass_sol": 0.829,
+      "feh": -0.052,
+      "age_gyr": 6.2,
+      "luminosity_sol": 0.4717,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Infall zone; ICM stress 0.06; bias: jovian_wide",
+      "planets": [
+        {
+          "id": "ngc4921-s003-b",
+          "label": "NGC4921 3 B",
+          "type": "rocky_barren",
+          "radius_earth": 0.93,
+          "mass_earth": 2.17,
+          "period_days": 18.8,
+          "semi_major_au": 0.13,
+          "eq_temp_k": 585,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 1935,
+    "seed": 1557
+  }
+}

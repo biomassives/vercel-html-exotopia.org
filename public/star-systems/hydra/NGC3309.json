@@ -1,0 +1,176 @@
+{
+  "galaxy_id": "NGC3309",
+  "galaxy_name": "NGC3309",
+  "galaxy_hubble": "E",
+  "cluster": "Hydra Cluster",
+  "cluster_slug": "hydra",
+  "cluster_dist_mpc": 59.0,
+  "environment": {
+    "description": "NGC3309 (E) situated in the inner cluster region, within significant ICM influence. ICM stress 0.17; host population Teff ≈ 4849 K, Fe/H +0.16. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 3 star system(s), 7 planet(s) generated. Observational anchor: Chandra/Hubble.",
+    "radiation_factor": 1.5,
+    "metallicity_feh": 0.162,
+    "agn": false,
+    "cooling_flow": false,
+    "ram_pressure": false,
+    "merger": false
+  },
+  "placement_notes": {
+    "v1": "NGC3309 (E) situated in the inner cluster region, within significant ICM influence. ICM stress 0.17; host population Teff ≈ 4849 K, Fe/H +0.16. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 3 star system(s), 7 planet(s) generated. Observational anchor: Chandra/Hubble.",
+    "open_questions": [],
+    "nft_zones": [
+      "inner-zone-chandra-hubble"
+    ]
+  },
+  "generation": "v1-procedural",
+  "provenance": {
+    "script": "generate_cluster_starsystems.py",
+    "algorithm_version": "1.0",
+    "architecture_version": "1.0",
+    "seed_source": "NGC3309",
+    "generated_at": "2026-05-26T17:52:08.005961+00:00",
+    "inputs": {
+      "cluster_zone": "inner",
+      "icm_stress": 0.165,
+      "metallicity_fe_h": 0.162,
+      "planet_bias": "ancient_cold_rocky",
+      "star_teff_k": 4849,
+      "max_orbit_au": 11.9,
+      "gas_giant_prob": 0.22,
+      "anchor_telescope": "Chandra/Hubble",
+      "estimated_planets": 7
+    },
+    "observatory_report": "NGC3309 (E) situated in the inner cluster region, within significant ICM influence. ICM stress 0.17; host population Teff ≈ 4849 K, Fe/H +0.16. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 3 star system(s), 7 planet(s) generated. Observational anchor: Chandra/Hubble."
+  },
+  "star_systems": [
+    {
+      "id": "ngc3309-s001",
+      "label": "NGC3309 — Prime",
+      "spectral_type": "K2V",
+      "mass_sol": 0.835,
+      "feh": 0.15,
+      "age_gyr": 10.4,
+      "luminosity_sol": 0.487,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Inner zone; ICM stress 0.17; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "ngc3309-s001-b",
+          "label": "NGC3309 1 B",
+          "type": "rocky_barren",
+          "radius_earth": 1.01,
+          "mass_earth": 2.26,
+          "period_days": 9.4,
+          "semi_major_au": 0.082,
+          "eq_temp_k": 743,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "ngc3309-s001-c",
+          "label": "NGC3309 1 C",
+          "type": "hot_rocky",
+          "radius_earth": 1.26,
+          "mass_earth": 2.87,
+          "period_days": 16.0,
+          "semi_major_au": 0.1171,
+          "eq_temp_k": 621,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "ngc3309-s001-d",
+          "label": "NGC3309 1 D",
+          "type": "rocky_barren",
+          "radius_earth": 0.94,
+          "mass_earth": 0.58,
+          "period_days": 32.9,
+          "semi_major_au": 0.1891,
+          "eq_temp_k": 489,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "ngc3309-s002",
+      "label": "NGC3309 — Beta",
+      "spectral_type": "K5V",
+      "mass_sol": 0.745,
+      "feh": 0.144,
+      "age_gyr": 10.4,
+      "luminosity_sol": 0.30771,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Inner zone; ICM stress 0.17; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "ngc3309-s002-b",
+          "label": "NGC3309 2 B",
+          "type": "hot_rocky",
+          "radius_earth": 0.61,
+          "mass_earth": 0.91,
+          "period_days": 8.3,
+          "semi_major_au": 0.073,
+          "eq_temp_k": 702,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "ngc3309-s002-c",
+          "label": "NGC3309 2 C",
+          "type": "hot_rocky",
+          "radius_earth": 1.26,
+          "mass_earth": 2.14,
+          "period_days": 18.8,
+          "semi_major_au": 0.1253,
+          "eq_temp_k": 535,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "ngc3309-s003",
+      "label": "NGC3309 — Gamma",
+      "spectral_type": "K5V",
+      "mass_sol": 0.745,
+      "feh": 0.145,
+      "age_gyr": 10.1,
+      "luminosity_sol": 0.30771,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Inner zone; ICM stress 0.17; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "ngc3309-s003-b",
+          "label": "NGC3309 3 B",
+          "type": "hot_rocky",
+          "radius_earth": 0.78,
+          "mass_earth": 1.05,
+          "period_days": 8.3,
+          "semi_major_au": 0.073,
+          "eq_temp_k": 702,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "ngc3309-s003-c",
+          "label": "NGC3309 3 C",
+          "type": "hot_rocky",
+          "radius_earth": 1.18,
+          "mass_earth": 0.74,
+          "period_days": 19.3,
+          "semi_major_au": 0.1278,
+          "eq_temp_k": 530,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 1364,
+    "seed": 1567
+  }
+}

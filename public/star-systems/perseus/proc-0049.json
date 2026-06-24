@@ -1,0 +1,114 @@
+{
+  "galaxy_id": "proc-0049",
+  "galaxy_name": "proc-0049",
+  "galaxy_hubble": "Irr",
+  "cluster": "Perseus Cluster",
+  "cluster_slug": "perseus",
+  "cluster_dist_mpc": 73.0,
+  "environment": {
+    "description": "proc-0049 (Irr) situated in the inner cluster region, within significant ICM influence. ICM stress 0.30; host population Teff ≈ 9246 K, Fe/H +0.07. Architecture favours mixed architecture — inner rocky worlds alongside outer ice giants or mini-Neptunes. 2 star system(s), 3 planet(s) generated. Observational anchor: Chandra/Hubble.",
+    "radiation_factor": 1.9,
+    "metallicity_feh": 0.074,
+    "agn": false,
+    "cooling_flow": false,
+    "ram_pressure": false,
+    "merger": false
+  },
+  "placement_notes": {
+    "v1": "proc-0049 (Irr) situated in the inner cluster region, within significant ICM influence. ICM stress 0.30; host population Teff ≈ 9246 K, Fe/H +0.07. Architecture favours mixed architecture — inner rocky worlds alongside outer ice giants or mini-Neptunes. 2 star system(s), 3 planet(s) generated. Observational anchor: Chandra/Hubble.",
+    "open_questions": [],
+    "nft_zones": [
+      "inner-zone-chandra-hubble"
+    ]
+  },
+  "generation": "v1-procedural",
+  "provenance": {
+    "script": "generate_cluster_starsystems.py",
+    "algorithm_version": "1.0",
+    "architecture_version": "1.0",
+    "seed_source": "proc-0049",
+    "generated_at": "2026-05-26T17:52:09.722437+00:00",
+    "inputs": {
+      "cluster_zone": "inner",
+      "icm_stress": 0.3,
+      "metallicity_fe_h": 0.074,
+      "planet_bias": "mixed",
+      "star_teff_k": 9246,
+      "max_orbit_au": 15.2,
+      "gas_giant_prob": 0.4,
+      "anchor_telescope": "Chandra/Hubble",
+      "estimated_planets": 3
+    },
+    "observatory_report": "proc-0049 (Irr) situated in the inner cluster region, within significant ICM influence. ICM stress 0.30; host population Teff ≈ 9246 K, Fe/H +0.07. Architecture favours mixed architecture — inner rocky worlds alongside outer ice giants or mini-Neptunes. 2 star system(s), 3 planet(s) generated. Observational anchor: Chandra/Hubble."
+  },
+  "star_systems": [
+    {
+      "id": "proc-0049-s001",
+      "label": "proc-0049 — Prime",
+      "spectral_type": "A7V",
+      "mass_sol": 1.805,
+      "feh": 0.08,
+      "age_gyr": 9.9,
+      "luminosity_sol": 10.62244,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Inner zone; ICM stress 0.30; bias: mixed",
+      "planets": [
+        {
+          "id": "proc-0049-s001-b",
+          "label": "PROC-0049 1 B",
+          "type": "rocky_barren",
+          "radius_earth": 0.81,
+          "mass_earth": 1.63,
+          "period_days": 31.2,
+          "semi_major_au": 0.236,
+          "eq_temp_k": 946,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "proc-0049-s001-c",
+          "label": "PROC-0049 1 C",
+          "type": "gas_giant",
+          "radius_earth": 11.08,
+          "mass_earth": 184.78,
+          "period_days": 65.0,
+          "semi_major_au": 0.3852,
+          "eq_temp_k": 740,
+          "atmosphere": "h2_he_ch4",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "proc-0049-s002",
+      "label": "proc-0049 — Beta",
+      "spectral_type": "A7V",
+      "mass_sol": 1.805,
+      "feh": 0.06,
+      "age_gyr": 9.6,
+      "luminosity_sol": 10.62244,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Inner zone; ICM stress 0.30; bias: mixed",
+      "planets": [
+        {
+          "id": "proc-0049-s002-b",
+          "label": "PROC-0049 2 B",
+          "type": "hot_jupiter",
+          "radius_earth": 12.42,
+          "mass_earth": 477.53,
+          "period_days": 31.2,
+          "semi_major_au": 0.236,
+          "eq_temp_k": 946,
+          "atmosphere": "h2_he_na_k",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 668,
+    "seed": 2847
+  }
+}

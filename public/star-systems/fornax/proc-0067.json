@@ -1,0 +1,114 @@
+{
+  "galaxy_id": "proc-0067",
+  "galaxy_name": "proc-0067",
+  "galaxy_hubble": "E",
+  "cluster": "Fornax Cluster",
+  "cluster_slug": "fornax",
+  "cluster_dist_mpc": 19.0,
+  "environment": {
+    "description": "proc-0067 (E) situated in the dense cluster core, subject to strong ICM ram pressure. ICM stress 0.11; host population Teff ≈ 3321 K, Fe/H +0.28. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 2 star system(s), 3 planet(s) generated. Observational anchor: Chandra/Hubble.",
+    "radiation_factor": 1.32,
+    "metallicity_feh": 0.282,
+    "agn": false,
+    "cooling_flow": true,
+    "ram_pressure": false,
+    "merger": false
+  },
+  "placement_notes": {
+    "v1": "proc-0067 (E) situated in the dense cluster core, subject to strong ICM ram pressure. ICM stress 0.11; host population Teff ≈ 3321 K, Fe/H +0.28. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 2 star system(s), 3 planet(s) generated. Observational anchor: Chandra/Hubble.",
+    "open_questions": [],
+    "nft_zones": [
+      "core-zone-chandra-hubble"
+    ]
+  },
+  "generation": "v1-procedural",
+  "provenance": {
+    "script": "generate_cluster_starsystems.py",
+    "algorithm_version": "1.0",
+    "architecture_version": "1.0",
+    "seed_source": "proc-0067",
+    "generated_at": "2026-05-26T17:52:07.461720+00:00",
+    "inputs": {
+      "cluster_zone": "core",
+      "icm_stress": 0.107,
+      "metallicity_fe_h": 0.282,
+      "planet_bias": "ancient_cold_rocky",
+      "star_teff_k": 3321,
+      "max_orbit_au": 2.2,
+      "gas_giant_prob": 0.1,
+      "anchor_telescope": "Chandra/Hubble",
+      "estimated_planets": 3
+    },
+    "observatory_report": "proc-0067 (E) situated in the dense cluster core, subject to strong ICM ram pressure. ICM stress 0.11; host population Teff ≈ 3321 K, Fe/H +0.28. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 2 star system(s), 3 planet(s) generated. Observational anchor: Chandra/Hubble."
+  },
+  "star_systems": [
+    {
+      "id": "proc-0067-s001",
+      "label": "proc-0067 — Prime",
+      "spectral_type": "M6V",
+      "mass_sol": 0.182,
+      "feh": 0.277,
+      "age_gyr": 12.8,
+      "luminosity_sol": 0.00457,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "frontier",
+      "environment_note": "Core zone; ICM stress 0.11; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "proc-0067-s001-b",
+          "label": "PROC-0067 1 B",
+          "type": "super_earth",
+          "radius_earth": 1.66,
+          "mass_earth": 11.65,
+          "period_days": 7.9,
+          "semi_major_au": 0.044,
+          "eq_temp_k": 315,
+          "atmosphere": "n2_co2",
+          "settlement_tier": "frontier"
+        },
+        {
+          "id": "proc-0067-s001-c",
+          "label": "PROC-0067 1 C",
+          "type": "rocky_barren",
+          "radius_earth": 0.93,
+          "mass_earth": 1.45,
+          "period_days": 15.2,
+          "semi_major_au": 0.0681,
+          "eq_temp_k": 253,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "proc-0067-s002",
+      "label": "proc-0067 — Beta",
+      "spectral_type": "M4V",
+      "mass_sol": 0.283,
+      "feh": 0.257,
+      "age_gyr": 12.2,
+      "luminosity_sol": 0.01263,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Core zone; ICM stress 0.11; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "proc-0067-s002-b",
+          "label": "PROC-0067 2 B",
+          "type": "super_earth",
+          "radius_earth": 1.44,
+          "mass_earth": 7.75,
+          "period_days": 7.0,
+          "semi_major_au": 0.047,
+          "eq_temp_k": 393,
+          "atmosphere": "thick_co2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 1412,
+    "seed": 2845
+  }
+}

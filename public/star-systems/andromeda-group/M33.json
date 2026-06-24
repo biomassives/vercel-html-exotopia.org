@@ -1,0 +1,190 @@
+{
+  "galaxy_id": "M33",
+  "galaxy_name": "M33 — Triangulum",
+  "galaxy_hubble": "Sa",
+  "cluster": "Andromeda Group",
+  "cluster_slug": "andromeda-group",
+  "cluster_dist_mpc": 0.77,
+  "environment": {
+    "description": "M33 (Sa) situated in the infall region at the cluster periphery, largely ICM-free. ICM stress 0.00; host population Teff ≈ 5869 K, Fe/H +0.16. Architecture favours wide-orbit gas giants with potential moon settlement zones. 4 star system(s), 7 planet(s) generated. Observational anchor: JWST.",
+    "radiation_factor": 1.0,
+    "metallicity_feh": 0.158,
+    "agn": false,
+    "cooling_flow": false,
+    "ram_pressure": false,
+    "merger": false
+  },
+  "placement_notes": {
+    "v1": "M33 (Sa) situated in the infall region at the cluster periphery, largely ICM-free. ICM stress 0.00; host population Teff ≈ 5869 K, Fe/H +0.16. Architecture favours wide-orbit gas giants with potential moon settlement zones. 4 star system(s), 7 planet(s) generated. Observational anchor: JWST.",
+    "open_questions": [],
+    "nft_zones": [
+      "infall-zone-jwst"
+    ]
+  },
+  "generation": "v1-procedural",
+  "provenance": {
+    "script": "generate_cluster_starsystems.py",
+    "algorithm_version": "1.0",
+    "architecture_version": "1.0",
+    "seed_source": "M33",
+    "generated_at": "2026-05-26T17:52:05.310338+00:00",
+    "inputs": {
+      "cluster_zone": "infall",
+      "icm_stress": 0.0,
+      "metallicity_fe_h": 0.158,
+      "planet_bias": "jovian_wide",
+      "star_teff_k": 5869,
+      "max_orbit_au": 68.0,
+      "gas_giant_prob": 0.65,
+      "anchor_telescope": "JWST",
+      "estimated_planets": 7
+    },
+    "observatory_report": "M33 (Sa) situated in the infall region at the cluster periphery, largely ICM-free. ICM stress 0.00; host population Teff ≈ 5869 K, Fe/H +0.16. Architecture favours wide-orbit gas giants with potential moon settlement zones. 4 star system(s), 7 planet(s) generated. Observational anchor: JWST."
+  },
+  "star_systems": [
+    {
+      "id": "m33-s001",
+      "label": "M33 — Triangulum — Prime",
+      "spectral_type": "F9V",
+      "mass_sol": 1.147,
+      "feh": 0.153,
+      "age_gyr": 6.7,
+      "luminosity_sol": 1.73206,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Infall zone; ICM stress 0.00; bias: jovian_wide",
+      "planets": [
+        {
+          "id": "m33-s001-b",
+          "label": "M33 1 B",
+          "type": "hot_rocky",
+          "radius_earth": 1.13,
+          "mass_earth": 0.52,
+          "period_days": 28.2,
+          "semi_major_au": 0.19,
+          "eq_temp_k": 670,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "m33-s001-c",
+          "label": "M33 1 C",
+          "type": "super_earth",
+          "radius_earth": 1.9,
+          "mass_earth": 4.51,
+          "period_days": 92.0,
+          "semi_major_au": 0.4176,
+          "eq_temp_k": 452,
+          "atmosphere": "thick_co2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "m33-s002",
+      "label": "M33 — Triangulum — Beta",
+      "spectral_type": "G2V",
+      "mass_sol": 1.037,
+      "feh": 0.148,
+      "age_gyr": 7.6,
+      "luminosity_sol": 1.15423,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Infall zone; ICM stress 0.00; bias: jovian_wide",
+      "planets": [
+        {
+          "id": "m33-s002-b",
+          "label": "M33 2 B",
+          "type": "rocky_barren",
+          "radius_earth": 0.58,
+          "mass_earth": 1.16,
+          "period_days": 24.5,
+          "semi_major_au": 0.167,
+          "eq_temp_k": 646,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "m33-s002-c",
+          "label": "M33 2 C",
+          "type": "gas_giant",
+          "radius_earth": 8.0,
+          "mass_earth": 245.34,
+          "period_days": 67.9,
+          "semi_major_au": 0.3296,
+          "eq_temp_k": 459,
+          "atmosphere": "h2_he_ch4",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "m33-s003",
+      "label": "M33 — Triangulum — Gamma",
+      "spectral_type": "F9V",
+      "mass_sol": 1.147,
+      "feh": 0.137,
+      "age_gyr": 7.9,
+      "luminosity_sol": 1.73206,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Infall zone; ICM stress 0.00; bias: jovian_wide",
+      "planets": [
+        {
+          "id": "m33-s003-b",
+          "label": "M33 3 B",
+          "type": "rocky_barren",
+          "radius_earth": 1.24,
+          "mass_earth": 0.46,
+          "period_days": 28.2,
+          "semi_major_au": 0.19,
+          "eq_temp_k": 670,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "m33-s003-c",
+          "label": "M33 3 C",
+          "type": "gas_giant",
+          "radius_earth": 11.54,
+          "mass_earth": 422.98,
+          "period_days": 92.9,
+          "semi_major_au": 0.4202,
+          "eq_temp_k": 450,
+          "atmosphere": "h2_he_ch4",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "m33-s004",
+      "label": "M33 — Triangulum — Delta",
+      "spectral_type": "G2V",
+      "mass_sol": 1.037,
+      "feh": 0.182,
+      "age_gyr": 6.9,
+      "luminosity_sol": 1.15423,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Infall zone; ICM stress 0.00; bias: jovian_wide",
+      "planets": [
+        {
+          "id": "m33-s004-b",
+          "label": "M33 4 B",
+          "type": "hot_rocky",
+          "radius_earth": 0.64,
+          "mass_earth": 2.47,
+          "period_days": 24.5,
+          "semi_major_au": 0.167,
+          "eq_temp_k": 646,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 2000,
+    "seed": 332
+  }
+}

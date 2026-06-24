@@ -1,0 +1,136 @@
+{
+  "galaxy_id": "IC4040",
+  "galaxy_name": "IC4040",
+  "galaxy_hubble": "Irr",
+  "cluster": "Coma Cluster",
+  "cluster_slug": "coma",
+  "cluster_dist_mpc": 99.0,
+  "environment": {
+    "description": "IC4040 (Irr) situated in the infall region at the cluster periphery, largely ICM-free. ICM stress 0.06; host population Teff ≈ 7533 K, Fe/H -0.04. Architecture favours wide-orbit gas giants with potential moon settlement zones. 1 star system(s), 6 planet(s) generated. Observational anchor: JWST.",
+    "radiation_factor": 1.18,
+    "metallicity_feh": -0.038,
+    "agn": false,
+    "cooling_flow": false,
+    "ram_pressure": false,
+    "merger": false
+  },
+  "placement_notes": {
+    "v1": "IC4040 (Irr) situated in the infall region at the cluster periphery, largely ICM-free. ICM stress 0.06; host population Teff ≈ 7533 K, Fe/H -0.04. Architecture favours wide-orbit gas giants with potential moon settlement zones. 1 star system(s), 6 planet(s) generated. Observational anchor: JWST.",
+    "open_questions": [],
+    "nft_zones": [
+      "infall-zone-jwst"
+    ]
+  },
+  "generation": "v1-procedural",
+  "provenance": {
+    "script": "generate_cluster_starsystems.py",
+    "algorithm_version": "1.0",
+    "architecture_version": "1.0",
+    "seed_source": "IC4040",
+    "generated_at": "2026-05-26T17:52:06.258746+00:00",
+    "inputs": {
+      "cluster_zone": "infall",
+      "icm_stress": 0.059,
+      "metallicity_fe_h": -0.038,
+      "planet_bias": "jovian_wide",
+      "star_teff_k": 7533,
+      "max_orbit_au": 59.8,
+      "gas_giant_prob": 0.657,
+      "anchor_telescope": "JWST",
+      "estimated_planets": 7
+    },
+    "observatory_report": "IC4040 (Irr) situated in the infall region at the cluster periphery, largely ICM-free. ICM stress 0.06; host population Teff ≈ 7533 K, Fe/H -0.04. Architecture favours wide-orbit gas giants with potential moon settlement zones. 1 star system(s), 6 planet(s) generated. Observational anchor: JWST."
+  },
+  "star_systems": [
+    {
+      "id": "ic4040-s001",
+      "label": "IC4040 — Prime",
+      "spectral_type": "A7V",
+      "mass_sol": 1.797,
+      "feh": -0.035,
+      "age_gyr": 6.9,
+      "luminosity_sol": 10.43392,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "frontier",
+      "environment_note": "Infall zone; ICM stress 0.06; bias: jovian_wide",
+      "planets": [
+        {
+          "id": "ic4040-s001-b",
+          "label": "IC4040 1 B",
+          "type": "hot_rocky",
+          "radius_earth": 1.06,
+          "mass_earth": 2.94,
+          "period_days": 62.3,
+          "semi_major_au": 0.374,
+          "eq_temp_k": 748,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "ic4040-s001-c",
+          "label": "IC4040 1 C",
+          "type": "gas_giant",
+          "radius_earth": 9.67,
+          "mass_earth": 404.48,
+          "period_days": 182.1,
+          "semi_major_au": 0.7645,
+          "eq_temp_k": 523,
+          "atmosphere": "h2_he_ch4",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "ic4040-s001-d",
+          "label": "IC4040 1 D",
+          "type": "gas_giant",
+          "radius_earth": 9.09,
+          "mass_earth": 409.46,
+          "period_days": 573.2,
+          "semi_major_au": 1.6418,
+          "eq_temp_k": 357,
+          "atmosphere": "h2_he_ch4",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "ic4040-s001-e",
+          "label": "IC4040 1 E",
+          "type": "terran",
+          "radius_earth": 1.1,
+          "mass_earth": 1.4,
+          "period_days": 1786.2,
+          "semi_major_au": 3.5028,
+          "eq_temp_k": 244,
+          "atmosphere": "n2_h2o",
+          "settlement_tier": "frontier"
+        },
+        {
+          "id": "ic4040-s001-f",
+          "label": "IC4040 1 F",
+          "type": "gas_giant",
+          "radius_earth": 11.66,
+          "mass_earth": 221.62,
+          "period_days": 6452.4,
+          "semi_major_au": 8.2465,
+          "eq_temp_k": 159,
+          "atmosphere": "h2_he_ch4",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "ic4040-s001-g",
+          "label": "IC4040 1 G",
+          "type": "gas_giant",
+          "radius_earth": 9.56,
+          "mass_earth": 285.22,
+          "period_days": 21481.0,
+          "semi_major_au": 18.3862,
+          "eq_temp_k": 106,
+          "atmosphere": "h2_he_ch4",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 774,
+    "seed": 1103
+  }
+}

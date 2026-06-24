@@ -1,0 +1,150 @@
+{
+  "galaxy_id": "proc-0149",
+  "galaxy_name": "proc-0149",
+  "galaxy_hubble": "E",
+  "cluster": "Hydra Cluster",
+  "cluster_slug": "hydra",
+  "cluster_dist_mpc": 59.0,
+  "environment": {
+    "description": "proc-0149 (E) situated in the inner cluster region, within significant ICM influence. ICM stress 0.17; host population Teff ≈ 4957 K, Fe/H +0.16. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 2 star system(s), 6 planet(s) generated. Observational anchor: Chandra/Hubble.",
+    "radiation_factor": 1.5,
+    "metallicity_feh": 0.162,
+    "agn": false,
+    "cooling_flow": false,
+    "ram_pressure": false,
+    "merger": false
+  },
+  "placement_notes": {
+    "v1": "proc-0149 (E) situated in the inner cluster region, within significant ICM influence. ICM stress 0.17; host population Teff ≈ 4957 K, Fe/H +0.16. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 2 star system(s), 6 planet(s) generated. Observational anchor: Chandra/Hubble.",
+    "open_questions": [],
+    "nft_zones": [
+      "inner-zone-chandra-hubble"
+    ]
+  },
+  "generation": "v1-procedural",
+  "provenance": {
+    "script": "generate_cluster_starsystems.py",
+    "algorithm_version": "1.0",
+    "architecture_version": "1.0",
+    "seed_source": "proc-0149",
+    "generated_at": "2026-05-26T17:52:08.263573+00:00",
+    "inputs": {
+      "cluster_zone": "inner",
+      "icm_stress": 0.165,
+      "metallicity_fe_h": 0.162,
+      "planet_bias": "ancient_cold_rocky",
+      "star_teff_k": 4957,
+      "max_orbit_au": 7.5,
+      "gas_giant_prob": 0.22,
+      "anchor_telescope": "Chandra/Hubble",
+      "estimated_planets": 6
+    },
+    "observatory_report": "proc-0149 (E) situated in the inner cluster region, within significant ICM influence. ICM stress 0.17; host population Teff ≈ 4957 K, Fe/H +0.16. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 2 star system(s), 6 planet(s) generated. Observational anchor: Chandra/Hubble."
+  },
+  "star_systems": [
+    {
+      "id": "proc-0149-s001",
+      "label": "proc-0149 — Prime",
+      "spectral_type": "K5V",
+      "mass_sol": 0.745,
+      "feh": 0.137,
+      "age_gyr": 10.7,
+      "luminosity_sol": 0.30771,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Inner zone; ICM stress 0.17; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "proc-0149-s001-b",
+          "label": "PROC-0149 1 B",
+          "type": "hot_rocky",
+          "radius_earth": 0.95,
+          "mass_earth": 0.21,
+          "period_days": 8.3,
+          "semi_major_au": 0.073,
+          "eq_temp_k": 702,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "proc-0149-s001-c",
+          "label": "PROC-0149 1 C",
+          "type": "hot_rocky",
+          "radius_earth": 0.83,
+          "mass_earth": 2.05,
+          "period_days": 16.9,
+          "semi_major_au": 0.1167,
+          "eq_temp_k": 555,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "proc-0149-s001-d",
+          "label": "PROC-0149 1 D",
+          "type": "super_earth",
+          "radius_earth": 2.07,
+          "mass_earth": 11.45,
+          "period_days": 35.3,
+          "semi_major_au": 0.1908,
+          "eq_temp_k": 434,
+          "atmosphere": "n2_co2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "proc-0149-s002",
+      "label": "proc-0149 — Beta",
+      "spectral_type": "K2V",
+      "mass_sol": 0.835,
+      "feh": 0.164,
+      "age_gyr": 10.2,
+      "luminosity_sol": 0.487,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Inner zone; ICM stress 0.17; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "proc-0149-s002-b",
+          "label": "PROC-0149 2 B",
+          "type": "hot_rocky",
+          "radius_earth": 0.9,
+          "mass_earth": 1.39,
+          "period_days": 9.4,
+          "semi_major_au": 0.082,
+          "eq_temp_k": 743,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "proc-0149-s002-c",
+          "label": "PROC-0149 2 C",
+          "type": "hot_rocky",
+          "radius_earth": 1.08,
+          "mass_earth": 3.47,
+          "period_days": 19.8,
+          "semi_major_au": 0.135,
+          "eq_temp_k": 579,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "proc-0149-s002-d",
+          "label": "PROC-0149 2 D",
+          "type": "rocky_barren",
+          "radius_earth": 1.0,
+          "mass_earth": 2.0,
+          "period_days": 42.8,
+          "semi_major_au": 0.2256,
+          "eq_temp_k": 448,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 1364,
+    "seed": 2854
+  }
+}

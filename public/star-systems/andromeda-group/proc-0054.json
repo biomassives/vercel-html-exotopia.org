@@ -1,0 +1,164 @@
+{
+  "galaxy_id": "proc-0054",
+  "galaxy_name": "proc-0054",
+  "galaxy_hubble": "Sa",
+  "cluster": "Andromeda Group",
+  "cluster_slug": "andromeda-group",
+  "cluster_dist_mpc": 0.77,
+  "environment": {
+    "description": "proc-0054 (Sa) situated in the inner cluster region, within significant ICM influence. ICM stress 0.00; host population Teff ≈ 5556 K, Fe/H +0.22. Architecture favours mixed architecture — inner rocky worlds alongside outer ice giants or mini-Neptunes. 3 star system(s), 6 planet(s) generated. Observational anchor: Hubble.",
+    "radiation_factor": 1.0,
+    "metallicity_feh": 0.218,
+    "agn": false,
+    "cooling_flow": false,
+    "ram_pressure": false,
+    "merger": false
+  },
+  "placement_notes": {
+    "v1": "proc-0054 (Sa) situated in the inner cluster region, within significant ICM influence. ICM stress 0.00; host population Teff ≈ 5556 K, Fe/H +0.22. Architecture favours mixed architecture — inner rocky worlds alongside outer ice giants or mini-Neptunes. 3 star system(s), 6 planet(s) generated. Observational anchor: Hubble.",
+    "open_questions": [],
+    "nft_zones": [
+      "inner-zone-hubble"
+    ]
+  },
+  "generation": "v1-procedural",
+  "provenance": {
+    "script": "generate_cluster_starsystems.py",
+    "algorithm_version": "1.0",
+    "architecture_version": "1.0",
+    "seed_source": "proc-0054",
+    "generated_at": "2026-05-26T17:52:05.425679+00:00",
+    "inputs": {
+      "cluster_zone": "inner",
+      "icm_stress": 0.0,
+      "metallicity_fe_h": 0.218,
+      "planet_bias": "mixed",
+      "star_teff_k": 5556,
+      "max_orbit_au": 22.7,
+      "gas_giant_prob": 0.4,
+      "anchor_telescope": "Hubble",
+      "estimated_planets": 6
+    },
+    "observatory_report": "proc-0054 (Sa) situated in the inner cluster region, within significant ICM influence. ICM stress 0.00; host population Teff ≈ 5556 K, Fe/H +0.22. Architecture favours mixed architecture — inner rocky worlds alongside outer ice giants or mini-Neptunes. 3 star system(s), 6 planet(s) generated. Observational anchor: Hubble."
+  },
+  "star_systems": [
+    {
+      "id": "proc-0054-s001",
+      "label": "proc-0054 — Prime",
+      "spectral_type": "G7V",
+      "mass_sol": 0.938,
+      "feh": 0.2,
+      "age_gyr": 9.6,
+      "luminosity_sol": 0.77449,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Inner zone; ICM stress 0.00; bias: mixed",
+      "planets": [
+        {
+          "id": "proc-0054-s001-b",
+          "label": "PROC-0054 1 B",
+          "type": "rocky_barren",
+          "radius_earth": 1.14,
+          "mass_earth": 1.17,
+          "period_days": 10.7,
+          "semi_major_au": 0.093,
+          "eq_temp_k": 783,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "proc-0054-s001-c",
+          "label": "PROC-0054 1 C",
+          "type": "hot_rocky",
+          "radius_earth": 1.18,
+          "mass_earth": 1.77,
+          "period_days": 25.3,
+          "semi_major_au": 0.1651,
+          "eq_temp_k": 588,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "proc-0054-s002",
+      "label": "proc-0054 — Beta",
+      "spectral_type": "G5V",
+      "mass_sol": 0.978,
+      "feh": 0.234,
+      "age_gyr": 10.7,
+      "luminosity_sol": 0.91658,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Inner zone; ICM stress 0.00; bias: mixed",
+      "planets": [
+        {
+          "id": "proc-0054-s002-b",
+          "label": "PROC-0054 2 B",
+          "type": "hot_rocky",
+          "radius_earth": 1.04,
+          "mass_earth": 0.47,
+          "period_days": 11.2,
+          "semi_major_au": 0.097,
+          "eq_temp_k": 800,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "proc-0054-s002-c",
+          "label": "PROC-0054 2 C",
+          "type": "gas_giant",
+          "radius_earth": 10.44,
+          "mass_earth": 317.32,
+          "period_days": 27.5,
+          "semi_major_au": 0.1768,
+          "eq_temp_k": 592,
+          "atmosphere": "h2_he_ch4",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "proc-0054-s003",
+      "label": "proc-0054 — Gamma",
+      "spectral_type": "G9V",
+      "mass_sol": 0.898,
+      "feh": 0.232,
+      "age_gyr": 9.4,
+      "luminosity_sol": 0.64959,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Inner zone; ICM stress 0.00; bias: mixed",
+      "planets": [
+        {
+          "id": "proc-0054-s003-b",
+          "label": "PROC-0054 3 B",
+          "type": "rocky_barren",
+          "radius_earth": 1.28,
+          "mass_earth": 1.47,
+          "period_days": 10.1,
+          "semi_major_au": 0.088,
+          "eq_temp_k": 770,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "proc-0054-s003-c",
+          "label": "PROC-0054 3 C",
+          "type": "hot_rocky",
+          "radius_earth": 1.18,
+          "mass_earth": 1.9,
+          "period_days": 27.7,
+          "semi_major_au": 0.1727,
+          "eq_temp_k": 550,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 2000,
+    "seed": 2810
+  }
+}

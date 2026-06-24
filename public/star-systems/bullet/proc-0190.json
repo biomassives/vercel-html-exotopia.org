@@ -1,0 +1,124 @@
+{
+  "galaxy_id": "proc-0190",
+  "galaxy_name": "proc-0190",
+  "galaxy_hubble": "Irr",
+  "cluster": "Bullet Cluster",
+  "cluster_slug": "bullet",
+  "cluster_dist_mpc": 1140.0,
+  "environment": {
+    "description": "proc-0190 (Irr) situated in the inner cluster region, within significant ICM influence. ICM stress 0.70; host population Teff ≈ 10689 K, Fe/H -0.55. Architecture favours mixed architecture — inner rocky worlds alongside outer ice giants or mini-Neptunes. 1 star system(s), 5 planet(s) generated. Observational anchor: Chandra/Hubble.",
+    "radiation_factor": 3.1,
+    "metallicity_feh": -0.55,
+    "agn": false,
+    "cooling_flow": false,
+    "ram_pressure": true,
+    "merger": false
+  },
+  "placement_notes": {
+    "v1": "proc-0190 (Irr) situated in the inner cluster region, within significant ICM influence. ICM stress 0.70; host population Teff ≈ 10689 K, Fe/H -0.55. Architecture favours mixed architecture — inner rocky worlds alongside outer ice giants or mini-Neptunes. 1 star system(s), 5 planet(s) generated. Observational anchor: Chandra/Hubble.",
+    "open_questions": [],
+    "nft_zones": [
+      "inner-zone-chandra-hubble"
+    ]
+  },
+  "generation": "v1-procedural",
+  "provenance": {
+    "script": "generate_cluster_starsystems.py",
+    "algorithm_version": "1.0",
+    "architecture_version": "1.0",
+    "seed_source": "proc-0190",
+    "generated_at": "2026-05-26T17:52:05.875658+00:00",
+    "inputs": {
+      "cluster_zone": "inner",
+      "icm_stress": 0.7,
+      "metallicity_fe_h": -0.55,
+      "planet_bias": "mixed",
+      "star_teff_k": 10689,
+      "max_orbit_au": 13.3,
+      "gas_giant_prob": 0.199,
+      "anchor_telescope": "Chandra/Hubble",
+      "estimated_planets": 5
+    },
+    "observatory_report": "proc-0190 (Irr) situated in the inner cluster region, within significant ICM influence. ICM stress 0.70; host population Teff ≈ 10689 K, Fe/H -0.55. Architecture favours mixed architecture — inner rocky worlds alongside outer ice giants or mini-Neptunes. 1 star system(s), 5 planet(s) generated. Observational anchor: Chandra/Hubble."
+  },
+  "star_systems": [
+    {
+      "id": "proc-0190-s001",
+      "label": "proc-0190 — Prime",
+      "spectral_type": "A7V",
+      "mass_sol": 1.76,
+      "feh": -0.535,
+      "age_gyr": 9.5,
+      "luminosity_sol": 9.60385,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Inner zone; ICM stress 0.70; bias: mixed",
+      "planets": [
+        {
+          "id": "proc-0190-s001-b",
+          "label": "PROC-0190 1 B",
+          "type": "rocky_barren",
+          "radius_earth": 1.23,
+          "mass_earth": 0.29,
+          "period_days": 29.6,
+          "semi_major_au": 0.226,
+          "eq_temp_k": 943,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "proc-0190-s001-c",
+          "label": "PROC-0190 1 C",
+          "type": "rocky_barren",
+          "radius_earth": 0.82,
+          "mass_earth": 1.46,
+          "period_days": 52.6,
+          "semi_major_au": 0.3316,
+          "eq_temp_k": 778,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "proc-0190-s001-d",
+          "label": "PROC-0190 1 D",
+          "type": "hot_rocky",
+          "radius_earth": 0.63,
+          "mass_earth": 1.8,
+          "period_days": 99.0,
+          "semi_major_au": 0.5058,
+          "eq_temp_k": 630,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "proc-0190-s001-e",
+          "label": "PROC-0190 1 E",
+          "type": "rocky_barren",
+          "radius_earth": 0.98,
+          "mass_earth": 1.44,
+          "period_days": 145.2,
+          "semi_major_au": 0.6528,
+          "eq_temp_k": 555,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "proc-0190-s001-f",
+          "label": "PROC-0190 1 F",
+          "type": "super_earth",
+          "radius_earth": 1.87,
+          "mass_earth": 4.7,
+          "period_days": 238.0,
+          "semi_major_au": 0.9075,
+          "eq_temp_k": 470,
+          "atmosphere": "thick_n2_co2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 492,
+    "seed": 2813
+  }
+}

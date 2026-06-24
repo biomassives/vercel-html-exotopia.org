@@ -1,0 +1,301 @@
+{
+  "_schema": "exotopia-pon-ink-v1.0",
+  "_description": "Complete type reference for all four Exotopia exolocation coordinate systems. Used by exolocation-metadata.js for validation and by the Algorand NFT metadata builder.",
+
+  "coordinate_systems": {
+
+    "exo-surface-v1": {
+      "description": "Colony or settlement location on the surface of an exoplanet. Uses surface lat/long polygon boundary.",
+      "reference_body_type": "exoplanet",
+      "reference_body_required": ["type", "pl_name", "host_star", "ra_deg", "dec_deg"],
+      "reference_body_optional": ["sy_dist_pc", "nasa_archive_id"],
+      "boundary_type": "polygon",
+      "boundary_required": ["type", "coordinate_units", "coordinates"],
+      "boundary_coordinate_units": ["degrees_surface_lat_long"],
+      "unit_name": "EXOSURF",
+      "example": {
+        "coordinate_system": "exo-surface-v1",
+        "schema_version": "1.0",
+        "reference_body": {
+          "type": "exoplanet",
+          "pl_name": "Kepler-452b",
+          "host_star": "Kepler-452",
+          "ra_deg": 296.0037,
+          "dec_deg": 44.2776,
+          "sy_dist_pc": 430,
+          "nasa_archive_id": "Kepler-452 b"
+        },
+        "region_name": "Aurora Basin",
+        "owner_group": "Eco Warriors",
+        "assignment_date": "2026-04-13",
+        "boundary": {
+          "type": "polygon",
+          "coordinate_units": "degrees_surface_lat_long",
+          "coordinates": [
+            [14.5, -23.1],
+            [14.5, -22.0],
+            [15.8, -22.0],
+            [15.8, -23.1],
+            [14.5, -23.1]
+          ],
+          "area_km2": null
+        }
+      }
+    },
+
+    "exo-orbital-v1": {
+      "description": "Zone or station in orbit around an exoplanet. Defined by altitude band and orbital parameters.",
+      "reference_body_type": "exoplanet",
+      "reference_body_required": ["type", "pl_name", "host_star", "ra_deg", "dec_deg"],
+      "reference_body_optional": ["sy_dist_pc", "nasa_archive_id"],
+      "boundary_type": "orbital_zone",
+      "boundary_required": ["type", "altitude_km_min", "altitude_km_max", "inclination_deg"],
+      "boundary_optional": ["longitude_of_ascending_node_deg"],
+      "unit_name": "EXOORB",
+      "example": {
+        "coordinate_system": "exo-orbital-v1",
+        "schema_version": "1.0",
+        "reference_body": {
+          "type": "exoplanet",
+          "pl_name": "Proxima Cen b",
+          "host_star": "Proxima Centauri",
+          "ra_deg": 217.4289,
+          "dec_deg": -62.6796,
+          "sy_dist_pc": 1.3,
+          "nasa_archive_id": "Proxima Cen b"
+        },
+        "region_name": "Sector 4 Low Orbit Band",
+        "owner_group": "Nature Protectors",
+        "assignment_date": "2026-04-13",
+        "boundary": {
+          "type": "orbital_zone",
+          "altitude_km_min": 200,
+          "altitude_km_max": 500,
+          "inclination_deg": 30,
+          "longitude_of_ascending_node_deg": 120
+        }
+      }
+    },
+
+    "exo-lunar-orbital-v1": {
+      "description": "Zone or station in orbit around a moon of an exoplanet. The reference body is the moon, with parent planet specified.",
+      "reference_body_type": "exoplanet_moon",
+      "reference_body_required": ["type", "moon_name", "parent_planet", "host_star", "ra_deg", "dec_deg"],
+      "reference_body_optional": ["sy_dist_pc", "nasa_archive_id"],
+      "boundary_type": "orbital_zone",
+      "boundary_required": ["type", "altitude_km_min", "altitude_km_max", "inclination_deg"],
+      "boundary_optional": ["longitude_of_ascending_node_deg"],
+      "unit_name": "EXOLUN",
+      "example": {
+        "coordinate_system": "exo-lunar-orbital-v1",
+        "schema_version": "1.0",
+        "reference_body": {
+          "type": "exoplanet_moon",
+          "moon_name": "TRAPPIST-1e Moon I",
+          "parent_planet": "TRAPPIST-1e",
+          "host_star": "TRAPPIST-1",
+          "ra_deg": 346.6225,
+          "dec_deg": -5.0414,
+          "sy_dist_pc": 12.1,
+          "nasa_archive_id": "TRAPPIST-1 e"
+        },
+        "region_name": "Relay Arc Alpha",
+        "owner_group": "Green Thumbs",
+        "assignment_date": "2026-04-13",
+        "boundary": {
+          "type": "orbital_zone",
+          "altitude_km_min": 50,
+          "altitude_km_max": 100,
+          "inclination_deg": 0,
+          "longitude_of_ascending_node_deg": null
+        }
+      }
+    },
+
+    "exo-moon-surface-v1": {
+      "description": "Settlement or colony on the surface of an exomoon. Trophic level L4 (SUBLUNARY). Parent planet may dominate the sky if orbital distance is small.",
+      "reference_body_type": "exoplanet_moon",
+      "reference_body_required": ["type", "moon_name", "moon_index", "parent_planet", "host_star", "ra_deg", "dec_deg"],
+      "reference_body_optional": ["sy_dist_pc", "est_radius_km", "est_orbital_km", "tidal_locked", "nasa_archive_id"],
+      "boundary_type": "polygon",
+      "boundary_required": ["type", "coordinate_units", "coordinates"],
+      "boundary_coordinate_units": ["degrees_surface_lat_long"],
+      "unit_name": "EXOMOONSURF",
+      "trophic_level": 4,
+      "example": {
+        "coordinate_system": "exo-moon-surface-v1",
+        "schema_version": "1.0",
+        "reference_body": {
+          "type": "exoplanet_moon",
+          "moon_name": "Kepler-442b Moon I",
+          "moon_index": 1,
+          "parent_planet": "Kepler-442b",
+          "host_star": "Kepler-442",
+          "ra_deg": 291.4027,
+          "dec_deg": 39.2637,
+          "sy_dist_pc": 1200,
+          "tidal_locked": true
+        },
+        "region_name": "Terminator Ridge Outpost",
+        "owner_group": "Uni-Kibaoni SHG",
+        "assignment_date": "2026-05-19",
+        "boundary": {
+          "type": "polygon",
+          "coordinate_units": "degrees_surface_lat_long",
+          "coordinates": [[0.1, 89.5], [0.1, 90.5], [1.0, 90.5], [1.0, 89.5], [0.1, 89.5]],
+          "area_km2": null
+        }
+      }
+    },
+
+    "exo-moon-lagrange-v1": {
+      "description": "Settlement at a Lagrange equilibrium point of the moon–planet system. Trophic level L5 (SYZYGY). L4/L5 are gravitationally stable (trojan); L1/L2 require active station-keeping.",
+      "reference_body_type": "exoplanet_moon",
+      "reference_body_required": ["type", "moon_name", "moon_index", "parent_planet", "host_star", "ra_deg", "dec_deg"],
+      "reference_body_optional": ["sy_dist_pc", "est_orbital_km", "nasa_archive_id"],
+      "boundary_type": "lagrange_zone",
+      "boundary_required": ["type", "lagrange_point", "station_keeping_delta_v_m_s"],
+      "boundary_optional": ["halo_orbit_amplitude_km", "station_name"],
+      "unit_name": "EXOLAGRANGE",
+      "trophic_level": 5,
+      "lagrange_points": {
+        "L1": {"stability": "unstable", "location": "Between moon and planet", "use": "Gateway station"},
+        "L2": {"stability": "unstable", "location": "Behind moon from planet", "use": "Observatory / relay"},
+        "L4": {"stability": "stable",   "location": "60° ahead in moon orbit", "use": "Permanent settlement (trojan)"},
+        "L5": {"stability": "stable",   "location": "60° behind in moon orbit", "use": "Permanent settlement (trojan)"}
+      },
+      "example": {
+        "coordinate_system": "exo-moon-lagrange-v1",
+        "schema_version": "1.0",
+        "reference_body": {
+          "type": "exoplanet_moon",
+          "moon_name": "Kepler-442b Moon I",
+          "moon_index": 1,
+          "parent_planet": "Kepler-442b",
+          "host_star": "Kepler-442",
+          "ra_deg": 291.4027,
+          "dec_deg": 39.2637,
+          "sy_dist_pc": 1200
+        },
+        "region_name": "L4 Trojan Station Alpha",
+        "owner_group": "OT Kulcha Collective",
+        "assignment_date": "2026-05-19",
+        "boundary": {
+          "type": "lagrange_zone",
+          "lagrange_point": "L4",
+          "station_keeping_delta_v_m_s": 0,
+          "halo_orbit_amplitude_km": 500
+        }
+      }
+    },
+
+    "exo-moon-interface-v1": {
+      "description": "Settlement in the transition zone between a moon's gravitational dominance and its parent planet's — the 'liminal' tier. Trophic level L6. Includes Hill sphere boundary, Roche limit zone, tidal lock transition, magnetosphere interface, and resonance zones.",
+      "reference_body_type": "exoplanet_moon",
+      "reference_body_required": ["type", "moon_name", "moon_index", "parent_planet", "host_star", "ra_deg", "dec_deg"],
+      "reference_body_optional": ["sy_dist_pc", "nasa_archive_id"],
+      "boundary_type": "interface_zone",
+      "boundary_required": ["type", "zone_type"],
+      "boundary_optional": ["radius_km", "resonance_ratio", "notes"],
+      "unit_name": "EXOLIMINAL",
+      "trophic_level": 6,
+      "zone_types": ["hill-sphere", "roche-limit", "tidal-lock-zone", "magnetosphere", "resonance-zone"],
+      "example": {
+        "coordinate_system": "exo-moon-interface-v1",
+        "schema_version": "1.0",
+        "reference_body": {
+          "type": "exoplanet_moon",
+          "moon_name": "Kepler-442b Moon I",
+          "moon_index": 1,
+          "parent_planet": "Kepler-442b",
+          "host_star": "Kepler-442",
+          "ra_deg": 291.4027,
+          "dec_deg": 39.2637,
+          "sy_dist_pc": 1200
+        },
+        "region_name": "Hill Sphere Gateway",
+        "owner_group": "Fana Ka",
+        "assignment_date": "2026-05-19",
+        "boundary": {
+          "type": "interface_zone",
+          "zone_type": "hill-sphere",
+          "radius_km": 12000,
+          "notes": "Estimated from moon mass ratio"
+        }
+      }
+    },
+
+    "exo-stellar-orbital-v1": {
+      "description": "Zone in orbit around the host star or binary star system of an exoplanet. Boundary uses orbital radius in AU rather than altitude.",
+      "reference_body_type": "star | binary_star_system",
+      "reference_body_required": ["type", "system_name", "primary_star", "ra_deg", "dec_deg"],
+      "reference_body_optional": ["secondary_star", "sy_dist_pc"],
+      "boundary_type": "orbital_zone",
+      "boundary_required": ["type", "orbital_radius_au_min", "orbital_radius_au_max", "inclination_deg"],
+      "unit_name": "EXOSTAR",
+      "example": {
+        "coordinate_system": "exo-stellar-orbital-v1",
+        "schema_version": "1.0",
+        "reference_body": {
+          "type": "binary_star_system",
+          "system_name": "Alpha Centauri",
+          "primary_star": "Alpha Centauri A",
+          "secondary_star": "Alpha Centauri B",
+          "ra_deg": 219.9021,
+          "dec_deg": -60.8339,
+          "sy_dist_pc": 1.34
+        },
+        "region_name": "Habitable Zone Waypoint Delta",
+        "owner_group": "Nature Protectors",
+        "assignment_date": "2026-04-13",
+        "boundary": {
+          "type": "orbital_zone",
+          "orbital_radius_au_min": 1.1,
+          "orbital_radius_au_max": 1.3,
+          "inclination_deg": 0
+        }
+      }
+    }
+
+  },
+
+  "arc3_template": {
+    "_note": "Top-level ARC-3 metadata structure. The exolocation block lives inside properties.exolocation.",
+    "name": "<region_name>",
+    "description": "<human description>",
+    "image": "ipfs://<image_CID>",
+    "image_mimetype": "image/png",
+    "external_url": "https://exotopia.org",
+    "properties": {
+      "standard": "exotopia-pon-ink-v1.0",
+      "exolocation": "<one of the four examples above>"
+    },
+    "attributes": [
+      { "trait_type": "Coordinate System", "value": "<coordinate_system value>" },
+      { "trait_type": "Region Name",       "value": "<region_name>" },
+      { "trait_type": "Exoplanet / Body",  "value": "<pl_name or system_name>" },
+      { "trait_type": "Host Star",         "value": "<host_star>" },
+      { "trait_type": "Distance (pc)",     "value": "<sy_dist_pc as string>" },
+      { "trait_type": "Owner Group",       "value": "<owner_group>" },
+      { "trait_type": "Assignment Date",   "value": "<YYYY-MM-DD>" },
+      { "trait_type": "Protocol",          "value": "PON INK v1.0" }
+    ]
+  },
+
+  "arc69_note_template": {
+    "_note": "Compact on-chain ARC-69 note (≤1 KB). Stores minimum identifying fields only; full metadata lives on IPFS via ARC-3.",
+    "standard": "arc69",
+    "description": "Exotopia virtual property",
+    "external_url": "https://exotopia.org",
+    "properties": {
+      "protocol":           "pon-ink-v1.0",
+      "coordinate_system":  "<coordinate_system value>",
+      "region_name":        "<region_name>",
+      "reference_body_key": "<pl_name | moon_name | system_name>",
+      "ra_deg":             "<number>",
+      "dec_deg":            "<number>",
+      "sy_dist_pc":         "<number | null>",
+      "assignment_date":    "<YYYY-MM-DD>"
+    }
+  }
+}

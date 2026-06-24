@@ -1,0 +1,3452 @@
+[
+  {
+    "name": "J001817.2+161740",
+    "ra_deg": 4.5717,
+    "dec_deg": 16.2944,
+    "z": 0.5401,
+    "dist_mpc": 2313.11,
+    "tap_kev": 4.57,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J003318.4-212447",
+    "ra_deg": 8.3267,
+    "dec_deg": -21.4131,
+    "z": 0.1897,
+    "dist_mpc": 812.44,
+    "tap_kev": 2.25,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J003917.9+004200",
+    "ra_deg": 9.8246,
+    "dec_deg": 0.7,
+    "z": 0.2801,
+    "dist_mpc": 1199.6,
+    "tap_kev": 1.43,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J003922.4+004809",
+    "ra_deg": 9.8433,
+    "dec_deg": 0.8025,
+    "z": 0.4145,
+    "dist_mpc": 1775.2,
+    "tap_kev": 4.02,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J003942.2+004533",
+    "ra_deg": 9.9258,
+    "dec_deg": 0.7592,
+    "z": 0.4156,
+    "dist_mpc": 1779.91,
+    "tap_kev": 2.35,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J004039.2+253106",
+    "ra_deg": 10.1633,
+    "dec_deg": 25.5183,
+    "z": 0.1517,
+    "dist_mpc": 649.69,
+    "tap_kev": 1.51,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J004156.8+253151",
+    "ra_deg": 10.4867,
+    "dec_deg": 25.5308,
+    "z": 0.1278,
+    "dist_mpc": 547.34,
+    "tap_kev": 3.18,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J004231.2+005114",
+    "ra_deg": 10.63,
+    "dec_deg": 0.8539,
+    "z": 0.1579,
+    "dist_mpc": 676.25,
+    "tap_kev": 2.16,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J004252.6+004259",
+    "ra_deg": 10.7192,
+    "dec_deg": 0.7164,
+    "z": 0.2697,
+    "dist_mpc": 1155.06,
+    "tap_kev": 3.12,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J004253.7-093423",
+    "ra_deg": 10.7238,
+    "dec_deg": -9.5731,
+    "z": 0.4069,
+    "dist_mpc": 1742.65,
+    "tap_kev": 3.29,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J004324.2-094449",
+    "ra_deg": 10.8508,
+    "dec_deg": -9.7469,
+    "z": 0.1828,
+    "dist_mpc": 782.89,
+    "tap_kev": 1.2,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J004334.0+010106",
+    "ra_deg": 10.8917,
+    "dec_deg": 1.0183,
+    "z": 0.158,
+    "dist_mpc": 676.67,
+    "tap_kev": 1.59,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J004350.7+004733",
+    "ra_deg": 10.9612,
+    "dec_deg": 0.7925,
+    "z": 0.4754,
+    "dist_mpc": 2036.02,
+    "tap_kev": 4.0,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J004401.3+000647",
+    "ra_deg": 11.0054,
+    "dec_deg": 0.1131,
+    "z": 0.2187,
+    "dist_mpc": 936.64,
+    "tap_kev": 3.13,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J010708.0+135927",
+    "ra_deg": 16.7833,
+    "dec_deg": 13.9908,
+    "z": 0.2826,
+    "dist_mpc": 1210.3,
+    "tap_kev": 1.43,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J011624.7+325713",
+    "ra_deg": 19.1029,
+    "dec_deg": 32.9536,
+    "z": 0.4829,
+    "dist_mpc": 2068.14,
+    "tap_kev": 2.54,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J012313.0+071232",
+    "ra_deg": 20.8042,
+    "dec_deg": 7.2089,
+    "z": 0.09,
+    "dist_mpc": 385.45,
+    "tap_kev": 1.61,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J012341.3+072323",
+    "ra_deg": 20.9221,
+    "dec_deg": 7.3897,
+    "z": 0.3411,
+    "dist_mpc": 1460.85,
+    "tap_kev": 2.93,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J012500.1+320152",
+    "ra_deg": 21.2504,
+    "dec_deg": 32.0311,
+    "z": 0.3395,
+    "dist_mpc": 1453.99,
+    "tap_kev": 2.35,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J015917.2+003011",
+    "ra_deg": 29.8217,
+    "dec_deg": 0.5031,
+    "z": 0.382,
+    "dist_mpc": 1636.01,
+    "tap_kev": 2.94,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J020342.0-074652",
+    "ra_deg": 30.925,
+    "dec_deg": -7.7811,
+    "z": 0.4398,
+    "dist_mpc": 1883.55,
+    "tap_kev": 7.48,
+    "color_hex": "#aaccff",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J023150.5-072836",
+    "ra_deg": 37.9604,
+    "dec_deg": -7.4767,
+    "z": 0.179,
+    "dist_mpc": 766.61,
+    "tap_kev": 2.49,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J023346.9-085054",
+    "ra_deg": 38.4454,
+    "dec_deg": -8.8483,
+    "z": 0.2597,
+    "dist_mpc": 1112.23,
+    "tap_kev": 2.33,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J024836.0+311918",
+    "ra_deg": 42.15,
+    "dec_deg": 31.3217,
+    "z": 0.3438,
+    "dist_mpc": 1472.41,
+    "tap_kev": 6.36,
+    "color_hex": "#aaccff",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J030614.1-000538",
+    "ra_deg": 46.5588,
+    "dec_deg": -0.0939,
+    "z": 0.4249,
+    "dist_mpc": 1819.74,
+    "tap_kev": 2.54,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J030637.1-001803",
+    "ra_deg": 46.6546,
+    "dec_deg": -0.3008,
+    "z": 0.4576,
+    "dist_mpc": 1959.79,
+    "tap_kev": 3.58,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J033757.5+002900",
+    "ra_deg": 54.4896,
+    "dec_deg": 0.4833,
+    "z": 0.3267,
+    "dist_mpc": 1399.17,
+    "tap_kev": 2.12,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J035417.6-001007",
+    "ra_deg": 58.5733,
+    "dec_deg": -0.1686,
+    "z": 0.2424,
+    "dist_mpc": 1038.14,
+    "tap_kev": 4.67,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J073605.9+433906",
+    "ra_deg": 114.0246,
+    "dec_deg": 43.6517,
+    "z": 0.4285,
+    "dist_mpc": 1835.16,
+    "tap_kev": 3.98,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J075121.7+181600",
+    "ra_deg": 117.8404,
+    "dec_deg": 18.2667,
+    "z": 0.3882,
+    "dist_mpc": 1662.56,
+    "tap_kev": 1.18,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J075427.4+220949",
+    "ra_deg": 118.6142,
+    "dec_deg": 22.1636,
+    "z": 0.3969,
+    "dist_mpc": 1699.82,
+    "tap_kev": 6.79,
+    "color_hex": "#aaccff",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J080354.8+651002",
+    "ra_deg": 120.9783,
+    "dec_deg": 65.1672,
+    "z": 0.3365,
+    "dist_mpc": 1441.15,
+    "tap_kev": 1.86,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J080714.1+152700",
+    "ra_deg": 121.8088,
+    "dec_deg": 15.45,
+    "z": 0.096,
+    "dist_mpc": 411.14,
+    "tap_kev": 1.83,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J083146.1+525056",
+    "ra_deg": 127.9421,
+    "dec_deg": 52.8489,
+    "z": 0.5206,
+    "dist_mpc": 2229.6,
+    "tap_kev": 5.42,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J083454.8+553422",
+    "ra_deg": 128.7283,
+    "dec_deg": 55.5728,
+    "z": 0.2416,
+    "dist_mpc": 1034.71,
+    "tap_kev": 3.61,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J083724.7+553249",
+    "ra_deg": 129.3529,
+    "dec_deg": 55.5469,
+    "z": 0.2773,
+    "dist_mpc": 1187.61,
+    "tap_kev": 2.33,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J083926.4+193658",
+    "ra_deg": 129.86,
+    "dec_deg": 19.6161,
+    "z": 0.357,
+    "dist_mpc": 1528.94,
+    "tap_kev": 1.52,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J084012.7+192807",
+    "ra_deg": 130.0529,
+    "dec_deg": 19.4686,
+    "z": 0.096,
+    "dist_mpc": 411.14,
+    "tap_kev": 0.68,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J084124.2+004640",
+    "ra_deg": 130.3508,
+    "dec_deg": 0.7778,
+    "z": 0.3773,
+    "dist_mpc": 1615.88,
+    "tap_kev": 3.32,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J084847.8+445611",
+    "ra_deg": 132.1992,
+    "dec_deg": 44.9364,
+    "z": 0.5327,
+    "dist_mpc": 2281.42,
+    "tap_kev": 2.77,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J084957.4+445945",
+    "ra_deg": 132.4892,
+    "dec_deg": 44.9958,
+    "z": 0.5072,
+    "dist_mpc": 2172.21,
+    "tap_kev": 1.79,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J091917.9+162508",
+    "ra_deg": 139.8246,
+    "dec_deg": 16.4189,
+    "z": 0.4623,
+    "dist_mpc": 1979.92,
+    "tap_kev": 3.4,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J091940.0+370755",
+    "ra_deg": 139.9167,
+    "dec_deg": 37.1319,
+    "z": 0.1108,
+    "dist_mpc": 474.53,
+    "tap_kev": 0.89,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J092114.3+370133",
+    "ra_deg": 140.3096,
+    "dec_deg": 37.0258,
+    "z": 0.2352,
+    "dist_mpc": 1007.3,
+    "tap_kev": 0.84,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J092545.5+305858",
+    "ra_deg": 141.4396,
+    "dec_deg": 30.9828,
+    "z": 0.4907,
+    "dist_mpc": 2101.55,
+    "tap_kev": 4.95,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J092650.8+310130",
+    "ra_deg": 141.7117,
+    "dec_deg": 31.025,
+    "z": 0.5557,
+    "dist_mpc": 2379.92,
+    "tap_kev": 2.44,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J093205.0+473320",
+    "ra_deg": 143.0208,
+    "dec_deg": 47.5556,
+    "z": 0.2248,
+    "dist_mpc": 962.76,
+    "tap_kev": 1.95,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J093259.7+551543",
+    "ra_deg": 143.2488,
+    "dec_deg": 55.2619,
+    "z": 0.1009,
+    "dist_mpc": 432.13,
+    "tap_kev": 0.84,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J093710.9+611558",
+    "ra_deg": 144.2954,
+    "dec_deg": 61.2661,
+    "z": 0.2079,
+    "dist_mpc": 890.38,
+    "tap_kev": 1.1,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J094034.6+355945",
+    "ra_deg": 145.1442,
+    "dec_deg": 35.9958,
+    "z": 0.2652,
+    "dist_mpc": 1135.79,
+    "tap_kev": 1.29,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J094054.6+032226",
+    "ra_deg": 145.2275,
+    "dec_deg": 3.3739,
+    "z": 0.4928,
+    "dist_mpc": 2110.54,
+    "tap_kev": 4.69,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J094107.7+032912",
+    "ra_deg": 145.2821,
+    "dec_deg": 3.4867,
+    "z": 0.2172,
+    "dist_mpc": 930.21,
+    "tap_kev": 0.95,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J094311.9+480920",
+    "ra_deg": 145.7996,
+    "dec_deg": 48.1556,
+    "z": 0.3447,
+    "dist_mpc": 1476.26,
+    "tap_kev": 1.8,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J094316.2+165216",
+    "ra_deg": 145.8175,
+    "dec_deg": 16.8711,
+    "z": 0.1625,
+    "dist_mpc": 695.95,
+    "tap_kev": 1.49,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J094331.2+163953",
+    "ra_deg": 145.88,
+    "dec_deg": 16.6647,
+    "z": 0.2544,
+    "dist_mpc": 1089.53,
+    "tap_kev": 3.64,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J094359.0+164119",
+    "ra_deg": 145.9958,
+    "dec_deg": 16.6886,
+    "z": 0.2524,
+    "dist_mpc": 1080.97,
+    "tap_kev": 1.54,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J094437.5+040035",
+    "ra_deg": 146.1562,
+    "dec_deg": 4.0097,
+    "z": 0.3666,
+    "dist_mpc": 1570.06,
+    "tap_kev": 3.03,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J094530.9+094637",
+    "ra_deg": 146.3787,
+    "dec_deg": 9.7769,
+    "z": 0.2196,
+    "dist_mpc": 940.49,
+    "tap_kev": 2.28,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J095419.8+173558",
+    "ra_deg": 148.5825,
+    "dec_deg": 17.5994,
+    "z": 0.3825,
+    "dist_mpc": 1638.15,
+    "tap_kev": 3.43,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J095603.5+410709",
+    "ra_deg": 149.0146,
+    "dec_deg": 41.1192,
+    "z": 0.6012,
+    "dist_mpc": 2574.79,
+    "tap_kev": 6.81,
+    "color_hex": "#aaccff",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J095736.7+023427",
+    "ra_deg": 149.4029,
+    "dec_deg": 2.5742,
+    "z": 0.3734,
+    "dist_mpc": 1599.18,
+    "tap_kev": 4.39,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J095901.4+024737",
+    "ra_deg": 149.7558,
+    "dec_deg": 2.7936,
+    "z": 0.4939,
+    "dist_mpc": 2115.25,
+    "tap_kev": 2.03,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J095902.7+025543",
+    "ra_deg": 149.7612,
+    "dec_deg": 2.9286,
+    "z": 0.3485,
+    "dist_mpc": 1492.54,
+    "tap_kev": 3.38,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J095951.4+014051",
+    "ra_deg": 149.9642,
+    "dec_deg": 1.6808,
+    "z": 0.3721,
+    "dist_mpc": 1593.61,
+    "tap_kev": 3.28,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J095956.9+251621",
+    "ra_deg": 149.9871,
+    "dec_deg": 25.2725,
+    "z": 0.0851,
+    "dist_mpc": 364.46,
+    "tap_kev": 1.3,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J100003.1+020145",
+    "ra_deg": 150.0129,
+    "dec_deg": 2.0292,
+    "z": 0.079,
+    "dist_mpc": 338.34,
+    "tap_kev": 0.53,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J100021.9+022326",
+    "ra_deg": 150.0913,
+    "dec_deg": 2.3906,
+    "z": 0.2206,
+    "dist_mpc": 944.77,
+    "tap_kev": 1.41,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J100043.1+014608",
+    "ra_deg": 150.1796,
+    "dec_deg": 1.7689,
+    "z": 0.3459,
+    "dist_mpc": 1481.4,
+    "tap_kev": 2.43,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J100047.5+015910",
+    "ra_deg": 150.1979,
+    "dec_deg": 1.9861,
+    "z": 0.4379,
+    "dist_mpc": 1875.42,
+    "tap_kev": 1.75,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J100052.0+683405",
+    "ra_deg": 150.2167,
+    "dec_deg": 68.5681,
+    "z": 0.2479,
+    "dist_mpc": 1061.69,
+    "tap_kev": 1.37,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J100058.3+683945",
+    "ra_deg": 150.2429,
+    "dec_deg": 68.6625,
+    "z": 0.497,
+    "dist_mpc": 2128.53,
+    "tap_kev": 3.63,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J100142.2+022543",
+    "ra_deg": 150.4258,
+    "dec_deg": 2.4286,
+    "z": 0.1236,
+    "dist_mpc": 529.35,
+    "tap_kev": 1.41,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J100200.9+020406",
+    "ra_deg": 150.5037,
+    "dec_deg": 2.0683,
+    "z": 0.3429,
+    "dist_mpc": 1468.55,
+    "tap_kev": 1.18,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J100217.2+015625",
+    "ra_deg": 150.5717,
+    "dec_deg": 1.9403,
+    "z": 0.3228,
+    "dist_mpc": 1382.47,
+    "tap_kev": 1.72,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J101042.4+554223",
+    "ra_deg": 152.6767,
+    "dec_deg": 55.7064,
+    "z": 0.1658,
+    "dist_mpc": 710.08,
+    "tap_kev": 1.59,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J101054.8+555716",
+    "ra_deg": 152.7283,
+    "dec_deg": 55.9544,
+    "z": 0.174,
+    "dist_mpc": 745.2,
+    "tap_kev": 1.07,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J101508.2+493152",
+    "ra_deg": 153.7842,
+    "dec_deg": 49.5311,
+    "z": 0.3226,
+    "dist_mpc": 1381.61,
+    "tap_kev": 2.18,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J101930.3+080347",
+    "ra_deg": 154.8762,
+    "dec_deg": 8.0631,
+    "z": 0.1764,
+    "dist_mpc": 755.48,
+    "tap_kev": 3.91,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J102133.2+213752",
+    "ra_deg": 155.3883,
+    "dec_deg": 21.6311,
+    "z": 0.1873,
+    "dist_mpc": 802.16,
+    "tap_kev": 1.89,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J102137.2+125653",
+    "ra_deg": 155.405,
+    "dec_deg": 12.9481,
+    "z": 0.3508,
+    "dist_mpc": 1502.39,
+    "tap_kev": 2.93,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J102245.6+194723",
+    "ra_deg": 155.69,
+    "dec_deg": 19.7897,
+    "z": 0.0394,
+    "dist_mpc": 168.74,
+    "tap_kev": 0.53,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J102539.4+470502",
+    "ra_deg": 156.4142,
+    "dec_deg": 47.0839,
+    "z": 0.1915,
+    "dist_mpc": 820.15,
+    "tap_kev": 0.64,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J103021.6+310144",
+    "ra_deg": 157.59,
+    "dec_deg": 31.0289,
+    "z": 0.2346,
+    "dist_mpc": 1004.73,
+    "tap_kev": 1.19,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J103039.7+310307",
+    "ra_deg": 157.6654,
+    "dec_deg": 31.0519,
+    "z": 0.1225,
+    "dist_mpc": 524.64,
+    "tap_kev": 0.72,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J103131.4+310546",
+    "ra_deg": 157.8808,
+    "dec_deg": 31.0961,
+    "z": 0.5428,
+    "dist_mpc": 2324.68,
+    "tap_kev": 3.82,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J103325.9+595312",
+    "ra_deg": 158.3579,
+    "dec_deg": 59.8867,
+    "z": 0.484,
+    "dist_mpc": 2072.85,
+    "tap_kev": 2.19,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J103512.7+595619",
+    "ra_deg": 158.8029,
+    "dec_deg": 59.9386,
+    "z": 0.5676,
+    "dist_mpc": 2430.89,
+    "tap_kev": 1.79,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J103905.0+643706",
+    "ra_deg": 159.7708,
+    "dec_deg": 64.6183,
+    "z": 0.3789,
+    "dist_mpc": 1622.73,
+    "tap_kev": 1.08,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J104019.7+090138",
+    "ra_deg": 160.0821,
+    "dec_deg": 9.0272,
+    "z": 0.3517,
+    "dist_mpc": 1506.24,
+    "tap_kev": 2.33,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J104133.2+061529",
+    "ra_deg": 160.3883,
+    "dec_deg": 6.2581,
+    "z": 0.0349,
+    "dist_mpc": 149.47,
+    "tap_kev": 0.54,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J104421.8+213029",
+    "ra_deg": 161.0908,
+    "dec_deg": 21.5081,
+    "z": 0.4987,
+    "dist_mpc": 2135.81,
+    "tap_kev": 3.37,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J104544.4+525018",
+    "ra_deg": 161.435,
+    "dec_deg": 52.8383,
+    "z": 0.2573,
+    "dist_mpc": 1101.95,
+    "tap_kev": 2.58,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J104944.2+330836",
+    "ra_deg": 162.4342,
+    "dec_deg": 33.1433,
+    "z": 0.2323,
+    "dist_mpc": 994.88,
+    "tap_kev": 1.52,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J105110.0+354658",
+    "ra_deg": 162.7917,
+    "dec_deg": 35.7828,
+    "z": 0.3775,
+    "dist_mpc": 1616.74,
+    "tap_kev": 1.85,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J105112.0+335910",
+    "ra_deg": 162.8,
+    "dec_deg": 33.9861,
+    "z": 0.2697,
+    "dist_mpc": 1155.06,
+    "tap_kev": 1.29,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J105318.6+572044",
+    "ra_deg": 163.3275,
+    "dec_deg": 57.3456,
+    "z": 0.3399,
+    "dist_mpc": 1455.71,
+    "tap_kev": 2.78,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J110355.9+360025",
+    "ra_deg": 165.9829,
+    "dec_deg": 36.0069,
+    "z": 0.2941,
+    "dist_mpc": 1259.56,
+    "tap_kev": 1.19,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J110428.4+355241",
+    "ra_deg": 166.1183,
+    "dec_deg": 35.8781,
+    "z": 0.1054,
+    "dist_mpc": 451.4,
+    "tap_kev": 0.63,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J110439.5+380531",
+    "ra_deg": 166.1646,
+    "dec_deg": 38.0919,
+    "z": 0.1534,
+    "dist_mpc": 656.97,
+    "tap_kev": 0.65,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J111036.3+482628",
+    "ra_deg": 167.6513,
+    "dec_deg": 48.4411,
+    "z": 0.343,
+    "dist_mpc": 1468.98,
+    "tap_kev": 1.24,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J111712.5+423605",
+    "ra_deg": 169.3021,
+    "dec_deg": 42.6014,
+    "z": 0.4404,
+    "dist_mpc": 1886.12,
+    "tap_kev": 5.0,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J111725.8+074337",
+    "ra_deg": 169.3575,
+    "dec_deg": 7.7269,
+    "z": 0.4693,
+    "dist_mpc": 2009.89,
+    "tap_kev": 3.22,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J111729.9+174455",
+    "ra_deg": 169.3746,
+    "dec_deg": 17.7486,
+    "z": 0.5066,
+    "dist_mpc": 2169.64,
+    "tap_kev": 5.36,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J111730.0+074623",
+    "ra_deg": 169.375,
+    "dec_deg": 7.7731,
+    "z": 0.1327,
+    "dist_mpc": 568.32,
+    "tap_kev": 1.84,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J111805.7+440935",
+    "ra_deg": 169.5238,
+    "dec_deg": 44.1597,
+    "z": 0.3466,
+    "dist_mpc": 1484.4,
+    "tap_kev": 2.69,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J111844.2+130749",
+    "ra_deg": 169.6842,
+    "dec_deg": 13.1303,
+    "z": 0.2358,
+    "dist_mpc": 1009.87,
+    "tap_kev": 1.34,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J112245.9+013335",
+    "ra_deg": 170.6912,
+    "dec_deg": 1.5597,
+    "z": 0.1369,
+    "dist_mpc": 586.31,
+    "tap_kev": 0.98,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J112410.1+062235",
+    "ra_deg": 171.0421,
+    "dec_deg": 6.3764,
+    "z": 0.3078,
+    "dist_mpc": 1318.23,
+    "tap_kev": 1.81,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J112739.7+583720",
+    "ra_deg": 171.9154,
+    "dec_deg": 58.6222,
+    "z": 0.1786,
+    "dist_mpc": 764.9,
+    "tap_kev": 1.39,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J113843.7+031537",
+    "ra_deg": 174.6821,
+    "dec_deg": 3.2603,
+    "z": 0.1278,
+    "dist_mpc": 547.34,
+    "tap_kev": 2.42,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J113910.1+170344",
+    "ra_deg": 174.7921,
+    "dec_deg": 17.0622,
+    "z": 0.297,
+    "dist_mpc": 1271.98,
+    "tap_kev": 2.44,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J114014.7+025633",
+    "ra_deg": 175.0613,
+    "dec_deg": 2.9425,
+    "z": 0.2065,
+    "dist_mpc": 884.39,
+    "tap_kev": 0.92,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J115012.7+550609",
+    "ra_deg": 177.5529,
+    "dec_deg": 55.1025,
+    "z": 0.2277,
+    "dist_mpc": 975.18,
+    "tap_kev": 1.79,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J115040.7+545641",
+    "ra_deg": 177.6696,
+    "dec_deg": 54.9447,
+    "z": 0.228,
+    "dist_mpc": 976.47,
+    "tap_kev": 2.12,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J115125.3+545006",
+    "ra_deg": 177.8554,
+    "dec_deg": 54.835,
+    "z": 0.1428,
+    "dist_mpc": 611.58,
+    "tap_kev": 2.52,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J115811.9+552126",
+    "ra_deg": 179.5496,
+    "dec_deg": 55.3572,
+    "z": 0.1354,
+    "dist_mpc": 579.88,
+    "tap_kev": 0.98,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J115824.6+440532",
+    "ra_deg": 179.6025,
+    "dec_deg": 44.0922,
+    "z": 0.4086,
+    "dist_mpc": 1749.93,
+    "tap_kev": 3.53,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J115850.5+440534",
+    "ra_deg": 179.7104,
+    "dec_deg": 44.0928,
+    "z": 0.2901,
+    "dist_mpc": 1242.43,
+    "tap_kev": 2.39,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J120340.3+443737",
+    "ra_deg": 180.9179,
+    "dec_deg": 44.6269,
+    "z": 0.3367,
+    "dist_mpc": 1442.0,
+    "tap_kev": 1.42,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J120531.7+441857",
+    "ra_deg": 181.3821,
+    "dec_deg": 44.3158,
+    "z": 0.3338,
+    "dist_mpc": 1429.58,
+    "tap_kev": 1.89,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J120606.8+441931",
+    "ra_deg": 181.5283,
+    "dec_deg": 44.3253,
+    "z": 0.2955,
+    "dist_mpc": 1265.55,
+    "tap_kev": 3.24,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J120800.8+433917",
+    "ra_deg": 182.0033,
+    "dec_deg": 43.6547,
+    "z": 0.2656,
+    "dist_mpc": 1137.5,
+    "tap_kev": 2.18,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J120929.1+392749",
+    "ra_deg": 182.3713,
+    "dec_deg": 39.4636,
+    "z": 0.2368,
+    "dist_mpc": 1014.16,
+    "tap_kev": 1.1,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J120933.9+392234",
+    "ra_deg": 182.3913,
+    "dec_deg": 39.3761,
+    "z": 0.5416,
+    "dist_mpc": 2319.54,
+    "tap_kev": 3.43,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J121020.1+503230",
+    "ra_deg": 182.5838,
+    "dec_deg": 50.5417,
+    "z": 0.3758,
+    "dist_mpc": 1609.46,
+    "tap_kev": 2.58,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J121030.6+423038",
+    "ra_deg": 182.6275,
+    "dec_deg": 42.5106,
+    "z": 0.3753,
+    "dist_mpc": 1607.32,
+    "tap_kev": 0.9,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J121110.9+502547",
+    "ra_deg": 182.7954,
+    "dec_deg": 50.4297,
+    "z": 0.4357,
+    "dist_mpc": 1865.99,
+    "tap_kev": 3.23,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J121157.1+502917",
+    "ra_deg": 182.9879,
+    "dec_deg": 50.4881,
+    "z": 0.0884,
+    "dist_mpc": 378.6,
+    "tap_kev": 0.77,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J121205.1+131221",
+    "ra_deg": 183.0213,
+    "dec_deg": 13.2058,
+    "z": 0.0821,
+    "dist_mpc": 351.61,
+    "tap_kev": 1.39,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J121334.6+025347",
+    "ra_deg": 183.3942,
+    "dec_deg": 2.8964,
+    "z": 0.4099,
+    "dist_mpc": 1755.5,
+    "tap_kev": 4.73,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J122035.2+291804",
+    "ra_deg": 185.1467,
+    "dec_deg": 29.3011,
+    "z": 0.0898,
+    "dist_mpc": 384.59,
+    "tap_kev": 0.77,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J122121.3+143317",
+    "ra_deg": 185.3388,
+    "dec_deg": 14.5547,
+    "z": 0.4843,
+    "dist_mpc": 2074.14,
+    "tap_kev": 1.79,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J122200.0+144203",
+    "ra_deg": 185.5,
+    "dec_deg": 14.7008,
+    "z": 0.3292,
+    "dist_mpc": 1409.88,
+    "tap_kev": 0.87,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J122527.7+004235",
+    "ra_deg": 186.3654,
+    "dec_deg": 0.7097,
+    "z": 0.237,
+    "dist_mpc": 1015.01,
+    "tap_kev": 2.76,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J122657.1+334332",
+    "ra_deg": 186.7379,
+    "dec_deg": 33.7256,
+    "z": 0.5001,
+    "dist_mpc": 2141.8,
+    "tap_kev": 4.36,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J122858.3+021126",
+    "ra_deg": 187.2429,
+    "dec_deg": 2.1906,
+    "z": 0.0821,
+    "dist_mpc": 351.61,
+    "tap_kev": 0.53,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J122903.6+015012",
+    "ra_deg": 187.265,
+    "dec_deg": 1.8367,
+    "z": 0.3622,
+    "dist_mpc": 1551.21,
+    "tap_kev": 0.89,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J122944.9+133453",
+    "ra_deg": 187.4371,
+    "dec_deg": 13.5814,
+    "z": 0.4373,
+    "dist_mpc": 1872.85,
+    "tap_kev": 2.56,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J123103.6+255142",
+    "ra_deg": 187.765,
+    "dec_deg": 25.8617,
+    "z": 0.4482,
+    "dist_mpc": 1919.53,
+    "tap_kev": 2.03,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J123105.2+155618",
+    "ra_deg": 187.7717,
+    "dec_deg": 15.9383,
+    "z": 0.1919,
+    "dist_mpc": 821.86,
+    "tap_kev": 2.97,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J123129.4+254906",
+    "ra_deg": 187.8725,
+    "dec_deg": 25.8183,
+    "z": 0.3299,
+    "dist_mpc": 1412.88,
+    "tap_kev": 1.29,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J123649.7+255002",
+    "ra_deg": 189.2071,
+    "dec_deg": 25.8339,
+    "z": 0.2139,
+    "dist_mpc": 916.08,
+    "tap_kev": 2.94,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J123755.7+621508",
+    "ra_deg": 189.4821,
+    "dec_deg": 62.2522,
+    "z": 0.3944,
+    "dist_mpc": 1689.12,
+    "tap_kev": 1.59,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J123836.2+175448",
+    "ra_deg": 189.6508,
+    "dec_deg": 17.9133,
+    "z": 0.4336,
+    "dist_mpc": 1857.0,
+    "tap_kev": 2.7,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J124125.7-015824",
+    "ra_deg": 190.3571,
+    "dec_deg": -1.9733,
+    "z": 0.1577,
+    "dist_mpc": 675.39,
+    "tap_kev": 1.74,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J124202.5+332216",
+    "ra_deg": 190.5104,
+    "dec_deg": 33.3711,
+    "z": 0.1392,
+    "dist_mpc": 596.16,
+    "tap_kev": 0.69,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J124235.9-112409",
+    "ra_deg": 190.6496,
+    "dec_deg": -11.4025,
+    "z": 0.0539,
+    "dist_mpc": 230.84,
+    "tap_kev": 0.98,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J124425.3+164759",
+    "ra_deg": 191.1054,
+    "dec_deg": 16.7997,
+    "z": 0.1911,
+    "dist_mpc": 818.43,
+    "tap_kev": 1.23,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J124453.5-003335",
+    "ra_deg": 191.2229,
+    "dec_deg": -0.5597,
+    "z": 0.2322,
+    "dist_mpc": 994.45,
+    "tap_kev": 2.0,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J124454.0-002636",
+    "ra_deg": 191.225,
+    "dec_deg": -0.4433,
+    "z": 0.231,
+    "dist_mpc": 989.32,
+    "tap_kev": 2.53,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J124515.9+565259",
+    "ra_deg": 191.3162,
+    "dec_deg": 56.8831,
+    "z": 0.4165,
+    "dist_mpc": 1783.77,
+    "tap_kev": 2.17,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J124730.4+564626",
+    "ra_deg": 191.8767,
+    "dec_deg": 56.7739,
+    "z": 0.448,
+    "dist_mpc": 1918.67,
+    "tap_kev": 0.94,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J124928.2-060002",
+    "ra_deg": 192.3675,
+    "dec_deg": -6.0006,
+    "z": 0.3555,
+    "dist_mpc": 1522.52,
+    "tap_kev": 5.02,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J125047.2+263338",
+    "ra_deg": 192.6967,
+    "dec_deg": 26.5606,
+    "z": 0.4757,
+    "dist_mpc": 2037.3,
+    "tap_kev": 1.85,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J125312.2+310711",
+    "ra_deg": 193.3008,
+    "dec_deg": 31.1197,
+    "z": 0.303,
+    "dist_mpc": 1297.67,
+    "tap_kev": 1.24,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J125401.8+310200",
+    "ra_deg": 193.5075,
+    "dec_deg": 31.0333,
+    "z": 0.5427,
+    "dist_mpc": 2324.25,
+    "tap_kev": 2.55,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J125620.2+254603",
+    "ra_deg": 194.0842,
+    "dec_deg": 25.7675,
+    "z": 0.216,
+    "dist_mpc": 925.07,
+    "tap_kev": 1.71,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J125752.4+283016",
+    "ra_deg": 194.4683,
+    "dec_deg": 28.5044,
+    "z": 0.3003,
+    "dist_mpc": 1286.11,
+    "tap_kev": 3.77,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J130240.6+672840",
+    "ra_deg": 195.6692,
+    "dec_deg": 67.4778,
+    "z": 0.1059,
+    "dist_mpc": 453.54,
+    "tap_kev": 1.9,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J130526.8+181200",
+    "ra_deg": 196.3617,
+    "dec_deg": 18.2,
+    "z": 0.4406,
+    "dist_mpc": 1886.98,
+    "tap_kev": 4.57,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J130534.9+175650",
+    "ra_deg": 196.3954,
+    "dec_deg": 17.9472,
+    "z": 0.5047,
+    "dist_mpc": 2161.5,
+    "tap_kev": 5.81,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J130554.1+181436",
+    "ra_deg": 196.4754,
+    "dec_deg": 18.2433,
+    "z": 0.4416,
+    "dist_mpc": 1891.26,
+    "tap_kev": 1.64,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J130815.2+213315",
+    "ra_deg": 197.0633,
+    "dec_deg": 21.5542,
+    "z": 0.1527,
+    "dist_mpc": 653.98,
+    "tap_kev": 0.76,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J130826.1+292430",
+    "ra_deg": 197.1087,
+    "dec_deg": 29.4083,
+    "z": 0.1233,
+    "dist_mpc": 528.06,
+    "tap_kev": 1.59,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J130832.2+534215",
+    "ra_deg": 197.1342,
+    "dec_deg": 53.7042,
+    "z": 0.329,
+    "dist_mpc": 1409.02,
+    "tap_kev": 3.67,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J130902.5+081734",
+    "ra_deg": 197.2604,
+    "dec_deg": 8.2928,
+    "z": 0.4218,
+    "dist_mpc": 1806.46,
+    "tap_kev": 2.83,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J130938.0+323234",
+    "ra_deg": 197.4083,
+    "dec_deg": 32.5428,
+    "z": 0.3243,
+    "dist_mpc": 1388.9,
+    "tap_kev": 1.29,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J131115.3+320004",
+    "ra_deg": 197.8137,
+    "dec_deg": 32.0011,
+    "z": 0.1788,
+    "dist_mpc": 765.76,
+    "tap_kev": 1.63,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J131155.1+352342",
+    "ra_deg": 197.9796,
+    "dec_deg": 35.395,
+    "z": 0.1837,
+    "dist_mpc": 786.74,
+    "tap_kev": 2.35,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J131303.2+351937",
+    "ra_deg": 198.2633,
+    "dec_deg": 35.3269,
+    "z": 0.2991,
+    "dist_mpc": 1280.97,
+    "tap_kev": 4.32,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J132054.4+335448",
+    "ra_deg": 200.2267,
+    "dec_deg": 33.9133,
+    "z": 0.1829,
+    "dist_mpc": 783.31,
+    "tap_kev": 5.06,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J132312.1+031743",
+    "ra_deg": 200.8004,
+    "dec_deg": 3.2953,
+    "z": 0.1645,
+    "dist_mpc": 704.51,
+    "tap_kev": 0.75,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J132420.7+301241",
+    "ra_deg": 201.0863,
+    "dec_deg": 30.2114,
+    "z": 0.6733,
+    "dist_mpc": 2883.58,
+    "tap_kev": 5.86,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J132457.3+300728",
+    "ra_deg": 201.2388,
+    "dec_deg": 30.1244,
+    "z": 0.2017,
+    "dist_mpc": 863.83,
+    "tap_kev": 0.98,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J132631.5+074503",
+    "ra_deg": 201.6312,
+    "dec_deg": 7.7508,
+    "z": 0.5356,
+    "dist_mpc": 2293.84,
+    "tap_kev": 1.67,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J133003.6+335042",
+    "ra_deg": 202.515,
+    "dec_deg": 33.845,
+    "z": 0.2485,
+    "dist_mpc": 1064.26,
+    "tap_kev": 1.32,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J133004.1+583429",
+    "ra_deg": 202.5171,
+    "dec_deg": 58.5747,
+    "z": 0.3012,
+    "dist_mpc": 1289.96,
+    "tap_kev": 3.32,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J133046.2+334620",
+    "ra_deg": 202.6925,
+    "dec_deg": 33.7722,
+    "z": 0.4543,
+    "dist_mpc": 1945.65,
+    "tap_kev": 1.78,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J133129.7+110758",
+    "ra_deg": 202.8738,
+    "dec_deg": 11.1328,
+    "z": 0.0841,
+    "dist_mpc": 360.18,
+    "tap_kev": 0.67,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J133458.4+375019",
+    "ra_deg": 203.7433,
+    "dec_deg": 37.8386,
+    "z": 0.3645,
+    "dist_mpc": 1561.06,
+    "tap_kev": 4.07,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J133502.5+502328",
+    "ra_deg": 203.7604,
+    "dec_deg": 50.3911,
+    "z": 0.0855,
+    "dist_mpc": 366.18,
+    "tap_kev": 1.3,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J133603.5+514538",
+    "ra_deg": 204.0146,
+    "dec_deg": 51.7606,
+    "z": 0.4389,
+    "dist_mpc": 1879.7,
+    "tap_kev": 2.09,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J133751.4+515232",
+    "ra_deg": 204.4642,
+    "dec_deg": 51.8756,
+    "z": 0.2608,
+    "dist_mpc": 1116.94,
+    "tap_kev": 1.15,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J133804.4+482106",
+    "ra_deg": 204.5183,
+    "dec_deg": 48.3517,
+    "z": 0.0745,
+    "dist_mpc": 319.06,
+    "tap_kev": 0.56,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J133909.1+481149",
+    "ra_deg": 204.7879,
+    "dec_deg": 48.1969,
+    "z": 0.4092,
+    "dist_mpc": 1752.5,
+    "tap_kev": 2.48,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J134304.9-000053",
+    "ra_deg": 205.7704,
+    "dec_deg": -0.0147,
+    "z": 0.6623,
+    "dist_mpc": 2836.46,
+    "tap_kev": 4.98,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J134326.5+554639",
+    "ra_deg": 205.8604,
+    "dec_deg": 55.7775,
+    "z": 0.0818,
+    "dist_mpc": 350.33,
+    "tap_kev": 0.71,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J134825.5+580021",
+    "ra_deg": 207.1062,
+    "dec_deg": 58.0058,
+    "z": 0.107,
+    "dist_mpc": 458.25,
+    "tap_kev": 1.35,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J134853.5+600947",
+    "ra_deg": 207.2229,
+    "dec_deg": 60.1631,
+    "z": 0.4399,
+    "dist_mpc": 1883.98,
+    "tap_kev": 2.36,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J134903.5+642311",
+    "ra_deg": 207.2646,
+    "dec_deg": 64.3864,
+    "z": 0.5388,
+    "dist_mpc": 2307.55,
+    "tap_kev": 2.48,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J135114.8+642321",
+    "ra_deg": 207.8117,
+    "dec_deg": 64.3892,
+    "z": 0.1969,
+    "dist_mpc": 843.27,
+    "tap_kev": 1.49,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J135358.9+334958",
+    "ra_deg": 208.4954,
+    "dec_deg": 33.8328,
+    "z": 0.47,
+    "dist_mpc": 2012.89,
+    "tap_kev": 2.83,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J135403.9+334600",
+    "ra_deg": 208.5163,
+    "dec_deg": 33.7667,
+    "z": 0.3823,
+    "dist_mpc": 1637.3,
+    "tap_kev": 2.51,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J135540.9+182544",
+    "ra_deg": 208.9204,
+    "dec_deg": 18.4289,
+    "z": 0.2801,
+    "dist_mpc": 1199.6,
+    "tap_kev": 1.98,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J135546.0+182255",
+    "ra_deg": 208.9417,
+    "dec_deg": 18.3819,
+    "z": 0.3147,
+    "dist_mpc": 1347.78,
+    "tap_kev": 2.0,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J135933.5+621901",
+    "ra_deg": 209.8896,
+    "dec_deg": 62.3169,
+    "z": 0.3287,
+    "dist_mpc": 1407.74,
+    "tap_kev": 5.0,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J140615.5+283051",
+    "ra_deg": 211.5646,
+    "dec_deg": 28.5142,
+    "z": 0.53,
+    "dist_mpc": 2269.86,
+    "tap_kev": 5.17,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J140700.1+282140",
+    "ra_deg": 211.7504,
+    "dec_deg": 28.3611,
+    "z": 0.498,
+    "dist_mpc": 2132.81,
+    "tap_kev": 2.05,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J141254.5-031536",
+    "ra_deg": 213.2271,
+    "dec_deg": -3.26,
+    "z": 0.3807,
+    "dist_mpc": 1630.44,
+    "tap_kev": 2.04,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J141313.0-031732",
+    "ra_deg": 213.3042,
+    "dec_deg": -3.2922,
+    "z": 0.329,
+    "dist_mpc": 1409.02,
+    "tap_kev": 2.88,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J141329.5+435845",
+    "ra_deg": 213.3729,
+    "dec_deg": 43.9792,
+    "z": 0.3444,
+    "dist_mpc": 1474.98,
+    "tap_kev": 2.69,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J141457.7-002059",
+    "ra_deg": 213.7404,
+    "dec_deg": -0.3497,
+    "z": 0.1405,
+    "dist_mpc": 601.73,
+    "tap_kev": 1.33,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J141457.8+440323",
+    "ra_deg": 213.7408,
+    "dec_deg": 44.0564,
+    "z": 0.4122,
+    "dist_mpc": 1765.35,
+    "tap_kev": 2.08,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J141508.3+282232",
+    "ra_deg": 213.7846,
+    "dec_deg": 28.3756,
+    "z": 0.4142,
+    "dist_mpc": 1773.91,
+    "tap_kev": 3.08,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J141534.4+282342",
+    "ra_deg": 213.8933,
+    "dec_deg": 28.395,
+    "z": 0.2239,
+    "dist_mpc": 958.91,
+    "tap_kev": 2.89,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J141621.6+264310",
+    "ra_deg": 214.09,
+    "dec_deg": 26.7194,
+    "z": 0.457,
+    "dist_mpc": 1957.22,
+    "tap_kev": 2.13,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J141627.9+444645",
+    "ra_deg": 214.1163,
+    "dec_deg": 44.7792,
+    "z": 0.3351,
+    "dist_mpc": 1435.15,
+    "tap_kev": 3.63,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J141800.9+245536",
+    "ra_deg": 214.5037,
+    "dec_deg": 24.9267,
+    "z": 0.2114,
+    "dist_mpc": 905.37,
+    "tap_kev": 0.94,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J141830.6+251052",
+    "ra_deg": 214.6275,
+    "dec_deg": 25.1811,
+    "z": 0.2909,
+    "dist_mpc": 1245.85,
+    "tap_kev": 5.9,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J142305.5+382807",
+    "ra_deg": 215.7729,
+    "dec_deg": 38.4686,
+    "z": 0.3921,
+    "dist_mpc": 1679.27,
+    "tap_kev": 3.67,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J142731.1+262904",
+    "ra_deg": 216.8796,
+    "dec_deg": 26.4844,
+    "z": 0.3467,
+    "dist_mpc": 1484.83,
+    "tap_kev": 1.93,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J142900.0+424743",
+    "ra_deg": 217.25,
+    "dec_deg": 42.7953,
+    "z": 0.179,
+    "dist_mpc": 766.61,
+    "tap_kev": 0.98,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J143103.0+421432",
+    "ra_deg": 217.7625,
+    "dec_deg": 42.2422,
+    "z": 0.4261,
+    "dist_mpc": 1824.88,
+    "tap_kev": 2.86,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J143431.8+033749",
+    "ra_deg": 218.6325,
+    "dec_deg": 3.6303,
+    "z": 0.2944,
+    "dist_mpc": 1260.84,
+    "tap_kev": 1.14,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J143448.3+033749",
+    "ra_deg": 218.7012,
+    "dec_deg": 3.6303,
+    "z": 0.1462,
+    "dist_mpc": 626.14,
+    "tap_kev": 2.36,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J143529.7+484538",
+    "ra_deg": 218.8738,
+    "dec_deg": 48.7606,
+    "z": 0.5985,
+    "dist_mpc": 2563.23,
+    "tap_kev": 7.22,
+    "color_hex": "#aaccff",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J143901.1+642332",
+    "ra_deg": 219.7546,
+    "dec_deg": 64.3922,
+    "z": 0.1436,
+    "dist_mpc": 615.0,
+    "tap_kev": 1.59,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J144512.2+292531",
+    "ra_deg": 221.3008,
+    "dec_deg": 29.4253,
+    "z": 0.1234,
+    "dist_mpc": 528.49,
+    "tap_kev": 0.74,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J144940.2+084756",
+    "ra_deg": 222.4175,
+    "dec_deg": 8.7989,
+    "z": 0.2538,
+    "dist_mpc": 1086.96,
+    "tap_kev": 0.89,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J145014.9+270836",
+    "ra_deg": 222.5621,
+    "dec_deg": 27.1433,
+    "z": 0.3359,
+    "dist_mpc": 1438.58,
+    "tap_kev": 2.75,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J145317.4+033446",
+    "ra_deg": 223.3225,
+    "dec_deg": 3.5794,
+    "z": 0.3554,
+    "dist_mpc": 1522.09,
+    "tap_kev": 3.28,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J150824.5-001557",
+    "ra_deg": 227.1021,
+    "dec_deg": -0.2658,
+    "z": 0.0887,
+    "dist_mpc": 379.88,
+    "tap_kev": 3.48,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J150918.8-001424",
+    "ra_deg": 227.3283,
+    "dec_deg": -0.24,
+    "z": 0.2482,
+    "dist_mpc": 1062.98,
+    "tap_kev": 2.98,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J151747.9+424141",
+    "ra_deg": 229.4496,
+    "dec_deg": 42.6947,
+    "z": 0.3753,
+    "dist_mpc": 1607.32,
+    "tap_kev": 2.58,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J153453.8+232828",
+    "ra_deg": 233.7242,
+    "dec_deg": 23.4744,
+    "z": 0.0901,
+    "dist_mpc": 385.88,
+    "tap_kev": 1.08,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J153629.1+543924",
+    "ra_deg": 234.1213,
+    "dec_deg": 54.6567,
+    "z": 0.4086,
+    "dist_mpc": 1749.93,
+    "tap_kev": 3.43,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J154406.5+534712",
+    "ra_deg": 236.0271,
+    "dec_deg": 53.7867,
+    "z": 0.4975,
+    "dist_mpc": 2130.67,
+    "tap_kev": 3.3,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J154931.9+213259",
+    "ra_deg": 237.3829,
+    "dec_deg": 21.5497,
+    "z": 0.6217,
+    "dist_mpc": 2662.59,
+    "tap_kev": 3.4,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J160129.7+083852",
+    "ra_deg": 240.3738,
+    "dec_deg": 8.6478,
+    "z": 0.1876,
+    "dist_mpc": 803.44,
+    "tap_kev": 1.85,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J161040.5+540638",
+    "ra_deg": 242.6687,
+    "dec_deg": 54.1106,
+    "z": 0.3426,
+    "dist_mpc": 1467.27,
+    "tap_kev": 1.89,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J163155.5+373602",
+    "ra_deg": 247.9812,
+    "dec_deg": 37.6006,
+    "z": 0.1754,
+    "dist_mpc": 751.19,
+    "tap_kev": 0.69,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J164116.2+385415",
+    "ra_deg": 250.3175,
+    "dec_deg": 38.9042,
+    "z": 0.3121,
+    "dist_mpc": 1336.65,
+    "tap_kev": 1.84,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J170041.9+641258",
+    "ra_deg": 255.1746,
+    "dec_deg": 64.2161,
+    "z": 0.235,
+    "dist_mpc": 1006.45,
+    "tap_kev": 4.08,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J171416.9+573102",
+    "ra_deg": 258.5704,
+    "dec_deg": 57.5172,
+    "z": 0.1024,
+    "dist_mpc": 438.55,
+    "tap_kev": 1.12,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J171438.0+623321",
+    "ra_deg": 258.6583,
+    "dec_deg": 62.5558,
+    "z": 0.1767,
+    "dist_mpc": 756.76,
+    "tap_kev": 1.62,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J172335.5+341155",
+    "ra_deg": 260.8979,
+    "dec_deg": 34.1986,
+    "z": 0.4295,
+    "dist_mpc": 1839.44,
+    "tap_kev": 3.08,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J173710.0+660326",
+    "ra_deg": 264.2917,
+    "dec_deg": 66.0572,
+    "z": 0.3825,
+    "dist_mpc": 1638.15,
+    "tap_kev": 1.46,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J213027.3-000017",
+    "ra_deg": 322.6137,
+    "dec_deg": -0.0047,
+    "z": 0.1361,
+    "dist_mpc": 582.88,
+    "tap_kev": 4.07,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J215437.2-091533",
+    "ra_deg": 328.655,
+    "dec_deg": -9.2592,
+    "z": 0.0781,
+    "dist_mpc": 334.48,
+    "tap_kev": 0.81,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J223546.4+335304",
+    "ra_deg": 338.9433,
+    "dec_deg": 33.8844,
+    "z": 0.3854,
+    "dist_mpc": 1650.57,
+    "tap_kev": 1.34,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J001115.6+005156",
+    "ra_deg": 2.815,
+    "dec_deg": 0.8656,
+    "z": 0.3622,
+    "dist_mpc": 1551.21,
+    "tap_kev": 1.83,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J002314.3+001158",
+    "ra_deg": 5.8096,
+    "dec_deg": 0.1994,
+    "z": 0.2597,
+    "dist_mpc": 1112.23,
+    "tap_kev": 3.08,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J032538.7-055530",
+    "ra_deg": 51.4113,
+    "dec_deg": -5.925,
+    "z": 0.2168,
+    "dist_mpc": 928.5,
+    "tap_kev": 1.72,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J033446.2+001710",
+    "ra_deg": 53.6925,
+    "dec_deg": 0.2861,
+    "z": 0.3261,
+    "dist_mpc": 1396.6,
+    "tap_kev": 2.72,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J044758.3-061529",
+    "ra_deg": 71.9929,
+    "dec_deg": -6.2581,
+    "z": 0.4826,
+    "dist_mpc": 2066.85,
+    "tap_kev": 2.04,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J082135.2+010231",
+    "ra_deg": 125.3967,
+    "dec_deg": 1.0419,
+    "z": 0.0812,
+    "dist_mpc": 347.76,
+    "tap_kev": 1.59,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J085930.8+170856",
+    "ra_deg": 134.8783,
+    "dec_deg": 17.1489,
+    "z": 0.3312,
+    "dist_mpc": 1418.45,
+    "tap_kev": 1.04,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J091551.4+293640",
+    "ra_deg": 138.9642,
+    "dec_deg": 29.6111,
+    "z": 0.4772,
+    "dist_mpc": 2043.73,
+    "tap_kev": 1.74,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J091601.2+292748",
+    "ra_deg": 139.005,
+    "dec_deg": 29.4633,
+    "z": 0.5445,
+    "dist_mpc": 2331.96,
+    "tap_kev": 2.31,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J092539.8+362702",
+    "ra_deg": 141.4158,
+    "dec_deg": 36.4506,
+    "z": 0.1243,
+    "dist_mpc": 532.35,
+    "tap_kev": 2.91,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J095610.3-002151",
+    "ra_deg": 149.0429,
+    "dec_deg": -0.3642,
+    "z": 0.5611,
+    "dist_mpc": 2403.05,
+    "tap_kev": 2.83,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J095931.5+022701",
+    "ra_deg": 149.8812,
+    "dec_deg": 2.4503,
+    "z": 0.3591,
+    "dist_mpc": 1537.94,
+    "tap_kev": 1.88,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J103129.5+645307",
+    "ra_deg": 157.8729,
+    "dec_deg": 64.8853,
+    "z": 0.3751,
+    "dist_mpc": 1606.46,
+    "tap_kev": 1.46,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J103351.0+650102",
+    "ra_deg": 158.4625,
+    "dec_deg": 65.0172,
+    "z": 0.3928,
+    "dist_mpc": 1682.26,
+    "tap_kev": 2.86,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J103905.2+395655",
+    "ra_deg": 159.7717,
+    "dec_deg": 39.9486,
+    "z": 0.0704,
+    "dist_mpc": 301.51,
+    "tap_kev": 0.65,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J105705.9+065347",
+    "ra_deg": 164.2746,
+    "dec_deg": 6.8964,
+    "z": 0.1532,
+    "dist_mpc": 656.12,
+    "tap_kev": 1.13,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J110809.4+613029",
+    "ra_deg": 167.0392,
+    "dec_deg": 61.5081,
+    "z": 0.2526,
+    "dist_mpc": 1081.82,
+    "tap_kev": 3.05,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J123601.3+263831",
+    "ra_deg": 189.0054,
+    "dec_deg": 26.6419,
+    "z": 0.2098,
+    "dist_mpc": 898.52,
+    "tap_kev": 1.34,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J125439.6+262003",
+    "ra_deg": 193.665,
+    "dec_deg": 26.3342,
+    "z": 0.077,
+    "dist_mpc": 329.77,
+    "tap_kev": 0.49,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J125808.5+271113",
+    "ra_deg": 194.5354,
+    "dec_deg": 27.1869,
+    "z": 0.4106,
+    "dist_mpc": 1758.5,
+    "tap_kev": 1.6,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J130046.6+590842",
+    "ra_deg": 195.1942,
+    "dec_deg": 59.145,
+    "z": 0.4423,
+    "dist_mpc": 1894.26,
+    "tap_kev": 1.92,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J130152.6+585816",
+    "ra_deg": 195.4692,
+    "dec_deg": 58.9711,
+    "z": 0.2185,
+    "dist_mpc": 935.78,
+    "tap_kev": 2.97,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J130851.3+574302",
+    "ra_deg": 197.2138,
+    "dec_deg": 57.7172,
+    "z": 0.3435,
+    "dist_mpc": 1471.12,
+    "tap_kev": 2.05,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J130947.7+573011",
+    "ra_deg": 197.4487,
+    "dec_deg": 57.5031,
+    "z": 0.2928,
+    "dist_mpc": 1253.99,
+    "tap_kev": 4.02,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J131059.0+572040",
+    "ra_deg": 197.7458,
+    "dec_deg": 57.3444,
+    "z": 0.4573,
+    "dist_mpc": 1958.5,
+    "tap_kev": 4.2,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J132905.0+582624",
+    "ra_deg": 202.2708,
+    "dec_deg": 58.44,
+    "z": 0.1567,
+    "dist_mpc": 671.11,
+    "tap_kev": 0.62,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J135428.5+052644",
+    "ra_deg": 208.6188,
+    "dec_deg": 5.4456,
+    "z": 0.0594,
+    "dist_mpc": 254.4,
+    "tap_kev": 2.24,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J135442.3+052856",
+    "ra_deg": 208.6763,
+    "dec_deg": 5.4822,
+    "z": 0.0653,
+    "dist_mpc": 279.66,
+    "tap_kev": 1.1,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J143713.9+341519",
+    "ra_deg": 219.3079,
+    "dec_deg": 34.2553,
+    "z": 0.5196,
+    "dist_mpc": 2225.32,
+    "tap_kev": 6.3,
+    "color_hex": "#aaccff",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J143929.0+024605",
+    "ra_deg": 219.8708,
+    "dec_deg": 2.7681,
+    "z": 0.1447,
+    "dist_mpc": 619.71,
+    "tap_kev": 0.99,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J144111.2+025156",
+    "ra_deg": 220.2967,
+    "dec_deg": 2.8656,
+    "z": 0.2924,
+    "dist_mpc": 1252.28,
+    "tap_kev": 1.96,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J144718.2+631614",
+    "ra_deg": 221.8258,
+    "dec_deg": 63.2706,
+    "z": 0.1978,
+    "dist_mpc": 847.13,
+    "tap_kev": 2.51,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J145846.5+493501",
+    "ra_deg": 224.6937,
+    "dec_deg": 49.5836,
+    "z": 0.4447,
+    "dist_mpc": 1904.54,
+    "tap_kev": 4.77,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J163015.3+243421",
+    "ra_deg": 247.5637,
+    "dec_deg": 24.5725,
+    "z": 0.0668,
+    "dist_mpc": 286.09,
+    "tap_kev": 3.04,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J215041.2-054102",
+    "ra_deg": 327.6717,
+    "dec_deg": -5.6839,
+    "z": 0.3809,
+    "dist_mpc": 1631.3,
+    "tap_kev": 2.99,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J220620.3-002559",
+    "ra_deg": 331.5846,
+    "dec_deg": -0.4331,
+    "z": 0.3253,
+    "dist_mpc": 1393.18,
+    "tap_kev": 1.78,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J001737.3-005239",
+    "ra_deg": 4.4054,
+    "dec_deg": -0.8775,
+    "z": 0.2141,
+    "dist_mpc": 916.94,
+    "tap_kev": 4.3,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J001848.0+160216",
+    "ra_deg": 4.7,
+    "dec_deg": 16.0378,
+    "z": 0.5412,
+    "dist_mpc": 2317.82,
+    "tap_kev": 5.17,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J005259.6-083936",
+    "ra_deg": 13.2483,
+    "dec_deg": -8.66,
+    "z": 0.3155,
+    "dist_mpc": 1351.21,
+    "tap_kev": 2.78,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J012351.8+333851",
+    "ra_deg": 20.9658,
+    "dec_deg": 33.6475,
+    "z": 0.2527,
+    "dist_mpc": 1082.25,
+    "tap_kev": 3.51,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J074603.9+305250",
+    "ra_deg": 116.5162,
+    "dec_deg": 30.8806,
+    "z": 0.2249,
+    "dist_mpc": 963.19,
+    "tap_kev": 2.14,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J075839.2+351936",
+    "ra_deg": 119.6633,
+    "dec_deg": 35.3267,
+    "z": 0.1738,
+    "dist_mpc": 744.34,
+    "tap_kev": 1.78,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J081058.2+500529",
+    "ra_deg": 122.7425,
+    "dec_deg": 50.0914,
+    "z": 0.3957,
+    "dist_mpc": 1694.68,
+    "tap_kev": 3.08,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J082030.6+205603",
+    "ra_deg": 125.1275,
+    "dec_deg": 20.9342,
+    "z": 0.2913,
+    "dist_mpc": 1247.56,
+    "tap_kev": 1.18,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J082412.9+300437",
+    "ra_deg": 126.0537,
+    "dec_deg": 30.0769,
+    "z": 0.3009,
+    "dist_mpc": 1288.68,
+    "tap_kev": 2.17,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J083713.1+061104",
+    "ra_deg": 129.3046,
+    "dec_deg": 6.1844,
+    "z": 0.2037,
+    "dist_mpc": 872.4,
+    "tap_kev": 0.86,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J083727.0+145102",
+    "ra_deg": 129.3625,
+    "dec_deg": 14.8506,
+    "z": 0.2153,
+    "dist_mpc": 922.08,
+    "tap_kev": 4.53,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J084004.3+294544",
+    "ra_deg": 130.0179,
+    "dec_deg": 29.7622,
+    "z": 0.5106,
+    "dist_mpc": 2186.77,
+    "tap_kev": 2.48,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J084043.6+383052",
+    "ra_deg": 130.1817,
+    "dec_deg": 38.5144,
+    "z": 0.1769,
+    "dist_mpc": 757.62,
+    "tap_kev": 1.38,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J084052.6+383847",
+    "ra_deg": 130.2192,
+    "dec_deg": 38.6464,
+    "z": 0.1148,
+    "dist_mpc": 491.66,
+    "tap_kev": 1.83,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J084105.6+383158",
+    "ra_deg": 130.2733,
+    "dec_deg": 38.5328,
+    "z": 0.2462,
+    "dist_mpc": 1054.41,
+    "tap_kev": 1.44,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J085332.1+150133",
+    "ra_deg": 133.3837,
+    "dec_deg": 15.0258,
+    "z": 0.4298,
+    "dist_mpc": 1840.73,
+    "tap_kev": 5.83,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J085337.6+180136",
+    "ra_deg": 133.4067,
+    "dec_deg": 18.0267,
+    "z": 0.1861,
+    "dist_mpc": 797.02,
+    "tap_kev": 1.67,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J085500.0+150918",
+    "ra_deg": 133.75,
+    "dec_deg": 15.155,
+    "z": 0.2246,
+    "dist_mpc": 961.91,
+    "tap_kev": 1.77,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J090551.6+010756",
+    "ra_deg": 136.465,
+    "dec_deg": 1.1322,
+    "z": 0.0716,
+    "dist_mpc": 306.64,
+    "tap_kev": 0.79,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J091255.3+415553",
+    "ra_deg": 138.2304,
+    "dec_deg": 41.9314,
+    "z": 0.1551,
+    "dist_mpc": 664.25,
+    "tap_kev": 1.05,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J091935.0+303157",
+    "ra_deg": 139.8958,
+    "dec_deg": 30.5325,
+    "z": 0.4273,
+    "dist_mpc": 1830.02,
+    "tap_kev": 3.9,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J091951.9+301659",
+    "ra_deg": 139.9663,
+    "dec_deg": 30.2831,
+    "z": 0.4091,
+    "dist_mpc": 1752.07,
+    "tap_kev": 5.18,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J092052.9+302758",
+    "ra_deg": 140.2204,
+    "dec_deg": 30.4661,
+    "z": 0.2894,
+    "dist_mpc": 1239.43,
+    "tap_kev": 3.68,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J094909.6+582307",
+    "ra_deg": 147.29,
+    "dec_deg": 58.3853,
+    "z": 0.2555,
+    "dist_mpc": 1094.24,
+    "tap_kev": 3.78,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J095904.4+130524",
+    "ra_deg": 149.7683,
+    "dec_deg": 13.09,
+    "z": 0.3959,
+    "dist_mpc": 1695.54,
+    "tap_kev": 2.86,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J095923.9+014620",
+    "ra_deg": 149.8496,
+    "dec_deg": 1.7722,
+    "z": 0.1321,
+    "dist_mpc": 565.75,
+    "tap_kev": 1.23,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J100055.6+285410",
+    "ra_deg": 150.2317,
+    "dec_deg": 28.9028,
+    "z": 0.0755,
+    "dist_mpc": 323.35,
+    "tap_kev": 0.65,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J100117.4+285111",
+    "ra_deg": 150.3225,
+    "dec_deg": 28.8531,
+    "z": 0.0773,
+    "dist_mpc": 331.06,
+    "tap_kev": 0.78,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J101120.0+533431",
+    "ra_deg": 152.8333,
+    "dec_deg": 53.5753,
+    "z": 0.3896,
+    "dist_mpc": 1668.56,
+    "tap_kev": 6.16,
+    "color_hex": "#aaccff",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J102316.6+435941",
+    "ra_deg": 155.8192,
+    "dec_deg": 43.9947,
+    "z": 0.0951,
+    "dist_mpc": 407.29,
+    "tap_kev": 1.59,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J103007.0-030638",
+    "ra_deg": 157.5292,
+    "dec_deg": -3.1106,
+    "z": 0.4381,
+    "dist_mpc": 1876.27,
+    "tap_kev": 3.13,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J103114.6-030641",
+    "ra_deg": 157.8108,
+    "dec_deg": -3.1114,
+    "z": 0.3454,
+    "dist_mpc": 1479.26,
+    "tap_kev": 1.82,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J103946.3+585412",
+    "ra_deg": 159.9429,
+    "dec_deg": 58.9033,
+    "z": 0.4088,
+    "dist_mpc": 1750.79,
+    "tap_kev": 4.37,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J104423.0+064509",
+    "ra_deg": 161.0958,
+    "dec_deg": 6.7525,
+    "z": 0.2979,
+    "dist_mpc": 1275.83,
+    "tap_kev": 3.08,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J104613.6+484820",
+    "ra_deg": 161.5567,
+    "dec_deg": 48.8056,
+    "z": 0.4342,
+    "dist_mpc": 1859.57,
+    "tap_kev": 2.79,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J104619.4+483620",
+    "ra_deg": 161.5808,
+    "dec_deg": 48.6056,
+    "z": 0.1403,
+    "dist_mpc": 600.87,
+    "tap_kev": 2.49,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J110150.2-011416",
+    "ra_deg": 165.4592,
+    "dec_deg": -1.2378,
+    "z": 0.4479,
+    "dist_mpc": 1918.24,
+    "tap_kev": 1.57,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J111153.6+022902",
+    "ra_deg": 167.9733,
+    "dec_deg": 2.4839,
+    "z": 0.085,
+    "dist_mpc": 364.03,
+    "tap_kev": 0.83,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J111206.6+061236",
+    "ra_deg": 168.0275,
+    "dec_deg": 6.21,
+    "z": 0.344,
+    "dist_mpc": 1473.27,
+    "tap_kev": 0.92,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J112259.2+465917",
+    "ra_deg": 170.7467,
+    "dec_deg": 46.9881,
+    "z": 0.4746,
+    "dist_mpc": 2032.59,
+    "tap_kev": 4.23,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J112419.9+470005",
+    "ra_deg": 171.0829,
+    "dec_deg": 47.0014,
+    "z": 0.4933,
+    "dist_mpc": 2112.68,
+    "tap_kev": 6.15,
+    "color_hex": "#aaccff",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J114535.8+024250",
+    "ra_deg": 176.3992,
+    "dec_deg": 2.7139,
+    "z": 0.1923,
+    "dist_mpc": 823.57,
+    "tap_kev": 2.83,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J114541.4+025415",
+    "ra_deg": 176.4225,
+    "dec_deg": 2.9042,
+    "z": 0.2618,
+    "dist_mpc": 1121.22,
+    "tap_kev": 1.54,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J114627.8+522108",
+    "ra_deg": 176.6158,
+    "dec_deg": 52.3522,
+    "z": 0.371,
+    "dist_mpc": 1588.9,
+    "tap_kev": 3.03,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J115650.5+525807",
+    "ra_deg": 179.2104,
+    "dec_deg": 52.9686,
+    "z": 0.1986,
+    "dist_mpc": 850.55,
+    "tap_kev": 0.93,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J115704.4+525310",
+    "ra_deg": 179.2683,
+    "dec_deg": 52.8861,
+    "z": 0.3067,
+    "dist_mpc": 1313.52,
+    "tap_kev": 0.95,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J120045.3+342454",
+    "ra_deg": 180.1887,
+    "dec_deg": 34.415,
+    "z": 0.2583,
+    "dist_mpc": 1106.23,
+    "tap_kev": 2.42,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J120124.3+342044",
+    "ra_deg": 180.3512,
+    "dec_deg": 34.3456,
+    "z": 0.261,
+    "dist_mpc": 1117.8,
+    "tap_kev": 1.54,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J120130.9+341706",
+    "ra_deg": 180.3787,
+    "dec_deg": 34.285,
+    "z": 0.2886,
+    "dist_mpc": 1236.0,
+    "tap_kev": 2.83,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J123101.8+102855",
+    "ra_deg": 187.7575,
+    "dec_deg": 10.4819,
+    "z": 0.1088,
+    "dist_mpc": 465.96,
+    "tap_kev": 1.89,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J123145.0+413731",
+    "ra_deg": 187.9375,
+    "dec_deg": 41.6253,
+    "z": 0.1743,
+    "dist_mpc": 746.48,
+    "tap_kev": 2.87,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J123150.4+120005",
+    "ra_deg": 187.96,
+    "dec_deg": 12.0014,
+    "z": 0.2494,
+    "dist_mpc": 1068.12,
+    "tap_kev": 4.13,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J123841.0+092830",
+    "ra_deg": 189.6708,
+    "dec_deg": 9.475,
+    "z": 0.2299,
+    "dist_mpc": 984.6,
+    "tap_kev": 5.21,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J124309.5+142026",
+    "ra_deg": 190.7896,
+    "dec_deg": 14.3406,
+    "z": 0.3401,
+    "dist_mpc": 1456.56,
+    "tap_kev": 1.6,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J124600.4+543530",
+    "ra_deg": 191.5017,
+    "dec_deg": 54.5917,
+    "z": 0.4985,
+    "dist_mpc": 2134.95,
+    "tap_kev": 2.23,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J125003.9+052118",
+    "ra_deg": 192.5163,
+    "dec_deg": 5.355,
+    "z": 0.3704,
+    "dist_mpc": 1586.33,
+    "tap_kev": 1.54,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J125812.4+474642",
+    "ra_deg": 194.5517,
+    "dec_deg": 47.7783,
+    "z": 0.4009,
+    "dist_mpc": 1716.95,
+    "tap_kev": 2.08,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J132606.0+315756",
+    "ra_deg": 201.525,
+    "dec_deg": 31.9656,
+    "z": 0.3233,
+    "dist_mpc": 1384.61,
+    "tap_kev": 1.92,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J132704.2+315129",
+    "ra_deg": 201.7675,
+    "dec_deg": 31.8581,
+    "z": 0.2478,
+    "dist_mpc": 1061.27,
+    "tap_kev": 1.48,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J132921.0-005358",
+    "ra_deg": 202.3375,
+    "dec_deg": -0.8994,
+    "z": 0.5047,
+    "dist_mpc": 2161.5,
+    "tap_kev": 3.33,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J133805.9-013501",
+    "ra_deg": 204.5246,
+    "dec_deg": -1.5836,
+    "z": 0.3749,
+    "dist_mpc": 1605.6,
+    "tap_kev": 1.28,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J143121.1-005341",
+    "ra_deg": 217.8379,
+    "dec_deg": -0.8947,
+    "z": 0.4027,
+    "dist_mpc": 1724.66,
+    "tap_kev": 5.94,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J143927.3+001249",
+    "ra_deg": 219.8638,
+    "dec_deg": 0.2136,
+    "z": 0.2762,
+    "dist_mpc": 1182.9,
+    "tap_kev": 2.13,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J145709.1-010057",
+    "ra_deg": 224.2879,
+    "dec_deg": -1.0158,
+    "z": 0.2622,
+    "dist_mpc": 1122.94,
+    "tap_kev": 1.41,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J151529.5+003943",
+    "ra_deg": 228.8729,
+    "dec_deg": 0.6619,
+    "z": 0.2508,
+    "dist_mpc": 1074.11,
+    "tap_kev": 1.47,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J163139.3+340430",
+    "ra_deg": 247.9137,
+    "dec_deg": 34.075,
+    "z": 0.1232,
+    "dist_mpc": 527.63,
+    "tap_kev": 3.33,
+    "color_hex": "#ffeecc",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J163210.1+340028",
+    "ra_deg": 248.0421,
+    "dec_deg": 34.0078,
+    "z": 0.1902,
+    "dist_mpc": 814.58,
+    "tap_kev": 0.8,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J163249.1+401606",
+    "ra_deg": 248.2046,
+    "dec_deg": 40.2683,
+    "z": 0.1819,
+    "dist_mpc": 779.03,
+    "tap_kev": 0.89,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  },
+  {
+    "name": "J163431.7+330925",
+    "ra_deg": 248.6321,
+    "dec_deg": 33.1569,
+    "z": 0.3598,
+    "dist_mpc": 1540.93,
+    "tap_kev": 2.49,
+    "color_hex": "#ffcc88",
+    "source": "NASA/HEASARC/Takey2013"
+  }
+]

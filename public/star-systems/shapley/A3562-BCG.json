@@ -1,0 +1,128 @@
+{
+  "galaxy_id": "A3562-BCG",
+  "galaxy_name": "A3562-BCG",
+  "galaxy_hubble": "cD",
+  "cluster": "Shapley Concentration",
+  "cluster_slug": "shapley",
+  "cluster_dist_mpc": 200.0,
+  "environment": {
+    "description": "A3562-BCG (cD) situated in the dense cluster core, subject to strong ICM ram pressure. ICM stress 0.57; host population Teff ≈ 3887 K, Fe/H +0.02. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 3 star system(s), 3 planet(s) generated. Observational anchor: Chandra.",
+    "radiation_factor": 2.71,
+    "metallicity_feh": 0.02,
+    "agn": false,
+    "cooling_flow": false,
+    "ram_pressure": true,
+    "merger": false
+  },
+  "placement_notes": {
+    "v1": "A3562-BCG (cD) situated in the dense cluster core, subject to strong ICM ram pressure. ICM stress 0.57; host population Teff ≈ 3887 K, Fe/H +0.02. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 3 star system(s), 3 planet(s) generated. Observational anchor: Chandra.",
+    "open_questions": [],
+    "nft_zones": [
+      "core-zone-chandra"
+    ]
+  },
+  "generation": "v1-procedural",
+  "provenance": {
+    "script": "generate_cluster_starsystems.py",
+    "algorithm_version": "1.0",
+    "architecture_version": "1.0",
+    "seed_source": "A3562-BCG",
+    "generated_at": "2026-05-26T17:52:10.318943+00:00",
+    "inputs": {
+      "cluster_zone": "core",
+      "icm_stress": 0.571,
+      "metallicity_fe_h": 0.02,
+      "planet_bias": "ancient_cold_rocky",
+      "star_teff_k": 3887,
+      "max_orbit_au": 2.8,
+      "gas_giant_prob": 0.1,
+      "anchor_telescope": "Chandra",
+      "estimated_planets": 1
+    },
+    "observatory_report": "A3562-BCG (cD) situated in the dense cluster core, subject to strong ICM ram pressure. ICM stress 0.57; host population Teff ≈ 3887 K, Fe/H +0.02. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 3 star system(s), 3 planet(s) generated. Observational anchor: Chandra."
+  },
+  "star_systems": [
+    {
+      "id": "a3562-bcg-s001",
+      "label": "A3562-BCG — Prime",
+      "spectral_type": "M2V",
+      "mass_sol": 0.4,
+      "feh": 0.003,
+      "age_gyr": 10.9,
+      "luminosity_sol": 0.02801,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Core zone; ICM stress 0.57; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "a3562-bcg-s001-b",
+          "label": "A3562-BCG 1 B",
+          "type": "super_earth",
+          "radius_earth": 1.82,
+          "mass_earth": 10.64,
+          "period_days": 6.5,
+          "semi_major_au": 0.05,
+          "eq_temp_k": 466,
+          "atmosphere": "thick_n2_co2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "a3562-bcg-s002",
+      "label": "A3562-BCG — Beta",
+      "spectral_type": "M2V",
+      "mass_sol": 0.4,
+      "feh": 0.024,
+      "age_gyr": 11.2,
+      "luminosity_sol": 0.02801,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Core zone; ICM stress 0.57; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "a3562-bcg-s002-b",
+          "label": "A3562-BCG 2 B",
+          "type": "gas_giant",
+          "radius_earth": 12.59,
+          "mass_earth": 224.89,
+          "period_days": 6.5,
+          "semi_major_au": 0.05,
+          "eq_temp_k": 466,
+          "atmosphere": "h2_he_ch4",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "a3562-bcg-s003",
+      "label": "A3562-BCG — Gamma",
+      "spectral_type": "M0V",
+      "mass_sol": 0.52,
+      "feh": 0.005,
+      "age_gyr": 12.0,
+      "luminosity_sol": 0.07335,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Core zone; ICM stress 0.57; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "a3562-bcg-s003-b",
+          "label": "A3562-BCG 3 B",
+          "type": "rocky_barren",
+          "radius_earth": 0.83,
+          "mass_earth": 1.2,
+          "period_days": 6.7,
+          "semi_major_au": 0.056,
+          "eq_temp_k": 560,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 3430,
+    "seed": 2699
+  }
+}

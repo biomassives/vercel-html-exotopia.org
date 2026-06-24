@@ -1,0 +1,119 @@
+{
+  "_schema": "exotopia-pon-ink-v1.0",
+  "_note": "Off-chain NFT metadata for an Exotopia virtual property. Upload to IPFS/Arweave; set the resulting CID/URI as the `uri` field in mintOneCNFT.ts metadataArgs.",
+
+  "name": "Exotopia Property: Aurora Basin",
+  "symbol": "EXOPROP",
+  "description": "Virtual bounded property on Kepler-452b assigned to the Eco Warriors group under the PON INK protocol. Aurora Basin is a settlement zone on the planet's temperate northern continent.",
+  "image": "ipfs://REPLACE_WITH_CID/image.png",
+  "animation_url": null,
+  "external_url": "https://exotopia.org",
+  "seller_fee_basis_points": 0,
+
+  "attributes": [
+    { "trait_type": "Exoplanet",          "value": "Kepler-452b" },
+    { "trait_type": "Host Star",          "value": "Kepler-452" },
+    { "trait_type": "Coordinate System",  "value": "exo-surface-v1" },
+    { "trait_type": "Region Name",        "value": "Aurora Basin" },
+    { "trait_type": "Group",              "value": "Eco Warriors" },
+    { "trait_type": "Assignment Date",    "value": "2026-04-11" },
+    { "trait_type": "Protocol",           "value": "PON INK v1.0" }
+  ],
+
+  "properties": {
+    "files": [
+      { "uri": "ipfs://REPLACE_WITH_CID/image.png", "type": "image/png" }
+    ],
+    "category": "image",
+    "creators": []
+  },
+
+  "exolocation": {
+    "schema_version": "1.0",
+    "coordinate_system": "exo-surface-v1",
+
+    "reference_body": {
+      "type": "exoplanet",
+      "pl_name": "Kepler-452b",
+      "host_star": "Kepler-452",
+      "ra_hms": "19h44m00.89s",
+      "dec_dms": "+44d16m39.2s",
+      "ra_deg": 296.0037,
+      "dec_deg": 44.2776,
+      "nasa_archive_id": "Kepler-452 b",
+      "sy_dist_pc": 430
+    },
+
+    "region_name": "Aurora Basin",
+    "owner_group": "Eco Warriors",
+    "assignment_date": "2026-04-11",
+
+    "boundary": {
+      "type": "polygon",
+      "coordinate_units": "degrees_surface_lat_long",
+      "coordinates": [
+        [14.5, -23.1],
+        [14.5, -22.0],
+        [15.8, -22.0],
+        [15.8, -23.1],
+        [14.5, -23.1]
+      ],
+      "area_km2": null
+    }
+  },
+
+  "_coordinate_system_reference": {
+    "_note": "Use exactly one of the four coordinate_system values below. Swap the exolocation block accordingly.",
+
+    "exo-surface-v1": {
+      "_use_when": "Colony or settlement location on an exoplanet surface owned by NFT holder(s)",
+      "reference_body.type": "exoplanet",
+      "boundary.type": "polygon | circle | named_zone",
+      "boundary.coordinate_units": "degrees_surface_lat_long",
+      "boundary.coordinates": "Array of [lat, lon] pairs closing back to first point"
+    },
+
+    "exo-orbital-v1": {
+      "_use_when": "Zone or station in orbit around an exoplanet",
+      "reference_body.type": "exoplanet",
+      "boundary.type": "orbital_zone",
+      "boundary.fields": {
+        "altitude_km_min": "number",
+        "altitude_km_max": "number",
+        "inclination_deg": "number",
+        "longitude_of_ascending_node_deg": "number | null"
+      }
+    },
+
+    "exo-lunar-orbital-v1": {
+      "_use_when": "Zone or station in orbit around a moon of an exoplanet",
+      "reference_body.type": "exoplanet_moon",
+      "reference_body.extra_fields": {
+        "moon_name": "string — human-readable name given by group if unnamed",
+        "parent_planet": "pl_name of the exoplanet the moon orbits"
+      },
+      "boundary.type": "orbital_zone",
+      "boundary.fields": {
+        "altitude_km_min": "number",
+        "altitude_km_max": "number",
+        "inclination_deg": "number"
+      }
+    },
+
+    "exo-stellar-orbital-v1": {
+      "_use_when": "Zone in orbit around the star or binary star system of an exoplanet",
+      "reference_body.type": "star | binary_star_system",
+      "reference_body.extra_fields": {
+        "system_name": "string",
+        "primary_star": "string",
+        "secondary_star": "string | null — null if single star"
+      },
+      "boundary.type": "orbital_zone",
+      "boundary.fields": {
+        "orbital_radius_au_min": "number",
+        "orbital_radius_au_max": "number",
+        "inclination_deg": "number"
+      }
+    }
+  }
+}

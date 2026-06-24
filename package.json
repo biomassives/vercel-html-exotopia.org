@@ -1,25 +1,45 @@
 {
-  "name": "vercel-html-hosting-template",
-  "version": "1.0.0",
-  "description": "This is a repository template to host static html/css webpages on https://vercel.app",
-  "main": "index.js",
+  "name": "exotopia",
+  "version": "0.1.0",
+  "description": "Exotopia — interactive exoplanet visualization and virtual real estate under the PON INK protocol",
+  "private": true,
   "scripts": {
-    "start": "node index.js"
+    "dev": "quasar dev",
+    "build": "quasar build",
+    "lint": "eslint --ext .js,.ts,.vue src",
+    "parse-exoplanets": "python3 parse_exoplanet_export.py",
+    "fetch-exoplanets": "node scripts/fetch-exoplanet-archive.mjs",
+    "fetch-bootes-void": "node scripts/fetch-bootes-void.mjs"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/KindCoder-no/vercel-html-hosting-template.git"
-  },
-  "keywords": [
-    "Vercel"
-  ],
-  "author": "Emre Sanden (KindCoder-no)",
-  "license": "Abstyles",
-  "bugs": {
-    "url": "https://github.com/KindCoder-no/vercel-html-hosting-template/issues"
-  },
-  "homepage": "https://github.com/KindCoder-no/vercel-html-hosting-template#readme",
   "dependencies": {
-    "express": "^4.18.2"
+    "@metaplex-foundation/mpl-bubblegum": "^0.7.0",
+    "@metaplex-foundation/mpl-token-metadata": "^2.13.0",
+    "@quasar/extras": "^1.16.12",
+    "@solana/spl-account-compression": "^0.2.0",
+    "@solana/web3.js": "^1.91.8",
+    "algosdk": "^2.9.0",
+    "ethers": "^6.16.0",
+    "gsap": "^3.12.5",
+    "marked": "^18.0.5",
+    "pinia": "^2.1.7",
+    "playwright": "^1.60.0",
+    "quasar": "^2.16.5",
+    "three": "^0.164.1",
+    "vue": "^3.4.21",
+    "vue-router": "^4.3.0"
+  },
+  "devDependencies": {
+    "@quasar/app-vite": "^1.10.3",
+    "@types/node": "^20.12.7",
+    "@types/three": "^0.164.0",
+    "@vue/eslint-config-typescript": "^13.0.0",
+    "autoprefixer": "^10.4.19",
+    "eslint": "^8.57.0",
+    "eslint-plugin-vue": "^9.24.0",
+    "sass": "^1.77.0",
+    "typescript": "^5.4.5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

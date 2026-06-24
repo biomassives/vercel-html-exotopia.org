@@ -1,0 +1,154 @@
+{
+  "galaxy_id": "NGC1407",
+  "galaxy_name": "NGC 1407",
+  "galaxy_hubble": "cD",
+  "cluster": "Eridanus Supergroup",
+  "cluster_slug": "eridanus-supergroup",
+  "cluster_dist_mpc": 23.0,
+  "environment": {
+    "description": "NGC1407 (cD) situated in the dense cluster core, subject to strong ICM ram pressure. ICM stress 0.06; host population Teff ≈ 4964 K, Fe/H +0.27. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 4 star system(s), 4 planet(s) generated. Observational anchor: Chandra/Hubble.",
+    "radiation_factor": 1.17,
+    "metallicity_feh": 0.274,
+    "agn": false,
+    "cooling_flow": true,
+    "ram_pressure": false,
+    "merger": false
+  },
+  "placement_notes": {
+    "v1": "NGC1407 (cD) situated in the dense cluster core, subject to strong ICM ram pressure. ICM stress 0.06; host population Teff ≈ 4964 K, Fe/H +0.27. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 4 star system(s), 4 planet(s) generated. Observational anchor: Chandra/Hubble.",
+    "open_questions": [],
+    "nft_zones": [
+      "core-zone-chandra-hubble"
+    ]
+  },
+  "generation": "v1-procedural",
+  "provenance": {
+    "script": "generate_cluster_starsystems.py",
+    "algorithm_version": "1.0",
+    "architecture_version": "1.0",
+    "seed_source": "NGC1407",
+    "generated_at": "2026-05-26T17:52:07.088323+00:00",
+    "inputs": {
+      "cluster_zone": "core",
+      "icm_stress": 0.057,
+      "metallicity_fe_h": 0.274,
+      "planet_bias": "ancient_cold_rocky",
+      "star_teff_k": 4964,
+      "max_orbit_au": 3.0,
+      "gas_giant_prob": 0.1,
+      "anchor_telescope": "Chandra/Hubble",
+      "estimated_planets": 3
+    },
+    "observatory_report": "NGC1407 (cD) situated in the dense cluster core, subject to strong ICM ram pressure. ICM stress 0.06; host population Teff ≈ 4964 K, Fe/H +0.27. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 4 star system(s), 4 planet(s) generated. Observational anchor: Chandra/Hubble."
+  },
+  "star_systems": [
+    {
+      "id": "ngc1407-s001",
+      "label": "NGC 1407 — Prime",
+      "spectral_type": "K2V",
+      "mass_sol": 0.839,
+      "feh": 0.289,
+      "age_gyr": 10.9,
+      "luminosity_sol": 0.49573,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Core zone; ICM stress 0.06; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "ngc1407-s001-b",
+          "label": "NGC1407 1 B",
+          "type": "hot_rocky",
+          "radius_earth": 0.69,
+          "mass_earth": 3.5,
+          "period_days": 9.4,
+          "semi_major_au": 0.082,
+          "eq_temp_k": 746,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "ngc1407-s002",
+      "label": "NGC 1407 — Beta",
+      "spectral_type": "K2V",
+      "mass_sol": 0.839,
+      "feh": 0.261,
+      "age_gyr": 12.8,
+      "luminosity_sol": 0.49573,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Core zone; ICM stress 0.06; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "ngc1407-s002-b",
+          "label": "NGC1407 2 B",
+          "type": "hot_rocky",
+          "radius_earth": 1.21,
+          "mass_earth": 0.21,
+          "period_days": 9.4,
+          "semi_major_au": 0.082,
+          "eq_temp_k": 746,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "ngc1407-s003",
+      "label": "NGC 1407 — Gamma",
+      "spectral_type": "K5V",
+      "mass_sol": 0.748,
+      "feh": 0.262,
+      "age_gyr": 11.9,
+      "luminosity_sol": 0.31323,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Core zone; ICM stress 0.06; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "ngc1407-s003-b",
+          "label": "NGC1407 3 B",
+          "type": "hot_rocky",
+          "radius_earth": 1.0,
+          "mass_earth": 1.87,
+          "period_days": 8.5,
+          "semi_major_au": 0.074,
+          "eq_temp_k": 700,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "ngc1407-s004",
+      "label": "NGC 1407 — Delta",
+      "spectral_type": "K5V",
+      "mass_sol": 0.748,
+      "feh": 0.265,
+      "age_gyr": 12.7,
+      "luminosity_sol": 0.31323,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Core zone; ICM stress 0.06; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "ngc1407-s004-b",
+          "label": "NGC1407 4 B",
+          "type": "rocky_barren",
+          "radius_earth": 1.28,
+          "mass_earth": 0.41,
+          "period_days": 8.5,
+          "semi_major_au": 0.074,
+          "eq_temp_k": 700,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 4843,
+    "seed": 1550
+  }
+}

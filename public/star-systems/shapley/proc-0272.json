@@ -1,0 +1,128 @@
+{
+  "galaxy_id": "proc-0272",
+  "galaxy_name": "proc-0272",
+  "galaxy_hubble": "Sa",
+  "cluster": "Shapley Concentration",
+  "cluster_slug": "shapley",
+  "cluster_dist_mpc": 200.0,
+  "environment": {
+    "description": "proc-0272 (Sa) situated in the inner cluster region, within significant ICM influence. ICM stress 0.40; host population Teff ≈ 4709 K, Fe/H -0.08. Architecture favours mixed architecture — inner rocky worlds alongside outer ice giants or mini-Neptunes. 3 star system(s), 3 planet(s) generated. Observational anchor: Chandra/Hubble.",
+    "radiation_factor": 2.2,
+    "metallicity_feh": -0.08,
+    "agn": false,
+    "cooling_flow": false,
+    "ram_pressure": true,
+    "merger": false
+  },
+  "placement_notes": {
+    "v1": "proc-0272 (Sa) situated in the inner cluster region, within significant ICM influence. ICM stress 0.40; host population Teff ≈ 4709 K, Fe/H -0.08. Architecture favours mixed architecture — inner rocky worlds alongside outer ice giants or mini-Neptunes. 3 star system(s), 3 planet(s) generated. Observational anchor: Chandra/Hubble.",
+    "open_questions": [],
+    "nft_zones": [
+      "inner-zone-chandra-hubble"
+    ]
+  },
+  "generation": "v1-procedural",
+  "provenance": {
+    "script": "generate_cluster_starsystems.py",
+    "algorithm_version": "1.0",
+    "architecture_version": "1.0",
+    "seed_source": "proc-0272",
+    "generated_at": "2026-05-26T17:52:10.842519+00:00",
+    "inputs": {
+      "cluster_zone": "inner",
+      "icm_stress": 0.4,
+      "metallicity_fe_h": -0.08,
+      "planet_bias": "mixed",
+      "star_teff_k": 4709,
+      "max_orbit_au": 24.6,
+      "gas_giant_prob": 0.414,
+      "anchor_telescope": "Chandra/Hubble",
+      "estimated_planets": 3
+    },
+    "observatory_report": "proc-0272 (Sa) situated in the inner cluster region, within significant ICM influence. ICM stress 0.40; host population Teff ≈ 4709 K, Fe/H -0.08. Architecture favours mixed architecture — inner rocky worlds alongside outer ice giants or mini-Neptunes. 3 star system(s), 3 planet(s) generated. Observational anchor: Chandra/Hubble."
+  },
+  "star_systems": [
+    {
+      "id": "proc-0272-s001",
+      "label": "proc-0272 — Prime",
+      "spectral_type": "K5V",
+      "mass_sol": 0.738,
+      "feh": -0.094,
+      "age_gyr": 10.0,
+      "luminosity_sol": 0.29605,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Inner zone; ICM stress 0.40; bias: mixed",
+      "planets": [
+        {
+          "id": "proc-0272-s001-b",
+          "label": "PROC-0272 1 B",
+          "type": "rocky_barren",
+          "radius_earth": 0.79,
+          "mass_earth": 0.75,
+          "period_days": 8.4,
+          "semi_major_au": 0.073,
+          "eq_temp_k": 695,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "proc-0272-s002",
+      "label": "proc-0272 — Beta",
+      "spectral_type": "K5V",
+      "mass_sol": 0.738,
+      "feh": -0.056,
+      "age_gyr": 9.7,
+      "luminosity_sol": 0.29605,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Inner zone; ICM stress 0.40; bias: mixed",
+      "planets": [
+        {
+          "id": "proc-0272-s002-b",
+          "label": "PROC-0272 2 B",
+          "type": "rocky_barren",
+          "radius_earth": 0.6,
+          "mass_earth": 0.92,
+          "period_days": 8.4,
+          "semi_major_au": 0.073,
+          "eq_temp_k": 695,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "proc-0272-s003",
+      "label": "proc-0272 — Gamma",
+      "spectral_type": "K5V",
+      "mass_sol": 0.738,
+      "feh": -0.091,
+      "age_gyr": 10.0,
+      "luminosity_sol": 0.29605,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Inner zone; ICM stress 0.40; bias: mixed",
+      "planets": [
+        {
+          "id": "proc-0272-s003-b",
+          "label": "PROC-0272 3 B",
+          "type": "hot_rocky",
+          "radius_earth": 1.36,
+          "mass_earth": 1.92,
+          "period_days": 8.4,
+          "semi_major_au": 0.073,
+          "eq_temp_k": 695,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 1560,
+    "seed": 2822
+  }
+}

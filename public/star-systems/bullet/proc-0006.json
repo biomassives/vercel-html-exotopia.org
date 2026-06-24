@@ -1,0 +1,102 @@
+{
+  "galaxy_id": "proc-0006",
+  "galaxy_name": "proc-0006",
+  "galaxy_hubble": "S0",
+  "cluster": "Bullet Cluster",
+  "cluster_slug": "bullet",
+  "cluster_dist_mpc": 1140.0,
+  "environment": {
+    "description": "proc-0006 (S0) situated in the dense cluster core, subject to strong ICM ram pressure. ICM stress 1.00; host population Teff ≈ 4726 K, Fe/H -0.55. Architecture favours chaotic infall architecture — disrupted barren worlds with ongoing orbital instability. 2 star system(s), 2 planet(s) generated. Observational anchor: Chandra.",
+    "radiation_factor": 4.0,
+    "metallicity_feh": -0.55,
+    "agn": true,
+    "cooling_flow": false,
+    "ram_pressure": true,
+    "merger": true
+  },
+  "placement_notes": {
+    "v1": "proc-0006 (S0) situated in the dense cluster core, subject to strong ICM ram pressure. ICM stress 1.00; host population Teff ≈ 4726 K, Fe/H -0.55. Architecture favours chaotic infall architecture — disrupted barren worlds with ongoing orbital instability. 2 star system(s), 2 planet(s) generated. Observational anchor: Chandra.",
+    "open_questions": [],
+    "nft_zones": [
+      "core-zone-chandra"
+    ]
+  },
+  "generation": "v1-procedural",
+  "provenance": {
+    "script": "generate_cluster_starsystems.py",
+    "algorithm_version": "1.0",
+    "architecture_version": "1.0",
+    "seed_source": "proc-0006",
+    "generated_at": "2026-05-26T17:52:05.483040+00:00",
+    "inputs": {
+      "cluster_zone": "core",
+      "icm_stress": 1.0,
+      "metallicity_fe_h": -0.55,
+      "planet_bias": "chaotic_infall",
+      "star_teff_k": 4726,
+      "max_orbit_au": 3.1,
+      "gas_giant_prob": 0.199,
+      "anchor_telescope": "Chandra",
+      "estimated_planets": 1
+    },
+    "observatory_report": "proc-0006 (S0) situated in the dense cluster core, subject to strong ICM ram pressure. ICM stress 1.00; host population Teff ≈ 4726 K, Fe/H -0.55. Architecture favours chaotic infall architecture — disrupted barren worlds with ongoing orbital instability. 2 star system(s), 2 planet(s) generated. Observational anchor: Chandra."
+  },
+  "star_systems": [
+    {
+      "id": "proc-0006-s001",
+      "label": "proc-0006 — Prime",
+      "spectral_type": "K5V",
+      "mass_sol": 0.724,
+      "feh": -0.528,
+      "age_gyr": 11.0,
+      "luminosity_sol": 0.27434,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Core zone; ICM stress 1.00; bias: chaotic_infall",
+      "planets": [
+        {
+          "id": "proc-0006-s001-b",
+          "label": "PROC-0006 1 B",
+          "type": "rocky_barren",
+          "radius_earth": 1.02,
+          "mass_earth": 1.95,
+          "period_days": 8.1,
+          "semi_major_au": 0.071,
+          "eq_temp_k": 691,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "proc-0006-s002",
+      "label": "proc-0006 — Beta",
+      "spectral_type": "K5V",
+      "mass_sol": 0.724,
+      "feh": -0.565,
+      "age_gyr": 10.5,
+      "luminosity_sol": 0.27434,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Core zone; ICM stress 1.00; bias: chaotic_infall",
+      "planets": [
+        {
+          "id": "proc-0006-s002-b",
+          "label": "PROC-0006 2 B",
+          "type": "hot_rocky",
+          "radius_earth": 0.84,
+          "mass_earth": 2.47,
+          "period_days": 8.1,
+          "semi_major_au": 0.071,
+          "eq_temp_k": 691,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 495,
+    "seed": 2788
+  }
+}

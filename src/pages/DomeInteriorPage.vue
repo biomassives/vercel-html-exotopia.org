@@ -1,0 +1,872 @@
+<template>
+  <q-page class="di-page">
+    <canvas ref="canvasEl" class="di-canvas" @mousemove="onMouseMove" @click="onCanvasClick" />
+
+    <!-- ── Top bar ──────────────────────────────────────────────────────── -->
+    <div class="di-topbar">
+      <q-btn flat dense size="xs" color="blue-grey-4" icon="arrow_back"
+        @click="goBack" label="Surface" />
+      <div class="di-topbar-center">
+        <q-icon name="mdi-home-circle-outline" size="12px" color="cyan-5" class="q-mr-xs" />
+        <span class="di-title">DOME INTERIOR</span>
+        <span class="di-hostname q-ml-sm">{{ hostname }}</span>
+      </div>
+      <div class="di-exoloc">{{ exolocation }}</div>
+    </div>
+
+    <!-- ── Hover tooltip ───────────────────────────────────────────────── -->
+    <Transition name="fade">
+      <div v-if="hoveredItem" class="di-tooltip q-pa-sm" :style="tooltipStyle">
+        <div class="row items-center q-mb-xs">
+          <div class="di-tt-dot q-mr-sm" :style="{ background: hoveredItem.color }" />
+          <span class="text-subtitle2 text-blue-grey-1">{{ hoveredItem.label }}</span>
+        </div>
+        <div class="text-caption text-cyan-5 q-mb-xs">{{ hoveredItem.zone }} · {{ TYPE_LABELS[hoveredItem.type] }}</div>
+        <div class="text-caption text-blue-grey-4">{{ hoveredItem.description }}</div>
+      </div>
+    </Transition>
+
+    <!-- ── Zone labels (toggleable) ────────────────────────────────────── -->
+    <Transition name="fade">
+      <div v-if="showZones" class="di-zone-overlay">
+        <div v-for="(pos, zone) in ZONE_POSITIONS" :key="zone"
+          class="di-zone-label"
+          :style="zoneScreenPos(pos)"
+        >{{ zone }}</div>
+      </div>
+    </Transition>
+
+    <!-- ── Loading ─────────────────────────────────────────────────────── -->
+    <Transition name="fade">
+      <div v-if="!sceneReady" class="di-loading column items-center justify-center">
+        <q-spinner-orbit color="cyan" size="44px" />
+        <div class="text-caption text-blue-grey-5 q-mt-sm">Entering dome…</div>
+      </div>
+    </Transition>
+
+    <!-- ── Bottom HUD ───────────────────────────────────────────────────── -->
+    <div class="di-hud">
+      <div class="row items-center q-gutter-x-sm no-wrap">
+        <q-btn flat dense round icon="help_outline" color="blue-grey-5" size="sm"
+          @click="showHints = !showHints" title="Controls" />
+        <q-btn flat dense round
+          :icon="showZones ? 'place' : 'place'" :color="showZones ? 'cyan-5' : 'blue-grey-6'"
+          size="sm" title="Toggle zone labels"
+          @click="showZones = !showZones" />
+        <q-separator vertical color="blue-grey-8" />
+        <span class="di-hud-count text-caption text-blue-grey-5">
+          {{ items.length }} item{{ items.length !== 1 ? 's' : '' }} placed
+        </span>
+        <q-separator vertical color="blue-grey-8" />
+        <q-btn flat dense round icon="exit_to_app" color="blue-grey-4" size="sm"
+          @click="goBack" title="Exit dome" />
+      </div>
+    </div>
+
+    <!-- ── Control hints ───────────────────────────────────────────────── -->
+    <Transition name="fade">
+      <div v-if="showHints" class="di-hints q-pa-sm">
+        <div class="di-hint-row"><q-icon name="mouse" size="11px" class="q-mr-xs" />Drag to look around</div>
+        <div class="di-hint-row"><q-icon name="scroll" size="11px" class="q-mr-xs" />Scroll / pinch to zoom</div>
+        <div class="di-hint-row"><q-icon name="keyboard" size="11px" class="q-mr-xs" />WASD / arrows to walk</div>
+        <div class="di-hint-row"><q-icon name="ads_click" size="11px" class="q-mr-xs" />Click item to inspect</div>
+      </div>
+    </Transition>
+
+    <!-- ── Inventory panel ─────────────────────────────────────────────── -->
+    <SettlementInventory :settlement-key="settlementKey" />
+
+    <!-- ── Item inspector ───────────────────────────────────────────────── -->
+    <Transition name="di-inspect-slide">
+      <div v-if="selectedItem" class="di-inspect-panel">
+        <div class="di-inspect-header">
+          <div class="di-inspect-dot" :style="{ background: selectedItem.color }" />
+          <span class="di-inspect-title">{{ selectedItem.label }}</span>
+          <q-space />
+          <q-btn flat dense round icon="close" size="xs" color="blue-grey-5" @click="closeInspector" title="Close" />
+        </div>
+        <div class="di-inspect-body">
+          <div class="di-inspect-meta">
+            <span class="di-inspect-chip">{{ selectedItem.zone }}</span>
+            <span class="di-inspect-chip" :class="`di-type--${selectedItem.type}`">{{ TYPE_LABELS[selectedItem.type] }}</span>
+          </div>
+          <div class="di-inspect-desc">{{ selectedItem.description }}</div>
+          <div v-if="selectedItem.community" class="di-inspect-prov">
+            <q-icon name="groups" size="10px" class="q-mr-xs" />{{ selectedItem.community }}
+          </div>
+          <div v-if="selectedItem.donorKey" class="di-inspect-prov">
+            <q-icon name="swap_horiz" size="10px" class="q-mr-xs" />From {{ selectedItem.donorKey }}
+          </div>
+          <div v-if="selectedItem.airdropBundle" class="di-inspect-prov">
+            <q-icon name="bolt" size="10px" class="q-mr-xs" />{{ selectedItem.airdropBundle }}
+          </div>
+          <div v-if="selectedItem.buildCost" class="di-inspect-prov">
+            <q-icon name="build" size="10px" class="q-mr-xs" />{{ selectedItem.buildCost }} eco-ops pts
+          </div>
+          <div class="di-inspect-date">Acquired {{ fmtDate(selectedItem.acquiredAt) }}</div>
+        </div>
+        <div class="di-inspect-footer">
+          <q-btn flat dense icon="delete_outline" label="Remove from settlement" color="red-5" size="sm"
+            @click="confirmRemoveSelected" />
+        </div>
+      </div>
+    </Transition>
+
+    <!-- Remove confirm -->
+    <q-dialog v-model="removeConfirmOpen">
+      <q-card class="bg-dark text-blue-grey-1" style="min-width:280px">
+        <q-card-section>
+          <div class="text-subtitle2">Remove "{{ selectedItem?.label }}"?</div>
+          <div class="text-caption text-blue-grey-5 q-mt-xs">This cannot be undone.</div>
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn flat label="Cancel" color="blue-grey-5" @click="removeConfirmOpen = false" />
+          <q-btn flat label="Remove" color="red-5" @click="doRemoveSelected" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
+  </q-page>
+</template>
+
+<script setup lang="ts">
+import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import * as THREE from 'three'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import { surfacePaletteFor, disposeScene } from 'src/lib/three-utils'
+import { useGalaxyStore } from 'src/stores/galaxy'
+import {
+  useSettlementItems,
+  ITEM_MESH_PRESETS,
+  ZONE_POSITIONS,
+  autoPosition,
+  type ItemAcquisitionType,
+  type SettlementItem,
+} from 'src/lib/settlement-items'
+import { surfaceKey } from 'src/lib/settlements'
+import SettlementInventory from 'src/components/SettlementInventory.vue'
+
+// ── Route ──────────────────────────────────────────────────────────────────────
+
+const route  = useRoute()
+const router = useRouter()
+
+const hostname   = computed(() => String(route.params.hostname   ?? ''))
+const planetName = computed(() => String(route.params.planetName ?? ''))
+const eqtK       = computed(() => Number(route.query.eqt ?? 285))
+
+// ── Settlement store ───────────────────────────────────────────────────────────
+
+const galaxyStore  = useGalaxyStore()
+const planet       = computed(() => galaxyStore.getPlanet(planetName.value) ?? null)
+const system       = computed(() => galaxyStore.getSystem(hostname.value)  ?? null)
+const effectiveEqt = computed(() => planet.value?.pl_eqt ?? eqtK.value)
+
+const settlementKey = computed(() => surfaceKey(planetName.value))
+const exolocation   = computed(() => `exo-surface-v1:${hostname.value}:${planetName.value}`)
+
+const { items, removeItem } = useSettlementItems(settlementKey)
+
+// ── Constants / display ────────────────────────────────────────────────────────
+
+const TYPE_LABELS: Record<ItemAcquisitionType, string> = {
+  constructed: 'constructed',
+  traded:      'traded',
+  generated:   'airdrop',
+  'eco-ops':   'eco-ops',
+}
+
+// ── UI state ──────────────────────────────────────────────────────────────────
+
+const sceneReady = ref(false)
+const showHints  = ref(false)
+const showZones  = ref(false)
+
+// ── Three.js ──────────────────────────────────────────────────────────────────
+
+const canvasEl = ref<HTMLCanvasElement>()
+
+let renderer: THREE.WebGLRenderer     | null = null
+let scene:    THREE.Scene             | null = null
+let camera:   THREE.PerspectiveCamera | null = null
+let controls: OrbitControls           | null = null
+let rafId:    number | null = null
+let clock:    THREE.Clock
+
+// Scene item meshes — keyed by item id
+const itemMeshes = new Map<string, THREE.Group>()
+
+// Raycaster for hover
+let raycaster:  THREE.Raycaster
+let itemMeshArr: { mesh: THREE.Object3D; id: string }[] = []
+
+interface HoveredItemData {
+  label: string
+  color: string
+  zone: string
+  type: ItemAcquisitionType
+  description: string
+}
+const hoveredItem  = ref<HoveredItemData | null>(null)
+const tooltipStyle = ref({ left: '0px', top: '0px' })
+const mouseNDC     = new THREE.Vector2()
+
+// Item inspector (click-to-inspect)
+const selectedItem      = ref<SettlementItem | null>(null)
+const removeConfirmOpen = ref(false)
+let   selectionRing: THREE.Mesh | null = null
+
+// Keyboard walk
+const keysDown = new Set<string>()
+
+// ── Mesh builders ──────────────────────────────────────────────────────────────
+
+function buildItemMesh(presetKey: string, colorHex: string): THREE.Group {
+  const col   = new THREE.Color(colorHex)
+  const group = new THREE.Group()
+
+  const glow = (r: number, y: number, opacity = 0.20): THREE.Mesh => new THREE.Mesh(
+    new THREE.SphereGeometry(r, 8, 8),
+    new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity, depthWrite: false, blending: THREE.AdditiveBlending })
+  )
+
+  switch (presetKey) {
+    case 'beacon': {
+      const post = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.26, 4.2, 7), new THREE.MeshPhongMaterial({ color: 0x223344 }))
+      post.position.y = 2.1
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(0.72, 0.14, 7, 16), new THREE.MeshBasicMaterial({ color: col }))
+      ring.position.y = 4.4
+      const g = glow(1.0, 0)
+      g.position.y = 4.4
+      group.add(post, ring, g)
+      break
+    }
+    case 'crystal': {
+      const oct = new THREE.Mesh(
+        new THREE.OctahedronGeometry(1.1),
+        new THREE.MeshPhongMaterial({ color: col, emissive: col.clone().multiplyScalar(0.25), shininess: 55, transparent: true, opacity: 0.88 })
+      )
+      oct.position.y = 2.4
+      const g = glow(1.6, 0, 0.14)
+      g.position.y = 2.4
+      group.add(oct, g)
+      break
+    }
+    case 'planter': {
+      const pot   = new THREE.Mesh(new THREE.CylinderGeometry(2.0, 2.3, 1.4, 8), new THREE.MeshPhongMaterial({ color: 0x5a3518 }))
+      pot.position.y = 0.7
+      const soil  = new THREE.Mesh(new THREE.CylinderGeometry(1.9, 1.9, 0.35, 8), new THREE.MeshPhongMaterial({ color: 0x1a0800 }))
+      soil.position.y = 1.57
+      const plant = new THREE.Mesh(new THREE.ConeGeometry(1.1, 2.4, 6), new THREE.MeshPhongMaterial({ color: col, flatShading: true }))
+      plant.position.y = 3.0
+      group.add(pot, soil, plant)
+      break
+    }
+    case 'solar-array': {
+      const frame = new THREE.Mesh(new THREE.BoxGeometry(3.5, 0.14, 2.2), new THREE.MeshPhongMaterial({ color: 0x223344 }))
+      frame.rotation.x = -0.35
+      frame.position.y = 1.8
+      const panel = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.07, 2.0), new THREE.MeshPhongMaterial({ color: col, emissive: col.clone().multiplyScalar(0.08) }))
+      panel.rotation.x = -0.35
+      panel.position.y = 1.87
+      const post2 = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.12, 1.6, 6), new THREE.MeshPhongMaterial({ color: 0x334455 }))
+      post2.position.y = 0.8
+      group.add(frame, panel, post2)
+      break
+    }
+    case 'monument': {
+      const base = new THREE.Mesh(new THREE.CylinderGeometry(1.4, 1.6, 0.8, 8), new THREE.MeshPhongMaterial({ color: 0x2a3a4a }))
+      base.position.y = 0.4
+      const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.7, 4.5, 7), new THREE.MeshPhongMaterial({ color: col }))
+      shaft.position.y = 3.0
+      const cap = new THREE.Mesh(new THREE.ConeGeometry(0.6, 1.2, 5), new THREE.MeshPhongMaterial({ color: col, emissive: col.clone().multiplyScalar(0.22) }))
+      cap.position.y = 5.9
+      const g = glow(0.9, 0, 0.18)
+      g.position.y = 5.9
+      group.add(base, shaft, cap, g)
+      break
+    }
+    case 'archive-node': {
+      const box = new THREE.Mesh(new THREE.BoxGeometry(2.2, 2.8, 2.2), new THREE.MeshPhongMaterial({ color: 0x162440, emissive: 0x001133, emissiveIntensity: 0.3 }))
+      box.position.y = 1.4
+      const edge = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(2.24, 2.84, 2.24)), new THREE.LineBasicMaterial({ color: col, transparent: true, opacity: 0.7 }))
+      edge.position.y = 1.4
+      const g = glow(1.4, 1.4, 0.10)
+      group.add(box, edge, g)
+      break
+    }
+    case 'water-filter': {
+      const tank = new THREE.Mesh(new THREE.CylinderGeometry(1.3, 1.3, 3.2, 10), new THREE.MeshPhongMaterial({ color: 0x0a1e3a, shininess: 30 }))
+      tank.position.y = 1.6
+      const ring2 = new THREE.Mesh(new THREE.TorusGeometry(1.35, 0.09, 6, 16), new THREE.MeshBasicMaterial({ color: col }))
+      ring2.position.y = 3.0
+      const pipe = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 1.2, 6), new THREE.MeshPhongMaterial({ color: 0x334455 }))
+      pipe.rotation.z = 0.3
+      pipe.position.set(1.4, 0.8, 0)
+      group.add(tank, ring2, pipe)
+      break
+    }
+    case 'art-sphere': {
+      const sphere = new THREE.Mesh(
+        new THREE.SphereGeometry(1.4, 18, 18),
+        new THREE.MeshPhongMaterial({ color: col, emissive: col.clone().multiplyScalar(0.18), shininess: 60 })
+      )
+      sphere.position.y = 2.2
+      const stand = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.4, 1.8, 7), new THREE.MeshPhongMaterial({ color: 0x223344 }))
+      stand.position.y = 0.9
+      const orbit = new THREE.Mesh(new THREE.TorusGeometry(1.8, 0.05, 6, 32), new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: 0.45 }))
+      orbit.position.y = 2.2
+      orbit.rotation.x = 0.6
+      const g = glow(2.0, 2.2, 0.10)
+      group.add(sphere, stand, orbit, g)
+      break
+    }
+    case 'comms-relay': {
+      const cone = new THREE.Mesh(new THREE.ConeGeometry(0.7, 5, 6), new THREE.MeshPhongMaterial({ color: 0x1a2e3e }))
+      cone.position.y = 2.5
+      for (const ry of [1.6, 3.2]) {
+        const r = new THREE.Mesh(new THREE.TorusGeometry(1.2, 0.08, 6, 20), new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: 0.7 }))
+        r.position.y = ry; r.rotation.x = Math.PI / 2
+        group.add(r)
+      }
+      const g = glow(0.8, 5.2, 0.22)
+      g.position.y = 5.2
+      group.add(cone, g)
+      break
+    }
+    case 'seed-vault': {
+      const vault = new THREE.Mesh(new THREE.CapsuleGeometry(1.0, 2.2, 6, 10), new THREE.MeshPhongMaterial({ color: 0x1a2e1a, shininess: 12 }))
+      vault.position.y = 2.1
+      const lid = new THREE.Mesh(new THREE.CylinderGeometry(1.05, 1.05, 0.35, 10), new THREE.MeshPhongMaterial({ color: col }))
+      lid.position.y = 3.45
+      const g = glow(1.2, 2.1, 0.12)
+      group.add(vault, lid, g)
+      break
+    }
+    default: {
+      // Generic orb
+      const sphere = new THREE.Mesh(new THREE.SphereGeometry(1.0, 12, 12), new THREE.MeshPhongMaterial({ color: col, emissive: col.clone().multiplyScalar(0.2) }))
+      sphere.position.y = 1.0
+      group.add(sphere)
+    }
+  }
+
+  // Point light per item — keeps the surrounding area lit
+  const pl = new THREE.PointLight(col.getHex(), 0.5, 14)
+  pl.position.y = 2.0
+  group.add(pl)
+
+  return group
+}
+
+// ── Scene ─────────────────────────────────────────────────────────────────────
+
+function buildScene() {
+  if (!canvasEl.value) return
+
+  const eqt     = effectiveEqt.value
+  const palette = surfacePaletteFor(eqt)
+
+  renderer = new THREE.WebGLRenderer({ canvas: canvasEl.value, antialias: true })
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+  renderer.setSize(window.innerWidth, window.innerHeight)
+  renderer.toneMapping = THREE.ACESFilmicToneMapping
+  renderer.toneMappingExposure = 0.85
+
+  scene  = new THREE.Scene()
+  scene.background = new THREE.Color(0x010510)
+  scene.fog        = new THREE.FogExp2(0x010510, 0.008)
+
+  camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 500)
+  camera.position.set(0, 5, 22)
+
+  // Controls — free-look inside dome
+  controls = new OrbitControls(camera, canvasEl.value)
+  controls.target.set(0, 4, -5)
+  controls.enableDamping  = true
+  controls.dampingFactor  = 0.07
+  controls.minDistance    = 0.4
+  controls.maxDistance    = 64        // keeps camera inside dome r=70
+  controls.minPolarAngle  = 0.06
+  controls.maxPolarAngle  = Math.PI * 0.82
+  controls.rotateSpeed    = 0.45
+  controls.mouseButtons   = { LEFT: THREE.MOUSE.ROTATE, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.PAN }
+  controls.touches        = { ONE: THREE.TOUCH.ROTATE, TWO: THREE.TOUCH.DOLLY_PAN }
+  controls.update()
+
+  clock     = new THREE.Clock()
+  raycaster = new THREE.Raycaster()
+
+  buildLights(eqt)
+  buildDomeShell()
+  buildGround(palette)
+  buildStructures(palette, eqt)
+  buildItems()
+  buildSelectionRing()
+
+  window.addEventListener('resize', onResize)
+  tick()
+  sceneReady.value = true
+}
+
+function buildSelectionRing() {
+  const ring = new THREE.Mesh(
+    new THREE.RingGeometry(1.9, 2.5, 32),
+    new THREE.MeshBasicMaterial({ color: 0x00ccee, transparent: true, opacity: 0.6, side: THREE.DoubleSide, depthWrite: false, blending: THREE.AdditiveBlending })
+  )
+  ring.rotation.x = -Math.PI / 2
+  ring.position.y = 0.08
+  ring.visible = false
+  scene!.add(ring)
+  selectionRing = ring
+}
+
+function buildLights(eqt: number) {
+  // Diffuse dome atmosphere
+  scene!.add(new THREE.AmbientLight(0x0a1828, 1.2))
+
+  // Soft "dome sky" hemisphere — slight tint from planet temperature
+  const skyColor = eqt > 800 ? new THREE.Color(0x1a0808) : eqt < 200 ? new THREE.Color(0x080818) : new THREE.Color(0x060e18)
+  scene!.add(new THREE.HemisphereLight(skyColor, new THREE.Color(0x020408), 0.6))
+
+  // Directional light filtering through dome apex
+  const sun = new THREE.DirectionalLight(0xddddff, 0.5)
+  sun.position.set(5, 60, -10)
+  scene!.add(sun)
+}
+
+function buildDomeShell() {
+  // Half-sphere visible from inside (BackSide)
+  const geo = new THREE.SphereGeometry(70, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2)
+
+  // Inner shell — soft blue-black
+  scene!.add(Object.assign(
+    new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: 0x020c1a, transparent: true, opacity: 0.55, side: THREE.BackSide, depthWrite: false })),
+    {}
+  ))
+
+  // Wireframe geodesic lattice (BackSide)
+  scene!.add(Object.assign(
+    new THREE.Mesh(geo.clone(), new THREE.MeshBasicMaterial({ color: 0x0066aa, wireframe: true, transparent: true, opacity: 0.06, side: THREE.BackSide, depthWrite: false })),
+    {}
+  ))
+
+  // Apex glow — diffuse ambient from dome top
+  const apexGlow = new THREE.Mesh(
+    new THREE.SphereGeometry(12, 10, 10),
+    new THREE.MeshBasicMaterial({ color: 0x003355, transparent: true, opacity: 0.18, depthWrite: false, blending: THREE.AdditiveBlending })
+  )
+  apexGlow.position.set(0, 68, 0)
+  scene!.add(apexGlow)
+
+  // Ground ring at dome base
+  const ring = new THREE.Mesh(
+    new THREE.RingGeometry(68, 72, 64),
+    new THREE.MeshBasicMaterial({ color: 0x0088cc, side: THREE.DoubleSide, transparent: true, opacity: 0.22, depthWrite: false, blending: THREE.AdditiveBlending })
+  )
+  ring.rotation.x = -Math.PI / 2
+  ring.position.y = 0.1
+  scene!.add(ring)
+}
+
+function buildGround(palette: ReturnType<typeof surfacePaletteFor>) {
+  // Main ground
+  const ground = new THREE.Mesh(
+    new THREE.CircleGeometry(70, 48),
+    new THREE.MeshPhongMaterial({ color: palette.terrain, shininess: 2 })
+  )
+  ground.rotation.x = -Math.PI / 2
+  ground.position.y = -0.05
+  scene!.add(ground)
+
+  // Subtle centre pathway markings
+  const spoke = new THREE.MeshBasicMaterial({ color: 0x0055aa, transparent: true, opacity: 0.14, depthWrite: false })
+  for (let i = 0; i < 6; i++) {
+    const angle = (i / 6) * Math.PI * 2
+    const pts   = [
+      new THREE.Vector3(0, 0.05, 0),
+      new THREE.Vector3(Math.cos(angle) * 50, 0.05, Math.sin(angle) * 50),
+    ]
+    scene!.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), spoke))
+  }
+}
+
+function buildStructures(palette: ReturnType<typeof surfacePaletteFor>, eqt: number) {
+  // Library (simplified)
+  const lib = new THREE.Group()
+  const libBox = new THREE.Mesh(new THREE.BoxGeometry(14, 18, 14),
+    new THREE.MeshPhongMaterial({ color: 0x1a2a3a, emissive: 0x001a2a, emissiveIntensity: 0.35 }))
+  libBox.position.set(0, 9, -15)
+  lib.add(libBox)
+  // windows
+  const winMat = new THREE.MeshBasicMaterial({ color: 0x44aaff, transparent: true, opacity: 0.75 })
+  for (let s = 0; s < 4; s++) {
+    const a = s * Math.PI / 2
+    const w = new THREE.Mesh(new THREE.PlaneGeometry(4.5, 6.5), winMat)
+    w.position.set(Math.sin(a) * 7.1, 9, -15 - Math.cos(a) * 7.1)
+    w.rotation.y = a
+    lib.add(w)
+  }
+  lib.add(new THREE.PointLight(0x44aaff, 0.8, 70))
+  lib.children[lib.children.length - 1]!.position.set(0, 22, -15)
+  scene!.add(lib)
+
+  // Water feature (animated in tick)
+  const wGeo = new THREE.PlaneGeometry(30, 60, 12, 20)
+  const wMat = new THREE.MeshPhongMaterial({ color: 0x0044aa, emissive: 0x001133, shininess: 70, transparent: true, opacity: 0.72, side: THREE.DoubleSide })
+  const water = new THREE.Mesh(wGeo, wMat)
+  water.rotation.x = -Math.PI / 2
+  water.position.set(34, 0.3, -26)
+  water.name = 'water'
+  scene!.add(water)
+  const waterLight = new THREE.PointLight(0x0066cc, 0.5, 50)
+  waterLight.position.set(34, 2, -26)
+  scene!.add(waterLight)
+
+  // Vegetation cluster (simplified)
+  const baseHue = eqt > 800 ? 0.08 : eqt < 200 ? 0.55 : 0.32
+  for (let i = 0; i < 20; i++) {
+    const h = baseHue + (Math.sin(i * 7.31) * 0.5 + 0.5) * 0.12
+    const col = new THREE.Color().setHSL(h, 0.65, 0.30 + (i % 5) * 0.04)
+    const ht  = 2.8 + (i % 4) * 1.8
+    const r   = 1.2 + (i % 3) * 0.8
+    const plant = new THREE.Mesh(
+      new THREE.ConeGeometry(r, ht, 6),
+      new THREE.MeshPhongMaterial({ color: col, flatShading: true })
+    )
+    const angle = (i / 20) * Math.PI * 2
+    const dist  = 20 + (i % 5) * 6
+    plant.position.set(Math.cos(angle) * dist * 0.4 + 4, ht / 2, Math.sin(angle) * dist - 50)
+    scene!.add(plant)
+  }
+}
+
+function buildItems() {
+  // Clear existing
+  for (const g of itemMeshes.values()) scene?.remove(g)
+  itemMeshes.clear()
+  itemMeshArr = []
+
+  // Zone slot counters for auto-positioning
+  const zoneCount: Record<string, number> = {}
+
+  for (const item of items.value) {
+    const slotIdx = zoneCount[item.zone] ?? 0
+    zoneCount[item.zone] = slotIdx + 1
+
+    const pos   = autoPosition(item, slotIdx)
+    const group = buildItemMesh(item.meshPreset, item.color)
+    group.position.set(pos.x, 0, pos.z)
+    group.name = `item:${item.id}`
+    scene!.add(group)
+    itemMeshes.set(item.id, group)
+
+    // Register all child meshes for hover detection
+    group.traverse(obj => {
+      if ((obj as THREE.Mesh).isMesh) itemMeshArr.push({ mesh: obj, id: item.id })
+    })
+  }
+}
+
+// ── Animation loop ─────────────────────────────────────────────────────────────
+
+function tick() {
+  rafId = requestAnimationFrame(tick)
+
+  const t = clock.getElapsedTime()
+
+  // Water ripple
+  const water = scene?.getObjectByName('water') as THREE.Mesh | undefined
+  if (water) {
+    const pos = (water.geometry as THREE.BufferGeometry).attributes.position!
+    for (let i = 0; i < pos.count; i++) {
+      const x = pos.getX(i), z = pos.getZ(i)
+      pos.setY(i, Math.sin(x * 0.22 + t * 1.8) * 0.5 + Math.cos(z * 0.17 + t * 1.4) * 0.35)
+    }
+    pos.needsUpdate = true
+    water.geometry.computeVertexNormals()
+  }
+
+  // Crystal float + rotation
+  for (const [id, group] of itemMeshes) {
+    const item = items.value.find(i => i.id === id)
+    if (item?.meshPreset === 'crystal') {
+      group.children[0]!.position.y = 2.4 + Math.sin(t * 0.8) * 0.4
+      group.children[0]!.rotation.y = t * 0.5
+    }
+    if (item?.meshPreset === 'art-sphere') {
+      const orbit = group.children[2]
+      if (orbit) orbit.rotation.z = t * 0.4
+    }
+  }
+
+  // Selection ring pulse
+  if (selectionRing?.visible) {
+    ;(selectionRing.material as THREE.MeshBasicMaterial).opacity = 0.40 + Math.sin(t * 3) * 0.25
+    selectionRing.rotation.z = t * 0.6
+  }
+
+  // WASD movement
+  if (keysDown.size > 0 && camera && controls) {
+    const WALK = 1.1
+    const fwd  = new THREE.Vector3()
+    camera.getWorldDirection(fwd); fwd.y = 0; fwd.normalize()
+    const right = new THREE.Vector3().crossVectors(fwd, new THREE.Vector3(0, 1, 0))
+    const delta = new THREE.Vector3()
+    if (keysDown.has('KeyW') || keysDown.has('ArrowUp'))    delta.addScaledVector(fwd,   WALK)
+    if (keysDown.has('KeyS') || keysDown.has('ArrowDown'))  delta.addScaledVector(fwd,  -WALK)
+    if (keysDown.has('KeyA') || keysDown.has('ArrowLeft'))  delta.addScaledVector(right, -WALK)
+    if (keysDown.has('KeyD') || keysDown.has('ArrowRight')) delta.addScaledVector(right,  WALK)
+    if (delta.lengthSq() > 0) {
+      camera.position.add(delta)
+      controls.target.add(delta)
+    }
+  }
+
+  controls?.update()
+
+  // Keep camera inside dome
+  const camDist = new THREE.Vector2(camera!.position.x, camera!.position.z).length()
+  if (camDist > 62) {
+    const scale = 62 / camDist
+    camera!.position.x *= scale
+    camera!.position.z *= scale
+  }
+  if (camera!.position.y < 1.2) camera!.position.y = 1.2
+  if (camera!.position.y > 65)  camera!.position.y = 65
+
+  if (renderer && scene && camera) renderer.render(scene, camera)
+}
+
+// ── Hover ─────────────────────────────────────────────────────────────────────
+
+function onMouseMove(e: MouseEvent) {
+  mouseNDC.x =  (e.clientX / window.innerWidth) * 2 - 1
+  mouseNDC.y = -((e.clientY - 44) / (window.innerHeight - 44)) * 2 + 1
+  tooltipStyle.value = { left: (e.clientX + 14) + 'px', top: (e.clientY - 10) + 'px' }
+
+  if (!camera) return
+  raycaster.setFromCamera(mouseNDC, camera)
+  const hits = raycaster.intersectObjects(itemMeshArr.map(m => m.mesh), false)
+  if (hits.length) {
+    const hit  = itemMeshArr.find(m => m.mesh === hits[0]!.object)!
+    const item = items.value.find(i => i.id === hit.id)
+    if (item) {
+      hoveredItem.value = {
+        label: item.label, color: item.color, zone: item.zone,
+        type: item.type, description: item.description,
+      }
+      return
+    }
+  }
+  hoveredItem.value = null
+}
+
+function onCanvasClick() {
+  if (!camera) return
+  raycaster.setFromCamera(mouseNDC, camera)
+  const hits = raycaster.intersectObjects(itemMeshArr.map(m => m.mesh), false)
+  if (hits.length) {
+    const hit  = itemMeshArr.find(m => m.mesh === hits[0]!.object)!
+    const item = items.value.find(i => i.id === hit.id)
+    const group = itemMeshes.get(hit.id)
+    if (item && group) {
+      selectedItem.value = item
+      if (selectionRing) {
+        selectionRing.position.x = group.position.x
+        selectionRing.position.z = group.position.z
+        ;(selectionRing.material as THREE.MeshBasicMaterial).color.set(item.color)
+        selectionRing.visible = true
+      }
+      return
+    }
+  }
+  closeInspector()
+}
+
+function closeInspector() {
+  selectedItem.value = null
+  if (selectionRing) selectionRing.visible = false
+}
+
+function confirmRemoveSelected() {
+  removeConfirmOpen.value = true
+}
+
+function doRemoveSelected() {
+  if (selectedItem.value) removeItem(selectedItem.value.id)
+  removeConfirmOpen.value = false
+  closeInspector()
+}
+
+function fmtDate(ts: number): string {
+  return new Date(ts).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: '2-digit' })
+}
+
+// ── Zone screen projections (for zone labels) ──────────────────────────────────
+
+function zoneScreenPos(pos: { cx: number; cz: number }): { left: string; top: string } {
+  if (!camera || !renderer) return { left: '50%', top: '50%' }
+  const v = new THREE.Vector3(pos.cx, 0.5, pos.cz).project(camera)
+  const x = ((v.x + 1) / 2) * window.innerWidth
+  const y = ((-v.y + 1) / 2) * window.innerHeight
+  return { left: x + 'px', top: y + 'px' }
+}
+
+// ── Helpers ────────────────────────────────────────────────────────────────────
+
+function onResize() {
+  if (!camera || !renderer) return
+  camera.aspect = window.innerWidth / window.innerHeight
+  camera.updateProjectionMatrix()
+  renderer.setSize(window.innerWidth, window.innerHeight)
+}
+
+function goBack() {
+  void router.push(`/surface/${encodeURIComponent(hostname.value)}/${encodeURIComponent(planetName.value)}`)
+}
+
+// ── Lifecycle ──────────────────────────────────────────────────────────────────
+
+const keydownFn = (e: KeyboardEvent) => {
+  keysDown.add(e.code)
+  if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) e.preventDefault()
+}
+const keyupFn = (e: KeyboardEvent) => keysDown.delete(e.code)
+
+// Re-build items whenever store changes
+watch(items, () => {
+  if (scene) buildItems()
+  if (selectedItem.value && !items.value.some(i => i.id === selectedItem.value!.id)) {
+    closeInspector()
+  }
+}, { deep: true })
+
+onMounted(async () => {
+  window.addEventListener('keydown', keydownFn)
+  window.addEventListener('keyup',   keyupFn)
+  await galaxyStore.loadData()
+  buildScene()
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', keydownFn)
+  window.removeEventListener('keyup',   keyupFn)
+  keysDown.clear()
+  if (rafId !== null) cancelAnimationFrame(rafId)
+  window.removeEventListener('resize', onResize)
+  controls?.dispose()
+  if (scene) disposeScene(scene)
+  renderer?.dispose()
+  renderer = null; scene = null; camera = null; controls = null
+})
+</script>
+
+<style scoped>
+.di-page   { position: relative; width: 100vw; height: 100vh; overflow: hidden; background: #010510; }
+.di-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+/* Top bar */
+.di-topbar {
+  position: absolute; top: 0; left: 0; right: 0; z-index: 10;
+  display: flex; align-items: center; gap: 10px;
+  padding: 6px 12px;
+  background: rgba(0, 5, 18, 0.82);
+  border-bottom: 1px solid rgba(0, 100, 160, 0.20);
+  backdrop-filter: blur(6px);
+}
+.di-topbar-center { flex: 1; display: flex; align-items: center; }
+.di-title    { font-size: 9px; letter-spacing: 0.18em; color: rgba(0, 180, 220, 0.65); font-family: monospace; }
+.di-hostname { font-size: 9px; color: rgba(130, 190, 220, 0.70); font-family: monospace; }
+.di-exoloc   { font-size: 8px; color: rgba(60, 100, 140, 0.55); font-family: monospace; }
+
+/* Tooltip */
+.di-tooltip {
+  position: absolute; z-index: 20; pointer-events: none;
+  background: rgba(1, 5, 20, 0.92); border: 1px solid rgba(0, 130, 190, 0.25);
+  border-radius: 4px; min-width: 160px; max-width: 220px;
+  backdrop-filter: blur(6px);
+}
+.di-tt-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+/* Zone overlay */
+.di-zone-overlay { position: absolute; inset: 0; pointer-events: none; z-index: 8; }
+.di-zone-label {
+  position: absolute; transform: translate(-50%, -50%);
+  font-size: 8px; letter-spacing: 0.12em;
+  color: rgba(0, 150, 200, 0.45); font-family: monospace;
+  background: rgba(0, 5, 15, 0.50); padding: 2px 5px; border-radius: 2px;
+}
+
+/* Loading */
+.di-loading {
+  position: absolute; inset: 0; background: #010510; z-index: 50;
+}
+
+/* Bottom HUD */
+.di-hud {
+  position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); z-index: 10;
+  background: rgba(0, 5, 20, 0.82); border: 1px solid rgba(0, 80, 130, 0.25);
+  border-radius: 20px; padding: 5px 14px;
+  backdrop-filter: blur(6px);
+}
+.di-hud-count { font-family: monospace; font-size: 9px; }
+
+/* Hints */
+.di-hints {
+  position: absolute; bottom: 52px; left: 50%; transform: translateX(-50%); z-index: 10;
+  background: rgba(0, 5, 20, 0.88); border: 1px solid rgba(0, 70, 120, 0.22);
+  border-radius: 5px; backdrop-filter: blur(6px);
+}
+.di-hint-row { display: flex; align-items: center; font-size: 9px; color: rgba(100, 160, 200, 0.70); margin-bottom: 3px; }
+.di-hint-row:last-child { margin-bottom: 0; }
+
+/* Transitions */
+.fade-enter-active, .fade-leave-active { transition: opacity 0.20s ease; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
+
+/* Item inspector */
+.di-inspect-panel {
+  position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+  width: 240px; z-index: 20;
+  background: rgba(1, 5, 20, 0.96);
+  border: 1px solid rgba(0, 150, 200, 0.22);
+  border-radius: 0 6px 6px 0;
+  backdrop-filter: blur(10px);
+  display: flex; flex-direction: column;
+  max-height: 70vh; overflow: hidden;
+}
+.di-inspect-header {
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(0, 80, 130, 0.25);
+  background: rgba(0, 8, 28, 0.70);
+  flex-shrink: 0;
+}
+.di-inspect-dot   { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.di-inspect-title { font-size: 11px; color: rgba(180, 220, 240, 0.92); letter-spacing: 0.04em; }
+.di-inspect-body  { padding: 10px; overflow-y: auto; }
+.di-inspect-meta  { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 6px; }
+.di-inspect-chip {
+  font-size: 8px; padding: 2px 6px; border-radius: 2px; letter-spacing: 0.06em;
+  background: rgba(0, 60, 100, 0.30); color: rgba(100, 160, 200, 0.70);
+}
+.di-type--constructed { background: rgba(180, 120, 0, 0.20);  color: rgba(255, 190, 60, 0.75); }
+.di-type--traded      { background: rgba(0, 120, 180, 0.20);  color: rgba(80, 200, 240, 0.75); }
+.di-type--generated   { background: rgba(120, 0, 180, 0.20);  color: rgba(190, 100, 255, 0.80); }
+.di-type--eco-ops     { background: rgba(0, 130, 50, 0.20);   color: rgba(80, 210, 120, 0.80); }
+.di-inspect-desc { font-size: 10px; color: rgba(140, 190, 220, 0.80); line-height: 1.5; margin-bottom: 8px; }
+.di-inspect-prov {
+  font-size: 9px; color: rgba(100, 160, 200, 0.60);
+  display: flex; align-items: center; gap: 3px; margin-bottom: 4px;
+}
+.di-inspect-date {
+  font-size: 8px; color: rgba(70, 100, 130, 0.55);
+  font-family: monospace; margin-top: 6px;
+}
+.di-inspect-footer { padding: 8px 10px; border-top: 1px solid rgba(0, 60, 100, 0.20); flex-shrink: 0; }
+
+.di-inspect-slide-enter-active, .di-inspect-slide-leave-active { transition: transform 0.22s ease, opacity 0.22s ease; }
+.di-inspect-slide-enter-from, .di-inspect-slide-leave-to { transform: translateX(-100%) translateY(-50%); opacity: 0; }
+</style>

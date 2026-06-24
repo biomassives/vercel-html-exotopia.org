@@ -1,0 +1,61 @@
+<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="starGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"   stop-color="#ffd480" stop-opacity="0.95"/>
+      <stop offset="45%"  stop-color="#ffd480" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#ffd480" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="baseGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"   stop-color="#00aaff" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="#00aaff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Host star corona -->
+  <circle cx="32" cy="9"  r="14" fill="url(#starGlow)"/>
+  <circle cx="32" cy="9"  r="3"  fill="#ffd480"/>
+
+  <!-- Star transit arc across sky (dashed) -->
+  <path d="M 5 43 Q 32 1 59 43"
+        fill="none" stroke="#ffd480" stroke-width="0.7"
+        stroke-opacity="0.35" stroke-dasharray="2,4"/>
+
+  <!-- Dome interior tint -->
+  <path d="M 8 46 A 24 24 0 0 1 56 46 Z"
+        fill="#003366" fill-opacity="0.07"/>
+
+  <!-- Latitude ring h=8 -->
+  <ellipse cx="32" cy="38" rx="22.6" ry="2.3"
+           fill="none" stroke="#0099dd" stroke-width="0.65" opacity="0.48"/>
+  <!-- Latitude ring h=16 -->
+  <ellipse cx="32" cy="30" rx="17.9" ry="1.8"
+           fill="none" stroke="#0099dd" stroke-width="0.6"  opacity="0.38"/>
+  <!-- Latitude ring h=21 -->
+  <ellipse cx="32" cy="25" rx="11.6" ry="1.2"
+           fill="none" stroke="#0099dd" stroke-width="0.55" opacity="0.3"/>
+
+  <!-- Dome meridians -->
+  <path d="M 16 46 A 16 24 0 0 1 48 46"
+        fill="none" stroke="#0099dd" stroke-width="0.7" opacity="0.48"/>
+  <path d="M 24 46 A 8 24 0 0 1 40 46"
+        fill="none" stroke="#0099dd" stroke-width="0.65" opacity="0.42"/>
+  <!-- Central meridian line -->
+  <line x1="32" y1="22" x2="32" y2="46"
+        stroke="#0099dd" stroke-width="0.65" opacity="0.5"/>
+
+  <!-- Outer dome arc -->
+  <path d="M 8 46 A 24 24 0 0 1 56 46"
+        fill="none" stroke="#0099dd" stroke-width="1.8" opacity="0.9"/>
+
+  <!-- Ground glow halo -->
+  <ellipse cx="32" cy="46" rx="24" ry="3"
+           fill="url(#baseGlow)"/>
+  <!-- Ground line -->
+  <line x1="3" y1="46" x2="61" y2="46"
+        stroke="#1a3a4a" stroke-width="1.1" opacity="0.75"/>
+
+  <!-- Pyramid / E8 conduit marker -->
+  <polygon points="32,31 26,46 38,46"
+           fill="#ffcc44" fill-opacity="0.12"
+           stroke="#ffcc44" stroke-width="0.9" opacity="0.82"/>
+</svg>

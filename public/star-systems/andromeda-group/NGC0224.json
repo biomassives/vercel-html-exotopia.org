@@ -1,0 +1,241 @@
+{
+  "galaxy_id": "NGC0224",
+  "galaxy_name": "M31 — Andromeda Galaxy",
+  "galaxy_hubble": "Sb",
+  "cluster": "Andromeda Group",
+  "cluster_slug": "andromeda-group",
+  "cluster_dist_mpc": 0.77,
+  "environment": {
+    "description": "Giant barred spiral; Local Group dominant; minimal ICM; normal stellar field environment",
+    "radiation_factor": 1.0,
+    "metallicity_feh": 0.1,
+    "agn": false,
+    "cooling_flow": false,
+    "ram_pressure": false,
+    "merger": false
+  },
+  "placement_notes": {
+    "v0": "Four systems placed across M31 stellar disk. Inner disk (r < 8 kpc): old metal-rich bulge population; rocky worlds dominate. Mid-disk: Solar analogues host temperate planets. Outer disk spiral arm: younger G-F stars with gas giant + rocky moon systems. One system in outer halo for contrast.",
+    "open_questions": [
+      "M31 has elevated star formation in ring at ~10 kpc — should that zone get G/F bias?",
+      "Andromeda–Milky Way merger in ~4.5 Gyr — mark outer halo system as \"disruption-risk\"?"
+    ],
+    "nft_zones": [
+      "inner-bulge-zone (high metallicity, rocky worlds)",
+      "mid-disk-temperate-band (Solar analogue systems)",
+      "outer-spiral-arm (young star, gas giant systems)"
+    ]
+  },
+  "generation": "v0-hand",
+  "star_systems": [
+    {
+      "id": "m31-s001",
+      "label": "Andromeda Bulge Station Alpha",
+      "spectral_type": "K2V",
+      "mass_sol": 0.82,
+      "feh": 0.22,
+      "age_gyr": 10.5,
+      "luminosity_sol": 0.45,
+      "coord_system": "exo-surface-v1",
+      "settlement_tier": "frontier",
+      "environment_note": "Metal-rich old bulge star; no gas giant companions expected",
+      "planets": [
+        {
+          "id": "m31-s001-b",
+          "label": "Andromeda Bulge I",
+          "type": "lava_world",
+          "radius_earth": 1.3,
+          "mass_earth": 2.8,
+          "period_days": 9.2,
+          "semi_major_au": 0.072,
+          "eq_temp_k": 2100,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "m31-s001-c",
+          "label": "Andromeda Bulge II",
+          "type": "rocky_barren",
+          "radius_earth": 0.85,
+          "mass_earth": 0.65,
+          "period_days": 58.4,
+          "semi_major_au": 0.3,
+          "eq_temp_k": 610,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "frontier"
+        },
+        {
+          "id": "m31-s001-d",
+          "label": "Andromeda Bulge III",
+          "type": "super_earth",
+          "radius_earth": 1.6,
+          "mass_earth": 5.2,
+          "period_days": 210,
+          "semi_major_au": 0.74,
+          "eq_temp_k": 325,
+          "atmosphere": "thick_n2_co2",
+          "settlement_tier": "candidate",
+          "notes": "Temperate — in conservative HZ; high surface gravity; candidate for atmospheric study"
+        }
+      ]
+    },
+    {
+      "id": "m31-s002",
+      "label": "Andromeda Mid-Disk Station Beta",
+      "spectral_type": "G4V",
+      "mass_sol": 0.96,
+      "feh": 0.08,
+      "age_gyr": 7.2,
+      "luminosity_sol": 0.88,
+      "coord_system": "exo-surface-v1",
+      "settlement_tier": "candidate",
+      "environment_note": "Near-Solar analogue in mid-disk; prime candidate for temperate worlds",
+      "planets": [
+        {
+          "id": "m31-s002-b",
+          "label": "Andromeda Station Beta I",
+          "type": "rocky_barren",
+          "radius_earth": 0.72,
+          "mass_earth": 0.43,
+          "period_days": 42.1,
+          "semi_major_au": 0.24,
+          "eq_temp_k": 730,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "m31-s002-c",
+          "label": "Andromeda Station Beta II",
+          "type": "super_earth",
+          "radius_earth": 1.4,
+          "mass_earth": 3.6,
+          "period_days": 298,
+          "semi_major_au": 0.94,
+          "eq_temp_k": 278,
+          "atmosphere": "n2_o2",
+          "settlement_tier": "candidate",
+          "notes": "Temperate super-earth with oxygen-bearing atmosphere; highest priority candidate in Andromeda"
+        },
+        {
+          "id": "m31-s002-d",
+          "label": "Andromeda Station Beta III",
+          "type": "mini_neptune",
+          "radius_earth": 2.9,
+          "mass_earth": 11.0,
+          "period_days": 680,
+          "semi_major_au": 1.72,
+          "eq_temp_k": 185,
+          "atmosphere": "h2_he",
+          "settlement_tier": "frontier"
+        },
+        {
+          "id": "m31-s002-e",
+          "label": "Andromeda Station Beta IV",
+          "type": "gas_giant",
+          "radius_earth": 9.8,
+          "mass_earth": 285,
+          "period_days": 4200,
+          "semi_major_au": 5.8,
+          "eq_temp_k": 78,
+          "atmosphere": "h2_he_ch4",
+          "settlement_tier": "frontier",
+          "notes": "Cold gas giant; potential moon settlement zone"
+        }
+      ]
+    },
+    {
+      "id": "m31-s003",
+      "label": "Andromeda Spiral Arm Station Gamma",
+      "spectral_type": "F8V",
+      "mass_sol": 1.12,
+      "feh": 0.02,
+      "age_gyr": 3.8,
+      "luminosity_sol": 1.58,
+      "coord_system": "exo-surface-v1",
+      "settlement_tier": "frontier",
+      "environment_note": "Younger F-star in active spiral arm; active star formation nearby",
+      "planets": [
+        {
+          "id": "m31-s003-b",
+          "label": "Andromeda Arm I",
+          "type": "rocky_barren",
+          "radius_earth": 1.1,
+          "mass_earth": 1.5,
+          "period_days": 52.3,
+          "semi_major_au": 0.36,
+          "eq_temp_k": 890,
+          "atmosphere": "thin_so2",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "m31-s003-c",
+          "label": "Andromeda Arm II",
+          "type": "ocean_world",
+          "radius_earth": 1.2,
+          "mass_earth": 2.0,
+          "period_days": 380,
+          "semi_major_au": 1.32,
+          "eq_temp_k": 242,
+          "atmosphere": "n2_co2",
+          "settlement_tier": "frontier",
+          "notes": "Global ice-capped ocean world; F-star irradiance at outer HZ edge"
+        },
+        {
+          "id": "m31-s003-d",
+          "label": "Andromeda Arm III",
+          "type": "gas_giant",
+          "radius_earth": 11.2,
+          "mass_earth": 340,
+          "period_days": 2800,
+          "semi_major_au": 4.4,
+          "eq_temp_k": 95,
+          "atmosphere": "h2_he",
+          "settlement_tier": "frontier"
+        }
+      ]
+    },
+    {
+      "id": "m31-s004",
+      "label": "Andromeda Outer Halo Station Delta",
+      "spectral_type": "M1V",
+      "mass_sol": 0.52,
+      "feh": -0.18,
+      "age_gyr": 12.0,
+      "luminosity_sol": 0.06,
+      "coord_system": "exo-surface-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Old metal-poor M-dwarf in outer stellar halo; low-mass rocky worlds",
+      "planets": [
+        {
+          "id": "m31-s004-b",
+          "label": "Andromeda Halo I",
+          "type": "rocky_barren",
+          "radius_earth": 0.82,
+          "mass_earth": 0.55,
+          "period_days": 14.6,
+          "semi_major_au": 0.063,
+          "eq_temp_k": 292,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical",
+          "notes": "Temperate rocky in M-dwarf HZ; tidally locked; terminator zone habitable band"
+        },
+        {
+          "id": "m31-s004-c",
+          "label": "Andromeda Halo II",
+          "type": "ice_world",
+          "radius_earth": 0.65,
+          "mass_earth": 0.28,
+          "period_days": 42.0,
+          "semi_major_au": 0.13,
+          "eq_temp_k": 128,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 2500,
+    "seed": 1527
+  }
+}

@@ -1,0 +1,253 @@
+[
+    {
+        "theme": "Organic Farming",
+        "goal": "Start an organic vegetable patch in your backyard.",
+        "group": "Eco Warriors",
+        "date": "2025-01-17",
+        "location": "City Park",
+        "exolocation": null,
+        "advisor_reviewer_contact": "advisor@example.com",
+        "wallet_addresses": {
+            "solana": "SolanaPlaceholderAddress",
+            "ether": "EthereumPlaceholderAddress",
+            "rmrk": "RMRKPlaceholderAddress",
+            "algorand": "AlgorandPlaceholderAddress"
+        }
+    },
+    {
+        "theme": "Transitioning Agriculture",
+        "goal": "Implement crop rotation and companion planting in local farms.",
+        "group": "Nature Protectors",
+        "date": "2024-07-07",
+        "location": "Local School",
+        "exolocation": null,
+        "advisor_reviewer_contact": "advisor@example.com",
+        "wallet_addresses": {
+            "solana": "SolanaPlaceholderAddress",
+            "ether": "EthereumPlaceholderAddress",
+            "rmrk": "RMRKPlaceholderAddress",
+            "algorand": "AlgorandPlaceholderAddress"
+        }
+    },
+    {
+        "theme": "Working with Forests",
+        "goal": "Learn about sustainable forest management and agroforestry.",
+        "group": "Nature Protectors",
+        "date": "2025-01-05",
+        "location": "Community Garden",
+        "exolocation": null,
+        "advisor_reviewer_contact": "advisor@example.com",
+        "wallet_addresses": {
+            "solana": "SolanaPlaceholderAddress",
+            "ether": "EthereumPlaceholderAddress",
+            "rmrk": "RMRKPlaceholderAddress",
+            "algorand": "AlgorandPlaceholderAddress"
+        }
+    },
+    {
+        "theme": "Permaculture Designs",
+        "goal": "Apply permaculture principles in your gardening practices.",
+        "group": "Green Thumbs",
+        "date": "2025-02-04",
+        "location": "Community Garden",
+        "exolocation": null,
+        "advisor_reviewer_contact": "advisor@example.com",
+        "wallet_addresses": {
+            "solana": "SolanaPlaceholderAddress",
+            "ether": "EthereumPlaceholderAddress",
+            "rmrk": "RMRKPlaceholderAddress",
+            "algorand": "AlgorandPlaceholderAddress"
+        }
+    },
+    {
+        "theme": "Rooftop and Local Water Filtration",
+        "goal": "Conduct a workshop on building and maintaining local water filtration systems.",
+        "group": "Nature Protectors",
+        "date": "2025-02-23",
+        "location": "Community Garden",
+        "exolocation": null,
+        "advisor_reviewer_contact": "advisor@example.com",
+        "wallet_addresses": {
+            "solana": "SolanaPlaceholderAddress",
+            "ether": "EthereumPlaceholderAddress",
+            "rmrk": "RMRKPlaceholderAddress",
+            "algorand": "AlgorandPlaceholderAddress"
+        }
+    },
+    {
+        "theme": "Solar Energy Utilization",
+        "goal": "Organize a solar panel installation training for homeowners.",
+        "group": "Nature Protectors",
+        "date": "2024-12-08",
+        "location": "City Park",
+        "exolocation": null,
+        "advisor_reviewer_contact": "advisor@example.com",
+        "wallet_addresses": {
+            "solana": "SolanaPlaceholderAddress",
+            "ether": "EthereumPlaceholderAddress",
+            "rmrk": "RMRKPlaceholderAddress",
+            "algorand": "AlgorandPlaceholderAddress"
+        }
+    },
+
+    {
+        "_coordinate_system": "exo-surface-v1",
+        "theme": "Exo-Terraforming Research",
+        "goal": "Establish baseline biodiversity protocols for Aurora Basin settlement zone on Kepler-452b.",
+        "group": "Eco Warriors",
+        "date": "2026-04-11",
+        "location": "Aurora Basin, Kepler-452b",
+        "exolocation": {
+            "schema_version": "1.0",
+            "coordinate_system": "exo-surface-v1",
+            "reference_body": {
+                "type": "exoplanet",
+                "pl_name": "Kepler-452b",
+                "host_star": "Kepler-452",
+                "ra_deg": 296.0037,
+                "dec_deg": 44.2776,
+                "nasa_archive_id": "Kepler-452 b",
+                "sy_dist_pc": 430
+            },
+            "region_name": "Aurora Basin",
+            "owner_group": "Eco Warriors",
+            "assignment_date": "2026-04-11",
+            "boundary": {
+                "type": "polygon",
+                "coordinate_units": "degrees_surface_lat_long",
+                "coordinates": [
+                    [14.5, -23.1],
+                    [14.5, -22.0],
+                    [15.8, -22.0],
+                    [15.8, -23.1],
+                    [14.5, -23.1]
+                ],
+                "area_km2": null
+            }
+        },
+        "advisor_reviewer_contact": "advisor@example.com",
+        "wallet_addresses": {
+            "solana": "SolanaPlaceholderAddress",
+            "ether": "EthereumPlaceholderAddress",
+            "rmrk": "RMRKPlaceholderAddress",
+            "algorand": "AlgorandPlaceholderAddress"
+        }
+    },
+
+    {
+        "_coordinate_system": "exo-orbital-v1",
+        "theme": "Orbital Atmospheric Monitoring",
+        "goal": "Operate a virtual research zone in low orbit above Proxima Centauri b to monitor atmospheric data streams.",
+        "group": "Nature Protectors",
+        "date": "2026-04-11",
+        "location": "Proxima Centauri b Low Orbit — Sector 4",
+        "exolocation": {
+            "schema_version": "1.0",
+            "coordinate_system": "exo-orbital-v1",
+            "reference_body": {
+                "type": "exoplanet",
+                "pl_name": "Proxima Cen b",
+                "host_star": "Proxima Centauri",
+                "ra_deg": 217.4289,
+                "dec_deg": -62.6796,
+                "nasa_archive_id": "Proxima Cen b",
+                "sy_dist_pc": 1.3
+            },
+            "region_name": "Sector 4 Low Orbit Band",
+            "owner_group": "Nature Protectors",
+            "assignment_date": "2026-04-11",
+            "boundary": {
+                "type": "orbital_zone",
+                "altitude_km_min": 200,
+                "altitude_km_max": 500,
+                "inclination_deg": 30,
+                "longitude_of_ascending_node_deg": 120
+            }
+        },
+        "advisor_reviewer_contact": "advisor@example.com",
+        "wallet_addresses": {
+            "solana": "SolanaPlaceholderAddress",
+            "ether": "EthereumPlaceholderAddress",
+            "rmrk": "RMRKPlaceholderAddress",
+            "algorand": "AlgorandPlaceholderAddress"
+        }
+    },
+
+    {
+        "_coordinate_system": "exo-lunar-orbital-v1",
+        "theme": "Lunar Relay Network",
+        "goal": "Establish virtual communication relay nodes in orbit around the primary moon of TRAPPIST-1e.",
+        "group": "Green Thumbs",
+        "date": "2026-04-11",
+        "location": "TRAPPIST-1e Moon I Orbital Zone — Relay Arc Alpha",
+        "exolocation": {
+            "schema_version": "1.0",
+            "coordinate_system": "exo-lunar-orbital-v1",
+            "reference_body": {
+                "type": "exoplanet_moon",
+                "moon_name": "TRAPPIST-1e Moon I",
+                "parent_planet": "TRAPPIST-1e",
+                "host_star": "TRAPPIST-1",
+                "ra_deg": 346.6225,
+                "dec_deg": -5.0414,
+                "nasa_archive_id": "TRAPPIST-1 e",
+                "sy_dist_pc": 12.1
+            },
+            "region_name": "Relay Arc Alpha",
+            "owner_group": "Green Thumbs",
+            "assignment_date": "2026-04-11",
+            "boundary": {
+                "type": "orbital_zone",
+                "altitude_km_min": 50,
+                "altitude_km_max": 100,
+                "inclination_deg": 0,
+                "longitude_of_ascending_node_deg": null
+            }
+        },
+        "advisor_reviewer_contact": "advisor@example.com",
+        "wallet_addresses": {
+            "solana": "SolanaPlaceholderAddress",
+            "ether": "EthereumPlaceholderAddress",
+            "rmrk": "RMRKPlaceholderAddress",
+            "algorand": "AlgorandPlaceholderAddress"
+        }
+    },
+
+    {
+        "_coordinate_system": "exo-stellar-orbital-v1",
+        "theme": "Stellar Gateway Station",
+        "goal": "Hold a virtual waypoint zone in the habitable belt of the Alpha Centauri binary system.",
+        "group": "Nature Protectors",
+        "date": "2026-04-11",
+        "location": "Alpha Centauri Habitable Zone — Waypoint Delta",
+        "exolocation": {
+            "schema_version": "1.0",
+            "coordinate_system": "exo-stellar-orbital-v1",
+            "reference_body": {
+                "type": "binary_star_system",
+                "system_name": "Alpha Centauri",
+                "primary_star": "Alpha Centauri A",
+                "secondary_star": "Alpha Centauri B",
+                "ra_deg": 219.9021,
+                "dec_deg": -60.8339,
+                "sy_dist_pc": 1.34
+            },
+            "region_name": "Habitable Zone Waypoint Delta",
+            "owner_group": "Nature Protectors",
+            "assignment_date": "2026-04-11",
+            "boundary": {
+                "type": "orbital_zone",
+                "orbital_radius_au_min": 1.1,
+                "orbital_radius_au_max": 1.3,
+                "inclination_deg": 0
+            }
+        },
+        "advisor_reviewer_contact": "advisor@example.com",
+        "wallet_addresses": {
+            "solana": "SolanaPlaceholderAddress",
+            "ether": "EthereumPlaceholderAddress",
+            "rmrk": "RMRKPlaceholderAddress",
+            "algorand": "AlgorandPlaceholderAddress"
+        }
+    }
+]

@@ -1,0 +1,67 @@
+[
+    {
+        "date": "2024-03-12",
+        "day": "Tuesday",
+        "activity": "Sustainable Living Workshop",
+        "category": "Sustainable Living",
+        "location": "Hospital Community Room",
+        "impact": "Educates healthcare staff on waste reduction practices",
+        "participants": 20,
+        "durationHours": 1.5,
+        "timeOfDay": "Afternoon",
+        "volunteerID": null,
+        "comments": "Engaged healthcare professionals in sustainable living practices."
+    },
+    {
+        "date": "2024-04-01",
+        "day": "Monday",
+        "activity": "Climate Advocacy Meeting",
+        "category": "Climate Groups",
+        "location": "Hospital Conference Room",
+        "impact": "Lobbies for sustainable energy policies in healthcare",
+        "participants": 8,
+        "durationHours": 2,
+        "timeOfDay": "Morning",
+        "volunteerID": null,
+        "comments": "Discussed strategies for advocating sustainable energy policies."
+    },
+    {
+        "date": "2024-02-28",
+        "day": "Wednesday",
+        "activity": "Community Outreach",
+        "category": "Community Support",
+        "location": "Local Community Center",
+        "impact": "Strengthens community bonds and spreads eco-friendly practices.",
+        "participants": 15,
+        "durationHours": 3,
+        "timeOfDay": "Afternoon",
+        "volunteerID": 79,
+        "comments": "Organized an event to educate the community on eco-friendly practices."
+    },
+    {
+        "date": "2024-02-28",
+        "day": "Wednesday",
+        "activity": "Medical Assistance",
+        "timeOfDay": "Evening",
+        "volunteerID": 33,
+        "comments": "Provides critical healthcare services, enhancing community well-being.",
+        "category": "Healthcare",
+        "location": "Community Health Center",
+        "impact": "Enhanced community health and well-being.",
+        "participants": 5,
+        "durationHours": 4
+    },
+    {
+        "date": "2024-03-03",
+        "day": "Sunday",
+        "activity": "Administrative Support",
+        "timeOfDay": "Afternoon",
+        "volunteerID": 54,
+        "comments": "Supports the efficient operation of eco-initiatives through skilled volunteerism.",
+        "category": "Administrative",
+        "location": "Local NGO Office",
+        "impact": "Improved efficiency of eco-initiatives.",
+        "participants": 3,
+        "durationHours": 2
+    }
+]

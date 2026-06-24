@@ -1,0 +1,152 @@
+{
+  "galaxy_id": "NGC4261",
+  "galaxy_name": "NGC 4261",
+  "galaxy_hubble": "E",
+  "cluster": "Virgo Cluster",
+  "cluster_slug": "virgo",
+  "cluster_dist_mpc": 16.5,
+  "environment": {
+    "description": "NGC4261 (E) situated in the infall region at the cluster periphery, largely ICM-free. ICM stress 0.02; host population Teff ≈ 3680 K, Fe/H +0.19. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 3 star system(s), 5 planet(s) generated. Observational anchor: HST/ATLAS.",
+    "radiation_factor": 1.05,
+    "metallicity_feh": 0.187,
+    "agn": false,
+    "cooling_flow": false,
+    "ram_pressure": false,
+    "merger": false
+  },
+  "placement_notes": {
+    "v1": "NGC4261 (E) situated in the infall region at the cluster periphery, largely ICM-free. ICM stress 0.02; host population Teff ≈ 3680 K, Fe/H +0.19. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 3 star system(s), 5 planet(s) generated. Observational anchor: HST/ATLAS.",
+    "open_questions": [],
+    "nft_zones": [
+      "infall-zone-hst-atlas"
+    ]
+  },
+  "generation": "v1-procedural",
+  "provenance": {
+    "script": "generate_cluster_starsystems.py",
+    "algorithm_version": "1.0",
+    "architecture_version": "1.0",
+    "seed_source": "NGC4261",
+    "generated_at": "2026-05-26T17:51:34.785795+00:00",
+    "inputs": {
+      "cluster_zone": "infall",
+      "icm_stress": 0.018,
+      "metallicity_fe_h": 0.187,
+      "planet_bias": "ancient_cold_rocky",
+      "star_teff_k": 3680,
+      "max_orbit_au": 79.1,
+      "gas_giant_prob": 0.22,
+      "anchor_telescope": "HST/ATLAS",
+      "estimated_planets": 5
+    },
+    "observatory_report": "NGC4261 (E) situated in the infall region at the cluster periphery, largely ICM-free. ICM stress 0.02; host population Teff ≈ 3680 K, Fe/H +0.19. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 3 star system(s), 5 planet(s) generated. Observational anchor: HST/ATLAS."
+  },
+  "star_systems": [
+    {
+      "id": "ngc4261-s001",
+      "label": "NGC 4261 — Prime",
+      "spectral_type": "M2V",
+      "mass_sol": 0.403,
+      "feh": 0.179,
+      "age_gyr": 6.8,
+      "luminosity_sol": 0.02844,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Infall zone; ICM stress 0.02; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "ngc4261-s001-b",
+          "label": "NGC4261 1 B",
+          "type": "rocky_barren",
+          "radius_earth": 0.79,
+          "mass_earth": 2.14,
+          "period_days": 6.4,
+          "semi_major_au": 0.05,
+          "eq_temp_k": 467,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "ngc4261-s001-c",
+          "label": "NGC4261 1 C",
+          "type": "rocky_barren",
+          "radius_earth": 1.19,
+          "mass_earth": 0.73,
+          "period_days": 15.9,
+          "semi_major_au": 0.0915,
+          "eq_temp_k": 345,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "ngc4261-s002",
+      "label": "NGC 4261 — Beta",
+      "spectral_type": "M4V",
+      "mass_sol": 0.282,
+      "feh": 0.171,
+      "age_gyr": 7.7,
+      "luminosity_sol": 0.01252,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "frontier",
+      "environment_note": "Infall zone; ICM stress 0.02; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "ngc4261-s002-b",
+          "label": "NGC4261 2 B",
+          "type": "super_earth",
+          "radius_earth": 1.55,
+          "mass_earth": 7.54,
+          "period_days": 7.0,
+          "semi_major_au": 0.047,
+          "eq_temp_k": 393,
+          "atmosphere": "thick_co2",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "ngc4261-s002-c",
+          "label": "NGC4261 2 C",
+          "type": "super_earth",
+          "radius_earth": 1.65,
+          "mass_earth": 7.43,
+          "period_days": 17.4,
+          "semi_major_au": 0.0863,
+          "eq_temp_k": 290,
+          "atmosphere": "thick_co2",
+          "settlement_tier": "frontier"
+        }
+      ]
+    },
+    {
+      "id": "ngc4261-s003",
+      "label": "NGC 4261 — Gamma",
+      "spectral_type": "M0V",
+      "mass_sol": 0.524,
+      "feh": 0.179,
+      "age_gyr": 6.4,
+      "luminosity_sol": 0.07533,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Infall zone; ICM stress 0.02; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "ngc4261-s003-b",
+          "label": "NGC4261 3 B",
+          "type": "hot_rocky",
+          "radius_earth": 1.17,
+          "mass_earth": 2.69,
+          "period_days": 6.7,
+          "semi_major_au": 0.056,
+          "eq_temp_k": 563,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 1485,
+    "seed": 1546
+  }
+}

@@ -1,0 +1,212 @@
+{
+  "galaxy_id": "ESO137-001",
+  "galaxy_name": "ESO137-001",
+  "galaxy_hubble": "Sb",
+  "cluster": "Norma Cluster",
+  "cluster_slug": "norma",
+  "cluster_dist_mpc": 65.0,
+  "environment": {
+    "description": "ESO137-001 (Sb) situated in the infall region at the cluster periphery, largely ICM-free. ICM stress 0.05; host population Teff ≈ 6361 K, Fe/H +0.03. Architecture favours wide-orbit gas giants with potential moon settlement zones. 3 star system(s), 10 planet(s) generated. Observational anchor: JWST.",
+    "radiation_factor": 1.14,
+    "metallicity_feh": 0.03,
+    "agn": false,
+    "cooling_flow": false,
+    "ram_pressure": false,
+    "merger": false
+  },
+  "placement_notes": {
+    "v1": "ESO137-001 (Sb) situated in the infall region at the cluster periphery, largely ICM-free. ICM stress 0.05; host population Teff ≈ 6361 K, Fe/H +0.03. Architecture favours wide-orbit gas giants with potential moon settlement zones. 3 star system(s), 10 planet(s) generated. Observational anchor: JWST.",
+    "open_questions": [],
+    "nft_zones": [
+      "infall-zone-jwst"
+    ]
+  },
+  "generation": "v1-procedural",
+  "provenance": {
+    "script": "generate_cluster_starsystems.py",
+    "algorithm_version": "1.0",
+    "architecture_version": "1.0",
+    "seed_source": "ESO137-001",
+    "generated_at": "2026-05-26T17:52:08.276394+00:00",
+    "inputs": {
+      "cluster_zone": "infall",
+      "icm_stress": 0.048,
+      "metallicity_fe_h": 0.03,
+      "planet_bias": "jovian_wide",
+      "star_teff_k": 6361,
+      "max_orbit_au": 88.0,
+      "gas_giant_prob": 0.65,
+      "anchor_telescope": "JWST",
+      "estimated_planets": 10
+    },
+    "observatory_report": "ESO137-001 (Sb) situated in the infall region at the cluster periphery, largely ICM-free. ICM stress 0.05; host population Teff ≈ 6361 K, Fe/H +0.03. Architecture favours wide-orbit gas giants with potential moon settlement zones. 3 star system(s), 10 planet(s) generated. Observational anchor: JWST."
+  },
+  "star_systems": [
+    {
+      "id": "eso137-001-s001",
+      "label": "ESO137-001 — Prime",
+      "spectral_type": "F5V",
+      "mass_sol": 1.322,
+      "feh": 0.048,
+      "age_gyr": 7.1,
+      "luminosity_sol": 3.05056,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "candidate",
+      "environment_note": "Infall zone; ICM stress 0.05; bias: jovian_wide",
+      "planets": [
+        {
+          "id": "eso137-001-s001-b",
+          "label": "ESO137-001 1 B",
+          "type": "hot_rocky",
+          "radius_earth": 0.87,
+          "mass_earth": 3.38,
+          "period_days": 35.5,
+          "semi_major_au": 0.232,
+          "eq_temp_k": 698,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "eso137-001-s001-c",
+          "label": "ESO137-001 1 C",
+          "type": "super_earth",
+          "radius_earth": 1.33,
+          "mass_earth": 7.51,
+          "period_days": 117.5,
+          "semi_major_au": 0.5154,
+          "eq_temp_k": 468,
+          "atmosphere": "n2_co2",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "eso137-001-s001-d",
+          "label": "ESO137-001 1 D",
+          "type": "terran",
+          "radius_earth": 1.16,
+          "mass_earth": 1.7,
+          "period_days": 396.1,
+          "semi_major_au": 1.1585,
+          "eq_temp_k": 312,
+          "atmosphere": "n2_o2",
+          "settlement_tier": "candidate"
+        },
+        {
+          "id": "eso137-001-s001-e",
+          "label": "ESO137-001 1 E",
+          "type": "terran",
+          "radius_earth": 1.21,
+          "mass_earth": 1.9,
+          "period_days": 1381.3,
+          "semi_major_au": 2.664,
+          "eq_temp_k": 206,
+          "atmosphere": "n2_h2o",
+          "settlement_tier": "frontier"
+        }
+      ]
+    },
+    {
+      "id": "eso137-001-s002",
+      "label": "ESO137-001 — Beta",
+      "spectral_type": "F5V",
+      "mass_sol": 1.322,
+      "feh": 0.043,
+      "age_gyr": 6.3,
+      "luminosity_sol": 3.05056,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Infall zone; ICM stress 0.05; bias: jovian_wide",
+      "planets": [
+        {
+          "id": "eso137-001-s002-b",
+          "label": "ESO137-001 2 B",
+          "type": "hot_rocky",
+          "radius_earth": 1.32,
+          "mass_earth": 2.01,
+          "period_days": 35.5,
+          "semi_major_au": 0.232,
+          "eq_temp_k": 698,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "eso137-001-s002-c",
+          "label": "ESO137-001 2 C",
+          "type": "gas_giant",
+          "radius_earth": 12.04,
+          "mass_earth": 280.07,
+          "period_days": 108.9,
+          "semi_major_au": 0.4899,
+          "eq_temp_k": 480,
+          "atmosphere": "h2_he_ch4",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "eso137-001-s002-d",
+          "label": "ESO137-001 2 D",
+          "type": "gas_giant",
+          "radius_earth": 9.93,
+          "mass_earth": 353.56,
+          "period_days": 371.6,
+          "semi_major_au": 1.1102,
+          "eq_temp_k": 319,
+          "atmosphere": "h2_he_ch4",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "eso137-001-s003",
+      "label": "ESO137-001 — Gamma",
+      "spectral_type": "F5V",
+      "mass_sol": 1.322,
+      "feh": 0.049,
+      "age_gyr": 6.2,
+      "luminosity_sol": 3.05056,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Infall zone; ICM stress 0.05; bias: jovian_wide",
+      "planets": [
+        {
+          "id": "eso137-001-s003-b",
+          "label": "ESO137-001 3 B",
+          "type": "hot_rocky",
+          "radius_earth": 1.24,
+          "mass_earth": 1.52,
+          "period_days": 35.5,
+          "semi_major_au": 0.232,
+          "eq_temp_k": 698,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "eso137-001-s003-c",
+          "label": "ESO137-001 3 C",
+          "type": "gas_giant",
+          "radius_earth": 11.16,
+          "mass_earth": 261.01,
+          "period_days": 94.2,
+          "semi_major_au": 0.4446,
+          "eq_temp_k": 504,
+          "atmosphere": "h2_he_ch4",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "eso137-001-s003-d",
+          "label": "ESO137-001 3 D",
+          "type": "gas_giant",
+          "radius_earth": 9.48,
+          "mass_earth": 296.77,
+          "period_days": 328.7,
+          "semi_major_au": 1.023,
+          "eq_temp_k": 332,
+          "atmosphere": "h2_he_ch4",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 2434,
+    "seed": 2874
+  }
+}

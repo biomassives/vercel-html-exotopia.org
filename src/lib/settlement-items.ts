@@ -1,0 +1,235 @@
+/**
+ * settlement-items.ts
+ *
+ * Data model for objects placed inside a settlement dome.
+ *
+ * Acquisition types:
+ *   constructed — built by the settler using eco-ops activity points
+ *   traded      — received from another settlement; carries donor provenance
+ *   generated   — awarded via pon.ink airdrop events
+ *   eco-ops     — earned through community SHG / field-work milestones
+ *
+ * Storage (hybrid model):
+ *   localStorage  — source of truth for constructed/placed items
+ *   pon.ink events (future) — authoritative for generated/traded items
+ *                             read-only imported into the same store
+ */
+
+import { reactive, computed, watch } from 'vue'
+import type { Ref } from 'vue'
+import { safeRead, safeWrite, hashStorageKey } from './storage-cipher'
+
+// ── Core types ────────────────────────────────────────────────────────────────
+
+export type ItemAcquisitionType = 'constructed' | 'traded' | 'generated' | 'eco-ops'
+
+export type ItemZone =
+  | 'library'
+  | 'water-edge'
+  | 'garden'
+  | 'gateway'
+  | 'courtyard'
+  | 'open-floor'
+
+export interface SettlementItem {
+  id:              string
+  type:            ItemAcquisitionType
+  meshPreset:      string        // key into ITEM_MESH_PRESETS
+  label:           string
+  description:     string
+  zone:            ItemZone
+  color:           string        // '#RRGGBB'
+  posX?:           number        // explicit placement (scene-local to dome centre)
+  posZ?:           number
+  // Constructed
+  buildCost?:      number        // eco-ops points spent
+  // Traded
+  donorKey?:       string        // donor settlement key
+  donorStarColor?: string        // '#RRGGBB' — trail colour on arrival
+  // Generated
+  airdropBundle?:  string        // pon.ink bundle type
+  // Eco-ops
+  community?:      string        // name of the SHG / community that earned it
+  // Metadata
+  acquiredAt:      number        // unix ms
+  settlementKey:   string
+}
+
+// ── Mesh preset catalogue ─────────────────────────────────────────────────────
+
+export interface ItemMeshPreset {
+  label:        string
+  defaultColor: number           // 0xRRGGBB
+  zoneDefault:  ItemZone
+  acquiredBy:   ItemAcquisitionType[]
+  description:  string
+  buildCost?:   number           // for constructed items
+}
+
+export const ITEM_MESH_PRESETS: Record<string, ItemMeshPreset> = {
+  'beacon': {
+    label: 'Signal Beacon', defaultColor: 0x00ddff, zoneDefault: 'gateway',
+    acquiredBy: ['constructed', 'generated'],
+    description: 'Broadcasts settlement presence to the conduit network.',
+    buildCost: 40,
+  },
+  'crystal': {
+    label: 'Resonance Crystal', defaultColor: 0xcc88ff, zoneDefault: 'courtyard',
+    acquiredBy: ['generated', 'eco-ops'],
+    description: 'Harmonic receiver that amplifies ambient light.',
+  },
+  'planter': {
+    label: 'Garden Planter', defaultColor: 0x44bb44, zoneDefault: 'garden',
+    acquiredBy: ['constructed', 'eco-ops'],
+    description: 'Cultivates alien flora adapted to local conditions.',
+    buildCost: 20,
+  },
+  'solar-array': {
+    label: 'Solar Array', defaultColor: 0xffcc44, zoneDefault: 'open-floor',
+    acquiredBy: ['constructed'],
+    description: 'Harvests light from the host star.',
+    buildCost: 60,
+  },
+  'monument': {
+    label: 'Community Monument', defaultColor: 0x88aacc, zoneDefault: 'courtyard',
+    acquiredBy: ['eco-ops'],
+    description: 'Marks a community milestone or declaration.',
+  },
+  'archive-node': {
+    label: 'Archive Node', defaultColor: 0x4488ff, zoneDefault: 'library',
+    acquiredBy: ['constructed', 'traded'],
+    description: 'Extends the settlement knowledge base.',
+    buildCost: 35,
+  },
+  'water-filter': {
+    label: 'Water Filtration Unit', defaultColor: 0x0055aa, zoneDefault: 'water-edge',
+    acquiredBy: ['constructed', 'traded', 'eco-ops'],
+    description: 'Improves water quality metrics for this settlement.',
+    buildCost: 50,
+  },
+  'art-sphere': {
+    label: 'Art Sphere', defaultColor: 0xff6688, zoneDefault: 'courtyard',
+    acquiredBy: ['traded', 'generated'],
+    description: 'Displays community artwork or an NFT piece.',
+  },
+  'comms-relay': {
+    label: 'Comms Relay', defaultColor: 0x55ffaa, zoneDefault: 'gateway',
+    acquiredBy: ['constructed', 'generated'],
+    description: 'Strengthens conduit range to neighbouring settlements.',
+    buildCost: 45,
+  },
+  'seed-vault': {
+    label: 'Seed Vault', defaultColor: 0xbbcc88, zoneDefault: 'library',
+    acquiredBy: ['eco-ops', 'traded'],
+    description: 'Stores genetic diversity — a symbol of long-term commitment.',
+  },
+}
+
+// ── Zone world positions (relative to dome centre at ground level) ────────────
+// Match interior scene layout: library at (0,−18), water at (36,−28),
+// garden deeper in, gateway near entrance (+Z side), courtyard in the middle.
+
+export const ZONE_POSITIONS: Record<ItemZone, { cx: number; cz: number; radius: number }> = {
+  'library':    { cx:  0,  cz: -18, radius: 10 },
+  'water-edge': { cx: 34,  cz: -26, radius:  8 },
+  'garden':     { cx:  4,  cz: -50, radius: 16 },
+  'gateway':    { cx:  0,  cz:  42, radius:  7 },
+  'courtyard':  { cx:  8,  cz:  -4, radius:  9 },
+  'open-floor': { cx: -18, cz: -28, radius: 13 },
+}
+
+/** Deterministic zone position for an item (no explicit posX/Z set). */
+export function autoPosition(
+  item: SettlementItem,
+  slotIdx: number,
+): { x: number; z: number } {
+  if (item.posX !== undefined && item.posZ !== undefined) {
+    return { x: item.posX, z: item.posZ }
+  }
+  const zone  = ZONE_POSITIONS[item.zone]
+  const angle = (slotIdx / 5) * Math.PI * 2
+  const r     = zone.radius * 0.55
+  return {
+    x: zone.cx + Math.cos(angle) * r,
+    z: zone.cz + Math.sin(angle) * r,
+  }
+}
+
+// ── Storage ───────────────────────────────────────────────────────────────────
+
+const STORAGE_PREFIX = 'e8.2'   // opaque — was 'exotopia_items_v1'
+
+// Hash the settlement key so no location names appear as localStorage keys
+function storageKey(sk: string) { return `${STORAGE_PREFIX}:${hashStorageKey(sk)}` }
+
+function loadItems(sk: string): SettlementItem[] {
+  return safeRead<SettlementItem[]>(storageKey(sk), [])
+}
+
+function saveItems(sk: string, items: SettlementItem[]) {
+  safeWrite(storageKey(sk), items)
+}
+
+// ── Shared store ──────────────────────────────────────────────────────────────
+// Module-level reactive cache, keyed by settlement key, so every component
+// instance pointed at the same settlement shares one live item list (and
+// localStorage persistence) rather than each holding its own stale copy.
+
+const itemsStore: Record<string, SettlementItem[]> = reactive({})
+
+function ensureLoaded(sk: string) {
+  if (!(sk in itemsStore)) itemsStore[sk] = loadItems(sk)
+}
+
+// ── Composable ────────────────────────────────────────────────────────────────
+
+export function useSettlementItems(settlementKey: Ref<string>) {
+  ensureLoaded(settlementKey.value)
+  watch(settlementKey, sk => ensureLoaded(sk))
+
+  const items = computed({
+    get: () => itemsStore[settlementKey.value] ?? [],
+    set: (val: SettlementItem[]) => { itemsStore[settlementKey.value] = val },
+  })
+
+  function persist() { saveItems(settlementKey.value, items.value) }
+
+  function addItem(
+    partial: Pick<SettlementItem, 'type' | 'meshPreset' | 'zone'> &
+             Partial<Omit<SettlementItem, 'id' | 'acquiredAt' | 'settlementKey' | 'type' | 'meshPreset' | 'zone'>>
+  ): SettlementItem {
+    const preset = ITEM_MESH_PRESETS[partial.meshPreset]
+    const colHex = '#' + (preset?.defaultColor ?? 0xffffff).toString(16).padStart(6, '0')
+    const item: SettlementItem = {
+      label:        preset?.label       ?? partial.meshPreset,
+      description:  preset?.description ?? '',
+      color:        colHex,
+      ...partial,
+      id:           `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      acquiredAt:   Date.now(),
+      settlementKey: settlementKey.value,
+    }
+    items.value = [...items.value, item]
+    persist()
+    return item
+  }
+
+  function removeItem(id: string) {
+    items.value = items.value.filter(i => i.id !== id)
+    persist()
+  }
+
+  function placeItem(id: string, posX: number, posZ: number) {
+    items.value = items.value.map(i => i.id === id ? { ...i, posX, posZ } : i)
+    persist()
+  }
+
+  const byType = computed((): Record<ItemAcquisitionType, SettlementItem[]> => ({
+    'constructed': items.value.filter(i => i.type === 'constructed'),
+    'traded':      items.value.filter(i => i.type === 'traded'),
+    'generated':   items.value.filter(i => i.type === 'generated'),
+    'eco-ops':     items.value.filter(i => i.type === 'eco-ops'),
+  }))
+
+  return { items, byType, addItem, removeItem, placeItem }
+}

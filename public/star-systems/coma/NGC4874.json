@@ -1,0 +1,128 @@
+{
+  "galaxy_id": "NGC4874",
+  "galaxy_name": "NGC4874",
+  "galaxy_hubble": "cD",
+  "cluster": "Coma Cluster",
+  "cluster_slug": "coma",
+  "cluster_dist_mpc": 99.0,
+  "environment": {
+    "description": "NGC4874 (cD) situated in the dense cluster core, subject to strong ICM ram pressure. ICM stress 0.59; host population Teff ≈ 3500 K, Fe/H +0.12. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 3 star system(s), 3 planet(s) generated. Observational anchor: Chandra.",
+    "radiation_factor": 2.77,
+    "metallicity_feh": 0.122,
+    "agn": false,
+    "cooling_flow": false,
+    "ram_pressure": true,
+    "merger": false
+  },
+  "placement_notes": {
+    "v1": "NGC4874 (cD) situated in the dense cluster core, subject to strong ICM ram pressure. ICM stress 0.59; host population Teff ≈ 3500 K, Fe/H +0.12. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 3 star system(s), 3 planet(s) generated. Observational anchor: Chandra.",
+    "open_questions": [],
+    "nft_zones": [
+      "core-zone-chandra"
+    ]
+  },
+  "generation": "v1-procedural",
+  "provenance": {
+    "script": "generate_cluster_starsystems.py",
+    "algorithm_version": "1.0",
+    "architecture_version": "1.0",
+    "seed_source": "NGC4874",
+    "generated_at": "2026-05-26T17:52:06.254076+00:00",
+    "inputs": {
+      "cluster_zone": "core",
+      "icm_stress": 0.589,
+      "metallicity_fe_h": 0.122,
+      "planet_bias": "ancient_cold_rocky",
+      "star_teff_k": 3500,
+      "max_orbit_au": 4.7,
+      "gas_giant_prob": 0.1,
+      "anchor_telescope": "Chandra",
+      "estimated_planets": 1
+    },
+    "observatory_report": "NGC4874 (cD) situated in the dense cluster core, subject to strong ICM ram pressure. ICM stress 0.59; host population Teff ≈ 3500 K, Fe/H +0.12. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 3 star system(s), 3 planet(s) generated. Observational anchor: Chandra."
+  },
+  "star_systems": [
+    {
+      "id": "ngc4874-s001",
+      "label": "NGC4874 — Prime",
+      "spectral_type": "M2V",
+      "mass_sol": 0.402,
+      "feh": 0.115,
+      "age_gyr": 11.8,
+      "luminosity_sol": 0.02827,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Core zone; ICM stress 0.59; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "ngc4874-s001-b",
+          "label": "NGC4874 1 B",
+          "type": "super_earth",
+          "radius_earth": 1.87,
+          "mass_earth": 8.41,
+          "period_days": 6.4,
+          "semi_major_au": 0.05,
+          "eq_temp_k": 467,
+          "atmosphere": "n2_co2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "ngc4874-s002",
+      "label": "NGC4874 — Beta",
+      "spectral_type": "M4V",
+      "mass_sol": 0.281,
+      "feh": 0.125,
+      "age_gyr": 11.4,
+      "luminosity_sol": 0.01245,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Core zone; ICM stress 0.59; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "ngc4874-s002-b",
+          "label": "NGC4874 2 B",
+          "type": "super_earth",
+          "radius_earth": 1.74,
+          "mass_earth": 5.59,
+          "period_days": 7.0,
+          "semi_major_au": 0.047,
+          "eq_temp_k": 392,
+          "atmosphere": "thick_n2_co2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "ngc4874-s003",
+      "label": "NGC4874 — Gamma",
+      "spectral_type": "M4V",
+      "mass_sol": 0.281,
+      "feh": 0.138,
+      "age_gyr": 10.9,
+      "luminosity_sol": 0.01245,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Core zone; ICM stress 0.59; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "ngc4874-s003-b",
+          "label": "NGC4874 3 B",
+          "type": "rocky_barren",
+          "radius_earth": 0.52,
+          "mass_earth": 1.05,
+          "period_days": 7.0,
+          "semi_major_au": 0.047,
+          "eq_temp_k": 392,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 3380,
+    "seed": 1603
+  }
+}

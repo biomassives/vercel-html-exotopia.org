@@ -1,0 +1,149 @@
+{
+  "total_planets": 6158,
+  "circumbinary_planets": 54,
+  "controversial_planets": 47,
+  "planets_with_pl_ref_url": 6158,
+  "planets_with_st_ref_url": 6148,
+  "field_coverage": {
+    "sy_dist": {
+      "populated": 6031,
+      "total": 6158,
+      "pct": 97.9
+    },
+    "pl_rade": {
+      "populated": 4574,
+      "total": 6158,
+      "pct": 74.3
+    },
+    "pl_eqt": {
+      "populated": 1704,
+      "total": 6158,
+      "pct": 27.7
+    },
+    "pl_masse": {
+      "populated": 2088,
+      "total": 6158,
+      "pct": 33.9
+    },
+    "pl_insol": {
+      "populated": 925,
+      "total": 6158,
+      "pct": 15.0
+    },
+    "pl_orbsmax": {
+      "populated": 3862,
+      "total": 6158,
+      "pct": 62.7
+    },
+    "pl_orbper": {
+      "populated": 5806,
+      "total": 6158,
+      "pct": 94.3
+    },
+    "st_spectype": {
+      "populated": 1361,
+      "total": 6158,
+      "pct": 22.1
+    },
+    "st_teff": {
+      "populated": 5414,
+      "total": 6158,
+      "pct": 87.9
+    },
+    "st_age": {
+      "populated": 2998,
+      "total": 6158,
+      "pct": 48.7
+    },
+    "glon": {
+      "populated": 6158,
+      "total": 6158,
+      "pct": 100.0
+    },
+    "glat": {
+      "populated": 6158,
+      "total": 6158,
+      "pct": 100.0
+    }
+  },
+  "sky_distribution_ra": {
+    "Psc/And (0-30)": {
+      "count": 255,
+      "pct": 4.1
+    },
+    "Ari/Per (30-60)": {
+      "count": 237,
+      "pct": 3.8
+    },
+    "Ori/Tau (60-90)": {
+      "count": 278,
+      "pct": 4.5
+    },
+    "CMa/Gem (90-120)": {
+      "count": 234,
+      "pct": 3.8
+    },
+    "Cnc/Hya (120-150)": {
+      "count": 290,
+      "pct": 4.7
+    },
+    "Leo/Vir (150-180)": {
+      "count": 325,
+      "pct": 5.3
+    },
+    "Vir/Boo (180-210)": {
+      "count": 313,
+      "pct": 5.1
+    },
+    "Sco/Oph (210-240)": {
+      "count": 191,
+      "pct": 3.1
+    },
+    "Oph/Sgr (240-270)": {
+      "count": 433,
+      "pct": 7.0
+    },
+    "Cyg/Lyr (270-300)": {
+      "count": 3093,
+      "pct": 50.2
+    },
+    "Cyg/Cep (300-330)": {
+      "count": 223,
+      "pct": 3.6
+    },
+    "Peg/Aqr (330-360)": {
+      "count": 286,
+      "pct": 4.6
+    }
+  },
+  "discovery_methods": {
+    "Transit": 4523,
+    "Radial Velocity": 1180,
+    "Microlensing": 278,
+    "Imaging": 94,
+    "Transit Timing Variations": 40,
+    "Eclipse Timing Variations": 17,
+    "Orbital Brightness Modulation": 9,
+    "Pulsar Timing": 8,
+    "Astrometry": 6,
+    "Pulsation Timing Variations": 2,
+    "Disk Kinematics": 1
+  },
+  "top_facilities": {
+    "Kepler": 2783,
+    "Transiting Exoplanet Survey Satellite (TESS)": 769,
+    "K2": 549,
+    "Multiple Observatories": 350,
+    "La Silla Observatory": 302,
+    "W. M. Keck Observatory": 194,
+    "KMTNet": 137,
+    "SuperWASP": 122,
+    "OGLE": 110,
+    "HATSouth": 73,
+    "Haute-Provence Observatory": 69,
+    "HATNet": 67,
+    "Roque de los Muchachos Observatory": 39,
+    "Paranal Observatory": 38,
+    "Okayama Astrophysical Observatory": 36
+  }
+}

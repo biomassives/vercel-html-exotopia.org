@@ -1,0 +1,140 @@
+{
+  "galaxy_id": "proc-0213",
+  "galaxy_name": "proc-0213",
+  "galaxy_hubble": "Sb",
+  "cluster": "Ophiuchus Cluster",
+  "cluster_slug": "ophiuchus",
+  "cluster_dist_mpc": 120.0,
+  "environment": {
+    "description": "proc-0213 (Sb) situated in the cluster outskirts, where ICM stripping is moderate. ICM stress 0.19; host population Teff ≈ 6445 K, Fe/H -0.03. Architecture favours mixed architecture — inner rocky worlds alongside outer ice giants or mini-Neptunes. 3 star system(s), 4 planet(s) generated. Observational anchor: JWST.",
+    "radiation_factor": 1.58,
+    "metallicity_feh": -0.03,
+    "agn": false,
+    "cooling_flow": false,
+    "ram_pressure": false,
+    "merger": false
+  },
+  "placement_notes": {
+    "v1": "proc-0213 (Sb) situated in the cluster outskirts, where ICM stripping is moderate. ICM stress 0.19; host population Teff ≈ 6445 K, Fe/H -0.03. Architecture favours mixed architecture — inner rocky worlds alongside outer ice giants or mini-Neptunes. 3 star system(s), 4 planet(s) generated. Observational anchor: JWST.",
+    "open_questions": [],
+    "nft_zones": [
+      "outskirts-zone-jwst"
+    ]
+  },
+  "generation": "v1-procedural",
+  "provenance": {
+    "script": "generate_cluster_starsystems.py",
+    "algorithm_version": "1.0",
+    "architecture_version": "1.0",
+    "seed_source": "proc-0213",
+    "generated_at": "2026-05-26T17:52:09.357151+00:00",
+    "inputs": {
+      "cluster_zone": "outskirts",
+      "icm_stress": 0.193,
+      "metallicity_fe_h": -0.03,
+      "planet_bias": "mixed",
+      "star_teff_k": 6445,
+      "max_orbit_au": 29.7,
+      "gas_giant_prob": 0.405,
+      "anchor_telescope": "JWST",
+      "estimated_planets": 4
+    },
+    "observatory_report": "proc-0213 (Sb) situated in the cluster outskirts, where ICM stripping is moderate. ICM stress 0.19; host population Teff ≈ 6445 K, Fe/H -0.03. Architecture favours mixed architecture — inner rocky worlds alongside outer ice giants or mini-Neptunes. 3 star system(s), 4 planet(s) generated. Observational anchor: JWST."
+  },
+  "star_systems": [
+    {
+      "id": "proc-0213-s001",
+      "label": "proc-0213 — Prime",
+      "spectral_type": "F9V",
+      "mass_sol": 1.139,
+      "feh": -0.033,
+      "age_gyr": 7.8,
+      "luminosity_sol": 1.68087,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Outskirts zone; ICM stress 0.19; bias: mixed",
+      "planets": [
+        {
+          "id": "proc-0213-s001-b",
+          "label": "PROC-0213 1 B",
+          "type": "rocky_barren",
+          "radius_earth": 1.26,
+          "mass_earth": 0.3,
+          "period_days": 13.9,
+          "semi_major_au": 0.118,
+          "eq_temp_k": 844,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "proc-0213-s001-c",
+          "label": "PROC-0213 1 C",
+          "type": "rocky_barren",
+          "radius_earth": 0.81,
+          "mass_earth": 0.45,
+          "period_days": 36.6,
+          "semi_major_au": 0.2253,
+          "eq_temp_k": 611,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "proc-0213-s002",
+      "label": "proc-0213 — Beta",
+      "spectral_type": "F5V",
+      "mass_sol": 1.318,
+      "feh": -0.054,
+      "age_gyr": 9.0,
+      "luminosity_sol": 3.02141,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Outskirts zone; ICM stress 0.19; bias: mixed",
+      "planets": [
+        {
+          "id": "proc-0213-s002-b",
+          "label": "PROC-0213 2 B",
+          "type": "hot_jupiter",
+          "radius_earth": 12.28,
+          "mass_earth": 311.66,
+          "period_days": 17.4,
+          "semi_major_au": 0.144,
+          "eq_temp_k": 885,
+          "atmosphere": "h2_he_na_k",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "proc-0213-s003",
+      "label": "proc-0213 — Gamma",
+      "spectral_type": "F9V",
+      "mass_sol": 1.139,
+      "feh": -0.022,
+      "age_gyr": 7.5,
+      "luminosity_sol": 1.68087,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Outskirts zone; ICM stress 0.19; bias: mixed",
+      "planets": [
+        {
+          "id": "proc-0213-s003-b",
+          "label": "PROC-0213 3 B",
+          "type": "rocky_barren",
+          "radius_earth": 1.08,
+          "mass_earth": 0.93,
+          "period_days": 13.9,
+          "semi_major_au": 0.118,
+          "eq_temp_k": 844,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 2235,
+    "seed": 2783
+  }
+}

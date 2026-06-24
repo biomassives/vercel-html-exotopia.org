@@ -1,0 +1,2045 @@
+[
+  {
+    "area": "Shelter",
+    "icon": "fa-home",
+    "featherIcon": "home",
+    "svgString": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"60\" height=\"60\" fill=\"#000000\" viewBox=\"0 0 256 256\"><path d=\"M219.31,108.68l-80-80a16,16,0,0,0-22.62,0l-80,80A15.87,15.87,0,0,0,32,120v96a8,8,0,0,0,8,8h64a8,8,0,0,0,8-8V160h32v56a8,8,0,0,0,8,8h64a8,8,0,0,0,8-8V120A15.87,15.87,0,0,0,219.31,108.68ZM208,208H160V152a8,8,0,0,0-8-8H104a8,8,0,0,0-8,8v56H48V120l80-80,80,80Z\"></path></svg>",
+    "subcategories": [
+      {
+        "uniqueId": "shelter-0",
+        "title": "Traditional & Green Methods",
+        "subtitle": "Low-cost, Durable Construction Methods",
+        "description": "Learn how to build safe, long-lasting structures using simple tools and affordable materials. Ideal for creating strong shelters in resource-limited areas.",
+        "tags": [
+          "construction",
+          "low-cost",
+          "durable",
+          "building",
+          "DIY",
+          "resilience",
+          "earthbag",
+          "bamboo",
+          "superadobe",
+          "natural building"
+        ],
+        "context": "Focuses on creating robust shelters that withstand local environmental conditions (weather, pests, minor seismic activity) using affordable, accessible techniques and minimal specialized tools, ensuring longevity with reasonable maintenance.",
+        "materials": [
+          "Earthbags / Superadobe tubes",
+          "Barbed Wire",
+          "Soil (appropriate mix)",
+          "Bamboo (treated)",
+          "Recycled Tires",
+          "Pallet Wood",
+          "Basic Fasteners",
+          "Natural Plasters/Sealers"
+        ],
+        "processSteps": [
+          "1. Site Assessment & Clearing",
+          "2. Foundation Laying (rubble trench, earthbag, tire)",
+          "3. Wall Construction (stacking, tamping, curing)",
+          "4. Lintels & Openings (doors, windows)",
+          "5. Roofing Structure & Covering",
+          "6. Plastering & Finishing (protection & aesthetics)"
+        ],
+        "videos": [
+          {
+            "title": "Building The Perfect Gabion Retaining Wall (2024)!",
+            "youtubeId": "vHfN4gYFgu8",
+            "description": "Stone in a mesh cage solution for retaining walls, gabion bases and fences  Apr 18, 2024  #Gabion How to make a gabion wall? Gabion the most beautiful solution for retaining walls. Gabion bases and fences. #Gabion #gabion design #gabion fences #gabion wall # gabion installation https://youtube.com/@user-ur4xo3fy3v?...",
+            "icon_tag_fa": "fas fa-layer-group",
+            "color_tag": "#78716c",
+            "localVideoFilename": "",
+            "authors": "Vasyl Prodan",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": [],
+            "tags": [
+              "retaining walls"
+            ]
+          },
+          {
+            "title": "Aircrete - Everything you need to know before you start",
+            "youtubeId": "EDNpgqOwlJM",
+            "description": "Aircrete is an amazing material to build with when it's used correctly.  In this video, we answer all your questions and give you detailed information about the properties and issues when building with Aircrete.  Leave a comment below if you have any other questions that don't get answered in this video.\n\nGet our Free Ebook: Aircrete Dome Guide Book - Everything you need to know about building an Aircrete Dome\nClick here: https://domegaia.com/pages/magic-of-d...\n\nLearn more about Aircrete workshops: https://domegaia.com/pages/workshops?...\n\nLearn more about Aircrete Tools and Equipment: https://domegaia.com/collections/airc...\n\n0:06 What is Aircrete\n1:32 Unique Properties\n2:06 Benefits\n2:50 Downsides\n3:27 What is the R-value\n5:22 Thermal mass\n6:01 Making Aircrete Flip-up Walls\n6:18 Using Slip Forms\n6:32 Additives\n7:25 What Not to Build with Aircrete\n9:00 Common Problems\n10:18 Conclusion",
+            "icon_tag_fa": "fas fa-house-user",
+            "color_tag": "#a16207",
+            "localVideoFilename": "",
+            "authors": "Domegaia",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "https://www.youtube.com/@domegaia",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": [
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "uniqueId": "shelter-1",
+        "title": "Materials",
+        "subtitle": "Locally Available Materials",
+        "description": "identify and use materials from your immediate surroundings—like earth, bamboo, or recycled materials—to lower costs and support sustainability.",
+        "tags": [
+          "materials",
+          "local",
+          "sustainability",
+          "earthship",
+          "vernacular architecture",
+          "resourcefulness",
+          "clay",
+          "stone",
+          "salvaged",
+          "bamboo",
+          "natural building"
+        ],
+        "context": "Emphasizes using resources found nearby (soil, stone, timber, bamboo, waste streams) to minimize transport costs, reduce environmental impact, often resulting in structures well-suited to the local climate and culture.",
+        "materials": [
+          "Local Soil (clay, sand, silt testing)",
+          "Stones/Rocks",
+          "Timber/Bamboo (sustainably harvested)",
+          "Grasses/Straw (for binder/insulation)",
+          "Recycled Materials (bottles, cans, tires)",
+          "Natural Binders (lime, clay slip)"
+        ],
+        "processSteps": [
+          "1. Site & Resource Mapping",
+          "2. Material Identification & Field Testing (soil jar test, etc.)",
+          "3. Sustainable Harvesting Practices",
+          "4. Material Processing (drying, treating, shaping)",
+          "5. Construction Integration Techniques",
+          "6. Assessing Long-term Availability"
+        ],
+        "videos": [
+          {
+            "icon_tag_fa": "fas fa-paint-roller",
+            "color_tag": "#a16207",
+            "title": "4 Types of Wild Clay You Can Find In Nature",
+            "youtubeId": "rusxyDCmwvI",
+            "description": "Mar 21, 2020  #wildclay #clay #artfromnature\nIn which I show you examples of the four main kinds of clay found in nature, primary, marine, lacustrine and alluvial. Learn to identify wild clay in the field so you can gather and process your own clay for pottery making.\n\nFor more help with identifying and processing wild clay check out my online video based class, Natural Clay 101 https://ancientpottery.how/courses/na... \n\n#wildclay #clay #artfromnature\n\n\\\\ Lots more information including video based lessons are available on my website at https://ancientpottery.how\n\n\\\\ Social Media Links\nInstagram -   / ancientpottery   \nFacebook -   / andywardpottery  \nTwitter -   / palatkwapi",
+            "localVideoFilename": "shelter_local_clay.mp4",
+            "authors": "Andy Ward's Ancient Pottery",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          },
+          {
+            "icon_tag_fa": "fas fa-tree",
+            "color_tag": "#16a34a",
+            "title": "8 Different Ways To Treat Bamboo",
+            "youtubeId": "sPbnW7sq2rU",
+            "description": "Unsure about how to treat bamboo so that it will last?  You can pressure treat it, soak it, heat it, but which way is the best way?\n\nIn this video I cover 8 different ways to treat bamboo so that it will last decades.  Not only that, Iʻll tell you when to use one way and when to use another.\n\nInterested in learning more, then check out the video!!\n\n🌸 FREE // Monthly Garden Tip Newsletter:  https://successful-pioneer-7609.ck.pa...\n\n🌱 EBOOK // Month by Month In The Tropical Garden\nhttps://tinyurl.com/ycxfa7ar",
+            "localVideoFilename": "shelter_bamboo_harvest.mp4",
+            "authors": "Homesteadin' Hawai'i",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          },
+          {
+            "icon_tag_fa": "fas fa-recycle",
+            "color_tag": "#059669",
+            "title": "Tips on building Bottle Walls",
+            "youtubeId": "QHIwldrqDr0",
+            "description": "Bottle walls are a type of eco-friendly construction technique that involves using glass bottles to create a wall. The idea behind bottle walls is to repurpose waste material while also providing a functional structure. Bottle walls can be used for a variety of purposes, including as an interior or exterior wall for a building, a decorative feature in a garden, or as a retaining wall.\n\nThis video was shot a few months ago in the fall helping our friend and neighbor Thomas get his entry way enclosed. More of a how to on bottle wall construction. See links below to our two other videos on making bottle bricks and finishing plaster on a bottle wall. \n\n   • How to cut bottles for \"Bottle Brick Wall\"  \n\n   • Earthship Bottle Wall Plaster  \n\nOwner Builders Unite!\n\n  / redwizardism  \nMusic\n1 songs\n\nTicklish\nQuincas Moreira\nКак Есенин",
+            "localVideoFilename": "shelter_glass_bottles.mp4",
+            "authors": "Owner Builders Unite",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          },
+          {
+            "title": "Aircrete - Everything you need to know before you start",
+            "youtubeId": "EDNpgqOwlJM",
+            "description": "Aircrete is an amazing material to build with when it's used correctly.  In this video, we answer all your questions and give you detailed information about the properties and issues when building with Aircrete.  Leave a comment below if you have any other questions that don't get answered in this video.\n\nGet our Free Ebook: Aircrete Dome Guide Book - Everything you need to know about building an Aircrete Dome\nClick here: https://domegaia.com/pages/magic-of-d...\n\nLearn more about Aircrete workshops: https://domegaia.com/pages/workshops?...\n\nLearn more about Aircrete Tools and Equipment: https://domegaia.com/collections/airc...\n\n0:06 What is Aircrete\n1:32 Unique Properties\n2:06 Benefits\n2:50 Downsides\n3:27 What is the R-value\n5:22 Thermal mass\n6:01 Making Aircrete Flip-up Walls\n6:18 Using Slip Forms\n6:32 Additives\n7:25 What Not to Build with Aircrete\n9:00 Common Problems\n10:18 Conclusion",
+            "authors": "Domegaia",
+            "tags": []
+          },
+          {
+            "title": "Rammed Earth: The World's Healthiest Building Material?",
+            "youtubeId": "I_xVQdL2ieI",
+            "description": "Let me introduce you to Rammed Earth - the healthiest building material on the planet.\n\nNo drywall. No paint. No chemicals. Just a special type of dirt mixture that can somehow regulate your nervous system. \n\nIn this video, I explain what rammed earth actually is, how it's made and everything you need to know before you ever consider building with it. Let's dive in. \n\n\n𝙂𝙚𝙩 𝙛𝙧𝙚𝙚 𝙖𝙘𝙘𝙚𝙨𝙨 𝙩𝙤 𝙏𝙝𝙚 𝙃𝙚𝙖𝙡𝙩𝙝𝙮 𝙃𝙤𝙢𝙚 𝘿𝙖𝙩𝙖𝙗𝙖𝙨𝙚 𝙝𝙚𝙧𝙚 - https://www.wellnessdaddy.com/database\n\n𝙎𝙪𝙗𝙨𝙘𝙧𝙞𝙗𝙚 𝙩𝙤 𝙢𝙮 𝙬𝙚𝙚𝙠𝙡𝙮 𝙣𝙚𝙬𝙨𝙡𝙚𝙩𝙩𝙚𝙧 𝙝𝙚𝙧𝙚 - https://www.wellnessdaddy.com/blog#si...\n\n\n𝐕𝐈𝐃𝐄𝐎 𝐂𝐇𝐀𝐏𝐓𝐄𝐑𝐒:\n00:00 What Is Rammed Earth? \n02:11 How It's Made?\n03:20 Humidity & Mold \n07:48 The Nervous System Effect \n11:27 Common Questions\n13:05 Pros and Cons \n\n\n𝐅𝐀𝐕𝐎𝐑𝐈𝐓𝐄 𝐓𝐎𝐎𝐋𝐒:\nBest Bloodwork → https://links.wellnessdaddy.com/Super...\nBest Air Filter → https://links.wellnessdaddy.com/Jaspr\n\n\n𝐑𝐄𝐒𝐎𝐔𝐑𝐂𝐄𝐒:\n✅ 𝐑𝐄𝐒𝐄𝐓 𝐘𝐎𝐔𝐑 𝐒𝐋𝐄𝐄𝐏 𝐈𝐍 𝟕 𝐃𝐀𝐘𝐒 𝐀𝐍𝐃 𝐔𝐍𝐋𝐎𝐂𝐊 𝐔𝐍𝐏𝐀𝐑𝐀𝐋𝐋𝐄𝐋𝐄𝐃 𝐄𝐍𝐄𝐑𝐆𝐘 𝐀𝐍𝐃 𝐏𝐄𝐅𝐎𝐑𝐌𝐀𝐍𝐂𝐄 👇\nhttps://links.wellnessdaddy.com/ZenSleep\n\n✅ 𝐎𝐏𝐓𝐈𝐌𝐈𝐙𝐄 𝐘𝐎𝐔𝐑 𝐍𝐄𝐑𝐕𝐎𝐔𝐒 𝐒𝐘𝐒𝐓𝐄𝐌 𝐀𝐍𝐃 𝐑𝐄𝐂𝐎𝐕𝐄𝐑𝐘 (𝐌𝐄𝐃𝐈𝐓𝐀𝐓𝐈𝐎𝐍 𝐅𝐎𝐑 𝐘𝐎𝐔𝐑 𝐌𝐔𝐒𝐂𝐋𝐄𝐒) 👇\nhttps://links.wellnessdaddy.com/Dojo\n\n\nSUBSCRIBE:    / @wellnessdaddy  \nFollow me on Instagram:   / wellnessdaddy_official  \nFollow me on Threads: https://www.threads.net/@wellnessdadd...\n\nThis information in this video is not medical advice, consult with a professional before you make any changes with your health protocols. I'm not a doctor and don't pretend to be one.\n\nDISCLAIMER: This video and description contain affiliate links, which means that if you click on one of the product links, I’ll receive a small commission.",
+            "authors": "Wellness Daddy",
+            "tags": [
+              "rammed earth"
+            ]
+          },
+          {
+            "title": "How To BUILD A RAMMED EARTH WALL: Sustainable & STRONG!",
+            "youtubeId": "VA-9d9_OhLk",
+            "description": "how to make a rammed earth wall! Rammed earth is composed of clay, sand, gravel, and a small portion of cement to act as a stabilizer. Ray shows us some of his completed projects in Tuscon, and then we dive into the demo! \n\nPlease consider supporting Natural Buildings on Patreon:   / naturalbuildings   \n\n\nFollow us on Instagram @naturalbuildings",
+            "authors": "Natural Buildings",
+            "tags": [
+              "rammed earth",
+              "comparative"
+            ]
+          }
+        ]
+      },
+      {
+        "uniqueId": "shelter-modern-construction-1780327885468",
+        "title": "Modern Construction",
+        "subtitle": "important details ensuring successful builds",
+        "videos": [
+          {
+            "title": "Learn window and flashing installation.  Learn  how to keep the water out💪 #window #flashing #learn",
+            "youtubeId": "Q4HOB4E-fJc",
+            "description": "ensure that windows are installed properly when using modern materials",
+            "authors": "BAS Renovations",
+            "tags": [
+              "windows",
+              "installation",
+              "flashing"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "area": "Water",
+    "icon": "fa-tint",
+    "featherIcon": "mdi-water",
+    "svgString": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"60\" height=\"60\" fill=\"#000000\" viewBox=\"0 0 256 256\"><path d=\"M174,47.75a254.19,254.19,0,0,0-41.45-38.3,8,8,0,0,0-9.18,0A254.19,254.19,0,0,0,82,47.75C54.51,79.32,40,112.6,40,144a88,88,0,0,0,176,0C216,112.6,201.49,79.32,174,47.75ZM200,144a70.57,70.57,0,0,1-.46,8H136V136h63.64Q200,140,200,144ZM183.39,88H136V72h36.89A175.85,175.85,0,0,1,183.39,88ZM136,200h37.19A71.67,71.67,0,0,1,136,215.54Zm0-16V168h59.87a72,72,0,0,1-8,16Zm0-64V104h55.39a116.84,116.84,0,0,1,5.45,16Zm23.89-64H136V32.6A257.22,257.22,0,0,1,159.89,56ZM56,144c0-50,42.26-92.71,64-111.4V215.54A72.08,72.08,0,0,1,56,144Z\"></path></svg>",
+    "subcategories": [
+      {
+        "uniqueId": "water-0",
+        "title": "Purification",
+        "description": "Use household items or low-cost filters to make water safe for drinking...",
+        "tags": [
+          "clean water",
+          "filtration",
+          "health",
+          "SODIS",
+          "potable water",
+          "waterborne disease",
+          "DIY filter",
+          "boiling",
+          "disinfection",
+          "resourcefulness",
+          "water testing"
+        ],
+        "context": "Access to safe drinking water is fundamental for health...",
+        "materials": [
+          "Clean Containers...",
+          "Heat Source...",
+          "Clear PET Bottles...",
+          "Cloth...",
+          "Sand...",
+          "Gravel...",
+          "Activated Charcoal...",
+          "Simple Chlorine/Iodine Solution..."
+        ],
+        "processSteps": [
+          "Pre-filtration...",
+          "Boiling...",
+          "Solar Disinfection...",
+          "Building Layered Filter...",
+          "Chemical Disinfection...",
+          "Safe Storage..."
+        ],
+        "videos": [
+          {
+            "icon_tag_fa": "fas fa-filter",
+            "color_tag": "#4b5563",
+            "title": "🇫🇷 🇬🇧 How to build a biosand filter to get safe drinking water ? - DIY Tutorial 💧",
+            "youtubeId": "y0OsnJ0Uz5Q",
+            "description": "📕 Much more detailed documentation on bio-sand filters: https://wiki.lowtechlab.org/wiki/Wate...\n\n---\n🇬🇧 [NEW TUTORIAL - How to make a biosand filter ? 💧]\n\nDespite the earth's abundance, only 2.5% of the world's water is freshwater, drinkable. According to WHO/UNICEF 2020, more than half of the world's population, or 4.2 billion people, lacks safely managed sanitation services. This causes, again according to these sources, many problems of malnutrition. \nA few weeks ago, the ceramic filter was proposed as a tutorial with plans accessible in open-source here 👉    • 🇫🇷🇬🇧 How to get safe drinking water for 20...  \n\nToday, let's go to the tutorial of the biosand filter, more suitable for domestic use because of its weight and a mechanism that requires a certain constancy ! \n\nIt was during the Nomade des mers' trip to Nicaragua that Caroline and Corentin met the members of the BlueEnergy association, who are very active on the issues of access to water, energy and essential hygienic conditions in the Bluefields area. Carlos, member of the association, showed Corentin how to reproduce a biosand filter, before this low-tech was reproduced on the boat.\n\n🛠  Several tutorials are available here (in french) https://wiki.lowtechlab.org/wiki/Wate...\nOr here (in english) https://sswm.info/sswm-solutions-bop-...\n\n🔎 Several associations have adopted this method for local needs.\nThis is the case of BlueEnergy, which Corentin and Caroline met in Panama \nhttps://blueenergy.fr/\nOr Ohorizons, the association behind the tutorial available on the Low-tech Lab wiki https://www.ohorizons.org/about-us\nOther information about water purification can also be found on the Sustainable Sanitation and Water Management website https://sswm.info/sswm-solutions-bop-...",
+            "localVideoFilename": "water_diy_filter_safety.mp4",
+            "authors": "Low-tech Lab",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "https://www.youtube.com/@CityPrepping",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": [],
+            "tags": [
+              "slow sand filter"
+            ]
+          },
+          {
+            "icon_tag_fa": "fas fa-flask-vial",
+            "color_tag": "#ef4444",
+            "title": "Understanding Water Safety & Contamination",
+            "youtubeId": "32",
+            "description": "Explains (TED-Ed) different types...",
+            "localVideoFilename": "water_safety_teded.mp4",
+            "authors": "TED-Ed / Mia Nacamulli",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "https://www.youtube.com/@TEDEd",
+            "licence": "Standard YouTube License",
+            "patreon": "https://www.patreon.com/teded",
+            "socials": {
+              "twitter": "https://twitter.com/TED_ED"
+            },
+            "fundraiser": "",
+            "sponsorPages": []
+          },
+          {
+            "icon_tag_fa": "fas fa-flask",
+            "color_tag": "#22c55e",
+            "title": "Simple DIY Water Filter Experiment (Layer Demo)",
+            "youtubeId": "25",
+            "description": "Demonstrates (Hungry SciANNtist)...",
+            "localVideoFilename": "water_filter_experiment.mp4",
+            "authors": "Hungry SciANNtist",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "https://www.youtube.com/@HungrySciANNtist",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          }
+        ]
+      },
+      {
+        "uniqueId": "water-1",
+        "title": "Desalination",
+        "description": "Build small-scale systems to turn salty or brackish water into fresh water...",
+        "tags": [
+          "desalination",
+          "salt removal",
+          "ocean",
+          "irrigation",
+          "solar still",
+          "distillation",
+          "potable water",
+          "coastal living",
+          "arid regions",
+          "solar thermal"
+        ],
+        "context": "Provides a vital source of freshwater in coastal or arid regions...",
+        "materials": [
+          "Dark Basin/Container...",
+          "Clear Cover...",
+          "Collection Trough/Channel...",
+          "Freshwater Container...",
+          "Sealant...",
+          "Insulation..."
+        ],
+        "processSteps": [
+          "1. Constructing Basin & Cover...",
+          "2. Positioning for Maximum Sun...",
+          "3. Setting up Collection Channel...",
+          "4. Filling Basin...",
+          "5. Monitoring Condensation...",
+          "6. Periodic Cleaning..."
+        ],
+        "videos": [
+          {
+            "icon_tag_fa": "fas fa-sun",
+            "color_tag": "#f97316",
+            "title": "Build a Simple Solar Still",
+            "youtubeId": "bJ9r8RFp4gE",
+            "description": "Step-by-step construction...",
+            "localVideoFilename": "water_solar_still.mp4",
+            "authors": "",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          },
+          {
+            "icon_tag_fa": "fas fa-tint-slash",
+            "color_tag": "#3b82f6",
+            "title": "Improving Solar Still Efficiency",
+            "youtubeId": "d5bjI9jgCxk",
+            "description": "Tips and tricks...",
+            "localVideoFilename": "water_solar_still_efficiency.mp4",
+            "authors": "",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          }
+        ]
+      },
+      {
+        "uniqueId": "water-2",
+        "title": "Distribution",
+        "description": "Design and improve gravity-fed or pump-based systems...",
+        "tags": [
+          "pipes",
+          "delivery",
+          "infrastructure",
+          "gravity feed",
+          "water storage",
+          "pump",
+          "conservation",
+          "ram pump",
+          "water pressure",
+          "plumbing"
+        ],
+        "context": "Ensuring collected or purified water reaches points of use reliably...",
+        "materials": [
+          "Piping...",
+          "Fittings...",
+          "Storage Tanks...",
+          "Pump...",
+          "Basic Surveying Tools...",
+          "Sealants/Tape"
+        ],
+        "processSteps": [
+          "1. Mapping Source...",
+          "2. System Design...",
+          "3. Trenching & Pipe Laying...",
+          "4. Tank Installation...",
+          "5. Pump Setup...",
+          "6. Testing, Leak Detection..."
+        ],
+        "videos": [
+          {
+            "icon_tag_fa": "fas fa-chart-line",
+            "color_tag": "#06b6d4",
+            "title": "Setting Up a Gravity Feed Water System",
+            "youtubeId": "9ICi3rFj28M",
+            "description": "How to use elevation...",
+            "localVideoFilename": "water_gravity_feed.mp4",
+            "authors": "",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          },
+          {
+            "icon_tag_fa": "fas fa-water",
+            "color_tag": "#3b82f6",
+            "title": "We Found Water For The Pond - Hydraulic Ram Pump",
+            "youtubeId": "2BqOhHcTzeM",
+            "description": "Demonstrates how to build and install a hydraulic ram pump using only water power to move water from a stream up to garden level. Mike Collinson shows the complete process from surveying requirements (minimum 3-foot drop) through assembly using standard plumbing parts including expansion tanks and brass swing check valves. Initial results show 11 liters per hour output. Covers drive pipe installation and pump positioning in stream.",
+            "localVideoFilename": "hydraulic_ram_pump_part1.mp4",
+            "authors": "Hometown Acres",
+            "researchReviewItems": [
+              "Minimum 3-foot water drop required for operation",
+              "Higher fall allows higher pumping height",
+              "Two brass swing check valves must be oriented correctly",
+              "Uses standard plumbing expansion tank",
+              "Drive pipe approximately 120 feet in this example",
+              "Initial output: 11 liters per hour",
+              "Part 1 of multi-part series"
+            ],
+            "contentCreatorArchive": "",
+            "licence": "Educational/Tutorial Content",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": [],
+            "tags": [
+              "hydraulic",
+              "water pump",
+              "DIY",
+              "renewable energy",
+              "water power",
+              "garden irrigation",
+              "sustainable technology"
+            ],
+            "difficulty": "Intermediate",
+            "duration_minutes": 5,
+            "part_number": 1,
+            "series_name": "DIY Hydraulic Ram Pump"
+          },
+          {
+            "title": "If You Have This Pipe, Replace It",
+            "youtubeId": "7RRsG4pKngc",
+            "description": "some older homes still have this type of older piping.",
+            "authors": "Wells, Septic & More",
+            "tags": [
+              "Polybutylene",
+              "industry upgrades"
+            ]
+          }
+        ]
+      }
+    ],
+    "image": "data:image/webp;base64,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"
+  },
+  {
+    "area": "Waste",
+    "icon": "fa-recycle",
+    "featherIcon": "trash-2",
+    "svgString": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"60\" height=\"60\" fill=\"#000000\" viewBox=\"0 0 256 256\"><path d=\"M76,120a12,12,0,1,1-12-12A12,12,0,0,1,76,120Zm164,0v88a16,16,0,0,1-16,16H112a16,16,0,0,1-16-16V186.35C87.37,200.37,76.18,208,64,208c-13.87,0-26.46-9.89-35.44-27.85C20.46,164,16,142.59,16,120s4.46-43.95,12.56-60.15C37.54,41.89,50.13,32,64,32H192c13.87,0,26.46,9.89,35.44,27.85C235.54,76.05,240,97.41,240,120ZM96,120c0-42.43-16.86-72-32-72S32,77.57,32,120s16.86,72,32,72S96,162.43,96,120Zm128,88V128H208a8,8,0,0,1,0-16h15.79C221.84,73.9,206.16,48,192,48H92.12a73.6,73.6,0,0,1,7.32,11.85c7.14,14.28,11.44,32.56,12.37,52.15H128a8,8,0,0,1,0,16H112v80Zm-48-96H160a8,8,0,0,0,0,16h16a8,8,0,0,0,0-16Z\"></path></svg>",
+    "subcategories": [
+      {
+        "uniqueId": "waste-0",
+        "title": "Composting",
+        "description": "Learn how to convert organic waste into nutrient-rich soil...",
+        "tags": [
+          "composting",
+          "organic waste",
+          "soil improvement",
+          "sustainability",
+          "fertilizer",
+          "vermicomposting",
+          "hot composting",
+          "cold composting",
+          "bokashi",
+          "mycelium",
+          "nutrient cycling"
+        ],
+        "context": "Transforms kitchen scraps and yard waste...",
+        "materials": [
+          "Organic 'Greens'...",
+          "Organic 'Browns'...",
+          "Compost Bin/Container...",
+          "Water Source...",
+          "Turning Tool...",
+          "(Optional: worms...)"
+        ],
+        "processSteps": [
+          "1. Choose Method...",
+          "2. Collect & Chop...",
+          "3. Layer Greens & Browns...",
+          "4. Maintain Moisture...",
+          "5. Aerate/Turn...",
+          "6. Harvest & Use..."
+        ],
+        "videos": [
+          {
+            "icon_tag_fa": "fas fa-seedling",
+            "color_tag": "#84cc16",
+            "title": "Making Compost: Homemade Worm Farm Compost System | Vermicompost",
+            "youtubeId": "kbhIJDV2ajI",
+            "youtubeType": "short",
+            "description": "Creating an efficient composting setup... Sep 15, 2023  IOWA\nWe created our own Worm Farm Composter to make Vermicompost. We feed the worms Johnson Su Compost and collect the worm castings weekly. The worm castings \"Vermicompost\" is used to make a biological compost via compost extract. The compost extract is then feed to our crops, garden, and fruit trees. Any excess is sold under our company Gibbsfield Ag.",
+            "localVideoFilename": "waste_3bin_compost.mp4",
+            "authors": "Gibbsfield Farms",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          },
+          {
+            "icon_tag_fa": "fas fa-worm",
+            "color_tag": "#a16207",
+            "title": "Urban Balcony Composting With Worms",
+            "youtubeId": "gNqkEGpv0vg",
+            "description": "Guide to small-scale vermicomposting...",
+            "localVideoFilename": "waste_vermicompost.mp4",
+            "authors": "",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          },
+          {
+            "icon_tag_fa": "fas fa-temperature-high",
+            "color_tag": "#f97316",
+            "title": "Static Aerated Composting System For Organic Farms",
+            "youtubeId": "755RfsdIzbQ",
+            "description": "Static aerated composting (aka an aerated static compost pile or ASP) is a system by which the composter does not need to turn the compost, but rather uses pipes and a blower to oxygenate the system. \n\nIn this video I show you a design for our static aerated compost system. Addressed in this video: How to build a static aerated compost system, what is a static aerated compost pile, what is ASP, aerated static composting, no turn composting, making compost on farm, certified organic compost rules, organic composting, Organic compost, composting for beginners, manure in organic certification, and more. \n\nGrowing For Market Article on Jay Armour's System: https://www.growingformarket.com/arti...\n\nTroy Hinke: https://www.livingrootscomposttea.com\n\nThe Living Soil Handbook:\nhttps://www.notillgrowers.com/livings...\n\nOUTSIDE OF United States: just get the book from local retailer because shipping is outrageous and you can instead, support our work through one of these methods 👇\n\nSupport our work at notillgrowers.com/support\nor\nPatreon.com/notillgrowers\n\n\nParts: \n~17' of large PVC (4\" or 6\" for better airflow) \n2 corresponding 90º elbows (4\" or 6\")\n3 corresponding T couplings (4\" or 6\")\nFour 12’ lengths of 4\" or 6\" drainage pipe (or something like that)",
+            "localVideoFilename": "waste_hot_compost.mp4",
+            "authors": "No-Till Growers",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          },
+          {
+            "title": "How to Start a Worm Bin That Doesn’t Crash",
+            "youtubeId": "NrabZQOVxqc",
+            "description": "Mar 3, 2026\nStarting an indoor worm compost bin is simple, but many first-time bins fail because small mistakes build up over time. In this video I show exactly how I start and run my indoor worm compost bin so it stays productive while you learn. This method focuses on forgiveness, balance, and simple materials so beginners can succeed without expensive systems or complicated setups.",
+            "authors": "Indiana Worm & Garden"
+          }
+        ]
+      },
+      {
+        "uniqueId": "waste-1",
+        "title": "Recycling",
+        "description": "Set up community or household recycling systems...",
+        "tags": [
+          "recycling",
+          "waste sorting",
+          "materials recovery",
+          "circular economy",
+          "community action",
+          "plastic recycling",
+          "paper recycling",
+          "metal recycling",
+          "glass recycling",
+          "waste management"
+        ],
+        "context": "Organizes the collection and separation...",
+        "materials": [
+          "Designated Bins/Containers...",
+          "Signage/Labels...",
+          "Collection Bags/Carts...",
+          "Basic Cleaning Supplies...",
+          "(Community: Central collection point...)"
+        ],
+        "processSteps": [
+          "1. Identify Accepted Materials...",
+          "2. Set Up Sorting Stations...",
+          "3. Rinse/Clean Recyclables...",
+          "4. Store Sorted Materials...",
+          "5. Coordinate Collection/Drop-off...",
+          "6. Educate Participants..."
+        ],
+        "videos": [
+          {
+            "icon_tag_fa": "fas fa-users",
+            "color_tag": "#6366f1",
+            "title": "Setting Up a Community Recycling Station Organizing an effective central collection point...",
+            "youtubeId": "KTE53bfnnhg",
+            "description": "0:00I'm going to begin the recording and I'm going to share my\n0:088 secondsscreen I want to welcome all of you uh to today's webinar my name is Maryann\n0:1515 secondsrayador I'm the assistant director of the Northeast Recycling Council today's webinar is being funded by\n0:2424 secondsUSDA and it is uh part of a program a part of a project to help support and\n0:3232 secondspromote glass recycling in rural communities today we have presenters from three rural recycling centers and\n0:4141 secondsthe nonprofit organization they are all working with to consolidate and ship the glass to its next destination our\n0:4949 secondspresenters are Suzanne Simon coordinator of the fford recycling center in Vermont\n0:5656 secondsthen we have Paul Alby who is the manager of the Norwich transfer station in Vermont Ben Hoy the director of the\n1:061 minute, 6 secondsWalpole recycling center in New Hampshire and Bonnie bethon senior Member Services representative of the\n1:131 minute, 13 secondsNortheast resource recovery Association so I I'd like to invite Suzanne to\n1:221 minute, 22 secondspresent thank you maranne and good morning everyone from across the United States I this is a pleasure to been\n1:311 minute, 31 secondsinvited uh as I developed this presentation I learned from uh uh very\n1:381 minute, 38 secondsold notebook of the history of our recycling it really started back in 1988\n1:451 minute, 45 seconds89 with the formation of a town committee uh this town committee was\n1:511 minute, 51 secondsboostered by the uh group of volunteers uh what I consider super\n1:581 minute, 58 secondsvolunteers uh because they did a tremendous job of pushing the whole concept new to the residents the 2400\n2:072 minutes, 7 secondsresidents of uh Thord uh into trying out uh doing recycling uh one of the key things that\n2:162 minutes, 16 secondsreally helped uh jump start was the pilot recycling grants that were given out by the state of Vermont uh the town\n2:252 minutes, 25 secondsof theer received $3,600 and it the uh and the town uh\n2:312 minutes, 31 secondsmatched with a 5,000 and with that money they were able to uh plan and Implement\n2:402 minutes, 40 secondsa program and it started at the uh local elementary school with a portable recycling center if I could have the\n2:482 minutes, 48 secondsnext slide please just give me a minute it's there\n2:572 minutes, 57 secondsyou go this is a a a photograph from a um a copy but it's clear enough to see\n3:073 minutes, 7 secondsthat this is a rectangular uh metal structure with side doors and you can see the side doors\n3:153 minutes, 15 secondsthat have uh been labeled for collection of glass and back then we were doing\n3:223 minutes, 22 secondsclear green and brown glass as well as aluminum uh cans so that was the initial\n3:293 minutes, 29 secondsuh program it added also later on newspapers and cardboard and one uh or\n3:373 minutes, 37 secondslittle letter indicated that they got a volunteer Who provided a bus and they collected all that paper and cardboard\n3:463 minutes, 46 secondsin the bus and they would take that monthly or so uh to another vendor who\n3:523 minutes, 52 secondswould actually um recycle that it was really important starting at the elementary school from what I read they\n4:004 minuteshad uh subcommittees that did Outreach to the schools and to the families they had a newsletter and they really uh\n4:104 minutes, 10 secondstried to increase the amount of recycling that occurred and actually did in the first five years and in fact in\n4:194 minutes, 19 seconds1993 they had to consider building a significant recycling center which is\n4:274 minutes, 27 secondsnow at the location where I work on Route 113 about a quarter of a mile from the town hall and a mile from the\n4:344 minutes, 34 secondselementary school today the census is around 24 uh 2700 people so it's about\n4:434 minutes, 43 secondsan increase of only about 300 people despite that we have 500 households that\n4:504 minutes, 50 secondsbuy permits on a annual basis um and I think we are hoping to Inc continue to\n4:594 minutes, 59 secondsin increase that I think a lot of people uh are using the Harford transfer station and the Lebanon landfill in New\n5:085 minutes, 8 secondsHampshire because they have more frequent hours than we do also cassella is a prominent uh fixture here in our\n5:175 minutes, 17 secondscommunities and they provide trash as well as Recycling and there is also some small uh private vendors that do trash\n5:265 minutes, 26 secondsand uh uh metals next slide\n5:335 minutes, 33 secondsplease this is a collage that Maryann put together from her visit from our our uh transfer station you can see my puppy\n5:415 minutes, 41 secondsdog in the middle photograph um this consists of uh uh two gates uh a entrance and an exit it's a\n5:515 minutes, 51 secondsone-way oval shaped gravel driveway with parking around the inner uh oval like\n5:595 minutes, 59 secondsspokes on a wheel the vehicles where they're parked are up against U the\n6:056 minutes, 5 secondsrolloffs that are then in line with this um asphalt uh walkway which my dog is\n6:146 minutes, 14 secondssitting on and you can also see that the uh walkway uh Rises up from the right\n6:206 minutes, 20 secondsand to the left to the bins and that allows people to um walk up right to the\n6:286 minutes, 28 secondsum bins and drop the recyclables and currently we do mixed paper corrugated\n6:366 minutes, 36 secondscardboard mixed Plastics one two and five and no black and that's because of our vendor\n6:436 minutes, 43 secondscassella uh scrap metal non-redeemable uh aluminum cans as well as our mixed\n6:516 minutes, 51 secondsglass our glass bin is covered and has plastic doors and reason I think\n6:586 minutes, 58 secondspreviously I've only been here uh 18 months I think they felt it was safer um some of these people who uh dropped\n7:077 minutes, 7 secondstheir glass in do it quite forcefully and we have found that this is a s uh safer\n7:147 minutes, 14 secondsmethod um these photos were taken um when we were participating in\n7:207 minutes, 20 secondsnr's program of clean glass which consisted of jars and uh bottles\n7:287 minutes, 28 secondsonly uh our clean glass was going to the Lebanon landfill and then on to Canada\n7:347 minutes, 34 secondsand my understanding is it was used to make fiberglass as well as new bottles\n7:417 minutes, 41 secondsand jars currently we have three paid staff that work from 8 to 8 uh 12:30\n7:487 minutes, 48 secondseach Saturday we use rakes and hand Pickers to remove contamination from the bins and we do fairly well in getting\n7:577 minutes, 57 secondsmost contaminants out next slide please uh in mid May of this uh past\n8:078 minutes, 7 secondsmonth um Levan and lill uh informed us that uh they were no longer collecting\n8:148 minutes, 14 secondsclean glass uh they have temporarily stopped for a variety of reasons and so we had to decide what to do next and we\n8:228 minutes, 22 secondsconsulted with Bonnie who's going to be speaking shortly and we changed to uh\n8:298 minutes, 29 secondscollect of glass for processed glass Aggregate and this is what they use uh\n8:368 minutes, 36 secondsfor road construction as well as uh constructing of uh uh surfaces of all\n8:448 minutes, 44 secondsall shapes and sizes um it's worked out really well for us um cassella who is\n8:518 minutes, 51 secondsour transporter of our uh recycled glass has agreed to do that and they the cost\n8:588 minutes, 58 secondsuh Bonnie was able to uh keep them at the same level approximately that we have\n9:059 minutes, 5 secondsnow uh the reaction to changing has been tremendous uh the community did not like\n9:149 minutes, 14 secondsthe previous uh uh clean glass program and the reason is they could not recycle\n9:229 minutes, 22 secondswindow glass porcelain uh Ceramics mirrors uh drinking glasses and cooking containers\n9:319 minutes, 31 secondsand they really like that opportunity now instead of it ending up in a landfill uh the glass volume averag is\n9:399 minutes, 39 secondsum about 4.7 uh every time it's the bin is pulled and you saw the bin um it's pulled with\n9:479 minutes, 47 secondsthe top and it has a side door and that's how they uh empty it uh last year\n9:559 minutes, 55 secondsthe total was 43 tons um this does not include our redeemables we've been doing redeemables\n10:0210 minutes, 2 secondssince we opened in uh 1989 and that brings in significant monies for us um we think we're going to\n10:1110 minutes, 11 secondsbe increasing volume this year I might be wrong but um with the addition of mirrors and glass paint we're wondering\n10:2010 minutes, 20 secondsif we're going to be pulling our glass bin more often the other area that Maryann wanted me to speak on which I\n10:2710 minutes, 27 secondshave only a a little bit to touch on and that is um Outreach the Outreach again\n10:3510 minutes, 35 secondswas done by this uh super Volunteers in in 1989 in the first five years\n10:4210 minutes, 42 secondscurrently we use technology uh we're we have a theer list serve and I uh several\n10:5010 minutes, 50 secondstimes a month uh put announcements out we also have a website and we also do\n10:5710 minutes, 57 secondsposters uh some of them are laminated uh and others uh we put place on what we call sandwich boards and\n11:0511 minutes, 5 secondsthese are boards that we've gotten from uh old uh indoor doors that we've cut\n11:1211 minutes, 12 secondsand painted and used to announce things as people drive in and the other key is\n11:2011 minutes, 20 secondsour Outreach is on Saturday mornings and also by email I have an email address\n11:2711 minutes, 27 secondsand we get dozens of questions and uh we always are thanking everyone for the questions because we really want\n11:3411 minutes, 34 secondsto encourage recycling thank you very much and I hope I didn't go over too far Mary thank you Suzanne you did fine and\n11:4311 minutes, 43 secondsum Paul I'd like to invite you to present okay the uh oh hold on one second there\n11:5211 minutes, 52 secondswe go okay I am actually not the manager at\n11:5911 minutes, 59 secondsthe transfer station they uh I am uh what they call the lead attendant and so I'm\n12:0612 minutes, 6 secondsresponsible for what happens up there on the two days a week we're open we're open Wednesdays and\n12:1512 minutes, 15 secondsSaturdays and I do not get involved in any of the finances other than collecting money that they uh the town\n12:2412 minutes, 24 secondsprefers to keep me in the dark as to expenses and revenue so uh I can't share any of that stuff with you uh just a\n12:3312 minutes, 33 secondslittle background it's kind of ironic I'm involved in this glass recycling now because I spent 42 years working for\n12:4312 minutes, 43 secondsCorning Glass and actually spent 10 years at Corning in Corning New York operating\n12:5012 minutes, 50 secondsglass mounting furnaces so uh glass contamination was build into my head early on when I worked there\n12:5912 minutes, 59 secondsand so I try to uh educate our customers about what does not go in and why we\n13:0813 minutes, 8 secondscan't have it um it's uh as you can see in\n13:1413 minutes, 14 secondsthe one slide there we have our sandwich boards that explained glass only this\n13:2213 minutes, 22 secondswas under the previous program when I the glass was going to Lebanon and I understand now we can\n13:3213 minutes, 32 secondsaccept more material and I guess one question for the NR\n13:3913 minutes, 39 secondsis are we going to go back to the program through Lebanon in the fall if\n13:4713 minutes, 47 secondsleanon starts taking glass again because I hate to uh keep changing what we\n13:5313 minutes, 53 secondsaccept and don't because the folks who come in seem to get very upset as we\n14:0114 minutes, 1 secondchange what we take and what we don't take is cassella tells us that they no\n14:0714 minutes, 7 secondslonger want such things as black plastic and so on and uh we have people who get\n14:1514 minutes, 15 secondsvery upset every time something changes so uh that's just the way that goes but\n14:2214 minutes, 22 secondswe uh do collect deposit cans and plastic bottles as well as\n14:3014 minutes, 30 secondsVermont deposit glass you can see we have Gaylords that we collect the glass that has\n14:3814 minutes, 38 secondsdeposits and uh we work with Vermont Redemption on that all the money goes to the\n14:4514 minutes, 45 secondstown and it is I feel it can be a good cost savings for the town because with\n14:5214 minutes, 52 secondsthe deposit glass we the town's getting money for instead of paying to get rid of it the the uh the bottom couple\n15:0115 minutes, 1 secondpictures you can see the uh kind of get an idea of the quany we have I think it's a 30\n15:0915 minutes, 9 secondsyard covered container with doors in the side that people put the glass in they\n15:1715 minutes, 17 secondshave to walk up those steps and deposit the glass the uh we've only been separating\n15:2615 minutes, 26 secondsthe glass since I think it was about 20 2019 before that it went in the zero\n15:3315 minutes, 33 secondssort with all the other recyclables and\n15:4015 minutes, 40 secondsuh one good benefit for us was when we put glass in with zero\n15:4715 minutes, 47 secondssort are zero sorts collected weekly and with glass and there we were\n15:5415 minutes, 54 secondsfinding we were getting the zero sort filled before the second day and so we'd\n16:0016 minuteshave to open other containers and pay cassella for additional pickups because the the biome with glass\n16:0916 minutes, 9 secondsand with the other recyclables just was filling the big Hopper too fast then we do have now it's a\n16:1916 minutes, 19 secondsnew thing they formed this winter a solid waste committee with people on the uh from the\n16:2716 minutes, 27 secondscommunity and there working on trying to get better\n16:3316 minutes, 33 secondssigns and uh they feel are sandwich boards are too negative because we have\n16:4016 minutes, 40 secondsall those items with red X's through but the uh Solid Waste committee\n16:4716 minutes, 47 secondsis also trying to come up with a brochure so when we start selling we\n16:5516 minutes, 55 secondshave a annual window sticker people have to buy to use our facility we we we hoping to have a\n17:0417 minutes, 4 secondsbrochure to hand out with the window stickers that explain the glass recycling program as well as the other\n17:1217 minutes, 12 secondsservices we offer and we do take of course we separate\n17:1817 minutes, 18 secondscardboard we have our food bin containers we have a regular garbage if\n17:2617 minutes, 26 secondsyou will where we take re anything with refrigerant in refrigerators air conditioners\n17:3417 minutes, 34 secondsdehumidifiers we also are paint care pickup place we take tires and we take construction material\n17:4417 minutes, 44 secondsso we're kind of we we take basically almost anything but hazardous waste we collect\n17:5317 minutes, 53 secondstires and we used to collect oil but that's kind of that's been on hold we're having trouble getting people to pick it\n18:0118 minutes, 1 secondup and we have a contamination issue including picking dead mice out of\n18:0818 minutes, 8 secondsthe waste oil which isn't fun but that's basically what we\n18:1618 minutes, 16 secondsdo there and I guess that's it if anybody has a question you can fire away or if\n18:2418 minutes, 24 secondsyou want to stop up and see what our facility looks like we open Wednesday and Saturday from 8: to\n18:3218 minutes, 32 seconds4:45 p.m. thank you Paul and we're gonna hold\n18:3918 minutes, 39 secondsquestions until the end um and right now we're gonna move into Ben's\n18:4718 minutes, 47 secondspresentation well thank you very much my name is Ben Hoy I'm the director of wall Poole recycling in Walpole New Hampshire\n18:5618 minutes, 56 secondsuh Tiny Town about uh 3600 people um just north of Keane um we are a pay by bag system uh\n19:0519 minutes, 5 secondsmeaning anyone can attend our facility um so we do get a lot of Out of Towners that come in um we really with the pay\n19:1419 minutes, 14 secondsby bag system we really advocate for recycling um trying to keep our waist down uh of course I can always tell\n19:2119 minutes, 21 secondswho's Recycling and who's not as anybody that that runs a facility knows when you hear glass U hit the compactor um you\n19:2819 minutes, 28 secondscan can tell right away so there's those indicators um but but you are paying for it you know when when you're not recycling so um the pay by bag system\n19:3719 minutes, 37 secondsreally helps to Advocate um for recycling um uh you know and and and it\n19:4419 minutes, 44 secondsdoes help us I think a lot we have probably roughly just looking at the public I think about 90% of the public\n19:5119 minutes, 51 secondsis is is doing some sort of recycling on site um we um uh as as as we said\n19:5919 minutes, 59 secondsearlier our um you know changes that are made are constant at the recycling center uh we're trying to always you\n20:0720 minutes, 7 secondsknow do what's best behind the scenes and and some of the changes we make we try to make changes without um notifying the public if possible because I know\n20:1620 minutes, 16 secondsthat people are resistant to change uh but it is for the best I mean a lot of times we're trying to make changes to align ourselves with who's recycling\n20:2420 minutes, 24 secondsproducts and and and how they want them recycled um so so those are the reasons for the changes um for us and one of the\n20:3320 minutes, 33 secondsbiggest things that we look for and try to advocate for is pulling is pulling recyclables from the waist stream um which which costs the taxpayer less\n20:4120 minutes, 41 secondsmoney in the long run um last year on a typical load um at um um wpo recycling\n20:5020 minutes, 50 secondswe're were shipping about 14 and a half tons um the reason for that as you can see um our container is crushed glass\n20:5920 minutes, 59 secondsit's pure glass it's it's pure bottled glass I should say uh we have a a really strong volunteer presence um that helps\n21:0721 minutes, 7 secondssort those bottles we keep that going um and and um you know like changes come about but we still kind of keep the same\n21:1521 minutes, 15 secondsbasic formula um we have on on the left on the bottom left of your screen you'll see it almost looks like stairs but it's\n21:2321 minutes, 23 secondsa conveyor belt um that goes into a it's called a bottle Crusher uh which the green U the green picked a little\n21:3121 minutes, 31 secondsmachine to the right of the conveyor belt is our bottle Crusher yeah I think MaryAnn's signaling it there yep yeah\n21:3821 minutes, 38 secondsit's a fantastic machine it's it's um uh it's just it's fun I think for the volunteers or if anybody's never done it\n21:4621 minutes, 46 secondsbefore um pressing the buttons watching the glass disappear and become um like a smaller more manageable product is is a\n21:5421 minutes, 54 secondsgreat thing um it's just it's it's fun to break bottles uh um we once the bottles are broken where that green\n22:0222 minutes, 2 secondsmachine is there's a room um in the back of the building um that that um the bottles go into the green machine they\n22:0922 minutes, 9 secondsget they are broken up by little Hammers and uh the the glass falls to the ground underneath that machine um I I open the\n22:1722 minutes, 17 secondsgarage door um when we think it's full um you can often it's like a different sound when the when the glass um conveyor belt is breaking glass with a\n22:2622 minutes, 26 secondsfull a full amount of glass underneath it um it's not falling quite as far so it kind of indicates to me it's time to to clean it up so I'll drive the Bobcat\n22:3422 minutes, 34 secondsinto that room I'll pick up the glass and I'll and I'll dump it into this container I have a yellow mark that I\n22:4022 minutes, 40 secondsdrew um along the container um where um anything over that Mark is too heavy for the hauler uh notton and Sun um does our\n22:5022 minutes, 50 secondshauling um they've been great for us but but if you go over that line it is hazardous to drive because of the weight\n22:5722 minutes, 57 secondsyou know so that's the that's an indicator for me to keep the weight down um so yeah we we ship about 14 and a\n23:0423 minutes, 4 secondshalf tons every time we do it we only do it like three times a year so that keeps the trucking costs low for us um we uh\n23:1223 minutes, 12 secondsship to Keen um and from Keen um that glass and I'm sure Bonnie will elaborate on it goes to\n23:2023 minutes, 20 secondsMontreal um and uh and they've asked us to keep porcelain and other like window panes out of our glass uh I was informed\n23:2923 minutes, 29 secondsby someone at 3M the company I guess I believe that um pulverizes our glass that uh porcelain and contaminants clog\n23:3923 minutes, 39 secondstheir machinery and and cause um you know they have to shut down while while they fix or or clean up the the\n23:4623 minutes, 46 secondsporcelain and in contaminants so it's important to keep the glass clean from what I know um and uh from there it it\n23:5523 minutes, 55 secondsgoes I believe it goes to Owen's Corning in Al New York where it's it is turned into fiberglass insulation what I what I\n24:0224 minutes, 2 secondswas told um so yeah we we keep we separate we're presort operation so everything is that comes in is is\n24:1024 minutes, 10 secondspre-sort uh we we we um bail specific U number one Pete number two htpe colored\n24:1924 minutes, 19 secondsnumber two natural um we we just started um exclusively bailing number five um\n24:2724 minutes, 27 secondsPlastics so something just happened to your sound where I'm it sounds like you're talking through\n24:3624 minutes, 36 secondsum I don't know like a megaphone or something can you just check that sorry about\n24:4424 minutes, 44 secondsthat um any uh okay any better yeah sitting closer\n24:5124 minutes, 51 secondsdefinitely helps very good okay um so yeah everything comes in pre-sort we're a Payway bag operation\n24:5924 minutes, 59 secondsum it's great to have volunteers they've helped us tremendously um in in the course of a year we we typically um uh\n25:0725 minutes, 7 secondsbreak up and ship about 42 tons of uh of glass which is 42 tons that's being recycled and not being put into the\n25:1525 minutes, 15 secondswaist stream and being paid for it that way so there are some small costs uh but those costs are well worth it but we know that the products being recycled\n25:2325 minutes, 23 secondsand reused um our costs uh um we're at\n25:2925 minutes, 29 secondsabout 45 a ton $45 a ton through NRA and the trucking the KE is $185 per\n25:3725 minutes, 37 secondstrip so um you know those costs are reasonable and U we're we're we're happy with our our glass program it works for\n25:4525 minutes, 45 secondsus um we're a small town and we we try to do the best we can to recycle all all products that we can so um and we're\n25:5225 minutes, 52 secondsalways looking for you know new new avenues to do those things but glass is important thing to recycle it it weighs it weighs a lot you know there's a lot\n26:0126 minutes, 1 secondof poundage in there and if you're pulling it from way stream you're doing a good thing for for your small\n26:0926 minutes, 9 secondscommunity and now Bonnie I'm gonna stop sharing my screen so that you\n26:1526 minutes, 15 secondscan uh share your screen we have a lot of questions coming\n26:2526 minutes, 25 secondsin too which is wonderful and we will get to them right after Bonnie okay so\n26:3226 minutes, 32 secondsyou can see my screen fine uh I cannot see it yet I'm\n26:4226 minutes, 42 secondshere how's that yes perfect okay all right well hello everybody it's great to\n26:4926 minutes, 49 secondssee all these programs some I've been to I haven't been up to Norwich so awesome to see all of you uh my name is Bonnie bethon I'm senior member service\n26:5826 minutes, 58 secondsrepresentative for nrra I actually was a operator um back in New Boston New Hampshire for 15 years\n27:0627 minutes, 6 secondsprior to coming to nrra almost 20 years ago so I've had my fingers in recycling ever since I went to UNH and just got\n27:1427 minutes, 14 secondsbit by the bug um little bit about nrra we've been\n27:2227 minutes, 22 secondsum a recycling nonprofit for almost four or 41 years and we do Cooperative\n27:2927 minutes, 29 secondsmarketing and Cooperative purchasing for our members and um which is about 400\n27:3727 minutes, 37 secondsmembers at this point in time part of what we're going to talk about is where does the glass go what are the options for members how do we how do they\n27:4627 minutes, 46 secondscollect it how do they store it transport it how do we weigh glass how do we charge for that and what are\n27:5427 minutes, 54 secondscontaminants and a couple of case studies very briefly well already talked about\n28:0228 minutes, 2 secondsnrra Cooperative marketing and purchasing is basically what um my role is in working with the best vendors for\n28:0928 minutes, 9 secondsthe commodity that our transfer stations produce I call it New England Hand sorted as Ben said pre-sorted material I\n28:1928 minutes, 19 secondscan sell this material anywhere because it's sorted to spec we returned um 1.8 million back to our members in 2020\n28:2928 minutes, 29 secondsand that's net revenue we also do education and technical assistance this is part of\n28:3528 minutes, 35 secondswhat we do here and we just finished our annual conference for the first time in three years we all got together and talk\n28:4228 minutes, 42 secondsabout to talk about recycling in Manchester New Hampshire in May and it was very successful we had 270 people\n28:4928 minutes, 49 secondsand 30 vendors all talking about recycling it seemed all at once it was it was quite a\n28:5628 minutes, 56 secondsbuzz so this two programs that go through nrra um and one of them is clean glass recycling this is the one that Ben\n29:0529 minutes, 5 secondsreferred to where his clean glass just glass jars and Bottles um his goes to Keen Keen\n29:1329 minutes, 13 secondsRecycling and then it is shipped up in 30 plus ton loads up to our Canadian vendor 2m resources in Canada and they\n29:2329 minutes, 23 secondsactually do the crushing of the glass getting it down to a very fine um crush and then it is sent back into the United\n29:3229 minutes, 32 secondsStates to be made into fiberglass insulation most likely um Corning and or new glass jars and bottles it's a very\n29:4129 minutes, 41 secondsspecific mix clean glass jars and bottle sounds really easy but it can be complicated and it requires um operators\n29:4929 minutes, 49 secondsto really stay on top of that we have 20 communities in New Hampshire Vermont and Massachusetts that do the clean glass recycling\n29:5629 minutes, 56 secondsprogram um our host sites what we call host sites we work with the city of Keane um the city of Lebanon is on pause\n30:0430 minutes, 4 secondsfor the summer they are low staffed it got overwhelming we wanted them to take a break in the fall we hope that they\n30:1130 minutes, 11 secondswill come back for a program but it probably will be a PGA processed glass aggregate program it will most likely\n30:2030 minutes, 20 secondsnot be a clean glass program so we're going to have a shift there we also take clean glass up at All Metals in hard Hardwick Vermont and then we have two\n30:2930 minutes, 29 secondscommunities that actually have enough glass that they keep separate and we pick it up our our vendor picks it up in\n30:3530 minutes, 35 secondswellsly mass and Rye New Hampshire uh this the other program is the processed glass aggregate program or\n30:4430 minutes, 44 secondsaffectionately known PGA um this glass jars and Bottles but also includes porcelain sinks and toilets with the\n30:5230 minutes, 52 secondsplastic and the metal removed Pyrex Ceramics you know that that cup um drinking glasses window glasses\n31:0131 minutes, 1 secondwithout the frames it's a much broader um capturing of glass material\n31:0831 minutes, 8 secondsit's crushed at our various sites into an Aggregate and is used for road base or drainage um around piping and we have\n31:1731 minutes, 17 seconds60 communities in New Hampshire and Vermont and Massachusetts that do the PGA program we have four sites at this point\n31:2631 minutes, 26 secondsin time um little New Hampshire New London New Hampshire Waste Management Rochester is a great partnership with\n31:3431 minutes, 34 secondsWaste Management where the material is brought there we send the crusher in and waste management uses that Crush\n31:4031 minutes, 40 secondsmaterial right at the landfill for um mostly for gas pipe drainage for the\n31:4731 minutes, 47 secondsmethane um or for road work we actually have a site down at the cape there was\n31:5431 minutes, 54 secondsum a lot of trucking of material out bringing it over the bridge and into Massachusetts so it we're working with\n32:0332 minutes, 3 secondsthe town of Dennis and um we have six towns coming into that one sight in Dennis Mass it's a PGA program with a\n32:1032 minutes, 10 secondsTwist they um actually it's clean glass jars and Bottles but it's um we crush it\n32:1832 minutes, 18 secondsso it's it's a little bit a morph of a program again total of 60 communities that use that processed glass aggregate\n32:2532 minutes, 25 secondsprogram this is our glass Crusher it's a pretty basic piece of equipment uh that takes the glass in crushes it and kind\n32:3332 minutes, 33 secondsof pops out the the quirks go in a in a in the base of this and the metal rings and the plastic so what you're what you\n32:4132 minutes, 41 secondssee coming out there as glass is literally can run your hands right through it and that becomes our\n32:4832 minutes, 48 secondsaggregate so each of the sites that collect um the glass for processed glass aggregate they have have to have about a\n32:5632 minutes, 56 secondsth tons on before we we send our mobile Crusher in um and he also brings along a loader to load that material so it's all\n33:0533 minutes, 5 secondsdone in one spot they just got done up in New London where we crushed uh 1,200 tons and right now our Crusher is over\n33:1333 minutes, 13 secondsin Waste Management in Rochester um where they're crushing almost 1,800\n33:1933 minutes, 19 secondstons the end product is a 1 inch minus or a 38 minus depending on which state\n33:2633 minutes, 26 secondsyou're in the Massachusetts D requires a 38 minus it's a smaller crush and we\n33:3333 minutes, 33 secondshave to actually have a screener come in to get it down to that size so it's a little bit more expensive process um but\n33:4133 minutes, 41 secondswe get the job done at the end there's other ways the glass is captured um Paul alluded it to it a\n33:4933 minutes, 49 secondslittle bit we capture our glass um in the Dual stream programs where containers set aside that also include\n33:5833 minutes, 58 secondsglass or in the single stream programs and some communities actually collect at their own facility and have\n34:0634 minutes, 6 secondsenough material to actually bring our vendor in and crush on site or they mechanically crush and can get it down\n34:1434 minutes, 14 secondsto a very small commodity collection two-stage separation is something you hear with\n34:2134 minutes, 21 secondsglass a lot because we want to keep that material clean especially in the clean glass program so having residents put\n34:3034 minutes, 30 secondstheir glass jars and bottles on a tray or in a SE separate small bin before it goes into the\n34:3834 minutes, 38 secondsact abolutely the best way to do it this is actually in sunap New\n34:4634 minutes, 46 secondsHampshire some communities collect in these dumping Hoppers and so if residents put it into the dumping Hopper\n34:5334 minutes, 53 secondsand then staff can go along and pick out anything that doesn't belong in this is prior to it going into that rolloff\n35:0035 minutescontainer going to Market so again two stage separation first stage collect from the residents inspect second stage\n35:0935 minutes, 9 secondsput it into the ultimate container going to Market some people store in open top\n35:1935 minutes, 19 secondscontainers some people store in bunkers and this is one you can actually see the PGA program here at work where there's\n35:2735 minutes, 27 secondsum crushed glass they actually have a Crusher up in Tuftonboro New Hampshire and they include um some crushed\n35:3435 minutes, 34 secondsporcelain the some tiles in there all of this is to spec under the processed glass aggregate\n35:4335 minutes, 43 secondsprogram this is the pile down in in Dennis you can stockpile the glass um just a reminder that if you want a nice\n35:5035 minutes, 50 secondssurface you don't want to pull up rocks and so on um when you are actually picking it up to put it into a container\n35:5935 minutes, 59 secondscontainer here's Kean New Hampshire you can see where a truck has come in to drop the material to be inspected and\n36:0736 minutes, 7 secondsand glasses delivered in six or 10 wheelers 30 yarders 40 yarders 50 yarders 70 cubic yarders whatever works\n36:1436 minutes, 14 secondsthe best for the community to bring their material to our ho host sites and\n36:2136 minutes, 21 secondsuh most most towns deliver their own and or hire a local hauler how do we do weight\n36:2836 minutes, 28 secondssome of our our host sites our glass host sites have scales some do not um if they have a scale the cost praton is\n36:3536 minutes, 35 secondsbased on those scale weights if the host site like New London New Hampshire does not have a scale we have three weights\n36:4336 minutes, 43 secondsthat we get from the three loads and we take the average weight um that the operator and nrra agree on and that is\n36:5136 minutes, 51 secondsthe weight that we use going forward if your program changed and you change from a 30 y to say a 50 yard container 50\n36:5936 minutes, 59 secondsyard container we would establish three new weights so this way we can we can bring material to any of these\n37:0737 minutes, 7 secondssites glass contamination this is an extreme picture of glass\n37:1437 minutes, 14 secondscontamination glass recycling is not an easy program to some people glass\n37:2137 minutes, 21 secondsfluorescent bulbs glass um we know better that we were able to pull that material material\n37:2837 minutes, 28 secondsout of the of the pile and recycle the glass that was there um but it does give\n37:3537 minutes, 35 secondsus the point to actually monitor when contamination happens so if on the first\n37:4337 minutes, 43 secondscontaminated load you get a warning the second load there could be a fee third load there could be there's a fee and\n37:5037 minutes, 50 secondsthen an invitation to leave the program until something changes drastically to get it better if there's hazardous ways\n37:5837 minutes, 58 secondsI we've seen some paint in this program just somebody put it in the wrong place um there is a fee charged so there's a\n38:0538 minutes, 5 secondsprocess in place just in case we have contaminants current cost to recycle glass um through nrra program the clean\n38:1438 minutes, 14 secondsglass program is um in Keen is $45 a ton the one in Hardwick is $51 a ton the\n38:2338 minutes, 23 secondsDennis Mass program is $75 a ton and that's because of the screening that needs to be done again to get it to the smaller size Littleton and New London\n38:3238 minutes, 32 secondsare $40 a ton charge as well as Waste Management tree so $40 a ton is a far cry from um the cost that you're paying\n38:4138 minutes, 41 secondsin your MSW program for sure so we trying very hard to keep those costs down to keep the glass out of the\n38:5138 minutes, 51 secondslandfills uh case study number one Washington New Hampshire population about 1100 what we have established with\n38:5838 minutes, 58 secondsour stats is that the average recycling rate for glass and is 44 pounds per\n39:0439 minutes, 4 secondsperson so in 2021 Washington did 37 tons or 65 pounds each so we see this program\n39:1339 minutes, 13 secondsin Washington New Hampshire as a success they've met the the average recycling rate of 44 pounds\n39:2139 minutes, 21 secondsplus one more study is Hancock New Hampshire um six almost 1,700 people\n39:2839 minutes, 28 secondsthey did 36 tons in 2021 and they have just about hit the mark of 43 pounds um\n39:3739 minutes, 37 secondsrecycled by population so it's fun to look at these from year to year see how if they've changed any part of their program and\n39:4539 minutes, 45 secondssee if that's improved upon that's that's that's quick quick view of what nrra offers for recycling\n39:5439 minutes, 54 secondsprograms with glass I'd certainly be happy to answer any questions we do have a lot of information on our website\n40:0240 minutes, 2 secondsincluding um glass story maps and a PGA video to watch a crush um and any questions sounds like we're we're going\n40:1140 minutes, 11 secondsto have lots of them\n40:3840 minutes, 38 secondsMaryann you're muted thank you I'm sorry about that um\n40:4740 minutes, 47 secondsSuzanne one question that came in is about uh the bottle Bill Glass and how\n40:5440 minutes, 54 secondsdo you separate that out and do you have a reverse vending machine on site uh no\n41:0141 minutes, 1 secondwe don't have a Redemption machine on site everything is handled uh by the paid staff what\n41:0941 minutes, 9 secondshappens is the uh some people don't want to separate the Redemption and so we end\n41:1641 minutes, 16 secondsup having uh a percentage that end up in the glass bin however we have\n41:2241 minutes, 22 secondsavailable uh bins at our shed uh they're the recycling a rectangular uh smaller\n41:3141 minutes, 31 secondsbins and we have them come up and put all their glass in there we also have a\n41:3941 minutes, 39 secondsseparate container for liquor liquor uh in the state of of Vermont is 15 cents\n41:4641 minutes, 46 secondsso we separate in a gaylord uh we take these small rectangular bins on a cart to our\n41:5441 minutes, 54 secondsRedemption uh shed which is off to the side and uh we have Gaylords for glass\n42:0242 minutes, 2 secondsthat's 5 cents and then uh uh a gay alord specially for glass for\n42:0842 minutes, 8 secondsliquor so uh one thing uh I just want to help people to understand is that the Redemption bottles are collected\n42:1742 minutes, 17 secondsseparately at each site um well and Ben not probably not for yours but I'll check in with you on that in a sec but\n42:2642 minutes, 26 secondsthat the glass bottles we were referring to in the presentations had to do with\n42:3342 minutes, 33 secondsglass bottles and jars uh other than the bottle Bill Glass so Ben do you want being that New Hampshire does not have a\n42:4142 minutes, 41 secondsbottle Bill do you want to talk about how and if you deal with uh redeemables\n42:4842 minutes, 48 secondsthere uh yeah so we uh you know try to along along with everyone else just try to keep up with change um we keep a\n42:5642 minutes, 56 secondspulse on what's happening Statewide and what's happening you know throughout throughout um I guess the country but um\n43:0543 minutes, 5 secondsyeah we I mean our main focus is basically to to condense each load um following the rules that we can kind of\n43:1343 minutes, 13 secondsyou know assess as we go along and and when things change we're happy to to um\n43:1943 minutes, 19 secondsgo about you know um getting what we can for the town if there if there's if it makes more sense to us to to to to uh\n43:2743 minutes, 27 secondsredeem those bottles then that's what we would do but um you know for for what we what we do our our main priority is to\n43:3443 minutes, 34 secondsjust break down the loads um and and recycle those those that glass and try to get it give it new life um so our\n43:4343 minutes, 43 secondshappy spot is up in Canada and then back to us um and and um and there is some cost involved and I saw I saw comment\n43:5143 minutes, 51 secondssomewhere that that um I guess around the country they're paying tipping fees or trash fees of\n43:5743 minutes, 57 seconds$40 roughly $40 a ton which um is a lot less than what we what we do in New England I'm not sure where where they're\n44:0544 minutes, 5 secondspaying that that low of a cost for for disposal so um what is your tipping fee for well so we're uh we're at like for\n44:1444 minutes, 14 secondsfor MSW we're at 85 a ton um $85 a ton so that's a lot more than than what it\n44:2144 minutes, 21 secondswould be if if it was recycled at at 445 a ton um and and you know obviously\n44:2944 minutes, 29 secondsthere's there's um some every Town's different walpole's primary goal is to recycle as much as we\n44:3644 minutes, 36 secondspossibly can um so I mean that's the way we look at things and of course there costs associated with keeping the equipment running well and keeping the\n44:4644 minutes, 46 secondsprocess um up and running um but knowing that some of these products that come in that would be landfilled and would be\n44:5244 minutes, 52 secondstrash are are being reused um you know we're not out there they searching for Virgin materials to to build with and\n45:0045 minutesand you know we're able to to give back and and kind of get get some um materials back into the recycling Market\n45:0845 minutes, 8 secondsthat that wouldn't be there if we if we didn't have this program thank you Ben and Paul can you talk about how you uh\n45:1745 minutes, 17 secondsSE uh bless you whoever that was can you SE um talk about how you separate out the redeemables there in\n45:2545 minutes, 25 secondsNorwich uh well we have Gaylords that are provided by the people\n45:3345 minutes, 33 secondsthat do the Redemption and we just have signs on them you know indicating they're for\n45:4045 minutes, 40 secondsVermont deposit glass only and they set near the stairs for the people get rid of all the other\n45:4845 minutes, 48 secondsglass and so it's a kind of a we we asked for cooperation of course uh we get a lot of pickle jars and olive\n45:5745 minutes, 57 secondsoil jars in with the redeemables so it kind of fed me we have three\n46:0546 minutes, 5 secondspeople working all the time but the other two guys are pretty much tied down to where they are so I circulate around\n46:1346 minutes, 13 secondsand pick out the non-redeemable glass out of the Redemption\n46:1946 minutes, 19 secondsbins and we don't we probably only get I would guess a quarter of the redeemable\n46:2846 minutes, 28 secondsglass is actually put in the Redemption bins the rest of it goes in the uh other glass\n46:3646 minutes, 36 secondshoppers so uh we're paying for a lot of stuff that would bring in money to the town if they\n46:4346 minutes, 43 secondswould just separate it but uh I think the one slide there did show the we have\n46:5046 minutes, 50 secondssigns on the and the bins where we collect the the uh Redemption\n46:5746 minutes, 57 secondsglass we don't separate the 15 centers from the Nickels which would be a good idea because it does make quite a\n47:0647 minutes, 6 secondsdifference you know thank you Paul the other question is Ben you\n47:1447 minutes, 14 secondstalked a lot about volunteers can you tell us how you've Incorporated volunteers into your\n47:2347 minutes, 23 secondsprogram and how that all works I I actually was amazed when I was there how many volunteers you have at your access\n47:3247 minutes, 32 secondsthat's just so unusual and I wondered how how that all happened and how you make it work sure um so it wasn't always\n47:4247 minutes, 42 secondsthat way I've been at the helm um coming up on four years now um when I first took over um we what happened was our\n47:5147 minutes, 51 secondsold reuse center was a was an old trailer um and a tree fell on it and uh we we ended up getting an insurance\n47:5847 minutes, 58 secondssettlement and we we were able to build a new reuse center we actually used the tree um within the the ReUse Center and\n48:0448 minutes, 4 secondsreuse that tree so um it it's it's a lot of fun we we we lucked out with um being\n48:1248 minutes, 12 secondsable to you know build a new nice new facility uh that can accommodate all of our extra um reusable products so so\n48:2048 minutes, 20 secondswhat we do is um we we made a few adaptations a couple changes which of course everyone was was tough on us\n48:2848 minutes, 28 secondsearly on we got through those hard times and we we initiated a new program where we weigh everything coming in to our\n48:3548 minutes, 35 secondsreuse center um and um if it's not sold we weigh it on the way out to the to the\n48:4248 minutes, 42 secondsto the compact or as waste U we keep numbers on everything and it used to be um a case where people would would drop\n48:5048 minutes, 50 secondsand run um in front of the old trailer it wasn't well managed it wasn't a comfortable place for volunte\n48:5748 minutes, 57 secondsum the new building um I give what so the ReUse Center we have 100% um shift\n49:0449 minutes, 4 secondscoverage for the next three months um and and people love it what I what I've done that's really been effective for us\n49:1149 minutes, 11 secondsis I I basically because I have to is an extra thing that I can't really keep track of so I what I do is I I give\n49:1949 minutes, 19 secondscomplete control to the volunteers and let them run the ReUse Center as if it was their own shop so you you have the\n49:2649 minutes, 26 secondsopportunity to be your own shopkeeper um learn some things about how to run a shop learn some things about you know\n49:3449 minutes, 34 secondshow to deal with the public and it's it's it's it's their source of Pride when someone walks in the door and says this place is great I love this and I\n49:4149 minutes, 41 secondsleave that with them and so that's how I get them coming back and it's we have a system where um it it's second to not as\n49:4849 minutes, 48 secondsfar as what we have for for um reuse um volunteers um so comfort and and and\n49:5549 minutes, 55 secondsjust the ease and up the operation that the um we we're trying not to waste anything so it's on a lot of levels it's\n50:0250 minutes, 2 secondsa really cool place now the volunteers um on the recycling line is is a tougher job um it's it's it's geared toward a\n50:1150 minutes, 11 secondsdifferent type of person um it it is constant work where you're on the line um sorting plastic pulling contaminants\n50:2050 minutes, 20 secondsfrom the waste or from the recycling stream um so so there's more footwork and more labor so there's less\n50:2750 minutes, 27 secondsVolunteers in that way um but we we've had volunteers for 30 years it's a volunteer-driven program um we've been\n50:3550 minutes, 35 secondsopen since 1992 so I we're coming up on 30 this about 30 years this year um uh\n50:4350 minutes, 43 secondsso it we've had different levels of volunteers it's it's kind of ebbed and flowed with the popularity of of just\n50:4950 minutes, 49 secondswell just different different um times have have have uh been um like different\n50:5650 minutes, 56 secondsnumbers for for volunteers but um yeah the volunteer if you ever get a chance to stop mle and see the volunteers that is probably our our the best thing going\n51:0551 minutes, 5 secondsfor us is having that volunteer presence who actually manages the or oversees the volunteer piece is it you or is it\n51:1451 minutes, 14 secondsanother volunteer it's um so I delegate the some of the responsibilities through another\n51:2251 minutes, 22 secondsvolunteer um the scheduling U portion of it which which this person um his name is Michael ner he uh he's done it for\n51:3051 minutes, 30 secondsyears and years even he actually brought the ReUse Center trailer to our facility so he's he's uh kept that portion of it\n51:3851 minutes, 38 secondsI have some small rules uh or some basic rules um that I try not to I try to try to like I said try to let the volunteers\n51:4651 minutes, 46 secondsdecide for themselves how how to run the shop um but there's some liability issues as far as what we can sell um and we try to make sure everyone's safe and\n51:5551 minutes, 55 secondsthings like that uh we also try to keep volunteers out of our working space area um you know because uh it it it is part\n52:0452 minutes, 4 secondsof our building and we just can't have them around heavy machinery and and moving um pallet jacks and things like that so um but I I actually manage both\n52:1352 minutes, 13 secondsthe ReUse Center and the um uh the recycling center the recycling center is my main priority and I do really rely on\n52:2152 minutes, 21 secondsthe volunteers to to handle a lot of the problems that come up themselves um so I just tell them if it goes good it's because you did it if it goes bad it's\n52:2952 minutes, 29 secondsbecause you did it that's the way it is for some reason that's worked out for us and I don't know if I'd recommend saying that to everyone but it's it's\n52:3652 minutes, 36 secondsworked out well and it's just been a pleasure to to be a part of it and Bonnie I wanted someone had commented\n52:4452 minutes, 44 secondsabout the use it's a shame to use clean glass as PGA and I wondered if you could\n52:5152 minutes, 51 secondstalk to what are some of the factors that lead a community to to\n52:5852 minutes, 58 secondsum collecting their glass for PGA as compared with collecting glass so that it's reused and manufact not reused\n53:0753 minutes, 7 secondsrecycled into a product that manufacturers could use for for making\n53:1353 minutes, 13 secondsnew bottles or fiberglass for instance so one of one of the main things is geography because you have to get your\n53:2253 minutes, 22 secondsglass from point A to point B so if you're up in the north part of the of the State of New Hampshire and you're right next to the town of Littleton that\n53:3053 minutes, 30 secondshas a host site that would determine that you would do a PGA program um if you were down in the in the lower level\n53:3853 minutes, 38 secondsclose to Keen then you'd probably be doing the same thing so transportation is one factor uh pricing\n53:4653 minutes, 46 secondsis another Factor we have different costs at different locations um and the ability to separate to that\n53:5453 minutes, 54 secondshigh spec of just just glass jars and Bottles um as Suzanne was saying about fford they're\n54:0354 minutes, 3 secondsso happy to put that other material in because it was being landfilled before so it has a lot to do with what have you\n54:1154 minutes, 11 secondsdone you know what your program been can your residence change and what are the good reasons to do so it's really\n54:1854 minutes, 18 secondslooking at each individual program and deciding what's best for each town did any of the\n54:2754 minutes, 27 secondsuh Suzanne or Paul or Ben do any of you want to add to that I I just want to say that um in\n54:3554 minutes, 35 secondsterms of costs uh and in terms of forcing our residents uh there was a question about\n54:4454 minutes, 44 secondslike C and D anything that we can't recycle um they would have to go\n54:5154 minutes, 51 secondssomewhere else and that's inconvenient and also costly for them so I I try to\n55:0055 minutestake everything that they want to get rid of as long as it's um reasonable and\n55:0955 minutes, 9 secondssafe so for um Paul and Ben you're you're separating your glass for clean\n55:1555 minutes, 15 secondsglass are you also taking the pain glass and the other glass that can and mirrors\n55:2355 minutes, 23 secondsand and the like that can't go into into the clean glass bin are you also collecting that\n55:3155 minutes, 31 secondsseparately um at norwi are that type stuff would typically go into our CND D\n55:3955 minutes, 39 secondsHopper you know like the porcelain the sinks the toilets and all that and uh so yes we do take it Paul\n55:4955 minutes, 49 secondsdoes that mean it's um going to the landfill as C and D\n55:5655 minutes, 56 secondsprobably does yes I'm I'm not sure if where cassella takes her CND D Hopper\n56:0456 minutes, 4 secondsexactly I've been told at one point they were crushing it using it for cover at the landfill so I'm not sure though for\n56:1356 minutes, 13 secondssure I'm not sure what they do with it yeah and my my uh situation is similar to Pauls um it's CND D anything\n56:2256 minutes, 22 secondsthat we that we get for glass or mirrors is CN D and again I think I believe it's\n56:2956 minutes, 29 secondslandfilled and Bonnie can you talk about do you have towns that do both the clean glass and the PGA program so that they\n56:3856 minutes, 38 secondscan collect all the glass and nothing's going to the landfill no the only other option would\n56:4856 minutes, 48 secondsbe if um no I guess not they're they're picking one or the other and it's typically like Paul and Ben said the\n56:5656 minutes, 56 secondswindow glass would go into the CN so I don't know of anybody that's actually separating that out for another product\n57:0457 minutes, 4 secondsan I I apologize for bringing up the CN d uh CN D is construction debris\n57:1157 minutes, 11 secondsanything that relates to construction and uh household uh types\n57:1957 minutes, 19 secondsof CND D is kind of a misnomer because we basically take anything that doesn't belong the\n57:2757 minutes, 27 secondsgarbage we take it the CND d as long as it's non hazardous so we take mattresses\n57:3357 minutes, 33 secondsFurniture sheet rack Lumber you name it and uh of course we do encourage people if it looks like it's reusable to lean\n57:4257 minutes, 42 secondsit against the outside the hopper and hopefully somebody would take it and reuse it instead and what I'm talking about that\n57:5057 minutes, 50 secondswe do have a uh what they call plowshare we have a area where people can leave\n57:5757 minutes, 57 secondsitems that they hope somebody else can use it's just kind of an honor System people leave it there other people take\n58:0658 minutes, 6 secondsit sometimes it becomes a free dump but you know we have a swap shop it's called a\n58:1458 minutes, 14 secondsswap shop and I I hate it because it's exactly what Paul is saying ours is not elegant now Maryanne you said yours is\n58:2458 minutes, 24 secondselegant I I love our Swap Shop it is so uh it's not as big as Ben's swap shop\n58:3258 minutes, 32 secondshowever a Ben's is much larger but it is a social area of our town people come\n58:4158 minutes, 41 secondsthere to talk to each other they some a lot of times you come out of your car with the items you want to put in the\n58:4858 minutes, 48 secondsswap shop and you don't even get to the swap shop because someone has met you in the parking lot they've become so used\n58:5658 minutes, 56 secondsto looking for items there that it's really a place to go I love it absolutely love it but they\n59:0559 minutes, 5 secondsdo depend on volunteers to keep it tidy and they go through the items so that things that are truly garbage don't sit\n59:1559 minutes, 15 secondsthere um so it does take effort but I'll tell you so many families depend on that Swap Shop in our town and Ben I'm sure\n59:2459 minutes, 24 secondsuh in yours too because your is uh so well organized that it's easy to come in and walk around and get what you\n59:3359 minutes, 33 secondsneed well it's certainly a social um interaction spot in town for sure and just like anyone's um small town\n59:4159 minutes, 41 secondsrecycling center it's uh there's there's plenty of social interaction all around especially at the Swap Shop where you get a little bit a little bit lower key\n59:4959 minutes, 49 secondsI mean when you're recycling you do have a job to do um you have to get through and do your business and leave but you can kind of spend some time and have a\n59:5759 minutes, 57 secondsconversation when you're at the ReUse Center so um yeah no it's it's a great addition to to our\n1:00:041 hour, 4 secondsfacility I'd like to ask each of you to talk about what you think is the most\n1:00:101 hour, 10 secondsimportant thing that you do to educate your residents about the glass recycling\n1:00:171 hour, 17 secondspart of your recycling programs what do you think is the most effective\n1:00:261 hour, 26 secondsDoan you want to go first uh no can I ask for the moment Ben or Paul who wants to be brave\n1:00:341 hour, 34 secondsand go first uh there you go I I don't know I I try to explain to the people\n1:00:431 hour, 43 secondswell with the clean glass there was a a big difference in cost whether it was contaminated or not so I try to exp\n1:00:521 hour, 52 secondspeople are always complaining about how much it cost to come and get rid of their stuff at the transfer station and\n1:00:591 hour, 59 secondsI say well you know the town has to pay for this stuff that you're dropping for free so if you would just you know you\n1:01:081 hour, 1 minute, 8 secondscan help keep the cost down by putting the proper thing in the glass um I try\n1:01:171 hour, 1 minute, 17 secondsthat and uh we actually sometimes have customers who shame the other customers\n1:01:261 hour, 1 minute, 26 secondsuh we don't get into that but we do have some customers who stand there and say what is wrong with you you ought to know\n1:01:331 hour, 1 minute, 33 secondsthat doesn't go there um but we don't we do not do that as paid staff it it's\n1:01:401 hour, 1 minute, 40 secondsuh there's I haven't found any real effective way to get cooperation there\n1:01:481 hour, 1 minute, 48 secondsit's uh depending on who's coming what day some days I picked I picked clothes\n1:01:551 hour, 1 minute, 55 secondsfrying pan fans and everything else out of the bin that's labeled glass only we have the Sandwich Board people walk by\n1:02:041 hour, 2 minutes, 4 secondsthem they toss they toss their uh glass lids for their frying pans with the metal bands\n1:02:121 hour, 2 minutes, 12 secondson them in and uh I do probably six to\n1:02:201 hour, 2 minutes, 20 seconds12 times a day minimum I'm up there with my little grabber pulling stuff out and\n1:02:281 hour, 2 minutes, 28 secondsputting it where it goes and I just try to explain to people hey you know read design here this is very\n1:02:361 hour, 2 minutes, 36 secondsimportant but I had on that note I had been talking with someone who manages a\n1:02:451 hour, 2 minutes, 45 secondsrecycling facility up in Maine and they were becoming really frustrated by residents throwing in the wrong thing\n1:02:541 hour, 2 minutes, 54 secondsand one day one of of the um locals came in and this person is an educator and he said you know I don't understand what\n1:03:021 hour, 3 minutes, 2 secondsI'm doing wrong people just don't get it they're not reading the signs they put all their garbage in with the glass what\n1:03:091 hour, 3 minutes, 9 secondsam I doing wrong and she he said she turned and looked at him and said you have to remember that you are at your\n1:03:161 hour, 3 minutes, 16 secondssite every day working you know where everything goes people who come in with their recycling maybe do it once a month\n1:03:251 hour, 3 minutes, 25 secondsor some people are less some people do it more but they're not remembering every time they come in what we feel is\n1:03:361 hour, 3 minutes, 36 secondsso passionate right we feel so passionate about and they they just don't feel that so it's it uh it\n1:03:441 hour, 3 minutes, 44 secondsrequires us to continue to have the patience to keep reminding them what to\n1:03:511 hour, 3 minutes, 51 secondsdo I also just wanted to share with you that um with that same work with those towns in\n1:04:001 hour, 4 minutesMaine uh I was lucky enough to find a radio uh person for a uh one of the\n1:04:081 hour, 4 minutes, 8 secondslocal stations and She interviewed me first about glass recycling but then she called the recycling facility managers\n1:04:181 hour, 4 minutes, 18 secondsfor each site to talk to them about their glass recycling and she put it on the air and they said that they saw\n1:04:261 hour, 4 minutes, 26 secondsdefinite upticks in the amount of glass coming in after that and that was all completely free it was like a freak\n1:04:341 hour, 4 minutes, 34 secondsthing we found out about and we just pursued it and the this radio announcer\n1:04:421 hour, 4 minutes, 42 secondsis so excited now anytime we have new announcements about glass she puts it in her show it's just part of what she's\n1:04:501 hour, 4 minutes, 50 secondsdoing because she is so excited to see glass recycling happening that was her motive um and she thinks it's a great\n1:04:591 hour, 4 minutes, 59 secondsthing so finding those free Outlets is important whether it's a we also have a\n1:05:051 hour, 5 minutes, 5 secondsfree television station that's well I shouldn't say free nothing know nothing about TV is free but it's a local\n1:05:131 hour, 5 minutes, 13 secondsstation where they post information um as well as radio stations\n1:05:201 hour, 5 minutes, 20 secondsif you have one local to you any other ideas about how to get residents\n1:05:291 hour, 5 minutes, 29 secondsmotivated I'm constantly talking as you can imagine right Bonnie um I um I'm\n1:05:361 hour, 5 minutes, 36 secondscoaxing I'm controling I'm talking to people I thank people when they collapse their boxes I\n1:05:441 hour, 5 minutes, 44 secondstell them what they did is perfect I say you get a gold star some have gone home\n1:05:511 hour, 5 minutes, 51 secondsand told their um spouses in fact I tell them to um I always thank people for asking\n1:05:591 hour, 5 minutes, 59 secondsquestions whether by email or in person and I I get I'm getting more and more questions because I constantly am asking\n1:06:081 hour, 6 minutes, 8 secondsand then I remind people and sometimes people are annoyed and I say oh I'm sorry I should have realized you know\n1:06:161 hour, 6 minutes, 16 secondswhat you're doing and um occasionally I may make mistakes and I point that out you know somebody dropped uh they're\n1:06:261 hour, 6 minutes, 26 secondsgarbage into the plastic they come and say hey I I dropped my plastic bag with some of my garbage and I I might tease\n1:06:351 hour, 6 minutes, 35 secondsthem but I say oh that's okay I do that all the time kind of thing and then I'll we'll go and get it so it's a it's a\n1:06:421 hour, 6 minutes, 42 secondsmatter of mindset but I agree with everything that everyone has said it gets frustrating after a while but uh\n1:06:511 hour, 6 minutes, 51 secondsyou just keep going and you keep saying hey you're doing a good job job patting people on the back and uh occasionally\n1:06:591 hour, 6 minutes, 59 secondstell people who show up and they don't have a permit I say if you show up again I'm gonna have to slap your hand and\n1:07:061 hour, 7 minutes, 6 secondsjust kiding things and to the people but telling them yeah this is important but\n1:07:141 hour, 7 minutes, 14 secondsit's not the end of your life if you don't do it right and Ben I want to get back to\n1:07:221 hour, 7 minutes, 22 secondssomething you had mentioned before you said you're tipping is $85 a ton does that include Transportation no no it doesn't and\n1:07:321 hour, 7 minutes, 32 secondstransportation is is uh $275 uh for each truck each once a week\n1:07:381 hour, 7 minutes, 38 secondswe we ship that so it definitely adds up and it it's going up we have a you know it goes up every couple years so um you\n1:07:471 hour, 7 minutes, 47 secondsknow that that is a significant source of of Revenue going toward toward um our waste disposal so anytime you can pull\n1:07:551 hour, 7 minutes, 55 secondswaste or recyclables from that waste stream it does add up between Trucking and and tipping it really does add\n1:08:041 hour, 8 minutes, 4 secondsup Bonnie can you mention how what percentage because I I think it's extremely high the transportation is a\n1:08:121 hour, 8 minutes, 12 secondslot higher than sometimes the Tipping fees and what percentage of what uh the transportation the hauling\n1:08:211 hour, 8 minutes, 21 secondscosts for the MSW uh for uh recycling in general well we know that because we\n1:08:291 hour, 8 minutes, 29 secondsship out uh full tractor Trail loads of cardboard say and we know we're paying anywhere from 2,000 to 2500 to get that\n1:08:371 hour, 8 minutes, 37 secondsmaterial from point A to point B so we understand the transportation cost never mind you know with all the fuel costs at\n1:08:441 hour, 8 minutes, 44 secondsthis point in time so that's a big part of it um when Ben was mention mentioning the $40 a ton that was most likely on\n1:08:521 hour, 8 minutes, 52 secondslandfills in Ohio Pennsylvania and we're starting to see material from New England um mssw and construction debris\n1:09:001 hour, 9 minutesgoing out that far because of those very low tipping fees in the middle of our country and yeah so it's again keep as\n1:09:091 hour, 9 minutes, 9 secondsmuch as you can out of the way stream and staying as local as possible huge Suzanne what is your tipping fee\n1:09:171 hour, 9 minutes, 17 secondsfor MSW um I don't know and for the following\n1:09:261 hour, 9 minutes, 26 secondsreason unlike uh Ben I guess um we do it per\n1:09:321 hour, 9 minutes, 32 secondsbag and it's done by a private vendor and the we don't pay them to be\n1:09:411 hour, 9 minutes, 41 secondson site but they bring uh a 40 yard bin and they fill it up every week\n1:09:511 hour, 9 minutes, 51 secondsalmost and then how do they get paid by your town uh per bag per bag oh I see right okay a\n1:09:591 hour, 9 minutes, 59 seconds10 a 10 gallon you know the white kitchen bags uh that's about\n1:10:051 hour, 10 minutes, 5 seconds$3 uh going up to $10 for the larger uh uh 30 gallon 50 gallon uh just the\n1:10:141 hour, 10 minutes, 14 secondslarger uh contractor bags and also if they're extremely heavy because we do have people like Ben\n1:10:231 hour, 10 minutes, 23 secondsdescribed uh you can tell when they bring their stuff over it's filled with recyclables yep and Paul what about in\n1:10:321 hour, 10 minutes, 32 secondsNorwich I don't know what the town pays to have the stuff on way we do charge\n1:10:391 hour, 10 minutes, 39 secondspeople per bag when they they drop their waste off and right now it's uh it's\n1:10:491 hour, 10 minutes, 49 secondslike if they buy it we have we sell cards that are good for 10 30\n1:10:551 hour, 10 minutes, 55 secondsbags and right now that's uh so 450 a bag but I imagine that's going to be\n1:11:021 hour, 11 minutes, 2 secondsgoing up but I I don't know what cassella charges to pick up and ha I know there's a base charge for Trucking\n1:11:101 hour, 11 minutes, 10 secondsplus a charge per ton and they're dumped once a week they're about a 40 yard\n1:11:181 hour, 11 minutes, 18 secondscompactor and I know in Spring well last time I asked uh Springfields is about 96\n1:11:261 hour, 11 minutes, 26 secondsa ton so we're paying really high tipping fees um and I see somebody posted\n1:11:331 hour, 11 minutes, 33 secondsTennessee has $37 a ton which is uh quite low so in those instances I think when\n1:11:431 hour, 11 minutes, 43 secondsyou are trying to convey the reason why recycling is so important particularly around glass there's such greenhouse gas\n1:11:521 hour, 11 minutes, 52 secondssavings from the use of glass um whether it's being used to make new bottles and\n1:12:001 hour, 12 minutesand uh or fiber glass but also uh some of the\n1:12:061 hour, 12 minutes, 6 secondsemerging um markets that are coming out in glass for use in Pelon material which\n1:12:141 hour, 12 minutes, 14 secondsis a glass uh I'm sorry a cement replacement in concrete and also as a foamed glass\n1:12:241 hour, 12 minutes, 24 secondsaggregate there are such um greenhouse gas savings from the use of glass as a\n1:12:321 hour, 12 minutes, 32 secondsreplacement material um use of recycled glass that uh it's that is a good\n1:12:401 hour, 12 minutes, 40 secondsselling point for residents to know about um and I through the course of\n1:12:491 hour, 12 minutes, 49 secondsthis conversation I will post a website where we've put uh We've created at nerk\n1:12:551 hour, 12 minutes, 55 secondsuh glass hierarchy and it talks about the different uh greenhouse gas savings\n1:13:011 hour, 13 minutes, 1 secondfrom different uh recycled glass applications and I will post that link\n1:13:091 hour, 13 minutes, 9 secondsum briefly so uh I would like to ask I\n1:13:181 hour, 13 minutes, 18 secondsthink we've gone through most if not all of the questions um wanted to ask you\n1:13:271 hour, 13 minutes, 27 secondsall to each one of you take a turn to talk about what you would suggest to\n1:13:331 hour, 13 minutes, 33 secondssomeone who maybe is collecting glass but hasn't been quite successful or somebody who's thinking about starting a\n1:13:421 hour, 13 minutes, 42 secondsglass program what are your words of advice to them and Ben I'd like to start with you\n1:13:511 hour, 13 minutes, 51 secondsplease sure I mean my advice to them would be you're going to save money uh you're you're you're recycling for a\n1:13:591 hour, 13 minutes, 59 secondsgood cause I mean you're you're saving um other companies from having to tap into virgin um\n1:14:061 hour, 14 minutes, 6 secondsmaterials uh so it it it really makes sense on both a financial level and an environmental level um you know it's\n1:14:151 hour, 14 minutes, 15 secondsit's something that you should be doing if you can and there you know there's minimal um I mean the bottle Crusher is\n1:14:231 hour, 14 minutes, 23 secondsan expense I guess going into it but when you're when you're looking at the savings and the cost of of mssw going up uh Solid Waste prices going up um it's\n1:14:321 hour, 14 minutes, 32 secondsit's a it's a no-brainer to to recycle glass and before we move on I skipped one question that was for you where did\n1:14:411 hour, 14 minutes, 41 secondsyou get the the machine that breaks your glass that is a great question I honestly I have no idea how old that is\n1:14:501 hour, 14 minutes, 50 secondsit just keeps working so I'm sure it's old um it's it's an old it's called called a bottle Buster um and I I\n1:14:581 hour, 14 minutes, 58 secondsneglected to look up any more information I don't even have any information on it most of the products that we purchased within the last 20\n1:15:061 hour, 15 minutes, 6 secondsyears I have information on it could be up to 30 years old um we've been crushing glass I believe that long but\n1:15:141 hour, 15 minutes, 14 secondsit's a fantastic and fun machine and the conveyor belt um it's just it's a it's it's fun to to kind of the volunteers enjoy I think it's their favorite part\n1:15:221 hour, 15 minutes, 22 secondsof volunteering on the line is is using our um conveyor belt and then smashing\n1:15:321 hour, 15 minutes, 32 secondsbottles just out of curiosity do you have any like dust collector on it so people aren't exposed to the well by\n1:15:401 hour, 15 minutes, 40 secondsabsolutely right I absolutely know how how um the glass dust is just terrible you breathe any of that in and you're\n1:15:471 hour, 15 minutes, 47 secondscoughing and you know it's just nasty stuff but uh it's what it is is it the conveyor belt goes into another room on the other side of the wall\n1:15:551 hour, 15 minutes, 55 secondsum so it's completely walled off um and there's no um residue or smoke or you\n1:16:021 hour, 16 minutes, 2 secondsknow um broken glass returning to the area where where you start the conveyor belts uh roughly 10 feet long and it's\n1:16:121 hour, 16 minutes, 12 secondsit's fed through a wall it drops into the bottle Buster and then it if if you were in that back room at the time of it being brushed up then yes it would be it\n1:16:211 hour, 16 minutes, 21 secondswould be very dusty in there uh but it's it's like a garage uh situation you open the garage door when you're done and you drive in with a bobcat so you're never\n1:16:301 hour, 16 minutes, 30 secondsreally subjected to much dust at all I usually close the windows the Bobcat um but yes it it is I mean you\n1:16:381 hour, 16 minutes, 38 secondsdon't want to be around that that glass when it's when it's dusty because it's it's tough to you you don't want to breathe that breathe that in at all um\n1:16:461 hour, 16 minutes, 46 secondsbut yeah we don't have that issue and it it works out really\n1:16:531 hour, 16 minutes, 53 secondswell um Suzanne any last words of wisdom for for everyone I I would say that the\n1:17:021 hour, 17 minutes, 2 secondsthe last program at seford has been here for 33 years and is considered an\n1:17:101 hour, 17 minutes, 10 secondsimportant program and the large volume that glass takes as well as the weight\n1:17:181 hour, 17 minutes, 18 secondsuh makes it really important to remove it from your Solid Waste despite um not\n1:17:251 hour, 17 minutes, 25 secondspaying for municipal solid waste removal it's on the responsibility of the\n1:17:331 hour, 17 minutes, 33 secondsresident and they pay in cash or check to that private vendor and they've been doing that for the last I don't know\n1:17:411 hour, 17 minutes, 41 secondsseveral decades I I think some of the uh realization has set in to Residents\n1:17:501 hour, 17 minutes, 50 secondsbecause they've reduced a couple of them have told me they've reduced the amount of trash that they uh bring and pay for\n1:17:591 hour, 17 minutes, 59 secondsuh 50 60% so I it's a it's a it's a winner it goes without saving if you\n1:18:081 hour, 18 minutes, 8 secondswant to go home and keep your greenb in your wallet you you're you're going to try to do it as best as you\n1:18:181 hour, 18 minutes, 18 secondscan Paul how about you uh what what she said about in\n1:18:251 hour, 18 minutes, 25 secondsgeneral recycling I know personally when we started recycling\n1:18:311 hour, 18 minutes, 31 secondsmany years ago I cut what I was paying for then the volume I was paying for about and half so I do kind of sometimes\n1:18:411 hour, 18 minutes, 41 secondspeople say well why should we bother to do this I say you can save money because you're paying for Less bags and uh so\n1:18:491 hour, 18 minutes, 49 secondsyou know the kind of appeal to people's selfish interest kind of helped I think\n1:18:561 hour, 18 minutes, 56 secondsand Paul where do people get the bags in your for for nor we don't sell the bags\n1:19:031 hour, 19 minutes, 3 secondswe uh we just sell the the tickets that they use for getting rid of their household\n1:19:111 hour, 19 minutes, 11 secondswaste and they bring it in and their cans their boxes whatever and the attendant charges them accordingly to\n1:19:201 hour, 19 minutes, 20 secondswhat they're dumping so they use tickets to pay for whatever they bring in in whatever\n1:19:281 hour, 19 minutes, 28 secondscontainer they bring it in so the attendant there has to kind of estimate at times because people\n1:19:371 hour, 19 minutes, 37 secondsbringing loose stuff to away like bundles of clothes um\n1:19:451 hour, 19 minutes, 45 secondswe are the solid waste committee is trying to get uh drop boxes so clothes\n1:19:531 hour, 19 minutes, 53 secondscan be recycled but that still in the work right now which would be a good thing I think\n1:20:001 hour, 20 minutesbut absolutely y okay and Bonnie do you have any last words of wisdom for\n1:20:071 hour, 20 minutes, 7 secondseveryone oh certainly continue keeping that glass out of the wa stream um we do have a glass Crusher info sheet on our\n1:20:151 hour, 20 minutes, 15 secondswebsite so if you go to the nrra website look under resources and there's three companies there that sell glass Crushers\n1:20:241 hour, 20 minutes, 24 secondsand there the municipal size um a lot of the contracts that you have whether you have single stream or dual stream\n1:20:321 hour, 20 minutes, 32 secondsrecycling um oftentimes the company that you're working with will give you a a break if\n1:20:401 hour, 20 minutes, 40 secondsyou pull your recy your glass out because it's very difficult for U murfs or material recycling facilities to deal\n1:20:471 hour, 20 minutes, 47 secondswith glass it comes out at the end a product that has glass in it yes but has a lot of contaminants such as paper and\n1:20:551 hour, 20 minutes, 55 secondsPlastics and so on so that end product is very difficult for these larger companies to deal with in the single stream process so again look for\n1:21:041 hour, 21 minutes, 4 secondsincentives from your the Comm the companies you're working with if I pull out my glass am I going to is there going to be savings um I liked what Su\n1:21:131 hour, 21 minutes, 13 secondsSuzanne said about encouraging people thank you you know the thank yous that go along with good job I think that\n1:21:201 hour, 21 minutes, 20 secondsmakes such a huge difference and being able to take the time of you as operators to say yes that goes here that\n1:21:281 hour, 21 minutes, 28 secondsdoes not go here and even though you have to repeat it a hundred times I think that's still what gets into people's minds as to okay you know\n1:21:371 hour, 21 minutes, 37 secondspotentially purchasing something that can be recycled as opposed to something that can't I think that's the\n1:21:451 hour, 21 minutes, 45 secondsold well I want to thank all of our presenters today this has been great I'm so happy you were all able to join us\n1:21:541 hour, 21 minutes, 54 secondsand to share your experiences and your expertise around glass recycling I want\n1:22:001 hour, 22 minutesto let everyone who has joined us know that the presentations from today's uh webinar\n1:22:081 hour, 22 minutes, 8 secondswill be put on nk's website um shortly afterwards and the recording\n1:22:151 hour, 22 minutes, 15 secondswill be available as well and I'll email everyone when these are both uh posted\n1:22:211 hour, 22 minutes, 21 secondsso that you can refer to it later but thank you everyone for attending and we hope you have a great\n1:22:301 hour, 22 minutes, 30 secondsafternoon thank you by thank you thank you\n\nSync to video time",
+            "localVideoFilename": "waste_community_recycling.mp4",
+            "authors": "Northeast Recycling Council, Inc.",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": [],
+            "tags": [
+              "glass recycling",
+              "economic planning",
+              "modern"
+            ]
+          },
+          {
+            "icon_tag_fa": "fas fa-cogs",
+            "color_tag": "#6b7280",
+            "title": "DIY Plastic Processing for Reuse",
+            "youtubeId": "kUR6_bQLU-E",
+            "description": "Introduction to small-scale methods...",
+            "localVideoFilename": "waste_plastic_processing.mp4",
+            "authors": "",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          },
+          {
+            "icon_tag_fa": "fas fa-newspaper",
+            "color_tag": "#a8a29e",
+            "title": "Making a book out of garbage! #recycle #bookbinding #papermaking  #papercrafts #sustainability",
+            "youtubeId": "hU3Ff2FOYQg",
+            "description": "Making a book out of waste paper! #recycle",
+            "localVideoFilename": "waste_paper_recycling.mp4",
+            "authors": "Serena McRae - Cactuscloudsart",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": [],
+            "tags": [
+              "papermaking"
+            ]
+          }
+        ]
+      },
+      {
+        "uniqueId": "waste-2",
+        "title": "Upcycling",
+        "description": "Transform discarded items into useful products...",
+        "tags": [
+          "upcycling",
+          "creative reuse",
+          "waste reduction",
+          "DIY",
+          "crafts",
+          "resourcefulness",
+          "zero waste",
+          "repurposing"
+        ],
+        "context": "Goes beyond basic recycling by creatively transforming waste...",
+        "materials": [
+          "Discarded Items...",
+          "Basic Tools...",
+          "Cleaning Supplies...",
+          "Finishing Materials..."
+        ],
+        "processSteps": [
+          "1. Collect & Select...",
+          "2. Clean & Prepare...",
+          "3. Brainstorm/Design...",
+          "4. Cut, Shape, Assemble...",
+          "5. Finish & Decorate...",
+          "6. Share Ideas..."
+        ],
+        "videos": [
+          {
+            "icon_tag_fa": "fas fa-couch",
+            "color_tag": "#78350f",
+            "title": "How to find SAFE pallets for projects",
+            "youtubeId": "7UfKS61BbqY",
+            "description": "Constructing chairs, tables, beds...",
+            "localVideoFilename": "waste_pallet_furniture.mp4",
+            "authors": "Wineberry Hill",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": [],
+            "tags": []
+          },
+          {
+            "icon_tag_fa": "fas fa-bottle-water",
+            "color_tag": "#0ea5e9",
+            "title": "Tips on building Bottle Walls",
+            "youtubeId": "QHIwldrqDr0",
+            "description": "Premiered Feb 17, 2023  CRESTONE, COLORADO\nBottle walls are a type of eco-friendly construction technique that involves using glass bottles to create a wall. The idea behind bottle walls is to repurpose waste material while also providing a functional structure. Bottle walls can be used for a variety of purposes, including as an interior or exterior wall for a building, a decorative feature in a garden, or as a retaining wall.\n\nThis video was shot a few months ago in the fall helping our friend and neighbor Thomas get his entry way enclosed. More of a how to on bottle wall construction. See links below to our two other videos on making bottle bricks and finishing plaster on a bottle wall. \n\n   • How to cut bottles for \"Bottle Brick Wall\"  \n\n   • Earthship Bottle Wall Plaster  \n\nOwner Builders Unite!\n\n  / redwizardism",
+            "localVideoFilename": "waste_bottle_bricks.mp4",
+            "authors": "Owner Builders Unite",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": [],
+            "tags": []
+          },
+          {
+            "icon_tag_fa": "fas fa-recycle",
+            "color_tag": "#52525b",
+            "title": "Tire Upcycling for Garden Projects",
+            "youtubeId": "AxiI17y0fNk",
+            "description": "Transforming old tires into planters...",
+            "localVideoFilename": "waste_tire_garden.mp4",
+            "authors": "",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          }
+        ]
+      },
+      {
+        "uniqueId": "waste-3",
+        "title": "Wastewater",
+        "description": "Build simple systems to treat and safely dispose of greywater and blackwater...",
+        "tags": [
+          "wastewater",
+          "greywater",
+          "blackwater",
+          "sanitation",
+          "treatment",
+          "constructed wetland",
+          "reed bed",
+          "filtration",
+          "hygiene",
+          "bioremediation",
+          "water reuse"
+        ],
+        "context": "Safely treats water from sinks, showers (greywater) or toilets (blackwater)...",
+        "materials": [
+          "Pipes/Plumbing...",
+          "Gravel...",
+          "Sand...",
+          "Water-loving Plants...",
+          "Waterproof Liner...",
+          "Settling Tank/Container...",
+          "Distribution Pipes..."
+        ],
+        "processSteps": [
+          "1. Identify Source...",
+          "2. Site Selection...",
+          "3. System Design...",
+          "4. Excavation & Liner...",
+          "5. Layering Filter Media...",
+          "6. Planting...",
+          "7. Connecting Inflow/Outflow...",
+          "8. Monitoring & Maintenance..."
+        ],
+        "videos": [
+          {
+            "icon_tag_fa": "fas fa-shower",
+            "color_tag": "#9ca3af",
+            "title": "DIY Greywater System for Garden Irrigation",
+            "youtubeId": "v3KGpnRrQ_I",
+            "description": "Simple methods for reusing household water...",
+            "localVideoFilename": "waste_greywater_garden.mp4",
+            "authors": "",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          },
+          {
+            "icon_tag_fa": "fas fa-leaf",
+            "color_tag": "#16a34a",
+            "title": "Constructing a Basic Wetland Filtration System",
+            "youtubeId": "6gGKKnD-Z4Q",
+            "description": "Building a natural water treatment system...",
+            "localVideoFilename": "waste_constructed_wetland.mp4",
+            "authors": "",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          },
+          {
+            "icon_tag_fa": "fas fa-toilet",
+            "color_tag": "#a16207",
+            "title": "Simple Septic System Installation Overview",
+            "youtubeId": "QYyZdJc2RhY",
+            "description": "Understanding the components and setup...",
+            "localVideoFilename": "waste_septic_overview.mp4",
+            "authors": "",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "area": "Energy",
+    "icon": "fa-bolt",
+    "featherIcon": "zap",
+    "svgString": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"60\" height=\"60\" fill=\"#000000\" viewBox=\"0 0 256 256\"><path d=\"M215.79,118.17a8,8,0,0,0-5-5.66L153.18,90.9l14.66-73.33a8,8,0,0,0-13.69-7l-112,120a8,8,0,0,0,3,13l57.63,21.61L88.16,238.43a8,8,0,0,0,13.69,7l112-120A8,8,0,0,0,215.79,118.17ZM109.37,214l10.47-52.38a8,8,0,0,0-5-9.06L62,132.71l84.62-90.66L136.16,94.43a8,8,0,0,0,5,9.06l52.8,19.8Z\"></path></svg>",
+    "subcategories": [
+      {
+        "uniqueId": "energy-0",
+        "title": "Solar Cookers: Box, Panel, and Parabolic",
+        "description": "Three distinct designs for solar cookers — insulated box, uninsulated panel, and parabolic reflector — using common materials to cook food using the sun's energy.",
+        "tags": [
+          "solar energy",
+          "sustainable cooking",
+          "off-grid",
+          "renewable energy",
+          "DIY",
+          "solar oven",
+          "parabolic cooker"
+        ],
+        "context": "This module outlines three practical approaches to solar cooking. Each design serves a unique context — the box cooker for slow baking and minimal heat loss; the panel cooker for portability and simplicity; and the parabolic cooker for fast, high-heat applications. Best used in sunny, low-wind environments.",
+        "variants": [
+          {
+            "type": "Insulated Box Cooker",
+            "optimalUse": "Slow cooking, baking, grains, stews; suitable for long exposure (1.5–4 hrs) under strong sun; low burn risk.",
+            "materials": [
+              "**1. Cooking Chamber & Insulation:**",
+              "   - Two cardboard boxes (one smaller, one larger)",
+              "   - Insulation (crumpled newspaper, straw, wool, or recycled fabric)",
+              "**2. Reflective & Heat Absorbing Surfaces:**",
+              "   - Aluminum foil or reflective mylar (for inside walls and flaps)",
+              "   - Black, heat-safe paint (non-toxic, for pot exterior)",
+              "**3. Transparent Window:**",
+              "   - Glass pane or clear oven bag (used to trap heat inside)",
+              "**4. Miscellaneous:**",
+              "   - Dark lidded cooking pot (thin black metal works best)",
+              "   - Tape, glue, box cutter, ruler"
+            ],
+            "processSteps": [
+              "1. Nest smaller box inside larger, insulating all gaps between with newspaper or straw.",
+              "2. Line the inside of the inner box with foil (shiny side up), glued flat.",
+              "3. Paint the pot black and allow to dry fully.",
+              "4. Create an angled reflector lid using a flap cut into the outer box top, lined with foil.",
+              "5. Tape or hinge the reflector flap to adjust for best sun angle.",
+              "6. Cover top opening with clear oven bag or glass to retain heat.",
+              "7. Place food in the black pot, seal the cooker, and orient toward the sun.",
+              "8. Cook time varies from 1.5–4 hours depending on sun strength and dish type."
+            ],
+            "videos": [
+              {
+                "title": "Building a DIY Solar Box Cooker",
+                "youtubeId": "example_box_cooker_id",
+                "description": "Step-by-step guide to constructing an insulated solar box cooker.",
+                "icon_tag_fa": "fas fa-box",
+                "color_tag": "#d97706",
+                "localVideoFilename": "",
+                "authors": "",
+                "researchReviewItems": [],
+                "contentCreatorArchive": "",
+                "licence": "Standard YouTube License",
+                "patreon": "",
+                "socials": {},
+                "fundraiser": "",
+                "sponsorPages": []
+              }
+            ]
+          },
+          {
+            "type": "Uninsulated Panel Cooker",
+            "optimalUse": "Portable and lightweight; great for light cooking (e.g., reheating, tea, grains); ideal for community demos, emergency kits.",
+            "materials": [
+              "**1. Structure:**",
+              "   - Cardboard sheets or corrugated plastic",
+              "**2. Reflective Surfaces:**",
+              "   - Aluminum foil or reflective tape",
+              "**3. Heat Retention:**",
+              "   - Clear oven bag or upside-down glass bowl",
+              "**4. Cooking Vessel:**",
+              "   - Thin black pot or jar with tight-fitting lid",
+              "**5. Fasteners:**",
+              "   - Binder clips, tape, string, or glue"
+            ],
+            "processSteps": [
+              "1. Cut reflective panels in 3–5 segments and hinge them at angles to form a reflector cone or C-shape.",
+              "2. Cover each panel with foil or reflective tape.",
+              "3. Place cooking pot inside a clear oven bag or under an inverted glass bowl.",
+              "4. Orient toward the sun, repositioning every 30–45 minutes for best results.",
+              "5. Monitor food through clear cover to prevent overheating or drying out."
+            ],
+            "videos": [
+              {
+                "title": "Making a Simple Solar Panel Cooker",
+                "youtubeId": "example_panel_cooker_id",
+                "description": "Demonstrates the construction of a basic, portable solar panel cooker.",
+                "icon_tag_fa": "fas fa-solar-panel",
+                "color_tag": "#fbbf24",
+                "localVideoFilename": "",
+                "authors": "",
+                "researchReviewItems": [],
+                "contentCreatorArchive": "",
+                "licence": "Standard YouTube License",
+                "patreon": "",
+                "socials": {},
+                "fundraiser": "",
+                "sponsorPages": []
+              }
+            ]
+          },
+          {
+            "type": "Parabolic Concentrating Cooker",
+            "optimalUse": "High heat applications (boiling water, frying, pressure cooking); great for short cook times; requires precise alignment and supervision.",
+            "materials": [
+              "**1. Reflective Dish:**",
+              "   - Old satellite dish lined with mylar, foil tape, or mirror pieces",
+              "   - Optional: large umbrella frame modified with reflective segments",
+              "**2. Support Frame:**",
+              "   - Sturdy stand or tripod to hold dish and align it with the sun",
+              "**3. Cooking Pot Holder:**",
+              "   - Metal frame or cage at focal point to hold pot safely",
+              "**4. Cooking Pot:**",
+              "   - Black pressure cooker or frying pot (must handle high heat)",
+              "**5. Safety Gear:**",
+              "   - Gloves, sunglasses, fire extinguisher (for safety)"
+            ],
+            "processSteps": [
+              "1. Line parabolic dish with reflective material, ensuring a clean, smooth curve.",
+              "2. Mark and test focal point using a piece of black paper (should burn in ~5 seconds under strong sun).",
+              "3. Mount pot holder securely at focal point using metal bars or cage.",
+              "4. Place black cooking pot with food or water inside the holder.",
+              "5. Align the parabola toward the sun and make periodic adjustments.",
+              "6. Supervise at all times — cook times may be as short as 10–30 minutes for boiling water or frying.",
+              "7. Remove food using heat-safe gloves and allow cooker to cool."
+            ],
+            "videos": [
+              {
+                "title": "How these mirror toys can generate cheap solar energy",
+                "youtubeId": "KS4bv_DwxbY",
+                "description": "Explores how inexpensive mirror dishes can concentrate solar energy to generate cheap thermal electricity. The video evaluates four approaches, with a focus on using thermal oil and heat storage for continuous power generation — potentially outperforming conventional power plants and solar panels.",
+                "icon_tag_fa": "fas fa-city",
+                "color_tag": "#6B7280",
+                "localVideoFilename": "",
+                "authors": "Sergiy Yurko",
+                "researchReviewItems": [],
+                "contentCreatorArchive": "",
+                "licence": "Standard YouTube License",
+                "patreon": "",
+                "socials": {},
+                "fundraiser": "",
+                "sponsorPages": []
+              }
+            ]
+          }
+        ],
+        "notes": [
+          "Solar cookers require direct, unobstructed sunlight — avoid shaded or cloudy periods for best results.",
+          "Use food-safe, non-toxic black paint for pot coating.",
+          "Never leave a parabolic cooker unattended; risk of ignition or burns is higher due to high temperatures.",
+          "For all types, reflective surfaces should be kept clean for maximum effectiveness."
+        ],
+        "videos": [
+          {
+            "title": "Sungood - Ultra portable solar oven ❗️❗️",
+            "youtubeId": "ynRG4GEsU78",
+            "description": "this is very similar to the Engineers without borders solar oven design for refugee camps.  people had issues with keeping the bag clean long term in camps. but it is simple and works well.",
+            "authors": "Tech Sugar 20",
+            "tags": [
+              "parabolic solar",
+              "EWB Solar cooker"
+            ]
+          },
+          {
+            "title": "This Man Built a Solar Oven That Actually Works",
+            "youtubeId": "GtpiAaU9zZc",
+            "description": "durable classic box cooker design with openable front glass/insolation panel",
+            "authors": "lateliersolaireoff",
+            "tags": [
+              "solar cooking",
+              "box cooker"
+            ]
+          }
+        ]
+      },
+      {
+        "uniqueId": "energy-1",
+        "title": "Biogas",
+        "description": "A comprehensive guide to the materials required and the step-by-step process for planning, building, and operating a biogas digester.",
+        "tags": [
+          "biogas",
+          "anaerobic digestion",
+          "renewable energy",
+          "waste to energy",
+          "methane",
+          "digester construction",
+          "DIY energy"
+        ],
+        "context": "This module provides in-depth information on constructing and managing a biogas system. It covers necessary materials for various common digester types and outlines a multi-phase process from planning to safe operation and maintenance. The advice and cautions section (to be filled with your content) will complement this technical information.",
+        "materials": [
+          "**1. Digester Tank Components:**",
+          "   - Main digester vessel (e.g., 1000L-2000L IBC tote, multiple HDPE plastic drums, pre-fabricated tank, or materials for constructed digesters like bricks, cement, sand, and waterproofing agent for fixed-dome; or geomembrane for Puxin-type)",
+          "   - Insulation materials (e.g., straw, styrofoam, agricultural plastic sheeting - especially for colder climates)",
+          "**2. Inlet & Outlet Systems:**",
+          "   - PVC pipes (various diameters: e.g., 100-150mm for inlet, 50-100mm for outlet, 15-25mm for gas line)",
+          "   - PVC fittings (elbows, T-joints, reducers, end caps, unions, tank connectors/bulkhead fittings)",
+          "   - Ball valves or gate valves (for inlet, outlet, and gas line control)",
+          "   - Sealants (e.g., PVC primer and cement, silicone sealant, rubber gaskets, Teflon tape) for watertight and airtight seals",
+          "**3. Gas Collection, Storage & Purification:**",
+          "   - Gas holder/storage (e.g., inner tube of a truck tire, dedicated biogas storage bag with UV protection, or materials for a floating drum gasholder like a smaller drum and guide frame)",
+          "   - Transparent flexible hose (for visual checks and connections)",
+          "   - Condensate/Water trap (PVC components to build a U-trap or T-junction drain)",
+          "   - H2S Scrubber (optional but recommended: PVC pipe section, end caps with fittings, iron filings/steel wool)",
+          "**4. Pressure Management & Safety Devices:**",
+          "   - Manometer (DIY U-tube with clear plastic tubing and colored water, or a low-pressure gauge)",
+          "   - Pressure relief valve (set to a safe low pressure, e.g., 2-5 kPa)",
+          "   - Flame arrestor (install on the gas line near the point of use)",
+          "**5. Feedstock Preparation & Handling:**",
+          "   - Buckets or containers for collecting and mixing feedstock",
+          "   - Chopper, shredder, or machete (for reducing particle size of fibrous materials - optional)",
+          "   - Water source and watering can/hose",
+          "**6. Tools for Construction & Maintenance:**",
+          "   - Basic hand tools (saw for PVC, drill, screwdrivers, wrenches, spirit level, measuring tape)",
+          "   - Shovels, trowels (for excavation or concrete work if applicable)",
+          "   - Safety gear (gloves, safety glasses, masks)",
+          "**7. Utilization Appliances (examples):**",
+          "   - Biogas stove or burner (specifically designed for biogas or modified)",
+          "   - Biogas lamp",
+          "   - Flexible gas piping for connecting to appliances"
+        ],
+        "processSteps": [
+          "**Phase 1: Planning and Design**",
+          "   - Step 1: Assess Feedstock Availability & Type (quantify daily organic waste like manure, kitchen scraps; analyze C/N ratio if possible)",
+          "   - Step 2: Determine Energy Needs & System Sizing (calculate required gas volume, which dictates digester volume - typical retention times are 20-60 days)",
+          "   - Step 3: Select Digester Design (e.g., floating drum, fixed dome, IBC tote, Puxin; consider climate, cost, available skills, and materials)",
+          "   - Step 4: Detailed Site Selection (ensure level ground, sunlight (for some designs), proximity to feedstock and use-point, away from dwellings, consider effluent drainage)",
+          "   - Step 5: Create a Detailed Construction Plan & Material List (sketch design, list all components, estimate costs)",
+          "   - Step 6: Review Safety Regulations & Obtain Permits (if required locally)",
+          "**Phase 2: Construction and Assembly**",
+          "   - Step 7: Prepare the Site (clear vegetation, level ground, excavate if necessary for underground designs)",
+          "   - Step 8: Construct or Place the Digester Tank (follow design plans meticulously; ensure structural integrity)",
+          "   - Step 9: Install Inlet (for feeding) and Outlet (for digestate removal) Pipes (ensure correct height difference for gravity flow, airtight and watertight seals)",
+          "   - Step 10: Assemble and Install Gas Holder/Dome and Gas Outlet Pipe (ensure gasholder can move freely if floating type, or dome is gas-tight)",
+          "   - Step 11: Connect Gas Line with Valves, Manometer, H2S Scrubber, Water Trap, and Safety Devices (pressure relief valve, flame arrestor)",
+          "   - Step 12: Perform Thorough Leak Testing (use soapy water on all gas joints and seals; for water seals, check levels. Pressurize slightly if possible to check tank integrity before filling with slurry)",
+          "**Phase 3: Commissioning (Startup)**",
+          "   - Step 13: Prepare Inoculum/Starter Culture (use slurry from an active digester, fresh cow dung, or septic tank sludge – about 10-30% of digester volume)",
+          "   - Step 14: Prepare Initial Feedstock Slurry (mix organic waste with water to a suitable consistency, typically 1:1 to 1:4 solids to water ratio by weight, targeting 6-10% total solids)",
+          "   - Step 15: Load the Digester (first add inoculum, then gradually fill with prepared feedstock slurry, leaving recommended headspace)",
+          "   - Step 16: Seal the Digester and Monitor (allow 1-4 weeks for anaerobic conditions to establish and methane production to begin; initial gas will be mainly CO2 and should be vented safely)",
+          "   - Step 17: Test First Biogas for Flammability (collect a sample in a small bag or balloon and test carefully away from the digester; if it burns with a blue flame, it's methane-rich)",
+          "**Phase 4: Regular Operation**",
+          "   - Step 18: Establish a Regular Feeding Schedule (daily or every few days, add a consistent amount of fresh slurry – e.g., 1/20th to 1/60th of the digester volume, matching the hydraulic retention time)",
+          "   - Step 19: Simultaneous Digestate Removal (remove an equivalent volume of digestate as you feed to maintain liquid level)",
+          "   - Step 20: Monitor Gas Production & Quality (check manometer, observe flame color when in use)",
+          "   - Step 21: Utilize Biogas Safely (connect to appliances, ensure good ventilation where gas is used)",
+          "   - Step 22: Process and Utilize Digestate (use as organic fertilizer after composting or dilution; handle with care)",
+          "**Phase 5: Maintenance and Troubleshooting**",
+          "   - Step 23: Regular Checks (inspect for gas leaks, water seal levels, pipe blockages, structural integrity of the digester and gasholder)",
+          "   - Step 24: Scum and Sludge Management (periodically check for and remove excessive scum buildup or sediment if design allows and performance degrades)",
+          "   - Step 25: Maintain H2S Scrubber Material (replace iron filings/steel wool when saturated – color change or H2S smell indicates saturation)",
+          "   - Step 26: Troubleshoot Common Issues (e.g., low/no gas, acidic conditions (low pH), foaming, rotten egg smell, refer to specific troubleshooting guides)",
+          "   - Step 27: Follow Safety Protocols Continuously (no smoking, ensure flame arrestors are functional, handle digestate hygienically)"
+        ],
+        "videos": [
+          {
+            "title": "New improved IBC bio digester design and build",
+            "youtubeId": "i7onXeTKiRM",
+            "description": "Step-by-step instructions for building a small-scale biogas digester using an IBC tote.",
+            "icon_tag_fa": "fas fa-gas-pump",
+            "color_tag": "#059669",
+            "localVideoFilename": "",
+            "authors": "OK at EVERYTHING - PRO at NOTHING",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          }
+        ]
+      },
+      {
+        "uniqueId": "energy-2",
+        "title": "Power Microgrids",
+        "description": "Build small, local power systems...",
+        "tags": [
+          "microgrid",
+          "sustainability",
+          "infrastructure",
+          "renewable energy",
+          "off-grid power",
+          "community power",
+          "solar",
+          "wind power",
+          "battery storage",
+          "energy access",
+          "resilience"
+        ],
+        "context": "Creates localized, independent energy networks...",
+        "materials": [
+          "ration Source(s)...",
+          "Charge Controllers...",
+          "Battery Bank...",
+          "Inverter(s)...",
+          "Distribution Wiring...",
+          "Load Management System...",
+          "Monitoring Equipment"
+        ],
+        "processSteps": [
+          "1. Energy Audit...",
+          "2. System Design...",
+          "3. Installation...",
+          "4. Wiring & Safety...",
+          "5. Distribution Network...",
+          "6. Commissioning...",
+          "7. Community Governance..."
+        ],
+        "videos": [
+          {
+            "title": "Introduction to Community Microgrids",
+            "youtubeId": "example_microgrid_intro_id",
+            "description": "An overview of how microgrids work and their benefits for local power.",
+            "icon_tag_fa": "fas fa-network-wired",
+            "color_tag": "#1d4ed8",
+            "localVideoFilename": "",
+            "authors": "",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          }
+        ]
+      },
+      {
+        "uniqueId": "energy-3",
+        "title": "DIY Biochar Retort (Soda Keg + Cast Iron Pan)",
+        "description": "A step-by-step guide for making biochar at home using a repurposed soda keg sealed with a cast iron pan and secured with stainless cable. The vessel is heated inside a wood stove to achieve pyrolysis.",
+        "tags": [
+          "biochar",
+          "pyrolysis",
+          "charcoal production",
+          "carbon sequestration",
+          "DIY energy",
+          "regenerative systems",
+          "wood stove",
+          "sustainable fuel"
+        ],
+        "context": "This module details the design, materials, and step-by-step process for building and operating a home-scale biochar retort using an improvised pressure vessel. It supports experimentation with different biomass types, carbon yields, and environmental impact (e.g., odor, residue, gas output). This system is well-suited for sustainable homesteads and regenerative agriculture enthusiasts.",
+        "materials": [
+          "**1. Retort Body:**",
+          "   - Stainless steel soda keg (top removed to create a chamber)",
+          "   - Cast iron pan (used as heavy lid)",
+          "**2. Retort Sealing System:**",
+          "   - Stainless steel cable (7x woven over-under stitching to hold the lid down under thermal expansion)",
+          "   - Optional: Furnace cement, clay, or fire rope gasket to improve the seal",
+          "**3. Biomass Feedstock:**",
+          "   - Dry wood chunks, nutshells, dried crop waste, or small sticks (low-moisture for optimal char quality)",
+          "**4. Heating Source:**",
+          "   - Wood stove or masonry heater with a well-established coal bed",
+          "**5. Monitoring & Safety:**",
+          "   - IR thermometer or thermocouple for vessel surface temp",
+          "   - Gloves, eye protection, long tongs",
+          "   - Ventilation (if indoors, use stove with chimney draw)"
+        ],
+        "processSteps": [
+          "**Phase 1: Vessel Preparation**",
+          "   - Step 1: Cut the soda keg and deburr edges",
+          "   - Step 2: Select a cast iron pan that tightly fits the keg’s top",
+          "   - Step 3: Prepare the stainless steel cable; test-fit the weave to hold the lid tight",
+          "**Phase 2: Biomass Loading**",
+          "   - Step 4: Fill the keg with dry, uniform biomass (avoid green or wet material)",
+          "   - Step 5: Place the lid and secure with cable (tighten using pliers or turnbuckle)",
+          "   - Step 6: Optionally apply clay or ash at the seam",
+          "**Phase 3: Pyrolysis Cycle**",
+          "   - Step 7: Prepare a bed of red-hot coals in the wood stove",
+          "   - Step 8: Insert the sealed vessel into the coals",
+          "   - Step 9: Let cook for 1.5–3 hours, depending on stove heat and biomass",
+          "   - Step 10: Optionally add coals around the vessel for uniform heat",
+          "**Phase 4: Cooling & Recovery**",
+          "   - Step 11: Allow the retort to cool fully (ideally overnight)",
+          "   - Step 12: Open the vessel only when cold to avoid oxygen flash",
+          "   - Step 13: Remove the biochar and inspect quality (black, glossy or dull, lightweight)",
+          "**Phase 5: Application or Storage**",
+          "   - Step 14: Store in airtight container or soak in compost tea before soil application",
+          "   - Step 15: Optionally log temperature, biomass weight in/out, odor, texture for experiments"
+        ],
+        "videos": [
+          {
+            "title": "Making Biochar at Home with a Simple Retort",
+            "youtubeId": "example_biochar_retort_id",
+            "description": "A demonstration of using a soda keg and cast iron pan to produce biochar.",
+            "icon_tag_fa": "fas fa-fire",
+            "color_tag": "#78350f",
+            "localVideoFilename": "",
+            "authors": "",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          }
+        ],
+        "notes": [
+          "Do not open the vessel hot—risk of flash combustion!",
+          "This is a low-pressure system; never fully seal without a pressure vent.",
+          "Char yield will vary by biomass type, particle size, and cook time.",
+          "If syngas flames appear, they should be short-lived and low volume in this design."
+        ]
+      },
+      {
+        "uniqueId": "energy-4",
+        "title": "Briquettes",
+        "subtitle": "Hand Pressed Heat & Cooking Fuel Briquettes",
+        "description": "DIY cook stove Fuel produced...",
+        "tags": [
+          "cooking fuel",
+          "upcycling",
+          "home heating",
+          "biomass",
+          "briquettes",
+          "waste to energy",
+          "appropriate technology",
+          "DIY",
+          "fuel efficiency"
+        ],
+        "context": "Compresses loose biomass waste...",
+        "materials": [
+          "Dry Biomass Waste...",
+          "Water...",
+          "Binder...",
+          "Briquette Press...",
+          "Drying Rack/Area"
+        ],
+        "processSteps": [
+          "1. Collect & Shred...",
+          "2. Mix with Water...",
+          "3. Load Slurry...",
+          "4. Compress Firmly...",
+          "5. Eject Wet Briquette...",
+          "6. Dry Thoroughly..."
+        ],
+        "videos": [
+          {
+            "icon_tag_fa": "fas fa-fire-alt",
+            "color_tag": "#d97706",
+            "title": "Simple Biomass Briquette Press Construction",
+            "youtubeId": "1LD7BhR3jTI",
+            "description": "Building a manual press...",
+            "localVideoFilename": "energy_briquette_press.mp4",
+            "authors": "",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "area": "Health",
+    "icon": "fa-heartbeat",
+    "svgString": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"60\" height=\"60\" fill=\"#000000\" viewBox=\"0 0 256 256\"><path d=\"M72,144H32a8,8,0,0,1,0-16H67.72l13.62-20.44a8,8,0,0,1,13.32,0l25.34,38,9.34-14A8,8,0,0,1,136,128h24a8,8,0,0,1,0,16H140.28l-13.62,20.44a8,8,0,0,1-13.32,0L88,126.42l-9.34,14A8,8,0,0,1,72,144ZM178,40c-20.65,0-38.73,8.88-50,23.89C116.73,48.88,98.65,40,78,40a62.07,62.07,0,0,0-62,62c0,.75,0,1.5,0,2.25a8,8,0,1,0,16-.5c0-.58,0-1.17,0-1.75A46.06,46.06,0,0,1,78,56c19.45,0,35.78,10.36,42.6,27a8,8,0,0,0,14.8,0c6.82-16.67,23.15-27,42.6-27a46.06,46.06,0,0,1,46,46c0,53.61-77.76,102.15-96,112.8-10.83-6.31-42.63-26-66.68-52.21a8,8,0,1,0-11.8,10.82c31.17,34,72.93,56.68,74.69,57.63a8,8,0,0,0,7.58,0C136.21,228.66,240,172,240,102A62.07,62.07,0,0,0,178,40Z\"></path></svg>",
+    "featherIcon": "heart",
+    "subcategories": [
+      {
+        "uniqueId": "health-0",
+        "title": "EMT",
+        "description": "Learn lifesaving basics...",
+        "tags": [
+          "EMT",
+          "emergency",
+          "first response",
+          "CPR",
+          "basic life support",
+          "patient assessment",
+          "wound care",
+          "trauma care",
+          "splinting",
+          "bleeding control"
+        ],
+        "context": "Provides foundational knowledge and skills...",
+        "materials": [
+          "First Aid Kit Supplies...",
+          "Gloves...",
+          "CPR Mask/Barrier...",
+          "Splinting Materials...",
+          "(Training: Mannequin)"
+        ],
+        "processSteps": [
+          "1. Ensure Scene Safety...",
+          "2. Primary Assessment...",
+          "3. Call for Help...",
+          "4. Critical Interventions...",
+          "5. Secondary Assessment...",
+          "6. Splinting/Wound Dressing...",
+          "7. Ongoing Monitoring..."
+        ],
+        "videos": []
+      },
+      {
+        "uniqueId": "health-1",
+        "title": "Telemedicine",
+        "description": "Use phones and simple apps...",
+        "tags": [
+          "health",
+          "telemedicine",
+          "remote care",
+          "digital health",
+          "remote diagnosis",
+          "mHealth",
+          "communication",
+          "health access"
+        ],
+        "context": "Leverages communication technology...",
+        "materials": [
+          "Device...",
+          "Internet/Phone Connectivity...",
+          "Camera...",
+          "Basic Measurement Tools...",
+          "Relevant Health Apps/Platforms"
+        ],
+        "processSteps": [
+          "1. Identify Provider...",
+          "2. Ensure Connectivity...",
+          "3. Prepare for Consultation...",
+          "4. Communicate Symptoms...",
+          "5. Follow Medical Advice...",
+          "6. Plan Follow-up..."
+        ],
+        "videos": []
+      },
+      {
+        "uniqueId": "health-2",
+        "title": "First Aid",
+        "description": "Master everyday skills...",
+        "tags": [
+          "first aid",
+          "injury",
+          "emergency",
+          "home care",
+          "wound care",
+          "burns",
+          "bites & stings",
+          "common ailments",
+          "hygiene"
+        ],
+        "context": "Focuses on immediate care for common injuries...",
+        "materials": [
+          "Well-stocked First Aid Kit...",
+          "Clean Water...",
+          "Cool Compresses...",
+          "Soap"
+        ],
+        "processSteps": [
+          "1. Assess the Situation...",
+          "2. Clean Wounds...",
+          "3. Apply Dressing...",
+          "4. Manage Minor Burns...",
+          "5. Treat Bites/Stings...",
+          "6. Manage Fever...",
+          "7. Recognize When to Seek Help..."
+        ],
+        "videos": []
+      },
+      {
+        "uniqueId": "health-3",
+        "title": "Self-sufficient Healthcare",
+        "description": "Set up a basic first aid station...",
+        "tags": [
+          "health",
+          "DIY",
+          "self-reliance",
+          "herbal medicine",
+          "community health",
+          "preventive health",
+          "traditional medicine",
+          "ORS",
+          "preparedness",
+          "hygiene",
+          "sanitation"
+        ],
+        "context": "Empowers individuals and communities...",
+        "materials": [
+          "Organized Storage...",
+          "Basic First Aid Supplies...",
+          "Medicinal Herbs...",
+          "Salt, Sugar, Bicarbonate...",
+          "Clean Water & Containers...",
+          "Notebook & Pen..."
+        ],
+        "processSteps": [
+          "1. Assess Local Health Issues...",
+          "2. Create Checklist & Stock...",
+          "3. Learn Plant Identification...",
+          "4. Prepare ORS...",
+          "5. Practice Hygiene...",
+          "6. Record Keeping...",
+          "7. Know Limitations..."
+        ],
+        "videos": [
+          {
+            "title": "Chinese grandma routine",
+            "youtubeId": "2kxmDxbgFkk",
+            "description": "",
+            "authors": "Stretch And Grow",
+            "tags": [
+              "stretch",
+              "tai chi",
+              "stress management"
+            ]
+          },
+          {
+            "title": "Walls Made of Straw? Incredible Craftsmanship Before Cement",
+            "youtubeId": "ig1Fp4QdggQ",
+            "description": "Jan 30, 2026  #TimberFrame #RuralLife #TraditionalConstruction\nBefore modern insulation materials, cement, and industrial construction methods became widespread, rural buildings relied on locally available resources.\nIn many parts of Germany, straw, clay, and wood were used to protect timber-framed houses from wind, rain, and cold — a practice that continued well into the 20th century, and in some regions even until the 1960s.\n\nThis film documents the traditional method of applying straw wall cladding to farmhouse buildings, using techniques once common in everyday rural life.\nStep by step, the process shows how clay mortar, hazel rods, and long-stem rye straw were combined to create a durable, weather-resistant wall surface.\n\nThrough historical footage, Uncovered Past offers an authentic look at pre-industrial building knowledge, craftsmanship, and materials — preserved at a time when such methods were already disappearing.\n\nOriginal source material: Schmidt/Nideggen 1981 - 22 Min. \nAufnahme: Gabriel Simons; Schnitt/Kommentar: Ute Herborg\nLVR-Institut für Landeskunde und Regionalgeschichte    • Verkleiden der Wetterwand mit Stroh   . CC BY 4.0.  \n\nEdited by GooseMedia. Licensed under CC BY 4.0.",
+            "authors": "Uncovered Past",
+            "tags": [
+              "traditional",
+              "cob",
+              "wattle and daub"
+            ]
+          }
+        ]
+      },
+      {
+        "uniqueId": "health-1779978719166",
+        "title": "Clean Diet & Nutrition",
+        "videos": []
+      }
+    ]
+  },
+  {
+    "area": "Food",
+    "icon": "fa-utensils",
+    "featherIcon": "coffee",
+    "svgString": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"60\" height=\"60\" fill=\"#000000\" viewBox=\"0 0 256 256\"><path d=\"M88,48V16a8,8,0,0,1,16,0V48a8,8,0,0,1-16,0Zm40,8a8,8,0,0,0,8-8V16a8,8,0,0,0-16,0V48A8,8,0,0,0,128,56Zm32,0a8,8,0,0,0,8-8V16a8,8,0,0,0-16,0V48A8,8,0,0,0,160,56Zm92.8,46.4L224,124v60a32,32,0,0,1-32,32H64a32,32,0,0,1-32-32V124L3.2,102.4a8,8,0,0,1,9.6-12.8L32,104V80a8,8,0,0,1,8-8H216a8,8,0,0,1,8,8v24l19.2-14.4a8,8,0,0,1,9.6,12.8ZM208,88H48v96a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16Z\"></path></svg>",
+    "subcategories": [
+      {
+        "uniqueId": "food-0",
+        "title": "Urban Gardening",
+        "description": "Grow healthy vegetables in small spaces...",
+        "tags": [
+          "urban farming",
+          "gardening",
+          "food security",
+          "container gardening",
+          "small space gardening",
+          "rooftop garden",
+          "balcony garden",
+          "composting",
+          "vertical farming",
+          "local food"
+        ],
+        "context": "Enables food production in densely populated areas...",
+        "materials": [
+          "Containers...",
+          "Potting Mix/Soil/Compost...",
+          "Seeds or Seedlings...",
+          "Watering Can/System...",
+          "Fertilizer...",
+          "Sunlight/Grow Lights"
+        ],
+        "processSteps": [
+          "1. Select Site...",
+          "2. Choose Containers...",
+          "3. Prepare Growing Medium...",
+          "4. Planting & Seeding...",
+          "5. Watering & Feeding...",
+          "6. Pest/Disease Management...",
+          "7. Harvesting..."
+        ],
+        "videos": [
+          {
+            "title": "Organic/Biodynamic Farming in the City",
+            "youtubeId": "QJcACw_--Nk",
+            "description": "Learn how an urban farmer in Portland manages a quarter-acre farm amidst the challenges of uncertain land tenure and the need for creative business strategies. Discover how urban farming can thrive with proper investment and community support.\n\nThroughout her young adult life, Amanda Morse has worked entirely in the nonprofit food sector. When she moved to Portland, Oregon, she was ready to apply her skills in a new direction. Knowing she wanted to live in the city, Morse decided to become an urban farmer, and began researching vacant plots of land in the city using Google Maps and other online resources to contact prospective property owners about leasing their land.  When the owner of the Tropicana Barbecue restaurant in North Portland responded favorably, in the winter of 2011, Morse was able to begin transforming the ¼ acre parcel adjacent to the restaurant into her Blue House Greenhouse Farm.",
+            "icon_tag_fa": "fas fa-city",
+            "color_tag": "#6B7280",
+            "localVideoFilename": "",
+            "authors": "Food Farmer Earth",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": [],
+            "tags": []
+          },
+          {
+            "title": "Community Gardens as health and vitality nodes",
+            "youtubeId": "QZQpIHIr7s0",
+            "description": "Growing Together...",
+            "icon_tag_fa": "fas fa-sprout",
+            "color_tag": "#6B7280",
+            "localVideoFilename": "",
+            "authors": "",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          },
+          {
+            "title": "Community Gardens address food deserts",
+            "youtubeId": "QZQpIHIr7s0",
+            "description": "A film about Westraven Community Garden, a community garden and charity in Westwood, Peterborough. In this video, staff and volunteers at the garden talk about how important the space has been for their mental health and their connection to nature, as well as their local community.\n\nFind out more about Westraven CIO here: https://www.westraven.co.uk/  \n\nCommissioned by Peterborough Presents and Westraven. Supported by Arts Council England, Big Local, and Cross Keys Homes.\n\nFilm by Red7 Productions.",
+            "icon_tag_fa": "fas fa-sprout",
+            "color_tag": "#6B7280",
+            "localVideoFilename": "",
+            "authors": "Peterborough Presents",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": [],
+            "tags": []
+          }
+        ]
+      },
+      {
+        "uniqueId": "food-1",
+        "title": "Hydro/Aero/Aquaponics",
+        "description": "Use water-based growing systems...",
+        "tags": [
+          "hydroponics",
+          "water-efficient",
+          "urban food",
+          "aquaponics",
+          "aeroponics",
+          "soilless culture",
+          "vertical farming",
+          "nutrient solution",
+          "pH management",
+          "closed-loop system"
+        ],
+        "context": "Cultivates plants without soil...",
+        "materials": [
+          "Growing System Components...",
+          "Growing Medium...",
+          "Nutrient Solution...",
+          "pH Testing Kit...",
+          "EC/TDS Meter...",
+          "(Aquaponics: fish tank...)"
+        ],
+        "processSteps": [
+          "1. Assemble System...",
+          "2. Prepare Nutrient Solution...",
+          "3. Germinate Seeds...",
+          "4. Transplant...",
+          "5. Monitor & Maintain...",
+          "6. (Aquaponics: Manage fish...)",
+          "7. Harvesting..."
+        ],
+        "videos": [
+          {
+            "title": "Feed the World – Aquaponics",
+            "youtubeId": "ofS9MFXFIBE",
+            "description": "Introduces aquaponics...",
+            "icon_tag_fa": "fas fa-fish",
+            "color_tag": "#3B82F6",
+            "localVideoFilename": "",
+            "authors": "",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          },
+          {
+            "title": "Aquaponics Simplified: A Guide...",
+            "youtubeId": "4DMylpQqVKI",
+            "description": "Features 'Aqua Annie'...",
+            "icon_tag_fa": "fas fa-seedling",
+            "color_tag": "#10B981",
+            "localVideoFilename": "",
+            "authors": "",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          },
+          {
+            "title": "Designing a Sustainable Aquaponics System: An Inventor’s Touch",
+            "youtubeId": "x6buXYuvXWg",
+            "description": "Showcases inventor...",
+            "icon_tag_fa": "fas fa-cogs",
+            "color_tag": "#57534e",
+            "localVideoFilename": "",
+            "authors": "",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          }
+        ]
+      },
+      {
+        "uniqueId": "food-2",
+        "title": "Sustainable Agriculture Techniques",
+        "description": "Practice crop rotation, natural pest control...",
+        "tags": [
+          "agriculture",
+          "sustainable",
+          "soil health",
+          "permaculture",
+          "organic farming",
+          "agroecology",
+          "cover cropping",
+          "crop rotation",
+          "integrated pest management",
+          "conservation agriculture",
+          "biodiversity",
+          "seed saving"
+        ],
+        "context": "Employs ecological principles to farming...",
+        "materials": [
+          "Compost/Manure...",
+          "Cover Crop Seeds...",
+          "Mulch Materials...",
+          "Natural Pest Control Agents...",
+          "Diverse Crop Seeds...",
+          "Soil Testing Kit..."
+        ],
+        "processSteps": [
+          "1. Soil Health Assessment...",
+          "2. Implement Crop Rotation...",
+          "3. Utilize Cover Cropping...",
+          "4. Practice IPM...",
+          "5. Enhance Biodiversity...",
+          "6. Water Conservation...",
+          "7. Nutrient Management..."
+        ],
+        "videos": [
+          {
+            "icon_tag_fa": "fas fa-sync-alt",
+            "color_tag": "#ca8a04",
+            "title": "Crop Rotation Explained: Benefits & Planning",
+            "youtubeId": "QhH-YsDr8D4",
+            "description": "Understanding how rotating crops...",
+            "localVideoFilename": "",
+            "authors": "",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          },
+          {
+            "icon_tag_fa": "fas fa-shield-alt",
+            "color_tag": "#dc2626",
+            "title": "Natural Pest Control Methods for Gardens",
+            "youtubeId": "tgQ1L7TcDjQ",
+            "description": "Using companion planting...",
+            "localVideoFilename": "",
+            "authors": "",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          },
+          {
+            "icon_tag_fa": "fas fa-leaf",
+            "color_tag": "#16a34a",
+            "title": "Cover Cropping for Beginners: Building Soil",
+            "youtubeId": "NbvDEAomVlk",
+            "description": "How to choose, plant, and manage...",
+            "localVideoFilename": "",
+            "authors": "",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          },
+          {
+            "icon_tag_fa": "fas fa-tractor",
+            "color_tag": "#78350f",
+            "title": " How to Start a No-Till Garden from Scratch ",
+            "youtubeId": "sdmqbhQo-yw",
+            "description": "how to start a garden...",
+            "localVideoFilename": "",
+            "authors": "",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          },
+          {
+            "icon_tag_fa": "fas fa-tractor",
+            "color_tag": "#78350f",
+            "title": "Introduction to No-Till Farming Techniques",
+            "youtubeId": "0xvp8sWY6Fk",
+            "description": "Minimizing soil disturbance...",
+            "localVideoFilename": "",
+            "authors": "",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          },
+          {
+            "icon_tag_fa": "fas fa-seedling",
+            "color_tag": "#fbbf24",
+            "title": "Seed Saving Basics for Common Vegetables",
+            "youtubeId": "wB8Z4LnHJ8I",
+            "description": "How to collect, process, and store seeds...",
+            "localVideoFilename": "",
+            "authors": "",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          }
+        ]
+      },
+      {
+        "uniqueId": "food-3",
+        "title": "Fungi, Algae, Insects, & Tech",
+        "description": "Inventory and evaluation of modern...",
+        "tags": [
+          "alternative protein",
+          "future food",
+          "mycology",
+          "entomophagy",
+          "algae",
+          "spirulina",
+          "BSFL",
+          "insect farming",
+          "mushroom cultivation",
+          "food technology",
+          "fermentation",
+          "nutrition",
+          "mycoprotein"
+        ],
+        "context": "Explores less conventional but potentially highly sustainable...",
+        "materials": [
+          "Mushroom Spawn/Substrate...",
+          "Algae Culture...",
+          "Insect Starter Colony...",
+          "Containers/Enclosures...",
+          "Harvesting Tools...",
+          "Processing Equipment..."
+        ],
+        "processSteps": [
+          "1. Select Organism...",
+          "2. Set Up Environment...",
+          "3. Inoculation/Starting...",
+          "4. Feeding & Maintenance...",
+          "5. Harvesting...",
+          "6. Processing..."
+        ],
+        "videos": [
+          {
+            "title": "Fungi",
+            "youtubeId": "QJcACw_--Nk",
+            "description": "Explores the realities...",
+            "icon_tag_fa": "fas fa-city",
+            "color_tag": "#6B7280",
+            "localVideoFilename": "",
+            "authors": "",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          },
+          {
+            "title": "Fungi as Edible Mycelium",
+            "youtubeId": "ofS9MFXFIBE",
+            "description": "Mycelial cake can be dried...",
+            "icon_tag_fa": "fas fa-utensils",
+            "color_tag": "#3B82F6",
+            "localVideoFilename": "",
+            "authors": "",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          },
+          {
+            "title": "Fungi in soil and ecosystem health",
+            "youtubeId": "4DMylpQqVKI",
+            "description": "Explores the role of fungal networks...",
+            "icon_tag_fa": "fas fa-seedling",
+            "color_tag": "#10B981",
+            "localVideoFilename": "",
+            "authors": "",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          },
+          {
+            "title": "Fungi for creating structural compoments",
+            "youtubeId": "x6buXYuvXWg",
+            "description": "Using mycelium (fungal roots)...",
+            "icon_tag_fa": "fas fa-cogs",
+            "color_tag": "#57534e",
+            "localVideoFilename": "",
+            "authors": "",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          },
+          {
+            "title": "Fungi Algae (Lichens)",
+            "youtubeId": "mD5jnxhne7o",
+            "description": "Introduction to lichens...",
+            "icon_tag_fa": "fas fa-tree",
+            "color_tag": "#ca8a04",
+            "localVideoFilename": "",
+            "authors": "",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          },
+          {
+            "title": "Fungi eating insects so people can eat it (Entomopathogenic Fungi)",
+            "youtubeId": "5eibeYxRt5w",
+            "description": "Explores fungi that naturally control...",
+            "icon_tag_fa": "fas fa-bug-slash",
+            "color_tag": "#7c2d12",
+            "localVideoFilename": "",
+            "authors": "",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          },
+          {
+            "title": "Is Microalgae the Sustainable Food of the Future?",
+            "youtubeId": "VFNS7Is6Td0",
+            "description": "Investigates microalgae...",
+            "icon_tag_fa": "fas fa-bacteria",
+            "color_tag": "#0d9488",
+            "localVideoFilename": "",
+            "authors": "",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          },
+          {
+            "title": "Mushroom Farming Basics",
+            "youtubeId": "9IFTMnftLgU",
+            "description": "Growing edible mushrooms...",
+            "icon_tag_fa": "fas fa-cloud",
+            "color_tag": "#a1a1aa",
+            "localVideoFilename": "",
+            "authors": "",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          },
+          {
+            "title": "Spirulina Micro-Farming at Home",
+            "youtubeId": "SMUf_pbxkcU",
+            "description": "Small-scale production...",
+            "icon_tag_fa": "fas fa-vial",
+            "color_tag": "#2dd4bf",
+            "localVideoFilename": "",
+            "authors": "",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          },
+          {
+            "title": "Insect Farming: Cricket Rearing Systems",
+            "youtubeId": "jp6OgNyTxA0",
+            "description": "Setting up efficient cricket production...",
+            "icon_tag_fa": "fas fa-bug",
+            "color_tag": "#3f3f46",
+            "localVideoFilename": "",
+            "authors": "",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          },
+          {
+            "title": "Black Soldier Fly Larvae Composting",
+            "youtubeId": "5j0YCyg0vpE",
+            "description": "Converting organic waste...",
+            "icon_tag_fa": "fas fa-recycle",
+            "color_tag": "#166534",
+            "localVideoFilename": "",
+            "authors": "",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          },
+          {
+            "title": "Ancient Grain Recovery and Cultivation",
+            "youtubeId": "Xqn490UuVQU",
+            "description": "Growing forgotten but nutritious...",
+            "icon_tag_fa": "fas fa-wheat-awn",
+            "color_tag": "#f59e0b",
+            "localVideoFilename": "",
+            "authors": "",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          },
+          {
+            "title": "Simple Automation for Small-Scale Agriculture",
+            "youtubeId": "eHMpkXiGEag",
+            "description": "Low-tech solutions...",
+            "icon_tag_fa": "fas fa-robot",
+            "color_tag": "#78716c",
+            "localVideoFilename": "",
+            "authors": "",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          }
+        ]
+      }
+    ]
+  }
+]

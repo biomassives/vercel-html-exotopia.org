@@ -1,0 +1,102 @@
+{
+  "galaxy_id": "proc-0260",
+  "galaxy_name": "proc-0260",
+  "galaxy_hubble": "E",
+  "cluster": "Perseus Cluster",
+  "cluster_slug": "perseus",
+  "cluster_dist_mpc": 73.0,
+  "environment": {
+    "description": "proc-0260 (E) situated in the dense cluster core, subject to strong ICM ram pressure. ICM stress 0.43; host population Teff ≈ 4357 K, Fe/H +0.17. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 2 star system(s), 2 planet(s) generated. Observational anchor: Chandra.",
+    "radiation_factor": 2.29,
+    "metallicity_feh": 0.174,
+    "agn": false,
+    "cooling_flow": true,
+    "ram_pressure": true,
+    "merger": false
+  },
+  "placement_notes": {
+    "v1": "proc-0260 (E) situated in the dense cluster core, subject to strong ICM ram pressure. ICM stress 0.43; host population Teff ≈ 4357 K, Fe/H +0.17. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 2 star system(s), 2 planet(s) generated. Observational anchor: Chandra.",
+    "open_questions": [],
+    "nft_zones": [
+      "core-zone-chandra"
+    ]
+  },
+  "generation": "v1-procedural",
+  "provenance": {
+    "script": "generate_cluster_starsystems.py",
+    "algorithm_version": "1.0",
+    "architecture_version": "1.0",
+    "seed_source": "proc-0260",
+    "generated_at": "2026-05-26T17:52:10.237215+00:00",
+    "inputs": {
+      "cluster_zone": "core",
+      "icm_stress": 0.429,
+      "metallicity_fe_h": 0.174,
+      "planet_bias": "ancient_cold_rocky",
+      "star_teff_k": 4357,
+      "max_orbit_au": 5.3,
+      "gas_giant_prob": 0.1,
+      "anchor_telescope": "Chandra",
+      "estimated_planets": 1
+    },
+    "observatory_report": "proc-0260 (E) situated in the dense cluster core, subject to strong ICM ram pressure. ICM stress 0.43; host population Teff ≈ 4357 K, Fe/H +0.17. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 2 star system(s), 2 planet(s) generated. Observational anchor: Chandra."
+  },
+  "star_systems": [
+    {
+      "id": "proc-0260-s001",
+      "label": "proc-0260 — Prime",
+      "spectral_type": "K7V",
+      "mass_sol": 0.644,
+      "feh": 0.164,
+      "age_gyr": 11.8,
+      "luminosity_sol": 0.17249,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Core zone; ICM stress 0.43; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "proc-0260-s001-b",
+          "label": "PROC-0260 1 B",
+          "type": "rocky_barren",
+          "radius_earth": 1.03,
+          "mass_earth": 2.42,
+          "period_days": 7.5,
+          "semi_major_au": 0.065,
+          "eq_temp_k": 643,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "proc-0260-s002",
+      "label": "proc-0260 — Beta",
+      "spectral_type": "K7V",
+      "mass_sol": 0.644,
+      "feh": 0.158,
+      "age_gyr": 11.4,
+      "luminosity_sol": 0.17249,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Core zone; ICM stress 0.43; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "proc-0260-s002-b",
+          "label": "PROC-0260 2 B",
+          "type": "rocky_barren",
+          "radius_earth": 0.62,
+          "mass_earth": 1.67,
+          "period_days": 7.5,
+          "semi_major_au": 0.065,
+          "eq_temp_k": 643,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 1146,
+    "seed": 2796
+  }
+}

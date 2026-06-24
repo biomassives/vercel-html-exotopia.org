@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>eCo oPs Checkin Uploader</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@3"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+</head>
+
+<body class="bg-gray-100 p-8">
+  <div id="app">
+    <div class="max-w-md mx-auto bg-white p-8 rounded-md shadow-md">
+      <h1 class="text-3xl font-bold mb-4 text-teal-500 bg-gradient-to-r from-blue-400 via-green-400 to-yellow-500">eCo oPs Checkin Uploader</h1>
+      <form @submit.prevent="uploadFile" class="mb-4">
+        <input type="file" @change="handleFileChange" accept="image/*" class="mb-2 p-2 border rounded-md">
+        <button type="submit" class="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600">Upload</button>
+      </form>
+
+      <!-- Uploading dialogue -->
+      <div v-if="uploading" class="mb-4">
+        <p class="text-teal-500">Uploading...</p>
+      </div>
+
+      <!-- File uploaded successfully dialogue -->
+      <div v-if="cid" class="mb-4">
+        <p class="text-green-500">File uploaded successfully!</p>
+        <p><strong>CID:</strong> {{ cid }}</p>
+        <p>View on IPFS: <a :href="'https://ipfs.io/ipfs/' + cid" target="_blank" class="text-blue-500">https://ipfs.io/ipfs/{{ cid }}</a></p>
+      </div>
+
+      <!-- Error handling -->
+      <div v-if="uploadError" class="mb-4">
+        <p class="text-red-500">{{ uploadError }}</p>
+      </div>
+
+      <!-- Display the image on the page -->
+      <div v-if="file" class="mb-4">
+        <h2 class="text-xl font-semibold mb-2">Preview</h2>
+        <img :src="getFileObjectURL(file)" alt="Uploaded Image" class="mb-4 border rounded-md" style="max-width: 65%;">
+      </div>
+
+      <div v-if="cidResponse" class="mb-4">
+        <h2 class="text-xl font-semibold mb-2">Image Display with Metadata</h2>
+        <img :src="cidResponse.url" alt="Uploaded Image" class="mb-4 border rounded-md" style="max-width: 65%;">
+        <p><strong>Filename:</strong> {{ cidResponse.filename }}</p>
+        <p><strong>CID:</strong> {{ cidResponse.cid }}</p>
+        <p><strong>Description:</strong> {{ checkinData.description }}</p>
+        <!-- Add other metadata fields as needed -->
+        <a :href="cidResponse.url" target="_blank" class="text-blue-500">View File</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          file: null,
+          cid: null,
+          cidResponse: null,
+          checkinData: {
+            description: '',
+            // Add other metadata fields as needed
+          },
+          uploading: false,
+          uploadError: null,
+        };
+      },
+      methods: {
+        handleFileChange(event) {
+          this.file = event.target.files[0];
+        },
+        async uploadFile() {
+          this.uploading = true;
+          this.uploadError = null;
+
+          const formData = new FormData();
+          formData.append('file', this.file);
+
+          const apiKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDZhRmQ5M0JiNzQwM2RlQ2Y4NGVmRWRCRjlBNUFkNWM5RUQ1YjhFRjQiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY0NzU1NTQ4NTA4MSwibmFtZSI6Inlvb2NhdHMifQ.aZot4G1rrH-ED9tXIV9VAa3OCS87g6nBQEM1paBiIxI'; // Replace with your NFT.storage API key
+
+          try {
+            const response = await fetch('https://api.nft.storage/upload', {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${apiKey}`,
+              },
+              body: formData,
+            });
+
+            if (!response.ok) {
+              throw new Error(`Failed to upload file. HTTP status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            this.cid = result.value.cid;
+
+            // Retrieve detailed information about the uploaded file
+            const metadataResponse = await fetch(`https://api.nft.storage/${this.cid}`, {
+              headers: {
+                'Authorization': `Bearer ${apiKey}`,
+              },
+            });
+
+            if (!metadataResponse.ok) {
+              throw new Error(`Failed to retrieve metadata. HTTP status: ${metadataResponse.status}`);
+            }
+
+            this.cidResponse = await metadataResponse.json();
+          } catch (error) {
+            console.error('Error uploading file:', error);
+            this.uploadError = 'Upload failed. Please try again later.';
+          } finally {
+            this.uploading = false;
+          }
+        },
+        getFileObjectURL(file) {
+          if (typeof URL !== 'undefined' && typeof URL.createObjectURL === 'function') {
+            return URL.createObjectURL(file);
+          } else {
+            // Fallback method for browsers that don't support URL.createObjectURL
+            return window.webkitURL.createObjectURL(file);
+          }
+        },
+      },
+    });
+
+    app.mount('#app');
+  </script>
+</body>
+
+</html>
+

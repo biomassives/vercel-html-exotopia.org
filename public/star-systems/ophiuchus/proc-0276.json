@@ -1,0 +1,114 @@
+{
+  "galaxy_id": "proc-0276",
+  "galaxy_name": "proc-0276",
+  "galaxy_hubble": "E",
+  "cluster": "Ophiuchus Cluster",
+  "cluster_slug": "ophiuchus",
+  "cluster_dist_mpc": 120.0,
+  "environment": {
+    "description": "proc-0276 (E) situated in the cluster outskirts, where ICM stripping is moderate. ICM stress 0.19; host population Teff ≈ 3856 K, Fe/H +0.03. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 2 star system(s), 3 planet(s) generated. Observational anchor: HST/ATLAS.",
+    "radiation_factor": 1.58,
+    "metallicity_feh": 0.03,
+    "agn": false,
+    "cooling_flow": false,
+    "ram_pressure": false,
+    "merger": false
+  },
+  "placement_notes": {
+    "v1": "proc-0276 (E) situated in the cluster outskirts, where ICM stripping is moderate. ICM stress 0.19; host population Teff ≈ 3856 K, Fe/H +0.03. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 2 star system(s), 3 planet(s) generated. Observational anchor: HST/ATLAS.",
+    "open_questions": [],
+    "nft_zones": [
+      "outskirts-zone-hst-atlas"
+    ]
+  },
+  "generation": "v1-procedural",
+  "provenance": {
+    "script": "generate_cluster_starsystems.py",
+    "algorithm_version": "1.0",
+    "architecture_version": "1.0",
+    "seed_source": "proc-0276",
+    "generated_at": "2026-05-26T17:52:09.549273+00:00",
+    "inputs": {
+      "cluster_zone": "outskirts",
+      "icm_stress": 0.193,
+      "metallicity_fe_h": 0.03,
+      "planet_bias": "ancient_cold_rocky",
+      "star_teff_k": 3856,
+      "max_orbit_au": 43.0,
+      "gas_giant_prob": 0.22,
+      "anchor_telescope": "HST/ATLAS",
+      "estimated_planets": 3
+    },
+    "observatory_report": "proc-0276 (E) situated in the cluster outskirts, where ICM stripping is moderate. ICM stress 0.19; host population Teff ≈ 3856 K, Fe/H +0.03. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 2 star system(s), 3 planet(s) generated. Observational anchor: HST/ATLAS."
+  },
+  "star_systems": [
+    {
+      "id": "proc-0276-s001",
+      "label": "proc-0276 — Prime",
+      "spectral_type": "M0V",
+      "mass_sol": 0.521,
+      "feh": 0.032,
+      "age_gyr": 7.6,
+      "luminosity_sol": 0.07347,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Outskirts zone; ICM stress 0.19; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "proc-0276-s001-b",
+          "label": "PROC-0276 1 B",
+          "type": "hot_rocky",
+          "radius_earth": 0.96,
+          "mass_earth": 0.96,
+          "period_days": 6.7,
+          "semi_major_au": 0.056,
+          "eq_temp_k": 560,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "proc-0276-s001-c",
+          "label": "PROC-0276 1 C",
+          "type": "super_earth",
+          "radius_earth": 1.63,
+          "mass_earth": 8.95,
+          "period_days": 14.0,
+          "semi_major_au": 0.0914,
+          "eq_temp_k": 438,
+          "atmosphere": "thick_co2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "proc-0276-s002",
+      "label": "proc-0276 — Beta",
+      "spectral_type": "M0V",
+      "mass_sol": 0.521,
+      "feh": 0.038,
+      "age_gyr": 8.6,
+      "luminosity_sol": 0.07347,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Outskirts zone; ICM stress 0.19; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "proc-0276-s002-b",
+          "label": "PROC-0276 2 B",
+          "type": "hot_rocky",
+          "radius_earth": 1.02,
+          "mass_earth": 2.02,
+          "period_days": 6.7,
+          "semi_major_au": 0.056,
+          "eq_temp_k": 560,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 1341,
+    "seed": 2858
+  }
+}

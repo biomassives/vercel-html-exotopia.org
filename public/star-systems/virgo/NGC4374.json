@@ -1,0 +1,102 @@
+{
+  "galaxy_id": "NGC4374",
+  "galaxy_name": "M84",
+  "galaxy_hubble": "E",
+  "cluster": "Virgo Cluster",
+  "cluster_slug": "virgo",
+  "cluster_dist_mpc": 16.5,
+  "environment": {
+    "description": "NGC4374 (E) situated in the cluster outskirts, where ICM stripping is moderate. ICM stress 0.05; host population Teff ≈ 4596 K, Fe/H +0.22. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 2 star system(s), 2 planet(s) generated. Observational anchor: HST/ATLAS.",
+    "radiation_factor": 1.16,
+    "metallicity_feh": 0.217,
+    "agn": false,
+    "cooling_flow": false,
+    "ram_pressure": false,
+    "merger": false
+  },
+  "placement_notes": {
+    "v1": "NGC4374 (E) situated in the cluster outskirts, where ICM stripping is moderate. ICM stress 0.05; host population Teff ≈ 4596 K, Fe/H +0.22. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 2 star system(s), 2 planet(s) generated. Observational anchor: HST/ATLAS.",
+    "open_questions": [],
+    "nft_zones": [
+      "outskirts-zone-hst-atlas"
+    ]
+  },
+  "generation": "v1-procedural",
+  "provenance": {
+    "script": "generate_cluster_starsystems.py",
+    "algorithm_version": "1.0",
+    "architecture_version": "1.0",
+    "seed_source": "NGC4374",
+    "generated_at": "2026-05-26T17:51:34.780100+00:00",
+    "inputs": {
+      "cluster_zone": "outskirts",
+      "icm_stress": 0.054,
+      "metallicity_fe_h": 0.217,
+      "planet_bias": "ancient_cold_rocky",
+      "star_teff_k": 4596,
+      "max_orbit_au": 19.9,
+      "gas_giant_prob": 0.22,
+      "anchor_telescope": "HST/ATLAS",
+      "estimated_planets": 2
+    },
+    "observatory_report": "NGC4374 (E) situated in the cluster outskirts, where ICM stripping is moderate. ICM stress 0.05; host population Teff ≈ 4596 K, Fe/H +0.22. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 2 star system(s), 2 planet(s) generated. Observational anchor: HST/ATLAS."
+  },
+  "star_systems": [
+    {
+      "id": "ngc4374-s001",
+      "label": "M84 — Prime",
+      "spectral_type": "K5V",
+      "mass_sol": 0.746,
+      "feh": 0.193,
+      "age_gyr": 8.0,
+      "luminosity_sol": 0.31041,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Outskirts zone; ICM stress 0.05; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "ngc4374-s001-b",
+          "label": "NGC4374 1 B",
+          "type": "hot_rocky",
+          "radius_earth": 1.03,
+          "mass_earth": 3.11,
+          "period_days": 8.3,
+          "semi_major_au": 0.073,
+          "eq_temp_k": 703,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "ngc4374-s002",
+      "label": "M84 — Beta",
+      "spectral_type": "K7V",
+      "mass_sol": 0.646,
+      "feh": 0.237,
+      "age_gyr": 8.3,
+      "luminosity_sol": 0.17367,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Outskirts zone; ICM stress 0.05; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "ngc4374-s002-b",
+          "label": "NGC4374 2 B",
+          "type": "hot_rocky",
+          "radius_earth": 1.19,
+          "mass_earth": 0.62,
+          "period_days": 7.5,
+          "semi_major_au": 0.065,
+          "eq_temp_k": 645,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 1455,
+    "seed": 1578
+  }
+}

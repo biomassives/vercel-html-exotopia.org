@@ -1,0 +1,112 @@
+{
+  "galaxy_id": "NGC0221",
+  "galaxy_name": "M32 — NGC 221",
+  "galaxy_hubble": "E",
+  "cluster": "Andromeda Group",
+  "cluster_slug": "andromeda-group",
+  "cluster_dist_mpc": 0.77,
+  "environment": {
+    "description": "Compact elliptical satellite of M31; tidal stripping has removed outer regions; old metal-rich stellar population",
+    "radiation_factor": 1.1,
+    "metallicity_feh": 0.2,
+    "agn": false,
+    "cooling_flow": false,
+    "ram_pressure": false,
+    "merger": false
+  },
+  "placement_notes": {
+    "v0": "Two systems in M32 stellar body. Compact elliptical — tidal stripping means no outer stellar disk. Old metal-rich K/M star population: rocky worlds expected, no gas giants (old stars, migration complete). M31 tidal field may have stripped or perturbed outer planetary orbits.",
+    "open_questions": [
+      "M32 tidal radius < 1 kpc — outer planetary orbits beyond 10 AU may be unstable",
+      "Does M32 harbor a black hole? If so, inner system radiation environment?"
+    ],
+    "nft_zones": [
+      "core-zone (most metal-rich, compact settlement)"
+    ]
+  },
+  "generation": "v0-hand",
+  "star_systems": [
+    {
+      "id": "m32-s001",
+      "label": "M32 Station Alpha",
+      "spectral_type": "K1V",
+      "mass_sol": 0.84,
+      "feh": 0.18,
+      "age_gyr": 11.0,
+      "luminosity_sol": 0.48,
+      "coord_system": "exo-surface-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Old metal-rich K-star; tidal environment; compact rocky system",
+      "planets": [
+        {
+          "id": "m32-s001-b",
+          "label": "M32 Alpha I",
+          "type": "lava_world",
+          "radius_earth": 1.2,
+          "mass_earth": 2.0,
+          "period_days": 7.5,
+          "semi_major_au": 0.055,
+          "eq_temp_k": 1820,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "m32-s001-c",
+          "label": "M32 Alpha II",
+          "type": "rocky_barren",
+          "radius_earth": 0.88,
+          "mass_earth": 0.72,
+          "period_days": 112,
+          "semi_major_au": 0.47,
+          "eq_temp_k": 318,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical",
+          "notes": "Marginally temperate; tidal perturbations from M31 may affect orbit stability"
+        }
+      ]
+    },
+    {
+      "id": "m32-s002",
+      "label": "M32 Station Beta",
+      "spectral_type": "M2V",
+      "mass_sol": 0.48,
+      "feh": 0.14,
+      "age_gyr": 10.5,
+      "luminosity_sol": 0.05,
+      "coord_system": "exo-surface-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Old metal-rich M-dwarf; compact system; tidally locked inner planet",
+      "planets": [
+        {
+          "id": "m32-s002-b",
+          "label": "M32 Beta I",
+          "type": "rocky_barren",
+          "radius_earth": 0.95,
+          "mass_earth": 0.88,
+          "period_days": 18.3,
+          "semi_major_au": 0.072,
+          "eq_temp_k": 258,
+          "atmosphere": "thin_n2",
+          "settlement_tier": "theoretical",
+          "notes": "Tidally locked; terminator-zone temperate band; old metal-rich rocky"
+        },
+        {
+          "id": "m32-s002-c",
+          "label": "M32 Beta II",
+          "type": "ice_world",
+          "radius_earth": 0.6,
+          "mass_earth": 0.22,
+          "period_days": 72,
+          "semi_major_au": 0.19,
+          "eq_temp_k": 98,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 1484,
+    "seed": 1506
+  }
+}

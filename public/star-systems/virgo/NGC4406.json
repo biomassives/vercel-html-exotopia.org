@@ -1,0 +1,113 @@
+{
+  "galaxy_id": "NGC4406",
+  "galaxy_name": "M86 — NGC 4406",
+  "galaxy_hubble": "E",
+  "cluster": "Virgo Cluster",
+  "cluster_slug": "virgo",
+  "cluster_dist_mpc": 16.5,
+  "environment": {
+    "description": "Giant elliptical; uniquely approaching us at -244 km/s (blueshifted); falling into Virgo from far side; normal ICM environment",
+    "radiation_factor": 1.4,
+    "metallicity_feh": 0.22,
+    "agn": false,
+    "cooling_flow": false,
+    "ram_pressure": true,
+    "merger": false
+  },
+  "placement_notes": {
+    "v0": "Two systems in M86 outer stellar body. M86 is notably APPROACHING us (blueshifted by -244 km/s) — infalling from the far side of the Virgo cluster. Ram pressure from ICM wind acts on interstellar gas. Old metal-rich elliptical stars: rocky world bias, K hosts dominant. ICM ram-pressure wind may strip any residual interstellar material from young-star zones.",
+    "open_questions": [
+      "M86 approaches us faster than expected — will it pass through the cluster core?",
+      "X-ray plume detected behind M86 from ram-pressure — does this affect very outer planetary orbits?"
+    ],
+    "nft_zones": [
+      "stellar-core-zone (sheltered from ram pressure)",
+      "outer-zone-windward (ICM ram-pressure interface)"
+    ]
+  },
+  "generation": "v0-hand",
+  "star_systems": [
+    {
+      "id": "m86-s001",
+      "label": "Virgo Blueshift Station Alpha",
+      "spectral_type": "K2V",
+      "mass_sol": 0.81,
+      "feh": 0.2,
+      "age_gyr": 11.5,
+      "luminosity_sol": 0.43,
+      "coord_system": "exo-surface-v1",
+      "settlement_tier": "frontier",
+      "environment_note": "Core elliptical K-dwarf; sheltered from ICM ram-pressure wind",
+      "planets": [
+        {
+          "id": "m86-s001-b",
+          "label": "Blueshift Station I",
+          "type": "rocky_barren",
+          "radius_earth": 0.88,
+          "mass_earth": 0.72,
+          "period_days": 65,
+          "semi_major_au": 0.28,
+          "eq_temp_k": 545,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "m86-s001-c",
+          "label": "Blueshift Station II",
+          "type": "super_earth",
+          "radius_earth": 1.45,
+          "mass_earth": 3.8,
+          "period_days": 340,
+          "semi_major_au": 0.97,
+          "eq_temp_k": 265,
+          "atmosphere": "n2_co2",
+          "settlement_tier": "frontier",
+          "notes": "Cool temperate super-earth in K-dwarf HZ; M86 approach motion gives time-variable Doppler shift"
+        },
+        {
+          "id": "m86-s001-d",
+          "label": "Blueshift Station III",
+          "type": "mini_neptune",
+          "radius_earth": 3.0,
+          "mass_earth": 12.4,
+          "period_days": 880,
+          "semi_major_au": 2.1,
+          "eq_temp_k": 165,
+          "atmosphere": "h2_he",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "m86-s002",
+      "label": "Virgo Blueshift Station Beta",
+      "spectral_type": "M3V",
+      "mass_sol": 0.42,
+      "feh": 0.18,
+      "age_gyr": 12.0,
+      "luminosity_sol": 0.03,
+      "coord_system": "exo-surface-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Outer halo M-dwarf; windward side faces ICM ram-pressure flow",
+      "planets": [
+        {
+          "id": "m86-s002-b",
+          "label": "Blueshift Station Beta I",
+          "type": "rocky_barren",
+          "radius_earth": 0.78,
+          "mass_earth": 0.5,
+          "period_days": 26,
+          "semi_major_au": 0.095,
+          "eq_temp_k": 210,
+          "atmosphere": "trace",
+          "settlement_tier": "theoretical",
+          "notes": "Tidally locked; minimal atmosphere due to M-dwarf flaring + ICM proximity"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 1434,
+    "seed": 1555
+  }
+}

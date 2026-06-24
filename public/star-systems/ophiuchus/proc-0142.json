@@ -1,0 +1,200 @@
+{
+  "galaxy_id": "proc-0142",
+  "galaxy_name": "proc-0142",
+  "galaxy_hubble": "Sa",
+  "cluster": "Ophiuchus Cluster",
+  "cluster_slug": "ophiuchus",
+  "cluster_dist_mpc": 120.0,
+  "environment": {
+    "description": "proc-0142 (Sa) situated in the infall region at the cluster periphery, largely ICM-free. ICM stress 0.06; host population Teff ≈ 6638 K, Fe/H -0.06. Architecture favours wide-orbit gas giants with potential moon settlement zones. 3 star system(s), 9 planet(s) generated. Observational anchor: JWST.",
+    "radiation_factor": 1.19,
+    "metallicity_feh": -0.06,
+    "agn": false,
+    "cooling_flow": false,
+    "ram_pressure": false,
+    "merger": false
+  },
+  "placement_notes": {
+    "v1": "proc-0142 (Sa) situated in the infall region at the cluster periphery, largely ICM-free. ICM stress 0.06; host population Teff ≈ 6638 K, Fe/H -0.06. Architecture favours wide-orbit gas giants with potential moon settlement zones. 3 star system(s), 9 planet(s) generated. Observational anchor: JWST.",
+    "open_questions": [],
+    "nft_zones": [
+      "infall-zone-jwst"
+    ]
+  },
+  "generation": "v1-procedural",
+  "provenance": {
+    "script": "generate_cluster_starsystems.py",
+    "algorithm_version": "1.0",
+    "architecture_version": "1.0",
+    "seed_source": "proc-0142",
+    "generated_at": "2026-05-26T17:52:09.170755+00:00",
+    "inputs": {
+      "cluster_zone": "infall",
+      "icm_stress": 0.064,
+      "metallicity_fe_h": -0.06,
+      "planet_bias": "jovian_wide",
+      "star_teff_k": 6638,
+      "max_orbit_au": 72.4,
+      "gas_giant_prob": 0.661,
+      "anchor_telescope": "JWST",
+      "estimated_planets": 9
+    },
+    "observatory_report": "proc-0142 (Sa) situated in the infall region at the cluster periphery, largely ICM-free. ICM stress 0.06; host population Teff ≈ 6638 K, Fe/H -0.06. Architecture favours wide-orbit gas giants with potential moon settlement zones. 3 star system(s), 9 planet(s) generated. Observational anchor: JWST."
+  },
+  "star_systems": [
+    {
+      "id": "proc-0142-s001",
+      "label": "proc-0142 — Prime",
+      "spectral_type": "F5V",
+      "mass_sol": 1.317,
+      "feh": -0.066,
+      "age_gyr": 6.1,
+      "luminosity_sol": 3.00692,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Infall zone; ICM stress 0.06; bias: jovian_wide",
+      "planets": [
+        {
+          "id": "proc-0142-s001-b",
+          "label": "PROC-0142 1 B",
+          "type": "hot_rocky",
+          "radius_earth": 1.37,
+          "mass_earth": 1.69,
+          "period_days": 35.1,
+          "semi_major_au": 0.23,
+          "eq_temp_k": 699,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "proc-0142-s001-c",
+          "label": "PROC-0142 1 C",
+          "type": "gas_giant",
+          "radius_earth": 8.45,
+          "mass_earth": 446.94,
+          "period_days": 112.8,
+          "semi_major_au": 0.5009,
+          "eq_temp_k": 473,
+          "atmosphere": "h2_he_ch4",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "proc-0142-s001-d",
+          "label": "PROC-0142 1 D",
+          "type": "gas_giant",
+          "radius_earth": 12.98,
+          "mass_earth": 446.71,
+          "period_days": 399.6,
+          "semi_major_au": 1.1639,
+          "eq_temp_k": 310,
+          "atmosphere": "h2_he_ch4",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "proc-0142-s002",
+      "label": "proc-0142 — Beta",
+      "spectral_type": "F5V",
+      "mass_sol": 1.317,
+      "feh": -0.067,
+      "age_gyr": 7.9,
+      "luminosity_sol": 3.00692,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Infall zone; ICM stress 0.06; bias: jovian_wide",
+      "planets": [
+        {
+          "id": "proc-0142-s002-b",
+          "label": "PROC-0142 2 B",
+          "type": "hot_rocky",
+          "radius_earth": 1.35,
+          "mass_earth": 3.3,
+          "period_days": 35.1,
+          "semi_major_au": 0.23,
+          "eq_temp_k": 699,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "proc-0142-s002-c",
+          "label": "PROC-0142 2 C",
+          "type": "gas_giant",
+          "radius_earth": 9.62,
+          "mass_earth": 385.9,
+          "period_days": 126.4,
+          "semi_major_au": 0.5402,
+          "eq_temp_k": 456,
+          "atmosphere": "h2_he_ch4",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "proc-0142-s002-d",
+          "label": "PROC-0142 2 D",
+          "type": "gas_giant",
+          "radius_earth": 9.83,
+          "mass_earth": 399.73,
+          "period_days": 459.3,
+          "semi_major_au": 1.277,
+          "eq_temp_k": 296,
+          "atmosphere": "h2_he_ch4",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "proc-0142-s003",
+      "label": "proc-0142 — Gamma",
+      "spectral_type": "F5V",
+      "mass_sol": 1.317,
+      "feh": -0.039,
+      "age_gyr": 7.1,
+      "luminosity_sol": 3.00692,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Infall zone; ICM stress 0.06; bias: jovian_wide",
+      "planets": [
+        {
+          "id": "proc-0142-s003-b",
+          "label": "PROC-0142 3 B",
+          "type": "hot_rocky",
+          "radius_earth": 1.26,
+          "mass_earth": 3.49,
+          "period_days": 35.1,
+          "semi_major_au": 0.23,
+          "eq_temp_k": 699,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "proc-0142-s003-c",
+          "label": "PROC-0142 3 C",
+          "type": "gas_giant",
+          "radius_earth": 10.44,
+          "mass_earth": 178.66,
+          "period_days": 96.8,
+          "semi_major_au": 0.4524,
+          "eq_temp_k": 498,
+          "atmosphere": "h2_he_ch4",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "proc-0142-s003-d",
+          "label": "PROC-0142 3 D",
+          "type": "gas_giant",
+          "radius_earth": 12.46,
+          "mass_earth": 302.53,
+          "period_days": 338.1,
+          "semi_major_au": 1.0411,
+          "eq_temp_k": 328,
+          "atmosphere": "h2_he_ch4",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 1930,
+    "seed": 2791
+  }
+}

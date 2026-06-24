@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nested Spheres Visualization</title>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.module.js"></script>
+</head>
+<body>
+    <div id="three-js-container" style="width: 100vw; height: 100vh;"></div>
+ 
+
+
+    
+    <script type="module">
+        import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.module.js';
+
+        // Scene setup
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('three-js-container').appendChild(renderer.domElement);
+
+        // Sphere creation function
+        function createSphere(radius, color, positionZ) {
+            const geometry = new THREE.SphereGeometry(radius, 32, 32);
+            const material = new THREE.MeshBasicMaterial({ color: color, wireframe: true });
+            const sphere = new THREE.Mesh(geometry, material);
+            sphere.position.z = positionZ;
+            scene.add(sphere);
+        }
+
+        // Create nested spheres
+        createSphere(5, 'skyblue', 0); // Outermost sphere
+        createSphere(3.75, 'steelblue', 0); // Next nested sphere
+        createSphere(2.5, 'slateblue', 0); // Next nested sphere
+        createSphere(1.25, 'darkblue', 0); // Innermost sphere
+
+        // Camera position
+        camera.position.z = 0;
+
+
+
+
+
+        
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+
+        animate();
+    </script>
+</body>
+</html>

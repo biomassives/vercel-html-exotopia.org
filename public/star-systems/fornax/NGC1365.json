@@ -1,0 +1,252 @@
+{
+  "galaxy_id": "NGC1365",
+  "galaxy_name": "NGC1365",
+  "galaxy_hubble": "Sb",
+  "cluster": "Fornax Cluster",
+  "cluster_slug": "fornax",
+  "cluster_dist_mpc": 19.0,
+  "environment": {
+    "description": "NGC1365 (Sb) situated in the infall region at the cluster periphery, largely ICM-free. ICM stress 0.01; host population Teff ≈ 6177 K, Fe/H +0.12. Architecture favours wide-orbit gas giants with potential moon settlement zones. 5 star system(s), 11 planet(s) generated. Observational anchor: JWST.",
+    "radiation_factor": 1.03,
+    "metallicity_feh": 0.122,
+    "agn": false,
+    "cooling_flow": false,
+    "ram_pressure": false,
+    "merger": false
+  },
+  "placement_notes": {
+    "v1": "NGC1365 (Sb) situated in the infall region at the cluster periphery, largely ICM-free. ICM stress 0.01; host population Teff ≈ 6177 K, Fe/H +0.12. Architecture favours wide-orbit gas giants with potential moon settlement zones. 5 star system(s), 11 planet(s) generated. Observational anchor: JWST.",
+    "open_questions": [],
+    "nft_zones": [
+      "infall-zone-jwst"
+    ]
+  },
+  "generation": "v1-procedural",
+  "provenance": {
+    "script": "generate_cluster_starsystems.py",
+    "algorithm_version": "1.0",
+    "architecture_version": "1.0",
+    "seed_source": "NGC1365",
+    "generated_at": "2026-05-26T17:52:07.319292+00:00",
+    "inputs": {
+      "cluster_zone": "infall",
+      "icm_stress": 0.011,
+      "metallicity_fe_h": 0.122,
+      "planet_bias": "jovian_wide",
+      "star_teff_k": 6177,
+      "max_orbit_au": 84.9,
+      "gas_giant_prob": 0.65,
+      "anchor_telescope": "JWST",
+      "estimated_planets": 11
+    },
+    "observatory_report": "NGC1365 (Sb) situated in the infall region at the cluster periphery, largely ICM-free. ICM stress 0.01; host population Teff ≈ 6177 K, Fe/H +0.12. Architecture favours wide-orbit gas giants with potential moon settlement zones. 5 star system(s), 11 planet(s) generated. Observational anchor: JWST."
+  },
+  "star_systems": [
+    {
+      "id": "ngc1365-s001",
+      "label": "NGC1365 — Prime",
+      "spectral_type": "F9V",
+      "mass_sol": 1.146,
+      "feh": 0.136,
+      "age_gyr": 7.9,
+      "luminosity_sol": 1.72217,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "frontier",
+      "environment_note": "Infall zone; ICM stress 0.01; bias: jovian_wide",
+      "planets": [
+        {
+          "id": "ngc1365-s001-b",
+          "label": "NGC1365 1 B",
+          "type": "rocky_barren",
+          "radius_earth": 0.63,
+          "mass_earth": 0.55,
+          "period_days": 28.3,
+          "semi_major_au": 0.19,
+          "eq_temp_k": 669,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "ngc1365-s001-c",
+          "label": "NGC1365 1 C",
+          "type": "gas_giant",
+          "radius_earth": 11.22,
+          "mass_earth": 424.8,
+          "period_days": 98.2,
+          "semi_major_au": 0.4358,
+          "eq_temp_k": 442,
+          "atmosphere": "h2_he_ch4",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "ngc1365-s001-d",
+          "label": "NGC1365 1 D",
+          "type": "super_earth",
+          "radius_earth": 2.03,
+          "mass_earth": 11.78,
+          "period_days": 359.9,
+          "semi_major_au": 1.0363,
+          "eq_temp_k": 286,
+          "atmosphere": "thick_n2_co2",
+          "settlement_tier": "frontier"
+        }
+      ]
+    },
+    {
+      "id": "ngc1365-s002",
+      "label": "NGC1365 — Beta",
+      "spectral_type": "F9V",
+      "mass_sol": 1.146,
+      "feh": 0.11,
+      "age_gyr": 6.3,
+      "luminosity_sol": 1.72217,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Infall zone; ICM stress 0.01; bias: jovian_wide",
+      "planets": [
+        {
+          "id": "ngc1365-s002-b",
+          "label": "NGC1365 2 B",
+          "type": "hot_rocky",
+          "radius_earth": 1.15,
+          "mass_earth": 1.49,
+          "period_days": 28.3,
+          "semi_major_au": 0.19,
+          "eq_temp_k": 669,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "ngc1365-s002-c",
+          "label": "NGC1365 2 C",
+          "type": "terran",
+          "radius_earth": 1.26,
+          "mass_earth": 1.91,
+          "period_days": 95.3,
+          "semi_major_au": 0.4272,
+          "eq_temp_k": 446,
+          "atmosphere": "n2_o2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "ngc1365-s003",
+      "label": "NGC1365 — Gamma",
+      "spectral_type": "F9V",
+      "mass_sol": 1.146,
+      "feh": 0.141,
+      "age_gyr": 6.7,
+      "luminosity_sol": 1.72217,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Infall zone; ICM stress 0.01; bias: jovian_wide",
+      "planets": [
+        {
+          "id": "ngc1365-s003-b",
+          "label": "NGC1365 3 B",
+          "type": "gas_giant",
+          "radius_earth": 11.46,
+          "mass_earth": 392.72,
+          "period_days": 28.3,
+          "semi_major_au": 0.19,
+          "eq_temp_k": 669,
+          "atmosphere": "h2_he_ch4",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "ngc1365-s003-c",
+          "label": "NGC1365 3 C",
+          "type": "gas_giant",
+          "radius_earth": 9.22,
+          "mass_earth": 389.43,
+          "period_days": 77.9,
+          "semi_major_au": 0.3735,
+          "eq_temp_k": 477,
+          "atmosphere": "h2_he_ch4",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "ngc1365-s004",
+      "label": "NGC1365 — Delta",
+      "spectral_type": "F9V",
+      "mass_sol": 1.146,
+      "feh": 0.119,
+      "age_gyr": 6.9,
+      "luminosity_sol": 1.72217,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Infall zone; ICM stress 0.01; bias: jovian_wide",
+      "planets": [
+        {
+          "id": "ngc1365-s004-b",
+          "label": "NGC1365 4 B",
+          "type": "hot_rocky",
+          "radius_earth": 0.86,
+          "mass_earth": 2.0,
+          "period_days": 28.3,
+          "semi_major_au": 0.19,
+          "eq_temp_k": 669,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "ngc1365-s004-c",
+          "label": "NGC1365 4 C",
+          "type": "gas_giant",
+          "radius_earth": 9.97,
+          "mass_earth": 176.24,
+          "period_days": 89.5,
+          "semi_major_au": 0.4099,
+          "eq_temp_k": 455,
+          "atmosphere": "h2_he_ch4",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "ngc1365-s005",
+      "label": "NGC1365 — Epsilon",
+      "spectral_type": "F9V",
+      "mass_sol": 1.146,
+      "feh": 0.124,
+      "age_gyr": 7.2,
+      "luminosity_sol": 1.72217,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Infall zone; ICM stress 0.01; bias: jovian_wide",
+      "planets": [
+        {
+          "id": "ngc1365-s005-b",
+          "label": "NGC1365 5 B",
+          "type": "rocky_barren",
+          "radius_earth": 0.7,
+          "mass_earth": 1.02,
+          "period_days": 28.3,
+          "semi_major_au": 0.19,
+          "eq_temp_k": 669,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "ngc1365-s005-c",
+          "label": "NGC1365 5 C",
+          "type": "terran",
+          "radius_earth": 1.1,
+          "mass_earth": 1.52,
+          "period_days": 101.0,
+          "semi_major_au": 0.4442,
+          "eq_temp_k": 437,
+          "atmosphere": "n2_o2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 2485,
+    "seed": 1567
+  }
+}

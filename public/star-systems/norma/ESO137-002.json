@@ -1,0 +1,164 @@
+{
+  "galaxy_id": "ESO137-002",
+  "galaxy_name": "ESO137-002",
+  "galaxy_hubble": "Sa",
+  "cluster": "Norma Cluster",
+  "cluster_slug": "norma",
+  "cluster_dist_mpc": 65.0,
+  "environment": {
+    "description": "ESO137-002 (Sa) situated in the cluster outskirts, where ICM stripping is moderate. ICM stress 0.14; host population Teff ≈ 5613 K, Fe/H +0.06. Architecture favours mixed architecture — inner rocky worlds alongside outer ice giants or mini-Neptunes. 3 star system(s), 6 planet(s) generated. Observational anchor: JWST.",
+    "radiation_factor": 1.43,
+    "metallicity_feh": 0.06,
+    "agn": false,
+    "cooling_flow": false,
+    "ram_pressure": false,
+    "merger": false
+  },
+  "placement_notes": {
+    "v1": "ESO137-002 (Sa) situated in the cluster outskirts, where ICM stripping is moderate. ICM stress 0.14; host population Teff ≈ 5613 K, Fe/H +0.06. Architecture favours mixed architecture — inner rocky worlds alongside outer ice giants or mini-Neptunes. 3 star system(s), 6 planet(s) generated. Observational anchor: JWST.",
+    "open_questions": [],
+    "nft_zones": [
+      "outskirts-zone-jwst"
+    ]
+  },
+  "generation": "v1-procedural",
+  "provenance": {
+    "script": "generate_cluster_starsystems.py",
+    "algorithm_version": "1.0",
+    "architecture_version": "1.0",
+    "seed_source": "ESO137-002",
+    "generated_at": "2026-05-26T17:52:08.278371+00:00",
+    "inputs": {
+      "cluster_zone": "outskirts",
+      "icm_stress": 0.144,
+      "metallicity_fe_h": 0.06,
+      "planet_bias": "mixed",
+      "star_teff_k": 5613,
+      "max_orbit_au": 32.0,
+      "gas_giant_prob": 0.4,
+      "anchor_telescope": "JWST",
+      "estimated_planets": 6
+    },
+    "observatory_report": "ESO137-002 (Sa) situated in the cluster outskirts, where ICM stripping is moderate. ICM stress 0.14; host population Teff ≈ 5613 K, Fe/H +0.06. Architecture favours mixed architecture — inner rocky worlds alongside outer ice giants or mini-Neptunes. 3 star system(s), 6 planet(s) generated. Observational anchor: JWST."
+  },
+  "star_systems": [
+    {
+      "id": "eso137-002-s001",
+      "label": "ESO137-002 — Prime",
+      "spectral_type": "G7V",
+      "mass_sol": 0.932,
+      "feh": 0.064,
+      "age_gyr": 8.3,
+      "luminosity_sol": 0.75526,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Outskirts zone; ICM stress 0.14; bias: mixed",
+      "planets": [
+        {
+          "id": "eso137-002-s001-b",
+          "label": "ESO137-002 1 B",
+          "type": "hot_rocky",
+          "radius_earth": 1.34,
+          "mass_earth": 1.45,
+          "period_days": 10.6,
+          "semi_major_au": 0.092,
+          "eq_temp_k": 782,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "eso137-002-s001-c",
+          "label": "ESO137-002 1 C",
+          "type": "rocky_barren",
+          "radius_earth": 1.14,
+          "mass_earth": 1.76,
+          "period_days": 27.8,
+          "semi_major_au": 0.1755,
+          "eq_temp_k": 566,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "eso137-002-s002",
+      "label": "ESO137-002 — Beta",
+      "spectral_type": "G7V",
+      "mass_sol": 0.932,
+      "feh": 0.035,
+      "age_gyr": 9.2,
+      "luminosity_sol": 0.75526,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Outskirts zone; ICM stress 0.14; bias: mixed",
+      "planets": [
+        {
+          "id": "eso137-002-s002-b",
+          "label": "ESO137-002 2 B",
+          "type": "hot_rocky",
+          "radius_earth": 1.15,
+          "mass_earth": 0.97,
+          "period_days": 10.6,
+          "semi_major_au": 0.092,
+          "eq_temp_k": 782,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "eso137-002-s002-c",
+          "label": "ESO137-002 2 C",
+          "type": "gas_giant",
+          "radius_earth": 11.22,
+          "mass_earth": 345.97,
+          "period_days": 29.3,
+          "semi_major_au": 0.1817,
+          "eq_temp_k": 557,
+          "atmosphere": "h2_he_ch4",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "eso137-002-s003",
+      "label": "ESO137-002 — Gamma",
+      "spectral_type": "G5V",
+      "mass_sol": 0.972,
+      "feh": 0.083,
+      "age_gyr": 8.0,
+      "luminosity_sol": 0.89382,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Outskirts zone; ICM stress 0.14; bias: mixed",
+      "planets": [
+        {
+          "id": "eso137-002-s003-b",
+          "label": "ESO137-002 3 B",
+          "type": "hot_rocky",
+          "radius_earth": 1.29,
+          "mass_earth": 2.57,
+          "period_days": 11.2,
+          "semi_major_au": 0.097,
+          "eq_temp_k": 795,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "eso137-002-s003-c",
+          "label": "ESO137-002 3 C",
+          "type": "rocky_barren",
+          "radius_earth": 0.68,
+          "mass_earth": 1.93,
+          "period_days": 24.3,
+          "semi_major_au": 0.1628,
+          "eq_temp_k": 613,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 1842,
+    "seed": 2884
+  }
+}

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eco Ops Program Flowchart</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@9.1.1/dist/mermaid.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, sans-serif;
+      background: #f8fafc;
+      color: #1e293b;
+      padding: 1rem;
+    }
+
+    h1 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: #0f172a;
+    }
+
+    .section {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #475569;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #e2e8f0;
+    }
+
+    .section--green  .section-title { color: #15803d; border-color: #bbf7d0; }
+    .section--blue   .section-title { color: #1d4ed8; border-color: #bfdbfe; }
+    .section--violet .section-title { color: #6d28d9; border-color: #ddd6fe; }
+
+    .mermaid { width: 100%; overflow-x: auto; }
+
+    .note {
+      font-size: 0.72rem;
+      color: #94a3b8;
+      margin-top: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Eco Ops Program — Flow Overview</h1>
+
+  <!-- ── 1. Earn and Use NFTs ─────────────────────────────────────────── -->
+  <div class="section section--green">
+    <div class="section-title">1 · Earn and Use NFTs</div>
+    <div class="mermaid">
+graph TD
+    A["Perform eco-friendly action"] --> B{"Log action\nearns points"}
+    B --> C{"Points accumulate"}
+    C --> D["Not enough points yet"] --> B
+    C --> E["Threshold reached"]
+    E --> F["NFT minted and awarded"]
+    F --> G{"Keep or sell\non marketplace"}
+    G --> H["Funds in escrow wallet"]
+    H --> I{"Select conversion"}
+    I --> J["To fiat currency"] --> K["Bank transfer"] --> L["Spend on eco actions"]
+    I --> M["To crypto debit card"] --> N["Load onto card"] --> L
+    </div>
+  </div>
+
+  <!-- ── 2. Ecocity.com Projects ──────────────────────────────────────── -->
+  <div class="section section--blue">
+    <div class="section-title">2 · Participate in Ecocity.com Projects</div>
+    <div class="mermaid">
+graph TD
+    P["User with NFT"] --> Q{"Review project"}
+    Q --> R["Not aligned"] --> S["Exit"]
+    Q --> T["Aligned — decide to support"]
+    T --> V["Donate via NFT"] --> W["Project funded"]
+    T --> X["Convert and donate"] --> W
+    W --> PM["Project management tools"]
+    PM --> Y2["Assign tasks to volunteers"]
+    Y2 --> Z2["Volunteers notified"]
+    Y2 --> AA2["Track progress"]
+    PM --> AB2["Manage budget"]
+    AB2 --> AC2["Track spending"]
+    AB2 --> AD2["Request extra funding"]
+    PM --> AE2["Stakeholder updates"]
+    AE2 --> AF2["Post to platform"]
+    AE2 --> AG2["Export reports"]
+    </div>
+  </div>
+
+  <!-- ── 3. Exotopia Ecoplanet Model ─────────────────────────────────── -->
+  <div class="section section--violet">
+    <div class="section-title">3 · Participate in Exotopia Ecoplanet Model</div>
+    <div class="mermaid">
+graph TD
+    P2["User with NFT"] --> Z3["Access training modules"]
+    Z3 --> AA3["Complete module\nearns badge"] --> P2
+    Z3 --> AB3["Incomplete"] --> Z3
+    P2 --> AC3["Choose volunteer project"]
+    AC3 --> AD3["Perform tasks\nlog in Eco Ops app"]
+    AC3 --> AE3["Skills needed"] --> Z3
+    P2 --> AF3["Advocate for biodiversity"]
+    AF3 --> AG3["Awareness campaigns"] --> AH3["Policy change potential"]
+    P2 --> AI3["Deepen volunteer skills"]
+    AI3 --> Z3
+    AI3 --> AJ3["Take on complex projects"]
+    </div>
+    <div class="note">Actions logged via Eco Ops app feed back into the NFT earn loop above.</div>
+  </div>
+
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: 'default', flowchart: { useMaxWidth: true } });
+  </script>
+</body>
+</html>

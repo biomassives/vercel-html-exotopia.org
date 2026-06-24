@@ -1,0 +1,76 @@
+{
+  "galaxy_id": "proc-0212",
+  "galaxy_name": "proc-0212",
+  "galaxy_hubble": "dE",
+  "cluster": "Ophiuchus Cluster",
+  "cluster_slug": "ophiuchus",
+  "cluster_dist_mpc": 120.0,
+  "environment": {
+    "description": "proc-0212 (dE) situated in the dense cluster core, subject to strong ICM ram pressure. ICM stress 0.64; host population Teff ≈ 11085 K, Fe/H +0.04. Architecture favours rocky short-period planets — tightly-packed inner system, orbital compression from ICM drag. 1 star system(s), 1 planet(s) generated. Observational anchor: Chandra.",
+    "radiation_factor": 2.93,
+    "metallicity_feh": 0.04,
+    "agn": false,
+    "cooling_flow": false,
+    "ram_pressure": true,
+    "merger": false
+  },
+  "placement_notes": {
+    "v1": "proc-0212 (dE) situated in the dense cluster core, subject to strong ICM ram pressure. ICM stress 0.64; host population Teff ≈ 11085 K, Fe/H +0.04. Architecture favours rocky short-period planets — tightly-packed inner system, orbital compression from ICM drag. 1 star system(s), 1 planet(s) generated. Observational anchor: Chandra.",
+    "open_questions": [],
+    "nft_zones": [
+      "core-zone-chandra"
+    ]
+  },
+  "generation": "v1-procedural",
+  "provenance": {
+    "script": "generate_cluster_starsystems.py",
+    "algorithm_version": "1.0",
+    "architecture_version": "1.0",
+    "seed_source": "proc-0212",
+    "generated_at": "2026-05-26T17:52:09.355151+00:00",
+    "inputs": {
+      "cluster_zone": "core",
+      "icm_stress": 0.643,
+      "metallicity_fe_h": 0.04,
+      "planet_bias": "rocky_short_period",
+      "star_teff_k": 11085,
+      "max_orbit_au": 4.4,
+      "gas_giant_prob": 0.1,
+      "anchor_telescope": "Chandra",
+      "estimated_planets": 1
+    },
+    "observatory_report": "proc-0212 (dE) situated in the dense cluster core, subject to strong ICM ram pressure. ICM stress 0.64; host population Teff ≈ 11085 K, Fe/H +0.04. Architecture favours rocky short-period planets — tightly-packed inner system, orbital compression from ICM drag. 1 star system(s), 1 planet(s) generated. Observational anchor: Chandra."
+  },
+  "star_systems": [
+    {
+      "id": "proc-0212-s001",
+      "label": "proc-0212 — Prime",
+      "spectral_type": "A7V",
+      "mass_sol": 1.803,
+      "feh": 0.051,
+      "age_gyr": 11.5,
+      "luminosity_sol": 10.56495,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Core zone; ICM stress 0.64; bias: rocky_short_period",
+      "planets": [
+        {
+          "id": "proc-0212-s001-b",
+          "label": "PROC-0212 1 B",
+          "type": "rocky_barren",
+          "radius_earth": 0.95,
+          "mass_earth": 1.17,
+          "period_days": 12.6,
+          "semi_major_au": 0.129,
+          "eq_temp_k": 1278,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 259,
+    "seed": 2774
+  }
+}

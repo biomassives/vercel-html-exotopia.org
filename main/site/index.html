@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eco Ops Kathmandu</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-draw/dist/leaflet.draw.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
+  <style>
+    body {
+      background-color: #f0f0f0; /* Light gray background color */
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+    }
+
+    #header {
+      text-align: center;
+      padding: 10px;
+      background-color: #4CAF50; /* Green header color */
+      color: white;
+      font-size: 24px;
+      font-family: 'Montserrat', sans-serif; /* New font for header */
+    }
+
+    #map-container {
+      position: relative;
+      height: 600px;
+    }
+
+    #map {
+      width: 100%;
+      height: 100%;
+    }
+
+    .map-overlay {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      padding: 10px;
+      background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
+      border: 2px solid #4CAF50; /* Green border */
+      border-radius: 10px;
+      z-index: 1000;
+    }
+
+    #input-container {
+      position: absolute;
+      top: 70px;
+      right: 20px;
+      padding: 10px;
+      background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
+      border: 2px solid #4CAF50; /* Green border */
+      border-radius: 10px;
+      z-index: 1000;
+      display: none;
+    }
+
+    #close-btn {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      cursor: pointer;
+      font-size: 20px;
+    }
+
+    #language-switcher {
+      position: absolute;
+      top: 10px;
+      left: 20px;
+      z-index: 1000;
+    }
+
+    @media only screen and (max-width: 600px) {
+      #input-container {
+        top: 120px; /* Adjust the top position for narrower screens */
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div id="header">Eco Ops Kathmandu</div>
+<div id="language-switcher">
+  <label for="language">Language:</label>
+  <select id="language" onchange="changeLanguage()">
+    <option value="en">English</option>
+    <option value="ne">नेपाली</option>
+  </select>
+</div>
+
+<div id="map-container">
+    <div id="map"></div>
+    <div id="map-overlay" class="map-overlay"></div>
+    <div id="input-container">
+      <div id="close-btn" onclick="closeInputContainer()">×</div>
+      <label for="userInput" id="input-label">Note: Write or Upload:</label>
+      <textarea id="userInput" rows="4" cols="50"></textarea>
+      <input type="file" id="fileInput" accept="image/*, audio/*">
+      <button onclick="submitUserInput(drawnItems)">Submit</button>
+      <button onclick="geolocateUser()">Geolocate</button>
+      <button onclick="confirmSubmit()">Submit Data Collection</button>
+    </div>
+  </div>
+  
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-draw"></script>
+<script>
+  // Initialize the map
+  const map = L.map('map').setView([27.7172, 85.3240], 12);
+
+
+  // Function to geolocate the user
+  function geolocateUser() {
+    map.locate({ setView: true, maxZoom: 16 });
+  }
+
+  // Function to confirm data submission
+  function confirmSubmit() {
+    const confirmation = window.confirm("Are you sure you want to submit your data collection?");
+    if (confirmation) {
+      submitDataCollection(drawnItems);
+    }
+  }
+
+  // Function to submit the entire data collection
+  function submitDataCollection(drawnItems) {
+    // Add your code to submit the entire data collection
+    // (e.g., call a function from apiConfig.js)
+  }
+
+  // Load data from local storage on page load
+  document.addEventListener('DOMContentLoaded', function () {
+    loadFromLocalDatabase(localforage, drawnItems);
+  });
+
+
+
+
+
+  // Add the tile layer (OpenStreetMap)
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors'
+  }).addTo(map);
+
+  // Add Leaflet Draw functionality
+  const drawnItems = new L.FeatureGroup();
+  map.addLayer(drawnItems);
+
+  const drawControl = new L.Control.Draw({
+    draw: {
+      polygon: true,
+      polyline: false,
+      rectangle: false,
+      circle: false,
+      marker: { icon: L.divIcon({ className: 'leaflet-div-icon' }) },
+    },
+    edit: {
+      featureGroup: drawnItems,
+      remove: true,
+    },
+  });
+  map.addControl(drawControl);
+
+  // Event listener for drawing and editing
+  map.on('draw:created', function (e) {
+    const type = e.layerType;
+    const layer = e.layer;
+
+    if (type === 'marker') {
+      // Allow labels for points
+      const userInput = document.getElementById('userInput').value;
+      if (userInput) {
+        layer.bindPopup(userInput);
+      }
+    }
+
+    drawnItems.addLayer(layer);
+
+    // Show the input container
+    const inputContainer = document.getElementById('input-container');
+    inputContainer.style.display = 'block';
+  });
+
+  map.on('draw:edited', function () {
+    // Update the edited polygon or point if needed
+    // You can access the edited layer using drawnItems.getLayers()
+  });
+
+  function submitUserInput() {
+    const userInput = document.getElementById('userInput').value;
+    const fileInput = document.getElementById('fileInput');
+    const selectedFile = fileInput.files[0];
+
+    // Include user input, file, and layers in the submission JSON
+    const submissionData = {
+      userInput,
+      selectedFile,
+      layers: [],
+    };
+
+    drawnItems.eachLayer(layer => {
+      // Include details for each layer (polygon or point)
+      const layerData = {
+        type: layer instanceof L.Circle ? 'circle' : layer instanceof L.Polygon ? 'polygon' : 'point',
+        latlngs: layer.getLatLng(),
+        popupContent: layer.getPopup() ? layer.getPopup().getContent() : null,
+      };
+
+      submissionData.layers.push(layerData);
+    });
+
+    // Handle the submission data as needed
+    console.log('Submission Data:', submissionData);
+
+    // Save the data locally
+    saveToLocalDatabase(submissionData);
+
+    // Close the input container
+    closeInputContainer();
+  }
+
+  function closeInputContainer() {
+    // Close the input container
+    const inputContainer = document.getElementById('input-container');
+    inputContainer.style.display = 'none';
+  }
+
+  function changeLanguage() {
+    // Change text based on the selected language
+    const inputLabel = document.getElementById('input-label');
+    const selectedLanguage = document.getElementById('language').value;
+
+    if (selectedLanguage === 'en') {
+      inputLabel.textContent = 'Note: Write or Upload:';
+    } else if (selectedLanguage === 'ne') {
+      inputLabel.textContent = 'नोट: लेख्नुहोस् वा अपलोड गर्नुहोस्:';
+    }
+  }
+
+  function saveToLocalDatabase(data) {
+    // Use localforage to save data locally
+    localforage.setItem('submissionData', data)
+      .then(() => console.log('Data saved locally'))
+      .catch(err => console.error('Error saving data:', err));
+  }
+
+  // Load stored data on map load
+  localforage.getItem('submissionData')
+    .then((storedData) => {
+      if (storedData && storedData.layers) {
+        storedData.layers.forEach(layerData => {
+          let layer;
+          if (layerData.type === 'circle') {
+            // Create a circle layer
+            layer = L.circle(layerData.latlngs);
+          } else if (layerData.type === 'polygon') {
+            // Create a polygon layer
+            layer = L.polygon(layerData.latlngs);
+          } else if (layerData.type === 'point') {
+            // Create a point layer
+            layer = L.marker(layerData.latlngs);
+            if (layerData.popupContent) {
+              layer.bindPopup(layerData.popupContent);
+            }
+          }
+
+          // Add the layer to the map
+          drawnItems.addLayer(layer);
+        });
+      }
+    })
+    .catch(err => console.error('Error loading stored data:', err));
+</script>
+
+</body>
+</html>

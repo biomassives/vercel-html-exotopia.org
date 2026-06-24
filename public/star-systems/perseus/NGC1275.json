@@ -1,0 +1,165 @@
+{
+  "galaxy_id": "NGC1275",
+  "galaxy_name": "NGC 1275 — Perseus A",
+  "galaxy_hubble": "cD",
+  "cluster": "Perseus Cluster",
+  "cluster_slug": "perseus",
+  "cluster_dist_mpc": 73.0,
+  "environment": {
+    "description": "Seyfert 2 BCG; 350 million solar mass BH; AGN sound waves in ICM; Hα filaments extend 100 kpc; cooling flow deposits",
+    "radiation_factor": 5.8,
+    "metallicity_feh": 0.35,
+    "agn": true,
+    "cooling_flow": true,
+    "ram_pressure": false,
+    "merger": false
+  },
+  "placement_notes": {
+    "v0": "Three systems placed at large stellocentric offsets from NGC1275 nucleus. Seyfert 2 AGN — elevated UV/X-ray. Cooling flow deposits metal-enriched gas, boosting stellar metallicity. Hα filaments at 100 kpc suggest warm gas threads that may host star formation — unusual for BCG environment. All v0 systems flagged theoretical due to AGN and sound-wave ICM environment. Inner system placed in a cooling flow \"finger\" where star formation is observed.",
+    "open_questions": [
+      "Do the Hα filaments at 100 kpc host in-situ star formation? If yes, F/G stars possible there",
+      "Sound waves in ICM (Fabian+2011): period 10 Myr — do they perturb planetary orbits?",
+      "Cooling flow metallicity: does it enrich the outer stellar population differently than core?"
+    ],
+    "nft_zones": [
+      "outer-halo-low-agn (perpendicular to AGN axis)",
+      "cooling-flow-finger (Hα filament zone — unusual star formation)"
+    ]
+  },
+  "generation": "v0-hand",
+  "star_systems": [
+    {
+      "id": "ngc1275-s001",
+      "label": "Perseus Station Alpha — Cooling Flow Finger",
+      "spectral_type": "K2V",
+      "mass_sol": 0.83,
+      "feh": 0.32,
+      "age_gyr": 9.0,
+      "luminosity_sol": 0.46,
+      "coord_system": "exo-surface-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Embedded in Hα cooling flow filament zone; metal-enriched; unusual star formation region",
+      "planets": [
+        {
+          "id": "ngc1275-s001-b",
+          "label": "Perseus Alpha I",
+          "type": "lava_world",
+          "radius_earth": 1.5,
+          "mass_earth": 4.2,
+          "period_days": 6.8,
+          "semi_major_au": 0.052,
+          "eq_temp_k": 2450,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical",
+          "notes": "AGN-irradiated inner orbit; surface temperature dominated by AGN UV flux not stellar insolation"
+        },
+        {
+          "id": "ngc1275-s001-c",
+          "label": "Perseus Alpha II",
+          "type": "rocky_barren",
+          "radius_earth": 1.1,
+          "mass_earth": 1.5,
+          "period_days": 98,
+          "semi_major_au": 0.43,
+          "eq_temp_k": 490,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "ngc1275-s001-d",
+          "label": "Perseus Alpha III",
+          "type": "super_earth",
+          "radius_earth": 1.8,
+          "mass_earth": 6.8,
+          "period_days": 540,
+          "semi_major_au": 1.42,
+          "eq_temp_k": 198,
+          "atmosphere": "thick_co2",
+          "settlement_tier": "theoretical",
+          "notes": "Metal-rich thick-atmosphere world; cooling flow metallicity boost; may have complex mineralogy"
+        }
+      ]
+    },
+    {
+      "id": "ngc1275-s002",
+      "label": "Perseus Station Beta — Outer Halo",
+      "spectral_type": "M1V",
+      "mass_sol": 0.56,
+      "feh": 0.28,
+      "age_gyr": 13.0,
+      "luminosity_sol": 0.08,
+      "coord_system": "exo-surface-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Very old metal-rich M-dwarf; outer halo perpendicular to AGN axis",
+      "planets": [
+        {
+          "id": "ngc1275-s002-b",
+          "label": "Perseus Beta I",
+          "type": "rocky_barren",
+          "radius_earth": 0.9,
+          "mass_earth": 0.8,
+          "period_days": 24,
+          "semi_major_au": 0.09,
+          "eq_temp_k": 275,
+          "atmosphere": "thin_n2",
+          "settlement_tier": "theoretical",
+          "notes": "Tidally locked; least AGN-exposed system in NGC1275; marginal habitability on terminator"
+        },
+        {
+          "id": "ngc1275-s002-c",
+          "label": "Perseus Beta II",
+          "type": "ice_world",
+          "radius_earth": 0.72,
+          "mass_earth": 0.38,
+          "period_days": 108,
+          "semi_major_au": 0.27,
+          "eq_temp_k": 95,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "ngc1275-s003",
+      "label": "Perseus Station Gamma — AGN Axis Flank",
+      "spectral_type": "K5V",
+      "mass_sol": 0.72,
+      "feh": 0.3,
+      "age_gyr": 11.5,
+      "luminosity_sol": 0.22,
+      "coord_system": "exo-surface-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Flanking AGN cone; slightly elevated irradiance; high metallicity K-dwarf",
+      "planets": [
+        {
+          "id": "ngc1275-s003-b",
+          "label": "Perseus Gamma I",
+          "type": "rocky_barren",
+          "radius_earth": 1.0,
+          "mass_earth": 1.05,
+          "period_days": 52,
+          "semi_major_au": 0.22,
+          "eq_temp_k": 380,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "ngc1275-s003-c",
+          "label": "Perseus Gamma II",
+          "type": "mini_neptune",
+          "radius_earth": 2.4,
+          "mass_earth": 8.5,
+          "period_days": 610,
+          "semi_major_au": 1.48,
+          "eq_temp_k": 152,
+          "atmosphere": "h2_he",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 2250,
+    "seed": 1568
+  }
+}

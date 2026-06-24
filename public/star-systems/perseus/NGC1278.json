@@ -1,0 +1,164 @@
+{
+  "galaxy_id": "NGC1278",
+  "galaxy_name": "NGC1278",
+  "galaxy_hubble": "E",
+  "cluster": "Perseus Cluster",
+  "cluster_slug": "perseus",
+  "cluster_dist_mpc": 73.0,
+  "environment": {
+    "description": "NGC1278 (E) situated in the cluster outskirts, where ICM stripping is moderate. ICM stress 0.13; host population Teff ≈ 4053 K, Fe/H +0.10. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 3 star system(s), 6 planet(s) generated. Observational anchor: HST/ATLAS.",
+    "radiation_factor": 1.39,
+    "metallicity_feh": 0.104,
+    "agn": false,
+    "cooling_flow": false,
+    "ram_pressure": false,
+    "merger": false
+  },
+  "placement_notes": {
+    "v1": "NGC1278 (E) situated in the cluster outskirts, where ICM stripping is moderate. ICM stress 0.13; host population Teff ≈ 4053 K, Fe/H +0.10. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 3 star system(s), 6 planet(s) generated. Observational anchor: HST/ATLAS.",
+    "open_questions": [],
+    "nft_zones": [
+      "outskirts-zone-hst-atlas"
+    ]
+  },
+  "generation": "v1-procedural",
+  "provenance": {
+    "script": "generate_cluster_starsystems.py",
+    "algorithm_version": "1.0",
+    "architecture_version": "1.0",
+    "seed_source": "NGC1278",
+    "generated_at": "2026-05-26T17:52:09.564528+00:00",
+    "inputs": {
+      "cluster_zone": "outskirts",
+      "icm_stress": 0.129,
+      "metallicity_fe_h": 0.104,
+      "planet_bias": "ancient_cold_rocky",
+      "star_teff_k": 4053,
+      "max_orbit_au": 25.7,
+      "gas_giant_prob": 0.22,
+      "anchor_telescope": "HST/ATLAS",
+      "estimated_planets": 6
+    },
+    "observatory_report": "NGC1278 (E) situated in the cluster outskirts, where ICM stripping is moderate. ICM stress 0.13; host population Teff ≈ 4053 K, Fe/H +0.10. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 3 star system(s), 6 planet(s) generated. Observational anchor: HST/ATLAS."
+  },
+  "star_systems": [
+    {
+      "id": "ngc1278-s001",
+      "label": "NGC1278 — Prime",
+      "spectral_type": "M0V",
+      "mass_sol": 0.522,
+      "feh": 0.123,
+      "age_gyr": 7.9,
+      "luminosity_sol": 0.07434,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Outskirts zone; ICM stress 0.13; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "ngc1278-s001-b",
+          "label": "NGC1278 1 B",
+          "type": "hot_rocky",
+          "radius_earth": 1.08,
+          "mass_earth": 0.28,
+          "period_days": 6.7,
+          "semi_major_au": 0.056,
+          "eq_temp_k": 562,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "ngc1278-s001-c",
+          "label": "NGC1278 1 C",
+          "type": "rocky_barren",
+          "radius_earth": 0.75,
+          "mass_earth": 0.36,
+          "period_days": 14.0,
+          "semi_major_au": 0.0914,
+          "eq_temp_k": 439,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "ngc1278-s002",
+      "label": "NGC1278 — Beta",
+      "spectral_type": "K7V",
+      "mass_sol": 0.643,
+      "feh": 0.112,
+      "age_gyr": 9.4,
+      "luminosity_sol": 0.17058,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Outskirts zone; ICM stress 0.13; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "ngc1278-s002-b",
+          "label": "NGC1278 2 B",
+          "type": "hot_rocky",
+          "radius_earth": 1.14,
+          "mass_earth": 0.46,
+          "period_days": 7.5,
+          "semi_major_au": 0.065,
+          "eq_temp_k": 642,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "ngc1278-s002-c",
+          "label": "NGC1278 2 C",
+          "type": "super_earth",
+          "radius_earth": 1.82,
+          "mass_earth": 11.56,
+          "period_days": 16.2,
+          "semi_major_au": 0.1081,
+          "eq_temp_k": 497,
+          "atmosphere": "thick_n2_co2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "ngc1278-s003",
+      "label": "NGC1278 — Gamma",
+      "spectral_type": "K7V",
+      "mass_sol": 0.643,
+      "feh": 0.118,
+      "age_gyr": 7.8,
+      "luminosity_sol": 0.17058,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Outskirts zone; ICM stress 0.13; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "ngc1278-s003-b",
+          "label": "NGC1278 3 B",
+          "type": "hot_rocky",
+          "radius_earth": 1.06,
+          "mass_earth": 2.5,
+          "period_days": 7.5,
+          "semi_major_au": 0.065,
+          "eq_temp_k": 642,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "ngc1278-s003-c",
+          "label": "NGC1278 3 C",
+          "type": "hot_rocky",
+          "radius_earth": 1.09,
+          "mass_earth": 1.09,
+          "period_days": 15.3,
+          "semi_major_au": 0.1042,
+          "eq_temp_k": 507,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 1394,
+    "seed": 1589
+  }
+}

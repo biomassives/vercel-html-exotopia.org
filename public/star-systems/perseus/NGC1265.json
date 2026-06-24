@@ -1,0 +1,102 @@
+{
+  "galaxy_id": "NGC1265",
+  "galaxy_name": "NGC 1265",
+  "galaxy_hubble": "S0",
+  "cluster": "Perseus Cluster",
+  "cluster_slug": "perseus",
+  "cluster_dist_mpc": 73.0,
+  "environment": {
+    "description": "Head-tail radio galaxy; moving at ~1800 km/s through ICM; bent radio jets indicate strong ram-pressure; active interstellar gas stripping",
+    "radiation_factor": 2.8,
+    "metallicity_feh": 0.15,
+    "agn": false,
+    "cooling_flow": false,
+    "ram_pressure": true,
+    "merger": false
+  },
+  "placement_notes": {
+    "v0": "Two systems in NGC1265 stellar body — the head-tail radio galaxy. Moving at ~1800 km/s through Perseus ICM — ram pressure strips all interstellar gas behind the galaxy (the \"tail\"). Stellar body (the \"head\") is compact and shielded, but outer planetary orbits are at risk of disruption. Systems placed in inner stellar body only; outer zone flagged as disrupted. Elevated ICM radiation from high-speed passage through hot gas.",
+    "open_questions": [
+      "At 1800 km/s does the ICM ram-pressure wind perturb outer planetary orbits directly?",
+      "The bent jets indicate AGN — is the AGN active enough to add radiation loading?",
+      "Post-stripping: will NGC1265 retain any interstellar dust/gas for next star formation?"
+    ],
+    "nft_zones": [
+      "inner-head-zone (shielded compact stellar body)",
+      "tail-zone-theoretical (stripped region — disrupted orbits, no settlement)"
+    ]
+  },
+  "generation": "v0-hand",
+  "star_systems": [
+    {
+      "id": "ngc1265-s001",
+      "label": "Perseus Head-Tail Station Alpha",
+      "spectral_type": "K3V",
+      "mass_sol": 0.79,
+      "feh": 0.14,
+      "age_gyr": 10.8,
+      "luminosity_sol": 0.38,
+      "coord_system": "exo-surface-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Inner head zone; shielded by stellar body from ICM wind; moderate ICM X-ray",
+      "planets": [
+        {
+          "id": "ngc1265-s001-b",
+          "label": "Head-Tail Station I",
+          "type": "rocky_barren",
+          "radius_earth": 0.95,
+          "mass_earth": 0.9,
+          "period_days": 48,
+          "semi_major_au": 0.22,
+          "eq_temp_k": 500,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "ngc1265-s001-c",
+          "label": "Head-Tail Station II",
+          "type": "super_earth",
+          "radius_earth": 1.42,
+          "mass_earth": 3.8,
+          "period_days": 295,
+          "semi_major_au": 0.85,
+          "eq_temp_k": 268,
+          "atmosphere": "n2_co2",
+          "settlement_tier": "theoretical",
+          "notes": "Inner head zone — protected from ICM wind; most promising world in this head-tail galaxy; outer orbit stability uncertain given 1800 km/s motion through cluster"
+        }
+      ]
+    },
+    {
+      "id": "ngc1265-s002",
+      "label": "Perseus Head-Tail Station Beta",
+      "spectral_type": "M1V",
+      "mass_sol": 0.55,
+      "feh": 0.1,
+      "age_gyr": 10.0,
+      "luminosity_sol": 0.07,
+      "coord_system": "exo-surface-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "M-dwarf in compact inner head; ICM ram-pressure wind strips outer zone",
+      "planets": [
+        {
+          "id": "ngc1265-s002-b",
+          "label": "Head-Tail Beta I",
+          "type": "rocky_barren",
+          "radius_earth": 0.8,
+          "mass_earth": 0.55,
+          "period_days": 22,
+          "semi_major_au": 0.085,
+          "eq_temp_k": 258,
+          "atmosphere": "trace",
+          "settlement_tier": "theoretical",
+          "notes": "ICM ram-pressure may be gradually stripping even this inner atmosphere; orbit marked as ram-pressure-disrupted at > 5 AU"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 882,
+    "seed": 1562
+  }
+}

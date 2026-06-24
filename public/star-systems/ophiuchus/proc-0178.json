@@ -1,0 +1,128 @@
+{
+  "galaxy_id": "proc-0178",
+  "galaxy_name": "proc-0178",
+  "galaxy_hubble": "Sa",
+  "cluster": "Ophiuchus Cluster",
+  "cluster_slug": "ophiuchus",
+  "cluster_dist_mpc": 120.0,
+  "environment": {
+    "description": "proc-0178 (Sa) situated in the inner cluster region, within significant ICM influence. ICM stress 0.45; host population Teff ≈ 6300 K, Fe/H +0.00. Architecture favours mixed architecture — inner rocky worlds alongside outer ice giants or mini-Neptunes. 3 star system(s), 3 planet(s) generated. Observational anchor: Chandra/Hubble.",
+    "radiation_factor": 2.35,
+    "metallicity_feh": 0.0,
+    "agn": false,
+    "cooling_flow": false,
+    "ram_pressure": true,
+    "merger": false
+  },
+  "placement_notes": {
+    "v1": "proc-0178 (Sa) situated in the inner cluster region, within significant ICM influence. ICM stress 0.45; host population Teff ≈ 6300 K, Fe/H +0.00. Architecture favours mixed architecture — inner rocky worlds alongside outer ice giants or mini-Neptunes. 3 star system(s), 3 planet(s) generated. Observational anchor: Chandra/Hubble.",
+    "open_questions": [],
+    "nft_zones": [
+      "inner-zone-chandra-hubble"
+    ]
+  },
+  "generation": "v1-procedural",
+  "provenance": {
+    "script": "generate_cluster_starsystems.py",
+    "algorithm_version": "1.0",
+    "architecture_version": "1.0",
+    "seed_source": "proc-0178",
+    "generated_at": "2026-05-26T17:52:09.271069+00:00",
+    "inputs": {
+      "cluster_zone": "inner",
+      "icm_stress": 0.45,
+      "metallicity_fe_h": 0.0,
+      "planet_bias": "mixed",
+      "star_teff_k": 6300,
+      "max_orbit_au": 9.5,
+      "gas_giant_prob": 0.4,
+      "anchor_telescope": "Chandra/Hubble",
+      "estimated_planets": 2
+    },
+    "observatory_report": "proc-0178 (Sa) situated in the inner cluster region, within significant ICM influence. ICM stress 0.45; host population Teff ≈ 6300 K, Fe/H +0.00. Architecture favours mixed architecture — inner rocky worlds alongside outer ice giants or mini-Neptunes. 3 star system(s), 3 planet(s) generated. Observational anchor: Chandra/Hubble."
+  },
+  "star_systems": [
+    {
+      "id": "proc-0178-s001",
+      "label": "proc-0178 — Prime",
+      "spectral_type": "F9V",
+      "mass_sol": 1.14,
+      "feh": 0.006,
+      "age_gyr": 9.2,
+      "luminosity_sol": 1.68896,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Inner zone; ICM stress 0.45; bias: mixed",
+      "planets": [
+        {
+          "id": "proc-0178-s001-b",
+          "label": "PROC-0178 1 B",
+          "type": "rocky_barren",
+          "radius_earth": 0.89,
+          "mass_earth": 1.55,
+          "period_days": 13.9,
+          "semi_major_au": 0.118,
+          "eq_temp_k": 845,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "proc-0178-s002",
+      "label": "proc-0178 — Beta",
+      "spectral_type": "F9V",
+      "mass_sol": 1.14,
+      "feh": -0.022,
+      "age_gyr": 10.7,
+      "luminosity_sol": 1.68896,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Inner zone; ICM stress 0.45; bias: mixed",
+      "planets": [
+        {
+          "id": "proc-0178-s002-b",
+          "label": "PROC-0178 2 B",
+          "type": "rocky_barren",
+          "radius_earth": 0.56,
+          "mass_earth": 1.27,
+          "period_days": 13.9,
+          "semi_major_au": 0.118,
+          "eq_temp_k": 845,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "proc-0178-s003",
+      "label": "proc-0178 — Gamma",
+      "spectral_type": "F9V",
+      "mass_sol": 1.14,
+      "feh": 0.005,
+      "age_gyr": 10.7,
+      "luminosity_sol": 1.68896,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Inner zone; ICM stress 0.45; bias: mixed",
+      "planets": [
+        {
+          "id": "proc-0178-s003-b",
+          "label": "PROC-0178 3 B",
+          "type": "rocky_barren",
+          "radius_earth": 0.95,
+          "mass_earth": 1.11,
+          "period_days": 13.9,
+          "semi_major_au": 0.118,
+          "eq_temp_k": 845,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 1505,
+    "seed": 2869
+  }
+}

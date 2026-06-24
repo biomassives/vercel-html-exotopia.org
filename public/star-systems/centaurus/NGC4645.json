@@ -1,0 +1,178 @@
+{
+  "galaxy_id": "NGC4645",
+  "galaxy_name": "NGC4645",
+  "galaxy_hubble": "Sa",
+  "cluster": "Centaurus Cluster",
+  "cluster_slug": "centaurus",
+  "cluster_dist_mpc": 46.0,
+  "environment": {
+    "description": "NGC4645 (Sa) situated in the infall region at the cluster periphery, largely ICM-free. ICM stress 0.03; host population Teff ≈ 6676 K, Fe/H +0.07. Architecture favours wide-orbit gas giants with potential moon settlement zones. 4 star system(s), 6 planet(s) generated. Observational anchor: JWST.",
+    "radiation_factor": 1.08,
+    "metallicity_feh": 0.068,
+    "agn": false,
+    "cooling_flow": false,
+    "ram_pressure": false,
+    "merger": false
+  },
+  "placement_notes": {
+    "v1": "NGC4645 (Sa) situated in the infall region at the cluster periphery, largely ICM-free. ICM stress 0.03; host population Teff ≈ 6676 K, Fe/H +0.07. Architecture favours wide-orbit gas giants with potential moon settlement zones. 4 star system(s), 6 planet(s) generated. Observational anchor: JWST.",
+    "open_questions": [],
+    "nft_zones": [
+      "infall-zone-jwst"
+    ]
+  },
+  "generation": "v1-procedural",
+  "provenance": {
+    "script": "generate_cluster_starsystems.py",
+    "algorithm_version": "1.0",
+    "architecture_version": "1.0",
+    "seed_source": "NGC4645",
+    "generated_at": "2026-05-26T17:52:05.902441+00:00",
+    "inputs": {
+      "cluster_zone": "infall",
+      "icm_stress": 0.026,
+      "metallicity_fe_h": 0.068,
+      "planet_bias": "jovian_wide",
+      "star_teff_k": 6676,
+      "max_orbit_au": 63.9,
+      "gas_giant_prob": 0.65,
+      "anchor_telescope": "JWST",
+      "estimated_planets": 6
+    },
+    "observatory_report": "NGC4645 (Sa) situated in the infall region at the cluster periphery, largely ICM-free. ICM stress 0.03; host population Teff ≈ 6676 K, Fe/H +0.07. Architecture favours wide-orbit gas giants with potential moon settlement zones. 4 star system(s), 6 planet(s) generated. Observational anchor: JWST."
+  },
+  "star_systems": [
+    {
+      "id": "ngc4645-s001",
+      "label": "NGC4645 — Prime",
+      "spectral_type": "F5V",
+      "mass_sol": 1.324,
+      "feh": 0.079,
+      "age_gyr": 6.6,
+      "luminosity_sol": 3.06912,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Infall zone; ICM stress 0.03; bias: jovian_wide",
+      "planets": [
+        {
+          "id": "ngc4645-s001-b",
+          "label": "NGC4645 1 B",
+          "type": "rocky_barren",
+          "radius_earth": 1.18,
+          "mass_earth": 1.82,
+          "period_days": 35.5,
+          "semi_major_au": 0.232,
+          "eq_temp_k": 700,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "ngc4645-s001-c",
+          "label": "NGC4645 1 C",
+          "type": "gas_giant",
+          "radius_earth": 9.44,
+          "mass_earth": 192.67,
+          "period_days": 101.5,
+          "semi_major_au": 0.4677,
+          "eq_temp_k": 493,
+          "atmosphere": "h2_he_ch4",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "ngc4645-s002",
+      "label": "NGC4645 — Beta",
+      "spectral_type": "F5V",
+      "mass_sol": 1.324,
+      "feh": 0.082,
+      "age_gyr": 6.3,
+      "luminosity_sol": 3.06912,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Infall zone; ICM stress 0.03; bias: jovian_wide",
+      "planets": [
+        {
+          "id": "ngc4645-s002-b",
+          "label": "NGC4645 2 B",
+          "type": "hot_rocky",
+          "radius_earth": 0.93,
+          "mass_earth": 2.23,
+          "period_days": 35.5,
+          "semi_major_au": 0.232,
+          "eq_temp_k": 700,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "ngc4645-s002-c",
+          "label": "NGC4645 2 C",
+          "type": "gas_giant",
+          "radius_earth": 8.38,
+          "mass_earth": 446.33,
+          "period_days": 126.4,
+          "semi_major_au": 0.5413,
+          "eq_temp_k": 458,
+          "atmosphere": "h2_he_ch4",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "ngc4645-s003",
+      "label": "NGC4645 — Gamma",
+      "spectral_type": "F5V",
+      "mass_sol": 1.324,
+      "feh": 0.055,
+      "age_gyr": 7.6,
+      "luminosity_sol": 3.06912,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Infall zone; ICM stress 0.03; bias: jovian_wide",
+      "planets": [
+        {
+          "id": "ngc4645-s003-b",
+          "label": "NGC4645 3 B",
+          "type": "rocky_barren",
+          "radius_earth": 0.86,
+          "mass_earth": 0.85,
+          "period_days": 35.5,
+          "semi_major_au": 0.232,
+          "eq_temp_k": 700,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "ngc4645-s004",
+      "label": "NGC4645 — Delta",
+      "spectral_type": "F5V",
+      "mass_sol": 1.324,
+      "feh": 0.044,
+      "age_gyr": 7.6,
+      "luminosity_sol": 3.06912,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Infall zone; ICM stress 0.03; bias: jovian_wide",
+      "planets": [
+        {
+          "id": "ngc4645-s004-b",
+          "label": "NGC4645 4 B",
+          "type": "hot_rocky",
+          "radius_earth": 0.92,
+          "mass_earth": 2.95,
+          "period_days": 35.5,
+          "semi_major_au": 0.232,
+          "eq_temp_k": 700,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 1971,
+    "seed": 1582
+  }
+}

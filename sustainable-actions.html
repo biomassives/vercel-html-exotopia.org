@@ -1,0 +1,132 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exotopia Sustainable Actions Navigation</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Tailwind CSS for styling (optional) -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@^2.0/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        #app {
+            max-width: 600px;
+            margin: auto;
+            text-align: center;
+        }
+        canvas {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <header class="mb-4">
+        <h2 class="text-3xl font-bold">Worldbridger - Exotopia - Sustainable Actions Navigation</h2>
+    </header>
+    <!-- Ensure the image source is correct -->
+    <img src="worldbridgerone000.gif" alt="Worldbridger One Image">
+
+    <canvas id="ecoGoalsChart"></canvas>
+</div>
+
+<script>
+const { createApp } = Vue;
+
+createApp({
+    data() {
+        return {
+            ecoGoalsData: [],
+        };
+    },
+    mounted() {
+        this.fetchData();
+    },
+    methods: {
+        async fetchData() {
+            try {
+                const response = await axios.get('ot6.json');
+                this.ecoGoalsData = response.data;
+                this.createChart();
+            } catch (error) {
+                console.error('Fetching data failed:', error);
+            }
+        },
+        processData() {
+            const themes = this.ecoGoalsData.reduce((acc, {theme}) => {
+                acc[theme] = (acc[theme] || 0) + 1;
+                return acc;
+            }, {});
+            return {
+                labels: Object.keys(themes),
+                datasets: [{
+                    data: Object.values(themes),
+                    backgroundColor: [
+                    '#43a047', // A lush green, representing vitality and sustainability
+                    '#1e88e5', // Bright blue, reminiscent of clear skies
+                    '#ffb300', // Vibrant yellow, suggesting sunlight and energy
+                    '#d81b60', // Deep pink, for innovation and creativity
+                    '#8e24aa', // Purple, indicating wisdom and dignity
+                    '#fb8c00', // Orange, for warmth and enthusiasm
+                    '#004d40', // Teal, reflecting depth and stability
+                    '#6d4c41', // Brown, symbolizing the earth and groundedness
+                    '#546e7a', // Cool grey, for balance and modernity
+                    '#78909c', // Lighter blue-grey, for calmness and open space
+                    // You can repeat or add more colors as needed based on the number of themes
+                ]
+                ,
+                }]
+            };
+        },
+        createChart() {
+            const chartData = this.processData();
+            const ctx = document.getElementById('ecoGoalsChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'pie',
+                data: chartData,
+                options: {
+                    responsive: true,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                              
+                                    const details = [
+                                    "Vitality and Sustainability: Promoting green energy solutions.",
+                                    "Clear Skies Initiative: Reducing air pollution through innovative policies.",
+                                    "Solar Energy: Harnessing the power of the sun for cleaner fuel alternatives.",
+                                    "Innovation in Recycling: Creative ways to reuse and reduce waste.",
+                                    "Biodiversity: Protecting wildlife and natural habitats.",
+                                    "Community Engagement: Encouraging local initiatives for environmental awareness.",
+                                    "Ocean Conservation: Actions to preserve our oceans and marine life.",
+                                    "Sustainable Agriculture: Promoting eco-friendly farming practices.",
+                                    "Urban Green Spaces: Developing more parks and green areas in cities.",
+                                    "Climate Action: Working together to combat climate change effects."
+                                     ];
+
+                                    const label = context.label;
+                                    const detail = details[context.dataIndex];
+                                    return `${label}: ${context.parsed} goals. ${detail}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }
+}).mount('#app');
+</script>
+
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Exoplanet Visualization</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/three@0.125.2/build/three.min.js"></script>
+<script>
+    let scene, camera, renderer, sphere;
+    let mouseMove = { x: 0, y: 0 };
+    
+    function init() {
+        scene = new THREE.Scene();
+        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        renderer = new THREE.WebGLRenderer({antialias: true});
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Sphere with custom skin
+        const geometry = new THREE.SphereGeometry(5, 32, 32);
+        geometry.scale(-1, 1, 1); // Invert the geometry on the x-axis
+        const texture = new THREE.TextureLoader().load('sky_contellations.gif');
+        const material = new THREE.MeshBasicMaterial({
+            map: texture,
+            side: THREE.DoubleSide,
+            transparent: true, // Enable transparency
+            opacity: 0.8       // Set the level of transparency
+        });
+        sphere = new THREE.Mesh(geometry, material);
+        scene.add(sphere);
+
+        camera.position.z = 0;
+
+        document.addEventListener('mousemove', onDocumentMouseMove, false);
+        animate();
+    }
+
+    function onDocumentMouseMove(event) {
+        mouseMove.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouseMove.y = - (event.clientY / window.innerHeight) * 2 + 1;
+    }
+
+    function animate() {
+        requestAnimationFrame(animate);
+
+        // Slowed down rotation
+        sphere.rotation.y += 0.0005; // Very slow rotation speed on Y axis
+        sphere.rotation.x += 0.0005; // Very slow rotation speed on X axis
+
+        // Adjust rotation based on mouse movement, slowed down further
+        sphere.rotation.y += mouseMove.x * 0.0001;
+        sphere.rotation.x += mouseMove.y * 0.0001;
+
+        renderer.render(scene, camera);
+    }
+
+    init();
+
+    let raycaster = new THREE.Raycaster();
+    let mouse = new THREE.Vector2();
+
+    function onMouseClick(event) {
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObjects(scene.children);
+        for (let i = 0; i < intersects.length; i++) {
+            console.log(intersects[i]);
+        }
+    }
+
+    window.addEventListener('click', onMouseClick, false);
+</script>
+</body>
+</html>

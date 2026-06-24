@@ -1,0 +1,138 @@
+{
+  "galaxy_id": "SC1329-313",
+  "galaxy_name": "SC1329-313",
+  "galaxy_hubble": "E",
+  "cluster": "Shapley Concentration",
+  "cluster_slug": "shapley",
+  "cluster_dist_mpc": 200.0,
+  "environment": {
+    "description": "SC1329-313 (E) situated in the infall region at the cluster periphery, largely ICM-free. ICM stress 0.06; host population Teff ≈ 3555 K, Fe/H -0.08. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 2 star system(s), 5 planet(s) generated. Observational anchor: HST/ATLAS.",
+    "radiation_factor": 1.17,
+    "metallicity_feh": -0.08,
+    "agn": false,
+    "cooling_flow": false,
+    "ram_pressure": false,
+    "merger": false
+  },
+  "placement_notes": {
+    "v1": "SC1329-313 (E) situated in the infall region at the cluster periphery, largely ICM-free. ICM stress 0.06; host population Teff ≈ 3555 K, Fe/H -0.08. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 2 star system(s), 5 planet(s) generated. Observational anchor: HST/ATLAS.",
+    "open_questions": [],
+    "nft_zones": [
+      "infall-zone-hst-atlas"
+    ]
+  },
+  "generation": "v1-procedural",
+  "provenance": {
+    "script": "generate_cluster_starsystems.py",
+    "algorithm_version": "1.0",
+    "architecture_version": "1.0",
+    "seed_source": "SC1329-313",
+    "generated_at": "2026-05-26T17:52:10.320857+00:00",
+    "inputs": {
+      "cluster_zone": "infall",
+      "icm_stress": 0.057,
+      "metallicity_fe_h": -0.08,
+      "planet_bias": "ancient_cold_rocky",
+      "star_teff_k": 3555,
+      "max_orbit_au": 83.4,
+      "gas_giant_prob": 0.234,
+      "anchor_telescope": "HST/ATLAS",
+      "estimated_planets": 5
+    },
+    "observatory_report": "SC1329-313 (E) situated in the infall region at the cluster periphery, largely ICM-free. ICM stress 0.06; host population Teff ≈ 3555 K, Fe/H -0.08. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 2 star system(s), 5 planet(s) generated. Observational anchor: HST/ATLAS."
+  },
+  "star_systems": [
+    {
+      "id": "sc1329-313-s001",
+      "label": "SC1329-313 — Prime",
+      "spectral_type": "M2V",
+      "mass_sol": 0.399,
+      "feh": -0.087,
+      "age_gyr": 7.1,
+      "luminosity_sol": 0.02775,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Infall zone; ICM stress 0.06; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "sc1329-313-s001-b",
+          "label": "SC1329-313 1 B",
+          "type": "super_earth",
+          "radius_earth": 1.51,
+          "mass_earth": 8.7,
+          "period_days": 6.5,
+          "semi_major_au": 0.05,
+          "eq_temp_k": 464,
+          "atmosphere": "n2_co2",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "sc1329-313-s001-c",
+          "label": "SC1329-313 1 C",
+          "type": "rocky_barren",
+          "radius_earth": 1.17,
+          "mass_earth": 2.16,
+          "period_days": 11.9,
+          "semi_major_au": 0.0752,
+          "eq_temp_k": 379,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "sc1329-313-s001-d",
+          "label": "SC1329-313 1 D",
+          "type": "gas_giant",
+          "radius_earth": 11.29,
+          "mass_earth": 173.19,
+          "period_days": 26.7,
+          "semi_major_au": 0.1288,
+          "eq_temp_k": 289,
+          "atmosphere": "h2_he_ch4",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "sc1329-313-s002",
+      "label": "SC1329-313 — Beta",
+      "spectral_type": "M4V",
+      "mass_sol": 0.279,
+      "feh": -0.086,
+      "age_gyr": 6.1,
+      "luminosity_sol": 0.01222,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Infall zone; ICM stress 0.06; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "sc1329-313-s002-b",
+          "label": "SC1329-313 2 B",
+          "type": "rocky_barren",
+          "radius_earth": 0.59,
+          "mass_earth": 1.8,
+          "period_days": 7.0,
+          "semi_major_au": 0.047,
+          "eq_temp_k": 390,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "sc1329-313-s002-c",
+          "label": "SC1329-313 2 C",
+          "type": "rocky_barren",
+          "radius_earth": 1.1,
+          "mass_earth": 0.72,
+          "period_days": 17.2,
+          "semi_major_au": 0.0852,
+          "eq_temp_k": 290,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 1453,
+    "seed": 2834
+  }
+}

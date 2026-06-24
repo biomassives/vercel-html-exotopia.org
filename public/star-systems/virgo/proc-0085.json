@@ -1,0 +1,128 @@
+{
+  "galaxy_id": "proc-0085",
+  "galaxy_name": "proc-0085",
+  "galaxy_hubble": "S0",
+  "cluster": "Virgo Cluster",
+  "cluster_slug": "virgo",
+  "cluster_dist_mpc": 16.5,
+  "environment": {
+    "description": "proc-0085 (S0) situated in the cluster outskirts, where ICM stripping is moderate. ICM stress 0.05; host population Teff ≈ 5099 K, Fe/H +0.22. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 3 star system(s), 3 planet(s) generated. Observational anchor: HST/ATLAS.",
+    "radiation_factor": 1.16,
+    "metallicity_feh": 0.217,
+    "agn": false,
+    "cooling_flow": false,
+    "ram_pressure": false,
+    "merger": false
+  },
+  "placement_notes": {
+    "v1": "proc-0085 (S0) situated in the cluster outskirts, where ICM stripping is moderate. ICM stress 0.05; host population Teff ≈ 5099 K, Fe/H +0.22. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 3 star system(s), 3 planet(s) generated. Observational anchor: HST/ATLAS.",
+    "open_questions": [],
+    "nft_zones": [
+      "outskirts-zone-hst-atlas"
+    ]
+  },
+  "generation": "v1-procedural",
+  "provenance": {
+    "script": "generate_cluster_starsystems.py",
+    "algorithm_version": "1.0",
+    "architecture_version": "1.0",
+    "seed_source": "proc-0085",
+    "generated_at": "2026-05-26T17:52:11.077051+00:00",
+    "inputs": {
+      "cluster_zone": "outskirts",
+      "icm_stress": 0.054,
+      "metallicity_fe_h": 0.217,
+      "planet_bias": "ancient_cold_rocky",
+      "star_teff_k": 5099,
+      "max_orbit_au": 45.7,
+      "gas_giant_prob": 0.22,
+      "anchor_telescope": "HST/ATLAS",
+      "estimated_planets": 2
+    },
+    "observatory_report": "proc-0085 (S0) situated in the cluster outskirts, where ICM stripping is moderate. ICM stress 0.05; host population Teff ≈ 5099 K, Fe/H +0.22. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 3 star system(s), 3 planet(s) generated. Observational anchor: HST/ATLAS."
+  },
+  "star_systems": [
+    {
+      "id": "proc-0085-s001",
+      "label": "proc-0085 — Prime",
+      "spectral_type": "K2V",
+      "mass_sol": 0.837,
+      "feh": 0.24,
+      "age_gyr": 9.6,
+      "luminosity_sol": 0.49128,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Outskirts zone; ICM stress 0.05; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "proc-0085-s001-b",
+          "label": "PROC-0085 1 B",
+          "type": "rocky_barren",
+          "radius_earth": 0.52,
+          "mass_earth": 2.47,
+          "period_days": 9.4,
+          "semi_major_au": 0.082,
+          "eq_temp_k": 744,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "proc-0085-s002",
+      "label": "proc-0085 — Beta",
+      "spectral_type": "K2V",
+      "mass_sol": 0.837,
+      "feh": 0.211,
+      "age_gyr": 8.2,
+      "luminosity_sol": 0.49128,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Outskirts zone; ICM stress 0.05; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "proc-0085-s002-b",
+          "label": "PROC-0085 2 B",
+          "type": "hot_rocky",
+          "radius_earth": 1.34,
+          "mass_earth": 1.43,
+          "period_days": 9.4,
+          "semi_major_au": 0.082,
+          "eq_temp_k": 744,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "proc-0085-s003",
+      "label": "proc-0085 — Gamma",
+      "spectral_type": "G9V",
+      "mass_sol": 0.898,
+      "feh": 0.226,
+      "age_gyr": 9.3,
+      "luminosity_sol": 0.64949,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Outskirts zone; ICM stress 0.05; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "proc-0085-s003-b",
+          "label": "PROC-0085 3 B",
+          "type": "hot_rocky",
+          "radius_earth": 0.96,
+          "mass_earth": 1.99,
+          "period_days": 10.1,
+          "semi_major_au": 0.088,
+          "eq_temp_k": 770,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 1067,
+    "seed": 2843
+  }
+}

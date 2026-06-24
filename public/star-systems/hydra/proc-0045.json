@@ -1,0 +1,114 @@
+{
+  "galaxy_id": "proc-0045",
+  "galaxy_name": "proc-0045",
+  "galaxy_hubble": "E",
+  "cluster": "Hydra Cluster",
+  "cluster_slug": "hydra",
+  "cluster_dist_mpc": 59.0,
+  "environment": {
+    "description": "proc-0045 (E) situated in the dense cluster core, subject to strong ICM ram pressure. ICM stress 0.24; host population Teff ≈ 4613 K, Fe/H +0.20. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 2 star system(s), 3 planet(s) generated. Observational anchor: Chandra/Hubble.",
+    "radiation_factor": 1.71,
+    "metallicity_feh": 0.202,
+    "agn": false,
+    "cooling_flow": true,
+    "ram_pressure": false,
+    "merger": false
+  },
+  "placement_notes": {
+    "v1": "proc-0045 (E) situated in the dense cluster core, subject to strong ICM ram pressure. ICM stress 0.24; host population Teff ≈ 4613 K, Fe/H +0.20. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 2 star system(s), 3 planet(s) generated. Observational anchor: Chandra/Hubble.",
+    "open_questions": [],
+    "nft_zones": [
+      "core-zone-chandra-hubble"
+    ]
+  },
+  "generation": "v1-procedural",
+  "provenance": {
+    "script": "generate_cluster_starsystems.py",
+    "algorithm_version": "1.0",
+    "architecture_version": "1.0",
+    "seed_source": "proc-0045",
+    "generated_at": "2026-05-26T17:52:08.090448+00:00",
+    "inputs": {
+      "cluster_zone": "core",
+      "icm_stress": 0.236,
+      "metallicity_fe_h": 0.202,
+      "planet_bias": "ancient_cold_rocky",
+      "star_teff_k": 4613,
+      "max_orbit_au": 5.4,
+      "gas_giant_prob": 0.1,
+      "anchor_telescope": "Chandra/Hubble",
+      "estimated_planets": 3
+    },
+    "observatory_report": "proc-0045 (E) situated in the dense cluster core, subject to strong ICM ram pressure. ICM stress 0.24; host population Teff ≈ 4613 K, Fe/H +0.20. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 2 star system(s), 3 planet(s) generated. Observational anchor: Chandra/Hubble."
+  },
+  "star_systems": [
+    {
+      "id": "proc-0045-s001",
+      "label": "proc-0045 — Prime",
+      "spectral_type": "K5V",
+      "mass_sol": 0.746,
+      "feh": 0.2,
+      "age_gyr": 12.1,
+      "luminosity_sol": 0.30968,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Core zone; ICM stress 0.24; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "proc-0045-s001-b",
+          "label": "PROC-0045 1 B",
+          "type": "hot_rocky",
+          "radius_earth": 0.9,
+          "mass_earth": 1.08,
+          "period_days": 8.3,
+          "semi_major_au": 0.073,
+          "eq_temp_k": 703,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "proc-0045-s001-c",
+          "label": "PROC-0045 1 C",
+          "type": "gas_giant",
+          "radius_earth": 9.6,
+          "mass_earth": 226.19,
+          "period_days": 15.0,
+          "semi_major_au": 0.1079,
+          "eq_temp_k": 578,
+          "atmosphere": "h2_he_ch4",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "proc-0045-s002",
+      "label": "proc-0045 — Beta",
+      "spectral_type": "K5V",
+      "mass_sol": 0.746,
+      "feh": 0.22,
+      "age_gyr": 11.7,
+      "luminosity_sol": 0.30968,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Core zone; ICM stress 0.24; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "proc-0045-s002-b",
+          "label": "PROC-0045 2 B",
+          "type": "hot_rocky",
+          "radius_earth": 1.07,
+          "mass_earth": 3.36,
+          "period_days": 8.3,
+          "semi_major_au": 0.073,
+          "eq_temp_k": 703,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 1305,
+    "seed": 2811
+  }
+}

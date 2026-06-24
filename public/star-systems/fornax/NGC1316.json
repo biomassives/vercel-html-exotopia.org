@@ -1,0 +1,166 @@
+{
+  "galaxy_id": "NGC1316",
+  "galaxy_name": "Fornax A",
+  "galaxy_hubble": "Sa",
+  "cluster": "Fornax Cluster",
+  "cluster_slug": "fornax",
+  "cluster_dist_mpc": 19.0,
+  "environment": {
+    "description": "NGC1316 (Sa) situated in the infall region at the cluster periphery, largely ICM-free. ICM stress 0.01; host population Teff ≈ 6231 K, Fe/H +0.12. Architecture favours wide-orbit gas giants with potential moon settlement zones. 4 star system(s), 5 planet(s) generated. Observational anchor: JWST.",
+    "radiation_factor": 1.03,
+    "metallicity_feh": 0.122,
+    "agn": false,
+    "cooling_flow": false,
+    "ram_pressure": false,
+    "merger": false
+  },
+  "placement_notes": {
+    "v1": "NGC1316 (Sa) situated in the infall region at the cluster periphery, largely ICM-free. ICM stress 0.01; host population Teff ≈ 6231 K, Fe/H +0.12. Architecture favours wide-orbit gas giants with potential moon settlement zones. 4 star system(s), 5 planet(s) generated. Observational anchor: JWST.",
+    "open_questions": [],
+    "nft_zones": [
+      "infall-zone-jwst"
+    ]
+  },
+  "generation": "v1-procedural",
+  "provenance": {
+    "script": "generate_cluster_starsystems.py",
+    "algorithm_version": "1.0",
+    "architecture_version": "1.0",
+    "seed_source": "NGC1316",
+    "generated_at": "2026-05-26T17:52:07.316074+00:00",
+    "inputs": {
+      "cluster_zone": "infall",
+      "icm_stress": 0.011,
+      "metallicity_fe_h": 0.122,
+      "planet_bias": "jovian_wide",
+      "star_teff_k": 6231,
+      "max_orbit_au": 125.4,
+      "gas_giant_prob": 0.65,
+      "anchor_telescope": "JWST",
+      "estimated_planets": 5
+    },
+    "observatory_report": "NGC1316 (Sa) situated in the infall region at the cluster periphery, largely ICM-free. ICM stress 0.01; host population Teff ≈ 6231 K, Fe/H +0.12. Architecture favours wide-orbit gas giants with potential moon settlement zones. 4 star system(s), 5 planet(s) generated. Observational anchor: JWST."
+  },
+  "star_systems": [
+    {
+      "id": "ngc1316-s001",
+      "label": "Fornax A — Prime",
+      "spectral_type": "F9V",
+      "mass_sol": 1.146,
+      "feh": 0.143,
+      "age_gyr": 7.6,
+      "luminosity_sol": 1.72217,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Infall zone; ICM stress 0.01; bias: jovian_wide",
+      "planets": [
+        {
+          "id": "ngc1316-s001-b",
+          "label": "NGC1316 1 B",
+          "type": "hot_rocky",
+          "radius_earth": 0.91,
+          "mass_earth": 2.8,
+          "period_days": 28.3,
+          "semi_major_au": 0.19,
+          "eq_temp_k": 669,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "ngc1316-s001-c",
+          "label": "NGC1316 1 C",
+          "type": "gas_giant",
+          "radius_earth": 8.1,
+          "mass_earth": 183.07,
+          "period_days": 104.8,
+          "semi_major_au": 0.4551,
+          "eq_temp_k": 432,
+          "atmosphere": "h2_he_ch4",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "ngc1316-s002",
+      "label": "Fornax A — Beta",
+      "spectral_type": "F9V",
+      "mass_sol": 1.146,
+      "feh": 0.139,
+      "age_gyr": 6.5,
+      "luminosity_sol": 1.72217,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Infall zone; ICM stress 0.01; bias: jovian_wide",
+      "planets": [
+        {
+          "id": "ngc1316-s002-b",
+          "label": "NGC1316 2 B",
+          "type": "rocky_barren",
+          "radius_earth": 1.18,
+          "mass_earth": 1.33,
+          "period_days": 28.3,
+          "semi_major_au": 0.19,
+          "eq_temp_k": 669,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "ngc1316-s003",
+      "label": "Fornax A — Gamma",
+      "spectral_type": "F9V",
+      "mass_sol": 1.146,
+      "feh": 0.115,
+      "age_gyr": 6.7,
+      "luminosity_sol": 1.72217,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Infall zone; ICM stress 0.01; bias: jovian_wide",
+      "planets": [
+        {
+          "id": "ngc1316-s003-b",
+          "label": "NGC1316 3 B",
+          "type": "hot_rocky",
+          "radius_earth": 0.99,
+          "mass_earth": 0.39,
+          "period_days": 28.3,
+          "semi_major_au": 0.19,
+          "eq_temp_k": 669,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "ngc1316-s004",
+      "label": "Fornax A — Delta",
+      "spectral_type": "F9V",
+      "mass_sol": 1.146,
+      "feh": 0.099,
+      "age_gyr": 6.3,
+      "luminosity_sol": 1.72217,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "Infall zone; ICM stress 0.01; bias: jovian_wide",
+      "planets": [
+        {
+          "id": "ngc1316-s004-b",
+          "label": "NGC1316 4 B",
+          "type": "hot_rocky",
+          "radius_earth": 0.72,
+          "mass_earth": 2.8,
+          "period_days": 28.3,
+          "semi_major_au": 0.19,
+          "eq_temp_k": 669,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 1988,
+    "seed": 1544
+  }
+}

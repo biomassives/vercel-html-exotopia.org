@@ -1,0 +1,339 @@
+{
+  "_schema": "exotopia-station-v1.0",
+  "_description": "Type reference for the Exotopia Orbital Station NFT system on Solana. Three NFT tiers: StationCore (one per exolocation), StationModule (up to 7 per station), EcocitySolution (installable tools from ecocity.com).",
+
+  "nft_tiers": {
+
+    "station_core": {
+      "symbol": "EXOSTATION",
+      "description": "Root NFT defining an orbital station at an exolocation. Holds the exolocation record and a map of installed module mint addresses.",
+      "required_fields": ["station_id", "station_name", "exolocation", "capacity"],
+      "exolocation_coordinate_systems": [
+        "exo-orbital-v1",
+        "exo-lunar-orbital-v1",
+        "exo-stellar-orbital-v1",
+        "exo-surface-v1"
+      ],
+      "module_slots": {
+        "gallery":    { "max": 1, "description": "3D exhibition space — the existing orbital gallery prototype" },
+        "watsan":     { "max": 2, "description": "Water & sanitation systems" },
+        "energy":     { "max": 2, "description": "Renewable energy generation & storage" },
+        "shelter":    { "max": 2, "description": "Habitat construction & materials" },
+        "healthcare": { "max": 1, "description": "Sustainable medical & wellness systems" },
+        "food":       { "max": 2, "description": "Closed-loop food production" },
+        "command":    { "max": 1, "description": "Station operations & communications hub" }
+      },
+      "example": {
+        "station_id":   "STA-0001",
+        "station_name": "Proxima Outpost Alpha",
+        "owner":        "NatureProtectors",
+        "commissioned_date": "2026-04-13",
+        "exolocation": {
+          "coordinate_system": "exo-orbital-v1",
+          "region_name":       "Sector 4 Low Orbit Band",
+          "reference_body": {
+            "type":            "exoplanet",
+            "pl_name":         "Proxima Cen b",
+            "host_star":       "Proxima Centauri",
+            "ra_deg":          217.4289,
+            "dec_deg":         -62.6796,
+            "sy_dist_pc":      1.3,
+            "nasa_archive_id": "Proxima Cen b"
+          },
+          "boundary": {
+            "type":            "orbital_zone",
+            "altitude_km_min": 200,
+            "altitude_km_max": 500,
+            "inclination_deg": 30,
+            "longitude_of_ascending_node_deg": 120
+          }
+        },
+        "capacity": { "crew": 12, "volume_m3": 2400 },
+        "installed_modules": {
+          "gallery":    null,
+          "watsan":     [],
+          "energy":     [],
+          "shelter":    [],
+          "healthcare": null,
+          "food":       [],
+          "command":    null
+        }
+      }
+    },
+
+    "station_module": {
+      "symbol": "EXOMOD",
+      "description": "A functional module docked to a StationCore. References its parent station mint and lists installed EcocitySolution mints.",
+      "module_types": {
+        "gallery": {
+          "label": "Orbital Gallery",
+          "unit_name": "GALMOD",
+          "description": "3D immersive exhibition space. Connects to the gallery/ prototype. Displays artworks, data visualisations, and community archives.",
+          "required_fields": ["exhibit_capacity", "display_format"],
+          "optional_fields": ["arweave_scene_uri", "collection_mint"],
+          "example_attributes": [
+            { "trait_type": "Module Type",       "value": "gallery" },
+            { "trait_type": "Exhibit Capacity",  "value": "48" },
+            { "trait_type": "Display Format",    "value": "3D immersive" }
+          ]
+        },
+        "watsan": {
+          "label": "Water & Sanitation",
+          "unit_name": "WTSMOD",
+          "description": "Water treatment, purification, recycling, and sanitation systems. Ecocity solutions in this module reduce water stress for the crew.",
+          "required_fields": ["daily_water_capacity_L", "recycling_pct"],
+          "optional_fields": ["greywater_reuse", "compost_output_kg_day"],
+          "example_attributes": [
+            { "trait_type": "Module Type",             "value": "watsan" },
+            { "trait_type": "Daily Water Capacity (L)", "value": "500" },
+            { "trait_type": "Recycling %",             "value": "92" }
+          ]
+        },
+        "energy": {
+          "label": "Renewable Energy",
+          "unit_name": "ENGMOD",
+          "description": "Power generation, storage, and distribution. Tracks kWh generated per day and carbon offset.",
+          "required_fields": ["generation_kwh_day", "storage_kwh"],
+          "optional_fields": ["source_types", "co2_offset_kg_day"],
+          "example_attributes": [
+            { "trait_type": "Module Type",             "value": "energy" },
+            { "trait_type": "Generation (kWh/day)",    "value": "80" },
+            { "trait_type": "Storage (kWh)",           "value": "240" }
+          ]
+        },
+        "shelter": {
+          "label": "Habitat & Shelter",
+          "unit_name": "SHTMOD",
+          "description": "Pressurised living quarters, structural systems, and construction methods suited for off-world environments.",
+          "required_fields": ["floor_area_m2", "construction_method"],
+          "optional_fields": ["insulation_rating", "radiation_shielding"],
+          "example_attributes": [
+            { "trait_type": "Module Type",        "value": "shelter" },
+            { "trait_type": "Floor Area (m²)",    "value": "120" },
+            { "trait_type": "Construction",       "value": "inflatable + rigid frame" }
+          ]
+        },
+        "healthcare": {
+          "label": "Sustainable Healthcare",
+          "unit_name": "HLTHMOD",
+          "description": "Medical, wellness, and mental health systems. Emphasises low-resource, preventive, and traditional approaches alongside modern tools.",
+          "required_fields": ["capacity_patients", "care_level"],
+          "optional_fields": ["telemedicine", "herbal_garden"],
+          "example_attributes": [
+            { "trait_type": "Module Type",       "value": "healthcare" },
+            { "trait_type": "Patient Capacity",  "value": "4" },
+            { "trait_type": "Care Level",        "value": "primary + emergency" }
+          ]
+        },
+        "food": {
+          "label": "Food Production",
+          "unit_name": "FOODMOD",
+          "description": "Closed-loop food production: hydroponics, aeroponics, aquaculture, mycoculture, and soil-based growing.",
+          "required_fields": ["output_kg_day", "growing_method"],
+          "optional_fields": ["crop_varieties", "water_use_L_day"],
+          "example_attributes": [
+            { "trait_type": "Module Type",      "value": "food" },
+            { "trait_type": "Output (kg/day)",  "value": "6.5" },
+            { "trait_type": "Growing Method",   "value": "aquaponics" }
+          ]
+        },
+        "command": {
+          "label": "Command & Communications",
+          "unit_name": "CMDMOD",
+          "description": "Station operations hub: navigation, inter-station comms, environmental monitoring, and governance systems.",
+          "required_fields": ["comms_range_ly", "crew_positions"],
+          "optional_fields": ["ai_assist", "governance_model"],
+          "example_attributes": [
+            { "trait_type": "Module Type",      "value": "command" },
+            { "trait_type": "Comms Range (ly)", "value": "4.2" },
+            { "trait_type": "Crew Positions",   "value": "3" }
+          ]
+        }
+      },
+      "example": {
+        "module_id":     "MOD-GAL-0001",
+        "module_type":   "gallery",
+        "module_name":   "Aurora Gallery",
+        "station_mint":  "<StationCore mint address>",
+        "owner":         "NatureProtectors",
+        "installed_solutions": [],
+        "exhibit_capacity": 48,
+        "display_format":   "3D immersive",
+        "arweave_scene_uri": null
+      }
+    },
+
+    "ecocity_solution": {
+      "symbol": "ECOSOL",
+      "description": "An ecocity.com-sourced sustainable DIY solution installable into a matching StationModule. Documents materials, difficulty, and real-world impact metrics.",
+      "categories": {
+        "watsan": {
+          "label": "Water & Sanitation",
+          "solution_ids": ["biosand-filter", "solar-still", "constructed-wetland", "composting-toilet", "greywater-garden"],
+          "examples": {
+            "biosand-filter": {
+              "solution_id":   "biosand-filter",
+              "solution_name": "Biosand Water Filter",
+              "category":      "watsan",
+              "description":   "Gravity-fed biological sand filter removes pathogens and suspended solids from surface water. Effective for 1–5 households.",
+              "difficulty":    2,
+              "build_time_days": 3,
+              "materials": [
+                { "item": "coarse gravel",  "qty": "20 kg" },
+                { "item": "fine gravel",    "qty": "10 kg" },
+                { "item": "coarse sand",    "qty": "30 kg" },
+                { "item": "fine sand",      "qty": "20 kg" },
+                { "item": "concrete or food-safe plastic container", "qty": "1" }
+              ],
+              "impact": {
+                "beneficiaries":    5,
+                "water_L_day":      200,
+                "co2_kg_saved_day": 0.1
+              },
+              "compatible_modules": ["watsan"],
+              "ecocity_url":   "https://ecocity.com/solutions/biosand-filter",
+              "schematic_uri": null
+            }
+          }
+        },
+        "energy": {
+          "label": "Renewable Energy",
+          "solution_ids": ["micro-hydro", "pv-battery-pack", "wind-micro-turbine", "biogas-digester", "solar-thermal-water"],
+          "examples": {
+            "pv-battery-pack": {
+              "solution_id":   "pv-battery-pack",
+              "solution_name": "Off-Grid Solar PV + Battery Pack",
+              "category":      "energy",
+              "description":   "200 W solar panel paired with a 1 kWh LiFePO4 battery and MPPT charge controller. Provides reliable baseload for lighting, comms, and small appliances.",
+              "difficulty":    2,
+              "build_time_days": 1,
+              "materials": [
+                { "item": "200 W monocrystalline panel",   "qty": "1" },
+                { "item": "MPPT charge controller 20 A",   "qty": "1" },
+                { "item": "LiFePO4 battery 100 Ah 12 V",  "qty": "1" },
+                { "item": "MC4 connectors + cable",        "qty": "1 set" },
+                { "item": "fuse + busbar kit",             "qty": "1" }
+              ],
+              "impact": {
+                "beneficiaries":     4,
+                "kwh_day":           0.8,
+                "co2_kg_saved_day":  0.4
+              },
+              "compatible_modules": ["energy"],
+              "ecocity_url":   "https://ecocity.com/solutions/pv-battery-pack",
+              "schematic_uri": null
+            }
+          }
+        },
+        "shelter": {
+          "label": "Habitat & Shelter",
+          "solution_ids": ["earthbag-dome", "bamboo-frame-tensile", "superadobe-vault", "shipping-container-mod", "inflatable-hab"],
+          "examples": {
+            "earthbag-dome": {
+              "solution_id":   "earthbag-dome",
+              "solution_name": "Earthbag Dome Shelter",
+              "category":      "shelter",
+              "description":   "Polypropylene sandbag construction filled with local earth. Produces a thermally massive, low-cost dome habitat for 2–4 people.",
+              "difficulty":    3,
+              "build_time_days": 21,
+              "materials": [
+                { "item": "polypropylene sandbags 50 cm × 85 cm", "qty": "600" },
+                { "item": "barbed wire 4-point",                  "qty": "150 m" },
+                { "item": "local earth / subsoil",                "qty": "~20 m³" },
+                { "item": "lime plaster (interior/exterior)",     "qty": "200 kg" },
+                { "item": "wooden door frame + door",             "qty": "1" }
+              ],
+              "impact": {
+                "beneficiaries":     4,
+                "floor_area_m2":     28,
+                "co2_kg_saved_day":  0.9
+              },
+              "compatible_modules": ["shelter"],
+              "ecocity_url":   "https://ecocity.com/solutions/earthbag-dome",
+              "schematic_uri": null
+            }
+          }
+        },
+        "healthcare": {
+          "label": "Sustainable Healthcare",
+          "solution_ids": ["herbal-first-aid", "solar-autoclave", "oral-rehydration", "community-birthing-kit", "mental-wellness-circle"],
+          "examples": {
+            "herbal-first-aid": {
+              "solution_id":   "herbal-first-aid",
+              "solution_name": "Medicinal Herb Garden + First Aid Kit",
+              "category":      "healthcare",
+              "description":   "A curated selection of 20 medicinal plants covering wound care, fever management, digestive support, and respiratory health. Paired with a basic first aid manual.",
+              "difficulty":    1,
+              "build_time_days": 30,
+              "materials": [
+                { "item": "seed packets (20 species)",   "qty": "1 set" },
+                { "item": "growing trays / raised bed",  "qty": "4 m²" },
+                { "item": "compost / growing medium",    "qty": "80 L" },
+                { "item": "first aid manual",            "qty": "1" },
+                { "item": "dressing & bandage kit",      "qty": "1" }
+              ],
+              "impact": {
+                "beneficiaries": 20,
+                "treatments_per_month": 15
+              },
+              "compatible_modules": ["healthcare", "food"],
+              "ecocity_url":   "https://ecocity.com/solutions/herbal-first-aid",
+              "schematic_uri": null
+            }
+          }
+        },
+        "food": {
+          "label": "Food Production",
+          "solution_ids": ["ibc-aquaponics", "vertical-nft-hydroponics", "barrel-aeroponics", "mycoculture-monotub", "raised-bed-polyculture"],
+          "examples": {
+            "ibc-aquaponics": {
+              "solution_id":   "ibc-aquaponics",
+              "solution_name": "IBC Tote Aquaponics System",
+              "category":      "food",
+              "description":   "1000 L IBC tote split into fish tank + grow bed. Tilapia or catfish fertilise leafy greens and herbs through a gravel media bed. Self-contained closed loop.",
+              "difficulty":    3,
+              "build_time_days": 7,
+              "materials": [
+                { "item": "1000 L IBC tote",              "qty": "1" },
+                { "item": "gravel grow media 20 mm",       "qty": "100 L" },
+                { "item": "submersible pump 2000 L/h",     "qty": "1" },
+                { "item": "air pump + airstone",           "qty": "1" },
+                { "item": "grow bed frame (angle iron)",   "qty": "1 set" },
+                { "item": "fingerlings (tilapia or catfish)", "qty": "20" }
+              ],
+              "impact": {
+                "beneficiaries":   4,
+                "food_kg_month":   12,
+                "water_L_day":     5,
+                "co2_kg_saved_day": 0.3
+              },
+              "compatible_modules": ["food", "watsan"],
+              "ecocity_url":   "https://ecocity.com/solutions/ibc-aquaponics",
+              "schematic_uri": null
+            }
+          }
+        }
+      },
+      "difficulty_scale": {
+        "1": "Beginner — basic hand tools, no special skills",
+        "2": "Intermediate — some construction or plumbing experience helpful",
+        "3": "Advanced — requires multiple people and intermediate skills",
+        "4": "Expert — specialist knowledge or equipment required",
+        "5": "Team build — multi-week community project"
+      }
+    }
+
+  },
+
+  "on_chain_note_template": {
+    "_note": "Compact ARC-compatible note for Solana memo program (≤1 KB). Full metadata lives on IPFS/Arweave via uri field.",
+    "protocol":    "exotopia-station-v1.0",
+    "tier":        "station_core | station_module | ecocity_solution",
+    "station_id":  "<STA-XXXX>",
+    "module_type": "<gallery | watsan | energy | shelter | healthcare | food | command | null>",
+    "solution_id": "<solution_id or null>",
+    "exo_system":  "<pl_name | system_name>",
+    "ra_deg":      "<number>",
+    "dec_deg":     "<number>"
+  }
+}

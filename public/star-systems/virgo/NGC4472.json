@@ -1,0 +1,124 @@
+{
+  "galaxy_id": "NGC4472",
+  "galaxy_name": "M49 — NGC 4472",
+  "galaxy_hubble": "E",
+  "cluster": "Virgo Cluster",
+  "cluster_slug": "virgo",
+  "cluster_dist_mpc": 16.5,
+  "environment": {
+    "description": "BCG of Virgo B subcluster; brightest galaxy in Virgo; south of main cluster; relatively quiescent environment",
+    "radiation_factor": 1.6,
+    "metallicity_feh": 0.25,
+    "agn": false,
+    "cooling_flow": false,
+    "ram_pressure": false,
+    "merger": false
+  },
+  "placement_notes": {
+    "v0": "Three systems in M49 stellar body. BCG of B-subcluster — somewhat isolated from M87 AGN. Quiescent environment relative to M87 zone. Old metal-rich elliptical population; K/M dominant host stars; rocky worlds expected throughout. Best \"habitable candidate\" of the Virgo BCG set due to low AGN exposure.",
+    "open_questions": [
+      "M49 hosts a UCD (ultra-compact dwarf) system — do they affect local environment?",
+      "Is there any residual AGN activity in M49 nucleus?"
+    ],
+    "nft_zones": [
+      "inner-stellar-body (metal-rich rocky worlds)",
+      "outer-halo-south (lower cluster radiation)"
+    ]
+  },
+  "generation": "v0-hand",
+  "star_systems": [
+    {
+      "id": "m49-s001",
+      "label": "Virgo-B Station Alpha",
+      "spectral_type": "K4V",
+      "mass_sol": 0.76,
+      "feh": 0.22,
+      "age_gyr": 11.8,
+      "luminosity_sol": 0.28,
+      "coord_system": "exo-surface-v1",
+      "settlement_tier": "frontier",
+      "environment_note": "Inner stellar body K-dwarf; moderate cluster X-ray background",
+      "planets": [
+        {
+          "id": "m49-s001-b",
+          "label": "Virgo-B Station I",
+          "type": "rocky_barren",
+          "radius_earth": 1.05,
+          "mass_earth": 1.2,
+          "period_days": 42,
+          "semi_major_au": 0.19,
+          "eq_temp_k": 450,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "m49-s001-c",
+          "label": "Virgo-B Station II",
+          "type": "super_earth",
+          "radius_earth": 1.55,
+          "mass_earth": 4.8,
+          "period_days": 385,
+          "semi_major_au": 1.08,
+          "eq_temp_k": 238,
+          "atmosphere": "n2_co2",
+          "settlement_tier": "frontier",
+          "notes": "Best habitability candidate in Virgo BCG set; low AGN exposure; temperate K-dwarf HZ"
+        },
+        {
+          "id": "m49-s001-d",
+          "label": "Virgo-B Station III",
+          "type": "mini_neptune",
+          "radius_earth": 2.6,
+          "mass_earth": 9.8,
+          "period_days": 1100,
+          "semi_major_au": 2.45,
+          "eq_temp_k": 140,
+          "atmosphere": "h2_he",
+          "settlement_tier": "theoretical"
+        }
+      ]
+    },
+    {
+      "id": "m49-s002",
+      "label": "Virgo-B Station Beta",
+      "spectral_type": "K1V",
+      "mass_sol": 0.86,
+      "feh": 0.26,
+      "age_gyr": 12.2,
+      "luminosity_sol": 0.52,
+      "coord_system": "exo-surface-v1",
+      "settlement_tier": "theoretical",
+      "environment_note": "High-metallicity K-star; outer B-subcluster halo",
+      "planets": [
+        {
+          "id": "m49-s002-b",
+          "label": "Virgo-B Beta I",
+          "type": "lava_world",
+          "radius_earth": 1.2,
+          "mass_earth": 2.1,
+          "period_days": 8.8,
+          "semi_major_au": 0.063,
+          "eq_temp_k": 1960,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "m49-s002-c",
+          "label": "Virgo-B Beta II",
+          "type": "rocky_barren",
+          "radius_earth": 0.95,
+          "mass_earth": 0.92,
+          "period_days": 180,
+          "semi_major_au": 0.72,
+          "eq_temp_k": 302,
+          "atmosphere": "thin_co2",
+          "settlement_tier": "frontier"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 1401,
+    "seed": 1569
+  }
+}

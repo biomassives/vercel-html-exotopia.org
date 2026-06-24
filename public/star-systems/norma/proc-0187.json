@@ -1,0 +1,162 @@
+{
+  "galaxy_id": "proc-0187",
+  "galaxy_name": "proc-0187",
+  "galaxy_hubble": "E",
+  "cluster": "Norma Cluster",
+  "cluster_slug": "norma",
+  "cluster_dist_mpc": 65.0,
+  "environment": {
+    "description": "proc-0187 (E) situated in the cluster outskirts, where ICM stripping is moderate. ICM stress 0.14; host population Teff ≈ 3571 K, Fe/H +0.12. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 2 star system(s), 7 planet(s) generated. Observational anchor: HST/ATLAS.",
+    "radiation_factor": 1.43,
+    "metallicity_feh": 0.12,
+    "agn": false,
+    "cooling_flow": false,
+    "ram_pressure": false,
+    "merger": false
+  },
+  "placement_notes": {
+    "v1": "proc-0187 (E) situated in the cluster outskirts, where ICM stripping is moderate. ICM stress 0.14; host population Teff ≈ 3571 K, Fe/H +0.12. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 2 star system(s), 7 planet(s) generated. Observational anchor: HST/ATLAS.",
+    "open_questions": [],
+    "nft_zones": [
+      "outskirts-zone-hst-atlas"
+    ]
+  },
+  "generation": "v1-procedural",
+  "provenance": {
+    "script": "generate_cluster_starsystems.py",
+    "algorithm_version": "1.0",
+    "architecture_version": "1.0",
+    "seed_source": "proc-0187",
+    "generated_at": "2026-05-26T17:52:08.671994+00:00",
+    "inputs": {
+      "cluster_zone": "outskirts",
+      "icm_stress": 0.144,
+      "metallicity_fe_h": 0.12,
+      "planet_bias": "ancient_cold_rocky",
+      "star_teff_k": 3571,
+      "max_orbit_au": 32.1,
+      "gas_giant_prob": 0.22,
+      "anchor_telescope": "HST/ATLAS",
+      "estimated_planets": 7
+    },
+    "observatory_report": "proc-0187 (E) situated in the cluster outskirts, where ICM stripping is moderate. ICM stress 0.14; host population Teff ≈ 3571 K, Fe/H +0.12. Architecture favours ancient cold rocky worlds — metal-rich, tidal-disrupted outer orbits. 2 star system(s), 7 planet(s) generated. Observational anchor: HST/ATLAS."
+  },
+  "star_systems": [
+    {
+      "id": "proc-0187-s001",
+      "label": "proc-0187 — Prime",
+      "spectral_type": "M2V",
+      "mass_sol": 0.402,
+      "feh": 0.12,
+      "age_gyr": 8.9,
+      "luminosity_sol": 0.02826,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "frontier",
+      "environment_note": "Outskirts zone; ICM stress 0.14; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "proc-0187-s001-b",
+          "label": "PROC-0187 1 B",
+          "type": "rocky_barren",
+          "radius_earth": 0.69,
+          "mass_earth": 0.89,
+          "period_days": 6.4,
+          "semi_major_au": 0.05,
+          "eq_temp_k": 467,
+          "atmosphere": "none",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "proc-0187-s001-c",
+          "label": "PROC-0187 1 C",
+          "type": "super_earth",
+          "radius_earth": 1.84,
+          "mass_earth": 7.67,
+          "period_days": 14.8,
+          "semi_major_au": 0.087,
+          "eq_temp_k": 354,
+          "atmosphere": "thick_n2_co2",
+          "settlement_tier": "frontier"
+        },
+        {
+          "id": "proc-0187-s001-d",
+          "label": "PROC-0187 1 D",
+          "type": "super_earth",
+          "radius_earth": 1.83,
+          "mass_earth": 7.03,
+          "period_days": 33.7,
+          "semi_major_au": 0.1507,
+          "eq_temp_k": 269,
+          "atmosphere": "thick_n2_co2",
+          "settlement_tier": "frontier"
+        },
+        {
+          "id": "proc-0187-s001-e",
+          "label": "PROC-0187 1 E",
+          "type": "super_earth",
+          "radius_earth": 1.58,
+          "mass_earth": 10.59,
+          "period_days": 77.0,
+          "semi_major_au": 0.2614,
+          "eq_temp_k": 204,
+          "atmosphere": "thick_n2_co2",
+          "settlement_tier": "frontier"
+        }
+      ]
+    },
+    {
+      "id": "proc-0187-s002",
+      "label": "proc-0187 — Beta",
+      "spectral_type": "M2V",
+      "mass_sol": 0.402,
+      "feh": 0.145,
+      "age_gyr": 7.7,
+      "luminosity_sol": 0.02826,
+      "coord_system": "cluster-relative-v1",
+      "settlement_tier": "frontier",
+      "environment_note": "Outskirts zone; ICM stress 0.14; bias: ancient_cold_rocky",
+      "planets": [
+        {
+          "id": "proc-0187-s002-b",
+          "label": "PROC-0187 2 B",
+          "type": "super_earth",
+          "radius_earth": 1.83,
+          "mass_earth": 10.93,
+          "period_days": 6.4,
+          "semi_major_au": 0.05,
+          "eq_temp_k": 467,
+          "atmosphere": "n2_co2",
+          "settlement_tier": "theoretical"
+        },
+        {
+          "id": "proc-0187-s002-c",
+          "label": "PROC-0187 2 C",
+          "type": "super_earth",
+          "radius_earth": 1.25,
+          "mass_earth": 7.72,
+          "period_days": 12.8,
+          "semi_major_au": 0.0789,
+          "eq_temp_k": 371,
+          "atmosphere": "thick_n2_co2",
+          "settlement_tier": "frontier"
+        },
+        {
+          "id": "proc-0187-s002-d",
+          "label": "PROC-0187 2 D",
+          "type": "super_earth",
+          "radius_earth": 1.27,
+          "mass_earth": 9.58,
+          "period_days": 25.0,
+          "semi_major_au": 0.1235,
+          "eq_temp_k": 297,
+          "atmosphere": "thick_n2_co2",
+          "settlement_tier": "frontier"
+        }
+      ]
+    }
+  ],
+  "population": {
+    "nav_count": 1381,
+    "seed": 2868
+  }
+}
