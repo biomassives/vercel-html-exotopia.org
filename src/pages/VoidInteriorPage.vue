@@ -125,10 +125,67 @@
       </div>
     </transition>
 
+    <!-- Selected galaxy panel -->
+    <Transition name="vi-fade">
+      <div v-if="selGalaxy" class="vi-sel-panel">
+        <div class="vi-sel-header">
+          <div>
+            <div class="vi-sel-eyebrow">{{ selGalaxy.is_wall ? 'WALL GALAXY' : 'FIELD GALAXY' }}</div>
+            <div class="vi-sel-name">{{ selGalaxy.gid }}</div>
+          </div>
+          <q-btn flat dense size="xs" icon="mdi-close" color="blue-grey-5" @click="selGalaxy = null" />
+        </div>
+        <div class="vi-row">
+          <span class="vi-lbl">Morphology</span>
+          <span class="vi-val">{{ selGalaxy.morph || '—' }}</span>
+        </div>
+        <div class="vi-row">
+          <span class="vi-lbl">Redshift</span>
+          <span class="vi-val">z = {{ selGalaxy.z.toFixed(4) }}</span>
+        </div>
+        <div v-if="selGalaxy.has_agn" class="vi-row">
+          <span class="vi-lbl">AGN</span>
+          <span class="vi-val text-amber-6">Active nucleus</span>
+        </div>
+        <div class="vi-row">
+          <span class="vi-lbl">Position</span>
+          <span class="vi-val" style="font-size:8px">
+            {{ selGalaxy.pos_void.map(v => v.toFixed(2)).join(', ') }}
+          </span>
+        </div>
+        <div class="vi-row">
+          <span class="vi-lbl">Location</span>
+          <span class="vi-val">{{ selGalaxy.is_wall ? 'Void wall' : 'Void interior' }}</span>
+        </div>
+        <div class="vi-sel-color" :style="`background:${selGalaxy.col_hex}22;border-left:3px solid ${selGalaxy.col_hex}`">
+          Star colour: {{ selGalaxy.col_hex }}
+        </div>
+        <q-btn dense unelevated size="sm" color="blue-grey-9" class="full-width q-mt-sm"
+          icon="mdi-telescope" label="Explore star systems"
+          @click="goToGalaxy(selGalaxy)" />
+      </div>
+    </Transition>
+
+    <!-- Layer controls (bottom-left) -->
+    <transition name="vi-fade">
+      <div v-show="uiVisible" class="vi-layers">
+        <div class="vi-layers-label">LAYERS</div>
+        <button class="vi-layer-btn" :class="{ active: layerWall }" @click="layerWall = !layerWall">
+          <span class="vi-layer-dot" style="background:#cc8855"/>Wall
+        </button>
+        <button class="vi-layer-btn" :class="{ active: layerField }" @click="layerField = !layerField">
+          <span class="vi-layer-dot" style="background:#446688"/>Field
+        </button>
+        <button class="vi-layer-btn" :class="{ active: layerAGN }" @click="layerAGN = !layerAGN">
+          <span class="vi-layer-dot" style="background:#ffcc77"/>AGN
+        </button>
+      </div>
+    </transition>
+
     <!-- Bottom HUD — always visible, tap to toggle UI -->
     <div class="vi-hud" @click="onHudClick">
       <span class="vi-hud-text">
-        {{ volumeLabel }}
+        {{ volumeLabel }} · {{ Math.round(camR) }}% zoom
         <span v-if="!uiVisible" class="vi-hud-tap">· tap for info</span>
       </span>
     </div>
@@ -172,6 +229,14 @@ const agnPct = computed(() => {
   return ((oracleData.value.agn_count / oracleData.value.total_count) * 100).toFixed(1)
 })
 
+// ── Layer toggles + zoom + selection ─────────────────────────────────────────
+
+const layerWall  = ref(true)
+const layerField = ref(true)
+const layerAGN   = ref(true)
+const camR       = ref(115)
+const selGalaxy  = ref<VoidGalaxy | null>(null)
+
 // ── UI auto-hide ──────────────────────────────────────────────────────────────
 
 const uiVisible = ref(true)
@@ -196,23 +261,29 @@ let camera:   THREE.PerspectiveCamera
 let animId:   number
 
 // Orbital camera state
-const CAM_R = 115
 const orbit = { theta: 0.0, phi: Math.PI * 0.42 }
 const drag  = { active: false, lastX: 0, lastY: 0 }
 const touch = { lastX: 0, lastY: 0 }
 
 // Click detection — distinguish tap from drag
-let wallGalsArr:  VoidGalaxy[]     = []
-let fieldGalsArr: VoidGalaxy[]     = []
+let wallGalsArr:  VoidGalaxy[]        = []
+let fieldGalsArr: VoidGalaxy[]        = []
 let wallPoints:   THREE.Points | null = null
 let fieldPoints:  THREE.Points | null = null
+let agnPoints:    THREE.Points | null = null
 let dragMoved    = 0
 
 function updateCamera() {
+  const r  = camR.value
   const sp = Math.sin(orbit.phi), cp = Math.cos(orbit.phi)
   const st = Math.sin(orbit.theta), ct = Math.cos(orbit.theta)
-  camera.position.set(CAM_R * sp * st, CAM_R * cp, CAM_R * sp * ct)
+  camera.position.set(r * sp * st, r * cp, r * sp * ct)
   camera.lookAt(0, 0, 0)
+}
+
+function onWheel(e: WheelEvent) {
+  e.preventDefault()
+  camR.value = Math.max(18, Math.min(188, camR.value + e.deltaY * 0.10))
 }
 
 // Mouse drag
@@ -247,7 +318,7 @@ function onClick(e: MouseEvent) {
   if (dragMoved > 6 || !canvasEl.value || !camera) return
   const rect = canvasEl.value.getBoundingClientRect()
   const rc   = new THREE.Raycaster()
-  rc.params.Points = { threshold: 2.2 }
+  rc.params.Points = { threshold: 2.6 }
   rc.setFromCamera(
     new THREE.Vector2(
       ((e.clientX - rect.left) / rect.width)  *  2 - 1,
@@ -257,20 +328,21 @@ function onClick(e: MouseEvent) {
   )
   const targets = ([wallPoints, fieldPoints] as (THREE.Points | null)[]).filter(Boolean) as THREE.Points[]
   const hits    = rc.intersectObjects(targets, false)
-  if (!hits.length) return
+  if (!hits.length) { selGalaxy.value = null; return }
   const hit = hits[0]!
   const gal = hit.object === wallPoints ? wallGalsArr[hit.index!] : fieldGalsArr[hit.index!]
   if (!gal) return
+  // Show in-place panel — no page transition
+  selGalaxy.value = gal
+  uiVisible.value = true
+  if (hideTimer) clearTimeout(hideTimer)
+}
+
+function goToGalaxy(gal: VoidGalaxy) {
   void router.push({
     name:   'void-galaxy',
     params: { voidId: String(route.params.voidId ?? 'bootes-void'), gid: gal.gid },
-    query:  {
-      morph: gal.morph,
-      color: gal.col_hex.replace('#', ''),
-      z:     String(gal.z),
-      agn:   gal.has_agn  ? '1' : '0',
-      wall:  gal.is_wall  ? '1' : '0',
-    },
+    query:  { morph: gal.morph, color: gal.col_hex.replace('#', ''), z: String(gal.z), agn: gal.has_agn ? '1' : '0', wall: gal.is_wall ? '1' : '0' },
   })
 }
 
@@ -391,11 +463,12 @@ function addGalaxiesFromOracle(oracle: VoidOracleFile) {
     })
     const geo = new THREE.BufferGeometry()
     geo.setAttribute('position', new THREE.BufferAttribute(pos, 3))
-    scene.add(new THREE.Points(geo, new THREE.PointsMaterial({
+    agnPoints = new THREE.Points(geo, new THREE.PointsMaterial({
       color: 0xffd8a0, size: 2.6, sizeAttenuation: true,
       transparent: true, opacity: 0.20,
       blending: THREE.AdditiveBlending, depthWrite: false,
-    })))
+    }))
+    scene.add(agnPoints)
   }
 
   // Wall-group halos — 12 evenly-sampled wall positions; soft glow suggests group-scale halo
@@ -484,11 +557,29 @@ async function buildScene() {
   oracleData.value = oracle
   oracle ? addGalaxiesFromOracle(oracle) : addProceduralVoid()
 
-  let t = 0
+  // Void shell wireframe — visual boundary of the underdense region
+  if (radiusMpc.value) {
+    // pos_void coords: 1 Mpc = (1/15) pos_void unit; VIS_SCALE=7.5 → 1 Mpc ≈ 0.5 scene units
+    const shellR   = radiusMpc.value * 0.5
+    const shellGeo = new THREE.SphereGeometry(shellR, 48, 24)
+    const shellMat = new THREE.MeshBasicMaterial({
+      color: 0x1a3a60, wireframe: true, transparent: true, opacity: 0.04, depthWrite: false,
+    })
+    scene.add(new THREE.Mesh(shellGeo, shellMat))
+
+    // Equatorial ring — stronger accent at void midplane
+    const ringGeo = new THREE.TorusGeometry(shellR, 0.18, 4, 80)
+    const ringMat = new THREE.MeshBasicMaterial({ color: 0x224466, transparent: true, opacity: 0.07, depthWrite: false })
+    scene.add(new THREE.Mesh(ringGeo, ringMat))
+  }
+
   const loop = () => {
     animId = requestAnimationFrame(loop)
-    t += 0.00015
     if (!drag.active) orbit.theta += 0.000125
+    // Sync layer visibility from reactive state
+    if (wallPoints)  wallPoints.visible  = layerWall.value
+    if (fieldPoints) fieldPoints.visible = layerField.value
+    if (agnPoints)   agnPoints.visible   = layerAGN.value
     updateCamera()
     renderer.render(scene, camera)
   }
@@ -506,12 +597,14 @@ function onResize() {
 
 onMounted(() => {
   window.addEventListener('resize', onResize)
+  canvasEl.value?.addEventListener('wheel', onWheel, { passive: false })
   scheduleHide()
-  buildScene()
+  void buildScene()
 })
 
 onUnmounted(() => {
   window.removeEventListener('resize', onResize)
+  canvasEl.value?.removeEventListener('wheel', onWheel)
   if (hideTimer) clearTimeout(hideTimer)
   cancelAnimationFrame(animId)
   renderer?.dispose()
@@ -604,6 +697,49 @@ onUnmounted(() => {
 }
 .vi-hud-text { font-size: 10px; color: rgba(100,120,140,0.65); }
 .vi-hud-tap  { font-size: 9px;  color: rgba(80,100,120,0.45); }
+
+/* ── Selected galaxy panel ───────────────────────────────────────────────── */
+.vi-sel-panel {
+  position: absolute; top: 50%; left: 16px;
+  transform: translateY(-50%);
+  width: 228px; z-index: 12;
+  background: rgba(2, 6, 18, 0.92);
+  border: 1px solid rgba(80,110,160,0.28);
+  border-radius: 8px; padding: 12px;
+  backdrop-filter: blur(10px);
+}
+.vi-sel-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+.vi-sel-eyebrow { font-size: 8px; letter-spacing: 0.12em; color: rgba(80,120,170,0.65); margin-bottom: 2px; }
+.vi-sel-name { font-size: 13px; color: rgba(180,210,240,0.88); font-weight: 400; word-break: break-all; }
+.vi-sel-color {
+  font-size: 8.5px; color: rgba(160,180,200,0.55);
+  margin: 6px 0 2px; padding: 3px 6px; border-radius: 3px;
+}
+
+/* ── Layer toggles ───────────────────────────────────────────────────────── */
+.vi-layers {
+  position: absolute; bottom: 48px; left: 16px; z-index: 10;
+  display: flex; align-items: center; gap: 6px;
+}
+.vi-layers-label {
+  font-size: 7.5px; letter-spacing: 0.12em;
+  color: rgba(60,90,130,0.55); margin-right: 2px;
+}
+.vi-layer-btn {
+  display: flex; align-items: center; gap: 4px;
+  padding: 3px 9px; border-radius: 12px;
+  border: 1px solid rgba(80,110,150,0.22);
+  background: rgba(0,0,0,0.45);
+  color: rgba(100,130,165,0.50);
+  font-size: 9px; font-family: 'Courier New', monospace;
+  cursor: pointer; transition: all 0.13s;
+}
+.vi-layer-btn.active {
+  border-color: rgba(80,130,190,0.45);
+  color: rgba(170,200,235,0.80);
+  background: rgba(0,10,30,0.65);
+}
+.vi-layer-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
 
 /* ── Transitions ─────────────────────────────────────────────────────────── */
 .vi-fade-enter-active, .vi-fade-leave-active { transition: opacity 0.5s ease; }

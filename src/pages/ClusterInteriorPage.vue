@@ -28,9 +28,11 @@
       <div class="text-caption text-blue-grey-5 q-mt-sm">Loading cluster members…</div>
     </div>
 
-    <!-- Selected galaxy panel -->
-    <Transition name="slide-panel">
-      <div v-if="selected" class="ci-panel">
+    <!-- Galaxy info / loading / interior panel -->
+    <Transition name="slide-panel" mode="out-in">
+
+      <!-- ── CLUSTER: member galaxy info ────────────────────────────────── -->
+      <div v-if="viewMode === 'cluster' && selected" key="cluster" class="ci-panel">
         <div class="ci-panel-header">
           <div>
             <div class="text-caption text-cyan-7 q-mb-xs" style="letter-spacing:0.1em">MEMBER GALAXY</div>
@@ -57,12 +59,10 @@
         </div>
         <template v-if="selectedRealData">
           <div class="ci-row">
-            <span class="ci-lbl">Star systems</span>
-            <span class="text-cyan-5">{{ selectedRealData.systems }}</span>
+            <span class="ci-lbl">Star systems</span><span class="text-cyan-5">{{ selectedRealData.systems }}</span>
           </div>
           <div class="ci-row">
-            <span class="ci-lbl">Mapped worlds</span>
-            <span class="text-cyan-5">{{ selectedRealData.planets }}</span>
+            <span class="ci-lbl">Mapped worlds</span><span class="text-cyan-5">{{ selectedRealData.planets }}</span>
           </div>
           <div class="ci-data-badge">◉ mapped data</div>
         </template>
@@ -77,24 +77,83 @@
         <div v-if="selected.notes" class="text-caption text-blue-grey-6 q-mt-xs" style="font-size:9px;line-height:1.5">
           {{ selected.notes }}
         </div>
-
         <div v-if="zoomLevel === 'systems'" class="ci-lod-cloud">
           <q-icon name="mdi-star-four-points-small" size="9px" />
           <span>{{ systemCloudCount }} systems visible</span>
         </div>
-
         <q-separator color="blue-grey-8" class="q-my-sm" />
-
         <q-btn v-if="zoomLevel !== 'systems'" dense rounded unelevated size="sm" color="blue-grey-8" class="full-width q-mb-xs"
-          icon="mdi-magnify-plus" label="Zoom In — Reveal Systems"
-          @click="flyToSystemView()" />
+          icon="mdi-magnify-plus" label="Zoom In — Reveal Systems" @click="flyToSystemView()" />
         <q-btn dense rounded unelevated size="sm" color="cyan-8" class="full-width q-mb-xs"
-          icon="mdi-telescope" label="Explore Star Systems"
-          @click="navigateToGalaxy(false)" />
+          icon="mdi-telescope" label="Explore Star Systems" @click="exploreGalaxy(selected)" />
         <q-btn flat dense size="xs" color="blue-grey-5" class="full-width"
-          icon="mdi-map-marker-plus" label="Create a Settlement Here"
-          @click="navigateToGalaxy(true)" />
+          icon="mdi-map-marker-plus" label="Create a Settlement Here" @click="navigateToGalaxy(true)" />
       </div>
+
+      <!-- ── GALAXY LOADING ──────────────────────────────────────────────── -->
+      <div v-else-if="viewMode === 'galaxy-loading'" key="loading" class="ci-panel">
+        <div class="ci-panel-header">
+          <div class="text-caption text-cyan-7" style="letter-spacing:0.1em">ENTERING GALAXY</div>
+        </div>
+        <div class="text-subtitle2 text-blue-grey-2 q-mt-xs q-mb-sm">
+          {{ exploredMember?.name || exploredMember?.id }}
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <q-spinner-dots color="cyan-8" size="20px"/>
+          <span class="text-caption text-blue-grey-5">Loading star systems…</span>
+        </div>
+      </div>
+
+      <!-- ── GALAXY INTERIOR ─────────────────────────────────────────────── -->
+      <div v-else-if="viewMode === 'galaxy'" key="galaxy" class="ci-panel ci-panel--galaxy">
+        <div class="ci-panel-header">
+          <div>
+            <div class="text-caption text-cyan-6 q-mb-xs" style="letter-spacing:0.1em">GALAXY INTERIOR</div>
+            <div class="text-subtitle2 text-blue-grey-1">{{ exploredMember?.name || exploredMember?.id }}</div>
+            <div class="text-caption text-blue-grey-5">
+              {{ exploredDoc?.galaxy_hubble }} · {{ galSystems.length }} systems
+            </div>
+          </div>
+          <q-btn flat dense size="xs" icon="mdi-close" color="blue-grey-5" @click="exitGalaxyExplore" />
+        </div>
+
+        <template v-if="selectedSystem">
+          <q-separator color="blue-grey-8" class="q-my-sm" />
+          <div class="text-caption text-cyan-9 q-mb-xs" style="font-size:8px;letter-spacing:0.10em">STAR SYSTEM</div>
+          <div class="text-subtitle2 text-blue-grey-1 q-mb-xs">{{ selectedSystem.name }}</div>
+          <div class="ci-row">
+            <span class="ci-lbl">Spectral</span>
+            <span :style="{ color: selectedSystem.specColor }">{{ selectedSystem.spectral }}–class</span>
+          </div>
+          <div class="ci-row">
+            <span class="ci-lbl">Planets</span>
+            <span class="text-blue-grey-3">{{ selectedSystem.planetCount }}</span>
+          </div>
+          <div class="ci-row">
+            <span class="ci-lbl">Temp range</span>
+            <span class="text-blue-grey-3">{{ selectedSystem.eqtRange }}</span>
+          </div>
+          <q-separator color="blue-grey-8" class="q-my-sm" />
+          <div class="row q-gutter-xs q-mb-xs">
+            <q-btn dense rounded unelevated size="sm" color="cyan-9" icon="mdi-telescope" label="Enter system"
+              @click="descendToSurface(selectedSystem)" />
+            <q-btn dense rounded unelevated size="sm" color="amber-9" icon="mdi-map-marker-plus" label="Settle"
+              @click="goClaimSystem(selectedSystem)" />
+          </div>
+          <q-btn flat dense size="xs" color="blue-grey-6" class="full-width q-mb-xs"
+            icon="mdi-close" label="Deselect system" @click="selectedSystem = null" />
+        </template>
+        <template v-else>
+          <div class="text-caption text-blue-grey-6 q-mt-xs q-mb-sm" style="font-size:9px;line-height:1.55">
+            Scroll to zoom · drag to orbit · click a star system to select it
+          </div>
+        </template>
+
+        <q-separator color="blue-grey-9" class="q-my-xs" />
+        <q-btn flat dense size="xs" color="blue-grey-5" class="full-width"
+          icon="mdi-chevron-left" label="Back to cluster" @click="exitGalaxyExplore" />
+      </div>
+
     </Transition>
 
     <!-- Hover tooltip -->
@@ -118,7 +177,9 @@ import { useRoute, useRouter } from 'vue-router'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import gsap from 'gsap'
-import { prefetchClusterGalaxies } from 'src/composables/useClusterGalaxyData'
+import { prefetchClusterGalaxies, fetchGalaxyDoc, buildBackgroundField, mulberry32 } from 'src/composables/useClusterGalaxyData'
+import type { ClusterGalaxyDoc } from 'src/composables/useClusterGalaxyData'
+import { useSettlements, clusterKey } from 'src/lib/settlements'
 import { useSceneTransitionStore }  from 'src/stores/scene-transition'
 
 // ── Scene constants ───────────────────────────────────────────────────────────
@@ -163,6 +224,18 @@ interface ClusterData {
 }
 
 type GalMorph = 'cD' | 'E' | 'S0' | 'Sa' | 'Sb' | 'Irr'
+type ViewMode = 'cluster' | 'galaxy-loading' | 'galaxy'
+
+interface GalSystem {
+  idx:         number
+  id:          string
+  name:        string
+  spectral:    string
+  specColor:   string
+  planetCount: number
+  eqtRange:    string
+  worldPos:    THREE.Vector3
+}
 
 // ── Route ─────────────────────────────────────────────────────────────────────
 const route      = useRoute()
@@ -194,6 +267,14 @@ const selectedRealData = computed(() =>
   selected.value ? systemDataMap.value.get(selected.value.id) ?? null : null
 )
 
+// ── Galaxy interior view state ────────────────────────────────────────────────
+const viewMode        = ref<ViewMode>('cluster')
+const exploredMember  = ref<ClusterMember | null>(null)
+const exploredDoc     = ref<ClusterGalaxyDoc | null>(null)
+const selectedSystem  = ref<GalSystem | null>(null)
+const galSystems      = ref<GalSystem[]>([])
+const { hasSettlement, addSettlement } = useSettlements()
+
 // ── Three.js handles ──────────────────────────────────────────────────────────
 let renderer:  THREE.WebGLRenderer
 let scene:     THREE.Scene
@@ -204,8 +285,12 @@ let animId:    number
 const mouseNDC       = new THREE.Vector2()
 const hitProxies:    THREE.Mesh[]    = []
 const memberSprites: THREE.Sprite[]  = []
-const dataRings:     THREE.Sprite[]  = []    // pulsing ring badges for galaxies with real data
-const clusterCenter  = new THREE.Vector3()   // centroid of loaded members, set after build
+const clusterCenter  = new THREE.Vector3()
+// Galaxy interior objects
+let   galaxyGroup:    THREE.Group | null = null
+const sysProxies:     THREE.Mesh[]       = []
+const galGlowSprites: THREE.Sprite[]     = []
+let   hoveredSysIdx   = -1   // centroid of loaded members, set after build
 
 // ── Galaxy morph texture cache ────────────────────────────────────────────────
 const _texCache = new Map<string, THREE.CanvasTexture>()
@@ -303,35 +388,6 @@ function makeGalSprite(morph: GalMorph, col: THREE.Color, sizeSu: number): THREE
   const sp  = new THREE.Sprite(mat)
   sp.scale.setScalar(sizeSu)
   sp.frustumCulled = false
-  return sp
-}
-
-// ── Data-badge ring sprite ────────────────────────────────────────────────────
-
-function makeDataRing(sizeSu: number): THREE.Sprite {
-  const S = 128, cx = S / 2
-  const cv = document.createElement('canvas')
-  cv.width = cv.height = S
-  const ctx = cv.getContext('2d')!
-  ctx.setLineDash([9, 5])
-  ctx.beginPath()
-  ctx.arc(cx, cx, cx * 0.80, 0, Math.PI * 2)
-  ctx.strokeStyle = 'rgba(0,220,200,0.70)'
-  ctx.lineWidth   = 3.5
-  ctx.stroke()
-  ctx.setLineDash([])
-  for (let i = 0; i < 6; i++) {
-    const a = (i / 6) * Math.PI * 2
-    ctx.beginPath()
-    ctx.arc(cx + Math.cos(a) * cx * 0.80, cx + Math.sin(a) * cx * 0.80, 3, 0, Math.PI * 2)
-    ctx.fillStyle = 'rgba(0,255,220,0.9)'
-    ctx.fill()
-  }
-  const tex = new THREE.CanvasTexture(cv)
-  tex.generateMipmaps = false; tex.minFilter = THREE.LinearFilter
-  const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false })
-  const sp  = new THREE.Sprite(mat)
-  sp.scale.setScalar(sizeSu * 1.75)
   return sp
 }
 
@@ -445,7 +501,6 @@ async function loadAndBuild() {
 function buildMembers(members: ClusterMember[]) {
   hitProxies.length = 0
   memberSprites.length = 0
-  dataRings.length = 0
 
   for (const m of members) {
     const morph = (m.hubble ?? 'E') as GalMorph
@@ -476,15 +531,6 @@ function buildMembers(members: ClusterMember[]) {
     sp.userData = { member: m }
     scene.add(sp)
     memberSprites.push(sp)
-
-    // Data-badge ring for galaxies with generated star-system JSON
-    if (systemDataMap.value.has(m.id)) {
-      const ring = makeDataRing(sz)
-      ring.position.copy(sp.position)
-      ring.userData = { isBadge: true }
-      scene.add(ring)
-      dataRings.push(ring)
-    }
 
     // Hit proxy — slightly larger than sprite so it's easy to click, but not so
     // large that neighbours overlap (typical galaxy spacing ~1-7 su at SCENE_SCALE=80)
@@ -519,11 +565,6 @@ function startLoop() {
     animId = requestAnimationFrame(tick)
     controls.update()
     updateZoomLevel()
-    // Slowly rotate data-badge rings so they feel alive
-    const t = performance.now() / 1000
-    for (const ring of dataRings) {
-      ;(ring.material as THREE.SpriteMaterial).rotation = t * 0.35
-    }
     renderer.render(scene, camera)
   }
   tick()
@@ -535,12 +576,43 @@ function onWheel() {
   gsap.killTweensOf(controls.target)
 }
 
+function applyGalHover(newIdx: number) {
+  if (newIdx === hoveredSysIdx) return
+  if (hoveredSysIdx >= 0) {
+    const pg = galGlowSprites[hoveredSysIdx]
+    if (pg) pg.scale.setScalar(pg.userData.baseScale as number)
+  }
+  if (newIdx >= 0) {
+    const ng = galGlowSprites[newIdx]
+    if (ng) ng.scale.setScalar((ng.userData.baseScale as number) * 2.5)
+  }
+  hoveredSysIdx = newIdx
+}
+
 function onMouseMove(e: MouseEvent) {
   const el = canvasEl.value
   if (!el) return
   mouseNDC.x =  (e.clientX / el.clientWidth)  * 2 - 1
   mouseNDC.y = -(e.clientY / el.clientHeight) * 2 + 1
   raycaster.setFromCamera(mouseNDC, camera)
+
+  if (viewMode.value === 'galaxy') {
+    const hits = raycaster.intersectObjects(sysProxies)
+    if (hits.length) {
+      const idx = (hits[0].object as THREE.Mesh).userData.sysIdx as number
+      const sys = galSystems.value[idx]
+      hoverName.value = sys?.name ?? ''
+      hoverPos.value  = { x: e.clientX, y: e.clientY }
+      el.style.cursor = 'pointer'
+      applyGalHover(idx)
+    } else {
+      hoverName.value = ''
+      el.style.cursor = ''
+      applyGalHover(-1)
+    }
+    return
+  }
+
   const hits = raycaster.intersectObjects(hitProxies)
   if (hits.length) {
     const m = hits[0].object.userData.member as ClusterMember
@@ -555,6 +627,7 @@ function onMouseMove(e: MouseEvent) {
 
 function onMouseLeave() {
   hoverName.value = ''
+  applyGalHover(-1)
 }
 
 function onClick(e: MouseEvent) {
@@ -563,6 +636,21 @@ function onClick(e: MouseEvent) {
   mouseNDC.x =  (e.clientX / el.clientWidth)  * 2 - 1
   mouseNDC.y = -(e.clientY / el.clientHeight) * 2 + 1
   raycaster.setFromCamera(mouseNDC, camera)
+
+  // ── Galaxy interior mode ──────────────────────────────────────────────────
+  if (viewMode.value === 'galaxy') {
+    const hits = raycaster.intersectObjects(sysProxies)
+    if (hits.length) {
+      const idx = (hits[0].object as THREE.Mesh).userData.sysIdx as number
+      const sys = galSystems.value[idx]
+      if (sys) selectGalSystem(sys)
+    } else {
+      selectedSystem.value = null
+    }
+    return
+  }
+
+  // ── Cluster mode ──────────────────────────────────────────────────────────
   const hits = raycaster.intersectObjects(hitProxies)
   if (!hits.length) {
     deselect()
@@ -571,7 +659,6 @@ function onClick(e: MouseEvent) {
   const proxy  = hits[0].object
   const member = proxy.userData.member as ClusterMember
   selected.value = member
-  // Capture click viewport % and bearing for the outgoing transition
   clickPct.x      = e.clientX / window.innerWidth  * 100
   clickPct.y      = e.clientY / window.innerHeight * 100
   clickBearing.value = Math.atan2(
@@ -580,6 +667,249 @@ function onClick(e: MouseEvent) {
   )
   void router.replace({ query: { member: member.id } })
   flyToMember(proxy.position)
+}
+
+// ── Galaxy interior helpers ───────────────────────────────────────────────────
+
+const SPECTRAL_COLOR: Record<string, string> = {
+  O: '#9bb0ff', B: '#aabfff', A: '#cad7ff', F: '#f8f7ff',
+  G: '#ffe4aa', K: '#ffbe6e', M: '#ff8250',
+}
+
+function mapDocToGalSystems(doc: ClusterGalaxyDoc, origin: THREE.Vector3): GalSystem[] {
+  const seed = (doc.cluster_slug + doc.galaxy_id)
+    .split('').reduce((a, c, i) => a + c.charCodeAt(0) * (i + 1), 0) & 0xFFFFFFFF
+  const rng  = mulberry32(seed)
+  return doc.star_systems.slice(0, 80).map((s, i) => {
+    const spec      = s.spectral_type[0] ?? 'K'
+    const specColor = SPECTRAL_COLOR[spec] ?? '#ffbe6e'
+    const temps     = s.planets.map(p => p.eq_temp_k)
+    const eqtLo     = temps.length ? Math.min(...temps) : 150
+    const eqtHi     = temps.length ? Math.max(...temps) : 400
+    const orbitR    = 0.3 + rng() * 2.2
+    const theta     = rng() * Math.PI * 2
+    const phi       = Math.acos(2 * rng() - 1) * 0.55
+    const worldPos  = new THREE.Vector3(
+      origin.x + orbitR * Math.sin(phi) * Math.cos(theta),
+      origin.y + orbitR * Math.cos(phi) * 0.28,
+      origin.z + orbitR * Math.sin(phi) * Math.sin(theta),
+    )
+    return { idx: i, id: s.id, name: s.label, spectral: spec, specColor, planetCount: s.planets.length, eqtRange: `${eqtLo}–${eqtHi} K`, worldPos }
+  })
+}
+
+function buildSysGlow(sys: GalSystem): THREE.Sprite {
+  const cv = document.createElement('canvas'); cv.width = cv.height = 64
+  const ctx = cv.getContext('2d')!; const cx = 32
+  const hex = sys.specColor.replace('#', '')
+  const r = parseInt(hex.substring(0, 2), 16)
+  const g = parseInt(hex.substring(2, 4), 16)
+  const b = parseInt(hex.substring(4, 6), 16)
+  ctx.save(); ctx.beginPath(); ctx.arc(cx, cx, cx, 0, Math.PI * 2); ctx.clip()
+  const grd = ctx.createRadialGradient(cx, cx, 0, cx, cx, cx * 0.8)
+  grd.addColorStop(0,    `rgba(255,255,255,0.95)`)
+  grd.addColorStop(0.08, `rgba(${r},${g},${b},0.80)`)
+  grd.addColorStop(0.35, `rgba(${r},${g},${b},0.22)`)
+  grd.addColorStop(1,    `rgba(${r},${g},${b},0)`)
+  ctx.fillStyle = grd; ctx.fillRect(0, 0, 64, 64); ctx.restore()
+  const tex = new THREE.CanvasTexture(cv)
+  tex.generateMipmaps = false; tex.minFilter = THREE.LinearFilter
+  const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0 })
+  const sp = new THREE.Sprite(mat)
+  sp.scale.setScalar(0.055); sp.position.copy(sys.worldPos)
+  sp.userData = { baseScale: 0.055, sysIdx: sys.idx }
+  return sp
+}
+
+function buildGalaxyInterior(doc: ClusterGalaxyDoc, origin: THREE.Vector3, systems: GalSystem[]) {
+  clearGalaxyInterior()
+  galaxyGroup = new THREE.Group()
+  galGlowSprites.length = 0; sysProxies.length = 0; hoveredSysIdx = -1
+
+  // Background stellar population (morphology-aware, from composable)
+  const field = buildBackgroundField(doc, 2.5)
+  const bgPos = new Float32Array(field.count * 3)
+  for (let i = 0; i < field.count; i++) {
+    bgPos[i * 3]     = origin.x + field.positions[i * 3]
+    bgPos[i * 3 + 1] = origin.y + field.positions[i * 3 + 1]
+    bgPos[i * 3 + 2] = origin.z + field.positions[i * 3 + 2]
+  }
+  const bgGeo = new THREE.BufferGeometry()
+  bgGeo.setAttribute('position', new THREE.BufferAttribute(bgPos, 3))
+  bgGeo.setAttribute('color',    new THREE.BufferAttribute(field.colors, 3))
+
+  const ptCv = document.createElement('canvas'); ptCv.width = ptCv.height = 32
+  const ptCtx = ptCv.getContext('2d')!
+  const ptGrd = ptCtx.createRadialGradient(16, 16, 0, 16, 16, 16)
+  ptGrd.addColorStop(0, 'rgba(255,255,255,1.0)'); ptGrd.addColorStop(0.3, 'rgba(255,255,255,0.7)')
+  ptGrd.addColorStop(0.7, 'rgba(255,255,255,0.15)'); ptGrd.addColorStop(1, 'rgba(255,255,255,0)')
+  ptCtx.fillStyle = ptGrd; ptCtx.fillRect(0, 0, 32, 32)
+  const ptTex = new THREE.CanvasTexture(ptCv)
+  ptTex.generateMipmaps = false; ptTex.minFilter = THREE.LinearFilter
+  const bgMat = new THREE.PointsMaterial({
+    map: ptTex, vertexColors: true, size: 0.016, sizeAttenuation: true,
+    transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, alphaTest: 0.01,
+  })
+  const bgPoints = new THREE.Points(bgGeo, bgMat)
+  galaxyGroup.add(bgPoints)
+  gsap.to(bgMat, { opacity: 0.65, duration: 1.8, delay: 0.4, ease: 'power2.out' })
+
+  // Anchor star systems: dot + glow + invisible hit proxy
+  for (const sys of systems) {
+    const visR = 0.022 + sys.planetCount * 0.005
+    const dotGeo = new THREE.SphereGeometry(visR, 6, 6)
+    const dotMat = new THREE.MeshBasicMaterial({ color: sys.specColor, transparent: true, opacity: 0 })
+    const dot    = new THREE.Mesh(dotGeo, dotMat)
+    dot.position.copy(sys.worldPos)
+    dot.userData = { sysIdx: sys.idx }
+
+    const glow = buildSysGlow(sys)
+    galGlowSprites[sys.idx] = glow
+
+    const hitR   = Math.max(0.06, visR * 3.2)
+    const proxy  = new THREE.Mesh(
+      new THREE.SphereGeometry(hitR, 6, 6),
+      new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false }),
+    )
+    proxy.position.copy(sys.worldPos)
+    proxy.userData = { sysIdx: sys.idx }
+    sysProxies.push(proxy)
+
+    gsap.to(dotMat, { opacity: 0.88, duration: 1.2, delay: 0.5 + sys.idx * 0.006, ease: 'power2.out' })
+    gsap.to(glow.material, { opacity: 0.55, duration: 1.2, delay: 0.5 + sys.idx * 0.006, ease: 'power2.out' })
+
+    galaxyGroup.add(dot, glow, proxy)
+  }
+
+  scene.add(galaxyGroup)
+}
+
+function clearGalaxyInterior() {
+  if (!galaxyGroup) return
+  scene.remove(galaxyGroup)
+  galaxyGroup.traverse(obj => {
+    if ((obj as THREE.Mesh).isMesh || (obj as THREE.Points).isPoints) {
+      (obj as THREE.Mesh).geometry?.dispose()
+      const mat = (obj as THREE.Mesh).material
+      if (Array.isArray(mat)) mat.forEach(m => m.dispose())
+      else mat?.dispose()
+    }
+    if ((obj as THREE.Sprite).isSprite) {
+      const mat = (obj as THREE.Sprite).material as THREE.SpriteMaterial
+      mat.map?.dispose(); mat.dispose()
+    }
+  })
+  galaxyGroup = null
+  sysProxies.length = 0
+  galGlowSprites.length = 0
+  hoveredSysIdx = -1
+}
+
+async function exploreGalaxy(member: ClusterMember | null) {
+  if (!member) return
+  viewMode.value = 'galaxy-loading'
+  exploredMember.value = member
+  selectedSystem.value = null
+  clearSystemCloud()
+
+  const origin = memberSprites.find(
+    sp => (sp.userData as { member: ClusterMember }).member.id === member.id
+  )?.position.clone() ?? new THREE.Vector3()
+
+  try {
+    const doc = await fetchGalaxyDoc(slug.value, member.id)
+    exploredDoc.value = doc
+    const systems = mapDocToGalSystems(doc, origin)
+    galSystems.value = systems
+    buildGalaxyInterior(doc, origin, systems)
+
+    // Dim all other galaxy sprites so the explored one reads clearly
+    for (const sp of memberSprites) {
+      const m = (sp.userData as { member: ClusterMember }).member
+      const mat = sp.material as THREE.SpriteMaterial
+      const target = m.id === member.id ? mat.opacity : 0.05
+      gsap.to(mat, { opacity: target, duration: 0.9 })
+    }
+
+    // Fly camera to ~4 su from the galaxy, looking at it
+    const camDir = camera.position.clone().sub(origin).normalize()
+    const camDest = origin.clone().addScaledVector(camDir, 4.0)
+    gsap.killTweensOf(camera.position); gsap.killTweensOf(controls.target)
+    gsap.to(controls.target, { x: origin.x, y: origin.y, z: origin.z, duration: 1.0, ease: 'power2.out', onUpdate: () => controls.update() })
+    gsap.to(camera.position, { x: camDest.x, y: camDest.y, z: camDest.z, duration: 2.0, ease: 'power3.out', onUpdate: () => controls.update() })
+
+    viewMode.value = 'galaxy'
+  } catch (e) {
+    console.warn('[ClusterInteriorPage] exploreGalaxy failed:', e)
+    viewMode.value = 'cluster'
+    exploredMember.value = null
+  }
+}
+
+function exitGalaxyExplore() {
+  selectedSystem.value = null
+  clearGalaxyInterior()
+  galSystems.value = []
+  exploredDoc.value = null
+
+  // Restore all galaxy sprite opacities
+  for (const sp of memberSprites) {
+    const m = (sp.userData as { member: ClusterMember }).member
+    const base = m.bt_mag != null
+      ? Math.max(0.28, Math.min(0.95, 1.10 - (m.bt_mag - 9) * 0.09))
+      : 0.6
+    gsap.to(sp.material as THREE.SpriteMaterial, { opacity: base, duration: 0.8 })
+  }
+
+  // Fly back to cluster overview
+  const c = clusterCenter
+  gsap.killTweensOf(camera.position); gsap.killTweensOf(controls.target)
+  gsap.to(controls.target, { x: c.x, y: c.y, z: c.z, duration: 1.0, ease: 'power2.out', onUpdate: () => controls.update() })
+  gsap.to(camera.position, { x: c.x, y: c.y + 10, z: c.z + 28, duration: 2.0, ease: 'power3.inOut', onUpdate: () => controls.update() })
+
+  exploredMember.value = null
+  viewMode.value = 'cluster'
+}
+
+function selectGalSystem(sys: GalSystem) {
+  selectedSystem.value = sys
+  const fromCam = camera.position.clone().sub(sys.worldPos).normalize()
+  const dest    = sys.worldPos.clone().addScaledVector(fromCam, 0.85)
+  gsap.killTweensOf(camera.position); gsap.killTweensOf(controls.target)
+  gsap.to(controls.target, { x: sys.worldPos.x, y: sys.worldPos.y, z: sys.worldPos.z, duration: 0.6, ease: 'power2.out', onUpdate: () => controls.update() })
+  gsap.to(camera.position, { x: dest.x, y: dest.y, z: dest.z, duration: 1.4, ease: 'power3.out', onUpdate: () => controls.update() })
+}
+
+async function descendToSurface(sys: GalSystem) {
+  const mem = exploredMember.value
+  if (!mem) return
+  const sc      = sys.worldPos.clone().project(camera)
+  const px      = (sc.x + 1) / 2 * 100
+  const py      = (1 - sc.y) / 2 * 100
+  const bearing = Math.atan2(py / 100 - 0.5, px / 100 - 0.5)
+  await transition.depart(px, py, 'lightning', bearing)
+  void router.push({
+    name:   'cluster-system',
+    params: { clusterSlug: slug.value, memberId: mem.id, systemIdx: sys.idx },
+    query:  { bearing: bearing.toFixed(3) },
+  })
+}
+
+function goClaimSystem(sys: GalSystem) {
+  const mem = exploredMember.value
+  if (!mem) return
+  const key = clusterKey(slug.value, mem.id, sys.id, 'b')
+  if (!hasSettlement(key)) {
+    addSettlement({
+      key, type: 'cluster', planetName: 'b', hostname: sys.id,
+      exolocation: `exo-cluster-v1:${slug.value}:${mem.id}:${sys.id}:b`,
+      displayName: `${sys.id} · b (${slug.value})`,
+      clusterSlug: slug.value, memberId: mem.id,
+    })
+  }
+  void router.push(
+    `/mint?mode=cluster-world&cluster=${encodeURIComponent(slug.value)}&galaxy=${encodeURIComponent(mem.id)}&system=${encodeURIComponent(sys.id)}`
+  )
 }
 
 async function navigateToGalaxy(settle = false) {
@@ -675,6 +1005,8 @@ function spawnSystemCloud(member: ClusterMember, pos: THREE.Vector3) {
 }
 
 function updateZoomLevel() {
+  // LOD cloud only relevant in cluster mode
+  if (viewMode.value !== 'cluster') return
   const mem = selected.value
   if (!mem) {
     if (zoomLevel.value !== 'overview') { zoomLevel.value = 'overview'; clearSystemCloud() }
@@ -748,6 +1080,7 @@ onUnmounted(() => {
   window.removeEventListener('resize', onResize)
   renderer?.domElement.removeEventListener('wheel', onWheel)
   clearSystemCloud()
+  clearGalaxyInterior()
   _texCache.forEach(t => t.dispose())
   _texCache.clear()
   renderer?.dispose()
@@ -787,6 +1120,10 @@ onUnmounted(() => {
   padding: 12px;
   backdrop-filter: blur(8px);
   pointer-events: auto;
+}
+.ci-panel--galaxy {
+  border-color: rgba(0,180,160,0.30);
+  background: rgba(2, 12, 18, 0.92);
 }
 .ci-panel-header {
   display: flex; justify-content: space-between; align-items: flex-start;

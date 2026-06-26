@@ -341,7 +341,7 @@ async function _fetchGalaxyDoc(clusterSlug: string, galaxyId: string): Promise<C
   return buildProceduralDoc(normalId, 'E', clusterSlug, clusterSlug.replace(/-/g, ' '), 65, 40)
 }
 
-function fetchGalaxyDoc(clusterSlug: string, galaxyId: string): Promise<ClusterGalaxyDoc> {
+export function fetchGalaxyDoc(clusterSlug: string, galaxyId: string): Promise<ClusterGalaxyDoc> {
   const key = `${clusterSlug}/${galaxyId}`
   if (!_cache.has(key)) _cache.set(key, _fetchGalaxyDoc(clusterSlug, galaxyId))
   return _cache.get(key)!

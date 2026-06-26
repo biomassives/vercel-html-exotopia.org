@@ -543,15 +543,34 @@
 
     </div><!-- /hero (v-if no claim) -->
 
-    <!-- Edition stats ticker -->
+    <!-- Contextual ticker — exolocation path in cluster-world, card names otherwise -->
     <div class="edition-ticker">
-      <div class="ticker-inner">
+      <div v-if="mintMode === 'cluster-world'" class="ticker-inner ticker-inner--cw">
+        <template v-for="_ in 6" :key="_">
+          <span class="ticker-item">
+            <span class="ticker-num">CLUSTER</span> {{ cwCluster.toUpperCase() }}
+            <span class="ticker-sep">›</span>
+          </span>
+          <span class="ticker-item">
+            <span class="ticker-num">GALAXY</span> {{ cwGalaxy }}
+            <span class="ticker-sep">›</span>
+          </span>
+          <span class="ticker-item">
+            <span class="ticker-num">SYSTEM</span> {{ cwSystem }}
+            <span class="ticker-sep">›</span>
+          </span>
+          <span class="ticker-item">
+            <span class="ticker-num">WORLD</span> {{ cwPlanet }}
+            <span class="ticker-sep">◈</span>
+          </span>
+        </template>
+      </div>
+      <div v-else class="ticker-inner">
         <span v-for="c in COLLECTOR_CARDS" :key="c.id" class="ticker-item">
           <span class="ticker-num">#{{ String(c.id).padStart(2,'0') }}</span>
           {{ c.name }}
           <span class="ticker-sep">·</span>
         </span>
-        <!-- duplicate for seamless loop -->
         <span v-for="c in COLLECTOR_CARDS" :key="'b' + c.id" class="ticker-item" aria-hidden="true">
           <span class="ticker-num">#{{ String(c.id).padStart(2,'0') }}</span>
           {{ c.name }}
@@ -2550,6 +2569,18 @@ async function celoExecute() {
 .ticker-sep {
   margin: 0 8px;
   opacity: 0.30;
+}
+
+.ticker-inner--cw {
+  animation-duration: 22s;
+  .ticker-num {
+    color: rgba(0, 210, 180, 0.65);
+    font-size: 7px;
+    letter-spacing: 0.14em;
+  }
+  .ticker-item {
+    color: rgba(100, 200, 190, 0.60);
+  }
 }
 
 /* ── Forms section ───────────────────────────────────────────── */
