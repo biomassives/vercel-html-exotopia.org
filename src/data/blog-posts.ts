@@ -167,6 +167,18 @@ export const BLOG_POSTS: BlogPostMeta[] = [
     editorialNote: 'English edition — Swahili and community translations to follow.',
   },
   {
+    slug:     'online-safety-and-private-comms',
+    title:    'The Surveillance Bargain Hidden Inside Online Safety Laws',
+    subtitle: 'Why KOSA, the UK Online Safety Act, and Australia\'s framework threaten consent-based private communications — and what we\'re doing about it',
+    date:     'June 2026',
+    audience: ['community', 'ecosystem'],
+    series:   'ecosystem',
+    status:   'public-draft',
+    description:
+      'We built a seven-person private comment system. Under current or proposed law in Australia, the UK, and the US it may be non-compliant — not because it causes harm but because it refuses to build surveillance infrastructure. We explain the specific laws, our design choices, the honest complications, and why SCD Hub is lobbying Rep. Neguse (CO-02) against KOSA in its current form.',
+    editorialNote: 'Review Neguse committee assignments and KOSA status before publishing — legislative status changes quickly.',
+  },
+  {
     slug:     'e8-art-hash-zkp',
     title:    'The Most Symmetrical Object in Mathematics Is Now Protecting Field Workers in Coastal Kenya',
     subtitle: 'E8, Leech lattice, PLONK/halo2 proofs, and art-hashes you can verify with human eyes',

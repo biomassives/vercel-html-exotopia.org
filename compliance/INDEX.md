@@ -340,6 +340,12 @@ Regardless of local legal requirements, we commit to:
 | [central-american-corridor/overview.md](central-american-corridor/overview.md) | GT, HN, SV, NI | 4 | Pending |
 | [climate-destination/overview.md](climate-destination/overview.md) | DE, TR, CO, UG, US, CA, MX (as hosts) | 4 | Pending |
 
+### Platform feature compliance
+
+| Document | Feature | Status |
+|---|---|---|
+| [SOCIAL-COMMENTARY-ONLINE-SAFETY.md](SOCIAL-COMMENTARY-ONLINE-SAFETY.md) | Blog commentary / social system — risk assessment under AU Online Safety Act, UK Online Safety Act, US KOSA; no-AI-audit design defence; instance operator obligations; CSAM detection requirements; lobbying context | **Complete — action items pending** |
+
 ---
 
 *SCD Hub · Exotopia.org · GPL v3*  
