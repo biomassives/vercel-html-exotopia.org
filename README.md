@@ -211,6 +211,15 @@ No environment variables required for local development. The app runs entirely c
 | [SPEC_LEARNING_CURRICULUM.md](SPEC_LEARNING_CURRICULUM.md) | Online learning curriculum — WATSAN, Solar, and Citizen Science tracks; flashcard decks, time-sequence module maps, quiz system, and peer art method |
 | [compliance/digital-credentials-law/](compliance/digital-credentials-law/INDEX.md) | Digital credentials law — SVG certificate trust hierarchy, regional implementation plan for local ecologist/educator/artist user groups across East Africa, Central America, South America, Southeast Asia, EU, and Pacific |
 
+### Cryptographic proof layer
+
+| Document | Contents |
+|---|---|
+| [SPEC_ZK_E8_PLONK.md](SPEC_ZK_E8_PLONK.md) | Zero-knowledge lattice proof system — PLONK/halo2 circuits for E8 membership, E8→Λ₂₄ (Leech lattice) bridge for N>8 collaborators, Worldbridger One composite proof, art-hash visual fingerprint pipeline, scanner library, and full Rust crate structure |
+| [blog-e8-art-hash-zkp.md](blog-e8-art-hash-zkp.md) | Press release / blog — the art-hash concept explained for general audiences; E8 and Leech lattice primer; real-world application to Lamu coastal cleanup and Mpeketoni table banking |
+| [SPEC_WORLDBRIDGER_ONE.md](SPEC_WORLDBRIDGER_ONE.md) | Collaborative attribution protocol — multi-author asset fracturing, DAO resource return loops, KES yield splits |
+| [SPEC_PRIVACY_TIMESCALES.md](SPEC_PRIVACY_TIMESCALES.md) | Multi-timescale privacy — real-time E8 projection, 48h operational cache, archival ZK roots, CVE lifecycle |
+
 ### Technical specs
 
 | Document | Contents |
