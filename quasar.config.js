@@ -154,7 +154,7 @@ function ecoLibrarySavePlugin () {
 module.exports = configure(function (/* ctx */) {
   return {
     // Boot files run before the app component is mounted
-    boot: ['pinia'],
+    boot: ['pinia', 'member'],
 
     css: ['app.scss'],
 

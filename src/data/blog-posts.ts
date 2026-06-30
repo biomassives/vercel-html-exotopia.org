@@ -2,7 +2,7 @@ import { marked } from 'marked'
 
 export type BlogAudience = 'dev' | 'community' | 'field' | 'ecosystem'
 export type BlogStatus   = 'internal' | 'draft' | 'public-draft' | 'published'
-export type BlogSeries   = 'navigation' | 'science' | 'economy' | 'field' | 'ecosystem'
+export type BlogSeries   = 'navigation' | 'science' | 'economy' | 'field' | 'ecosystem' | 'protocol'
 
 export interface BlogPostMeta {
   slug: string
@@ -67,6 +67,7 @@ export const SERIES_LABEL: Record<BlogSeries, string> = {
   economy:    'Token Economy',
   field:      'Field & Community',
   ecosystem:  'Platform & Protocol',
+  protocol:   'Cryptography & ZK',
 }
 
 export const BLOG_POSTS: BlogPostMeta[] = [
@@ -164,6 +165,17 @@ export const BLOG_POSTS: BlogPostMeta[] = [
     description:
       'The Eco-Ledger is a shared vocabulary for land and livelihood records in Mpeketoni, Lamu County. How it was designed with the Uni-Kibaoni-Peace-Youth-SHG group led by Muirithi Jariffe, and what it allows communities to record, verify, and own.',
     editorialNote: 'English edition — Swahili and community translations to follow.',
+  },
+  {
+    slug:     'e8-art-hash-zkp',
+    title:    'The Most Symmetrical Object in Mathematics Is Now Protecting Field Workers in Coastal Kenya',
+    subtitle: 'E8, Leech lattice, PLONK/halo2 proofs, and art-hashes you can verify with human eyes',
+    date:     'June 2026',
+    audience: ['dev', 'community'],
+    series:   'protocol',
+    status:   'public-draft',
+    description:
+      'How the 240-root E8 lattice becomes the foundation for trustless field telemetry verification — PLONK proofs with no trusted setup, the E8→Λ₂₄ bridge for large collaborative groups, and art-hashes: SVG images that are simultaneously visual fingerprints and cryptographic proofs, readable by human eyes and machine scanners alike.',
   },
   {
     slug:     'costa-rica-biodiversity-platform',

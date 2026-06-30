@@ -69,6 +69,9 @@
         <router-link to="/blog" class="bp-back-link">← Back to all posts</router-link>
       </div>
 
+      <!-- Member comments -->
+      <BlogComments :post-slug="post.slug" />
+
     </div>
 
     <!-- 404 state -->
@@ -87,6 +90,7 @@ import {
   STATUS_COLOR, STATUS_LABEL, getBlogContent, readingTime,
   renderMarkdown, getRelatedPosts,
 } from 'src/data/blog-posts'
+import BlogComments from 'src/components/BlogComments.vue'
 
 const route  = useRoute()
 const slug   = computed(() => route.params.slug as string)
