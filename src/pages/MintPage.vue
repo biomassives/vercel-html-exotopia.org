@@ -2,6 +2,29 @@
   <q-page class="mint-page">
 
     <!-- ════════════════════════════════════════════════════════════════════
+         DRY RUN PREVIEW BANNER
+         ════════════════════════════════════════════════════════════════════ -->
+    <div v-if="isPreview && mintMode === 'surface-deed'" class="preview-banner">
+      <div class="pb-left">
+        <span class="pb-badge">◈ DRY RUN</span>
+        <span class="pb-label">PREVIEW · nothing is saved until you confirm</span>
+      </div>
+      <div class="pb-addr">
+        exo-surface-v1:{{ claimHost }}:{{ claimPlanet }}
+        · {{ claimLat >= 0 ? claimLat + '°N' : Math.abs(claimLat) + '°S' }}
+        {{ claimLon >= 0 ? claimLon + '°E' : Math.abs(claimLon) + '°W' }}
+      </div>
+      <div class="pb-actions">
+        <button class="pb-btn pb-btn--confirm" @click="confirmFromPreview">
+          ⬡ Establish Settlement
+        </button>
+        <button class="pb-btn pb-btn--back" @click="router.back()">
+          ← Back
+        </button>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════════════
          CLAIM HERO — shown when arriving from PlanetClaimOverlay
          ════════════════════════════════════════════════════════════════════ -->
     <div v-if="mintMode === 'surface-deed'" class="claim-hero">
@@ -580,16 +603,83 @@
     </div>
 
     <!-- ════════════════════════════════════════════════════════════════════
+         PREVIEW CONFIRM SECTION — replaces pathway + forms in dry-run mode
+         ════════════════════════════════════════════════════════════════════ -->
+    <div v-if="isPreview && mintMode === 'surface-deed'" class="preview-confirm">
+
+      <div class="pc-section-label">SETTLEMENT SUMMARY</div>
+
+      <div class="pc-addr-block">
+        exo-surface-v1:{{ claimHost }}:{{ claimPlanet }}
+      </div>
+
+      <div class="pc-meta-grid">
+        <div class="pc-meta-row">
+          <span>Planet</span><span>{{ claimPlanet }}</span>
+        </div>
+        <div class="pc-meta-row">
+          <span>System</span><span>{{ claimHost }}</span>
+        </div>
+        <div class="pc-meta-row">
+          <span>Plot centre</span>
+          <span>
+            {{ claimLat >= 0 ? claimLat + '°N' : Math.abs(claimLat) + '°S' }} ·
+            {{ claimLon >= 0 ? claimLon + '°E' : Math.abs(claimLon) + '°W' }}
+          </span>
+        </div>
+        <div class="pc-meta-row">
+          <span>Plot area</span><span>10° × 10° (40 virtual acres)</span>
+        </div>
+        <div class="pc-meta-row">
+          <span>Coordinate system</span><span>exo-surface-v1</span>
+        </div>
+        <div class="pc-meta-row">
+          <span>Record status</span>
+          <span class="pc-meta-val--preview">PREVIEW · not yet saved</span>
+        </div>
+      </div>
+
+      <div class="pc-section-label" style="margin-top:20px">WHAT HAPPENS WHEN YOU ESTABLISH</div>
+      <div class="pc-checklist">
+        <div class="pc-check-row">
+          <span class="pc-check-icon">◈</span>
+          Your plot is saved locally as your settlement record
+        </div>
+        <div class="pc-check-row">
+          <span class="pc-check-icon">◈</span>
+          Choose a settlement pathway — eco, gallery, water, learning, or community command
+        </div>
+        <div class="pc-check-row">
+          <span class="pc-check-icon">◈</span>
+          A Mule knowledge corpus is pre-loaded for your chosen domain
+        </div>
+        <div class="pc-check-row">
+          <span class="pc-check-icon pc-check-icon--dim">◈</span>
+          <span class="pc-check-dim">Optional: register the deed for permanent record (no cost at registration)</span>
+        </div>
+      </div>
+
+      <div class="pc-cta-row">
+        <button class="pc-cta-btn pc-cta-btn--confirm" @click="confirmFromPreview">
+          ⬡ Establish Settlement
+        </button>
+        <button class="pc-cta-btn pc-cta-btn--back" @click="router.back()">
+          ← Back to plot selection
+        </button>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════════════
          PATHWAY WIZARD — card gallery to configure the mint
          ════════════════════════════════════════════════════════════════════ -->
-    <div v-if="mintMode !== 'cluster-world'" class="pathway-section">
+    <div v-if="mintMode !== 'cluster-world' && !isPreview" class="pathway-section">
       <MintPathwayWizard @select="onPathwaySelect"/>
     </div>
 
     <!-- ════════════════════════════════════════════════════════════════════
          MINTING FORMS
          ════════════════════════════════════════════════════════════════════ -->
-    <div v-if="mintMode !== 'cluster-world' || showCwAdvanced" ref="formsAnchor" class="mint-forms q-pa-md">
+    <div v-if="(mintMode !== 'cluster-world' || showCwAdvanced) && !isPreview" ref="formsAnchor" class="mint-forms q-pa-md">
 
       <!-- Suppress heading when deed header above is already showing -->
       <div v-if="mintMode === 'general'" class="row items-center q-mb-xs">
@@ -1257,7 +1347,7 @@
  */
 
 import { ref, computed, onMounted, nextTick } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import PlanetClaimCard      from 'src/components/PlanetClaimCard.vue'
 import MintPathwayWizard    from 'src/components/MintPathwayWizard.vue'
 import type { MintPathway } from 'src/lib/mint-config'
@@ -1414,28 +1504,47 @@ const exo = ref({
 
 // ── Pre-populate from surface-view claim links ────────────────────────────────
 
-const route = useRoute()
+const route  = useRoute()
+const router = useRouter()
 
-// Claim params from PlanetClaimOverlay navigation
-// Pathway wizard handler
-function onPathwaySelect(pathway: MintPathway) {
-  // Pre-fill station name and category from the pathway selection
-  station.value.name     = pathway.exampleName
-  station.value.category = pathway.stationCategory
-  // Scroll to the forms section so user continues naturally
-  void nextTick(() => {
-    const el = document.getElementById('exoloc-form')
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  })
-}
+// ── Claim params from PlanetClaimOverlay navigation ──────────────────────────
 
-const claimHost   = computed(() => (route.query.host   as string) ?? '')
-const claimPlanet = computed(() => (route.query.planet as string) ?? '')
-const claimLat    = computed(() => parseFloat((route.query.lat as string) ?? 'NaN'))
-const claimLon    = computed(() => parseFloat((route.query.lon as string) ?? 'NaN'))
+const claimHost    = computed(() => (route.query.host   as string) ?? '')
+const claimPlanet  = computed(() => (route.query.planet as string) ?? '')
+const claimLat     = computed(() => parseFloat((route.query.lat as string) ?? 'NaN'))
+const claimLon     = computed(() => parseFloat((route.query.lon as string) ?? 'NaN'))
 const hasClaimPlot = computed(() =>
   !!claimHost.value && !!claimPlanet.value && !isNaN(claimLat.value) && !isNaN(claimLon.value)
 )
+
+// ── Preview mode — arrived via "Preview first" from PlanetClaimOverlay ───────
+// No settlement record is saved until the user explicitly confirms.
+
+const isPreview = computed(() => route.query.preview === '1')
+
+function confirmFromPreview() {
+  if (!claimHost.value || !claimPlanet.value || isNaN(claimLat.value) || isNaN(claimLon.value)) return
+  addSettlement({
+    key:         surfaceKey(claimPlanet.value),
+    type:        'surface',
+    planetName:  claimPlanet.value,
+    hostname:    claimHost.value,
+    exolocation: `exo-surface-v1:${claimHost.value}:${claimPlanet.value}`,
+    displayName: `${claimPlanet.value} · ${claimHost.value}`,
+    lat:         claimLat.value,
+    lon:         claimLon.value,
+  })
+  const params = new URLSearchParams({
+    host:   claimHost.value,
+    planet: claimPlanet.value,
+    coord:  'exo-surface-v1',
+    lat:    String(claimLat.value),
+    lon:    String(claimLon.value),
+  })
+  void router.replace(`/mint?${params.toString()}`)
+}
+
+// Pathway wizard handler
 
 const mintMode = computed((): 'surface-deed' | 'moon-orbital' | 'cluster-world' | 'cluster-outpost' | 'onboarding' | 'general' => {
   if (hasClaimPlot.value) return 'surface-deed'
@@ -3129,5 +3238,203 @@ async function celoExecute() {
   font-size: 8px;
   letter-spacing: 0.06em;
   color: rgba(80, 120, 160, 0.45);
+}
+
+/* ── DRY RUN PREVIEW BANNER ───────────────────────────────────────────────── */
+
+.preview-banner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 20px;
+  background: rgba(0, 30, 20, 0.92);
+  border-bottom: 1px solid rgba(0, 180, 120, 0.30);
+  backdrop-filter: blur(8px);
+  flex-wrap: wrap;
+  font-family: 'Courier New', monospace;
+}
+
+.pb-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.pb-badge {
+  font-size: 8.5px;
+  letter-spacing: 0.18em;
+  color: rgba(0, 230, 160, 0.90);
+  background: rgba(0, 80, 50, 0.45);
+  border: 1px solid rgba(0, 180, 120, 0.40);
+  border-radius: 3px;
+  padding: 2px 8px;
+  white-space: nowrap;
+}
+
+.pb-label {
+  font-size: 9px;
+  letter-spacing: 0.10em;
+  color: rgba(0, 200, 130, 0.60);
+  white-space: nowrap;
+}
+
+.pb-addr {
+  flex: 1;
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: rgba(0, 210, 255, 0.65);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pb-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.pb-btn {
+  font-family: 'Courier New', monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.10em;
+  padding: 5px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.13s, border-color 0.13s;
+}
+
+.pb-btn--confirm {
+  color: rgba(80, 230, 130, 0.92);
+  background: rgba(0, 70, 40, 0.40);
+  border: 1px solid rgba(60, 200, 110, 0.45);
+}
+.pb-btn--confirm:hover {
+  background: rgba(0, 100, 55, 0.55);
+  border-color: rgba(80, 230, 130, 0.65);
+}
+
+.pb-btn--back {
+  color: rgba(80, 140, 180, 0.65);
+  background: transparent;
+  border: 1px solid rgba(60, 110, 150, 0.22);
+}
+.pb-btn--back:hover {
+  background: rgba(0, 30, 60, 0.35);
+  border-color: rgba(80, 150, 200, 0.40);
+}
+
+/* ── PREVIEW CONFIRM SECTION ──────────────────────────────────────────────── */
+
+.preview-confirm {
+  max-width: 680px;
+  margin: 28px auto;
+  padding: 24px 28px;
+  background: rgba(0, 8, 20, 0.90);
+  border: 1px solid rgba(0, 140, 200, 0.18);
+  border-radius: 6px;
+  font-family: 'Courier New', monospace;
+}
+
+.pc-section-label {
+  font-size: 8px;
+  letter-spacing: 0.20em;
+  color: rgba(0, 180, 220, 0.50);
+  margin-bottom: 10px;
+}
+
+.pc-addr-block {
+  font-size: 12px;
+  color: rgba(0, 225, 255, 0.88);
+  letter-spacing: 0.06em;
+  background: rgba(0, 40, 70, 0.35);
+  border: 1px solid rgba(0, 160, 220, 0.28);
+  border-radius: 4px;
+  padding: 8px 14px;
+  margin-bottom: 14px;
+  word-break: break-all;
+}
+
+.pc-meta-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin-bottom: 4px;
+}
+
+.pc-meta-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(0, 40, 70, 0.22);
+  font-size: 9.5px;
+}
+.pc-meta-row span:first-child { color: rgba(70, 130, 170, 0.60); flex-shrink: 0; }
+.pc-meta-row span:last-child  { color: rgba(180, 220, 240, 0.85); text-align: right; }
+
+.pc-meta-val--preview {
+  color: rgba(255, 190, 60, 0.75) !important;
+  font-style: italic;
+}
+
+.pc-checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-bottom: 22px;
+}
+
+.pc-check-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 10px;
+  color: rgba(160, 210, 235, 0.80);
+}
+
+.pc-check-icon {
+  color: rgba(0, 210, 180, 0.70);
+  font-size: 10px;
+  flex-shrink: 0;
+}
+.pc-check-icon--dim { color: rgba(60, 110, 140, 0.50); }
+.pc-check-dim       { color: rgba(80, 130, 160, 0.50); }
+
+.pc-cta-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.pc-cta-btn {
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  letter-spacing: 0.10em;
+  padding: 9px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.14s, border-color 0.14s;
+}
+
+.pc-cta-btn--confirm {
+  color: rgba(80, 230, 130, 0.92);
+  background: rgba(0, 70, 40, 0.40);
+  border: 1px solid rgba(60, 200, 110, 0.45);
+}
+.pc-cta-btn--confirm:hover {
+  background: rgba(0, 100, 55, 0.55);
+  border-color: rgba(80, 230, 130, 0.65);
+}
+
+.pc-cta-btn--back {
+  color: rgba(80, 140, 180, 0.65);
+  background: transparent;
+  border: 1px solid rgba(60, 110, 150, 0.22);
+}
+.pc-cta-btn--back:hover {
+  background: rgba(0, 30, 60, 0.30);
+  border-color: rgba(80, 150, 200, 0.40);
 }
 </style>

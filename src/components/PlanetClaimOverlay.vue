@@ -371,6 +371,9 @@
 
             <div class="co-confirm-actions">
               <button class="co-btn co-btn--ghost" @click="step = 1">← Back to map</button>
+              <button class="co-btn co-btn--preview" @click="proceedToPreview">
+                ◈ Preview first →
+              </button>
               <button class="co-btn co-btn--mint" @click="proceedToMint">
                 ⬡ Establish Settlement
               </button>
@@ -772,6 +775,27 @@ function proceedToMint() {
   emit('update:modelValue', false)
   void router.push(`/mint?${params.toString()}`)
 }
+
+/** Navigate to the mint page in preview mode — no settlement record is saved. */
+function proceedToPreview() {
+  const c = selectedCell.value
+  if (!c || !props.planet || !props.system) return
+
+  const lat = cellLat(c.row)
+  const lon = cellLon(c.col)
+
+  const params = new URLSearchParams({
+    host:    props.system.hostname,
+    planet:  props.planet.pl_name,
+    coord:   'exo-surface-v1',
+    lat:     String(lat),
+    lon:     String(lon),
+    preview: '1',
+  })
+
+  emit('update:modelValue', false)
+  void router.push(`/mint?${params.toString()}`)
+}
 </script>
 
 <style scoped>
@@ -907,6 +931,15 @@ function proceedToMint() {
   color: rgba(80, 140, 180, 0.65);
   background: transparent;
   border-color: rgba(60, 110, 150, 0.22);
+}
+.co-btn--preview {
+  color: rgba(0, 200, 255, 0.80);
+  border-color: rgba(0, 160, 220, 0.30);
+  background: rgba(0, 40, 70, 0.28);
+}
+.co-btn--preview:hover:not(:disabled) {
+  background: rgba(0, 60, 100, 0.42);
+  border-color: rgba(0, 210, 255, 0.50);
 }
 .co-btn--mint {
   color: rgba(80, 230, 130, 0.92);

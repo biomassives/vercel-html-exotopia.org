@@ -199,9 +199,24 @@ No environment variables required for local development. The app runs entirely c
 
 **[DOCS.md](DOCS.md) — Complete document index (37 files across all categories)**
 
+### Ownership and access philosophy
+
+| Document | Contents |
+|---|---|
+| [FOCUS_LOCATION_OWNERSHIP.md](FOCUS_LOCATION_OWNERSHIP.md) | Why we are shifting from NFT jargon to ownership language — the "cosmic land title" framing, onboarding redesign, and what "permanent" technically means |
+| [compliance/INDEX.md](compliance/INDEX.md) | Jurisdiction strategy index — classification risk and operating strategy for US, EU, Kenya, Indonesia, Brazil, India, UAE, and 12 more country groups |
+| [compliance/RESEARCH_PROMPT.md](compliance/RESEARCH_PROMPT.md) | Legal research brief — structured prompt for jurisdiction-by-jurisdiction legal research (in progress) |
+| [compliance/POLYNOMICS-CONTRIBUTION.md](compliance/POLYNOMICS-CONTRIBUTION.md) | Contributor economy legal framework — bounty structures, volunteer classification, polynomics models (RPGF, quadratic funding, platform cooperativism, mutual credit) and operational playbook |
+| [SPEC_DOMAIN_COMPETENCY.md](SPEC_DOMAIN_COMPETENCY.md) | Domain competency framework — 12 domains (water, energy, food, circular, shelter, health, biodiversity, soil, climate, restoration, IEK, arts) with four competency levels, evidence requirements, ApproVideo content alignment, and certificate mapping |
+| [SPEC_LEARNING_CURRICULUM.md](SPEC_LEARNING_CURRICULUM.md) | Online learning curriculum — WATSAN, Solar, and Citizen Science tracks; flashcard decks, time-sequence module maps, quiz system, and peer art method |
+| [compliance/digital-credentials-law/](compliance/digital-credentials-law/INDEX.md) | Digital credentials law — SVG certificate trust hierarchy, regional implementation plan for local ecologist/educator/artist user groups across East Africa, Central America, South America, Southeast Asia, EU, and Pacific |
+
+### Technical specs
+
 | Document | Contents |
 |---|---|
 | [SPEC.md](SPEC.md) | Full platform specification |
+| [SPEC_ZOOM_DESCENT.md](SPEC_ZOOM_DESCENT.md) | Smooth zoom descent chain from home → cluster → system → planet → Local Step Portal → surface; water portal physics; light inversion |
 | [SPEC_COSMOS_ENTRY.md](SPEC_COSMOS_ENTRY.md) | CosmosPage rename + WelcomeOverlay design |
 | [SPEC_CELESTIAL_REVEAL.md](SPEC_CELESTIAL_REVEAL.md) | LOD image reveal + telescope archive integration |
 | [SPEC_DEFENDERNAV.md](SPEC_DEFENDERNAV.md) | Defender arcade-style navigator |

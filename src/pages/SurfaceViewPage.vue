@@ -61,9 +61,38 @@
       </div>
     </Transition>
 
+    <!-- ── Entry approach HUD ─────────────────────────────────────── -->
+    <Transition name="xray-fade">
+      <div v-if="entryAnimating" class="entry-hud" aria-hidden="true">
+        <div class="eh-corner eh-corner--tl" /><div class="eh-corner eh-corner--tr" />
+        <div class="eh-corner eh-corner--bl" /><div class="eh-corner eh-corner--br" />
+        <div class="eh-top">
+          <span class="eh-label">DESCENT APPROACH</span>
+          <span class="eh-sep">·</span>
+          <span class="eh-planet">{{ planetName }}</span>
+        </div>
+        <div class="eh-bottom">
+          <span class="eh-sys">{{ hostname }}</span>
+          <span class="eh-sep">·</span>
+          <span class="eh-mode">ION DRIVE</span>
+          <span class="eh-blink">▮</span>
+        </div>
+      </div>
+    </Transition>
+
+    <!-- ── Thermal lens badge (hot worlds: eqt > 600K) ─────────── -->
+    <Transition name="xray-fade">
+      <div v-if="planet?.pl_eqt && planet.pl_eqt > 600 && viewMode === 'natural'" class="thermal-lens-hud">
+        <span class="tlh-icon">⊙</span>
+        <span class="tlh-label">THERMAL LENS</span>
+        <span class="tlh-sep">·</span>
+        <span class="tlh-temp">{{ planet.pl_eqt.toLocaleString() }} K</span>
+      </div>
+    </Transition>
+
     <!-- ── Property header ─────────────────────────────────────── -->
     <!-- ── Planet info panel (top-left, collapsible) ─────────────── -->
-    <div class="planet-info-panel">
+    <div v-show="!entryAnimating" class="planet-info-panel">
 
       <!-- Collapsed header — always visible -->
       <div class="pip-header" @click="infoPanelOpen = !infoPanelOpen">
@@ -335,13 +364,44 @@
         <div v-if="hoveredObject.isPyramid" class="text-caption text-cyan-4 q-mt-xs" style="letter-spacing:0.05em">
           ▲ Click to open wormhole transit
         </div>
+        <div v-else-if="hoveredObject.type.includes('Sustainable Land Assistant')" class="text-caption text-amber-4 q-mt-xs" style="letter-spacing:0.05em">
+          ● Click to greet · double-click to approach
+        </div>
+      </div>
+    </Transition>
+
+    <!-- ── Mule / soul orb interaction panel ────────────────────── -->
+    <Transition name="fade">
+      <div v-if="selectedOrb" class="space-overlay mule-panel q-pa-sm">
+        <div class="mule-panel-header row items-center no-wrap q-mb-xs">
+          <div class="mule-orb-dot q-mr-sm" :style="{ background: selectedOrb.color }" />
+          <span class="mule-name">{{ selectedOrb.name }}</span>
+          <q-space />
+          <q-btn flat dense round icon="close" size="xs" color="blue-grey-5"
+            @click="selectedOrb = null" />
+        </div>
+        <div class="mule-type q-mb-xs">{{ selectedOrb.type }}</div>
+        <template v-if="selectedOrb.details">
+          <div v-for="(val, key) in selectedOrb.details" :key="key" class="mule-detail-row">
+            <span class="mule-detail-key">{{ key }}</span>
+            <span class="mule-detail-val">{{ val }}</span>
+          </div>
+        </template>
+        <div class="mule-actions row q-mt-sm q-gutter-x-xs">
+          <q-btn flat dense size="sm" color="amber-4" icon="directions_walk"
+            label="Approach"
+            @click="spatial.flyTo(`settlement:orb:${toOrbSlug(selectedOrb.name)}`); selectedOrb = null" />
+          <q-btn flat dense size="sm" color="blue-grey-4" icon="person"
+            label="Profile"
+            @click="selectedOrb = null" />
+        </div>
       </div>
     </Transition>
 
     <!-- Sky legend removed — info now lives in the planet info panel above -->
 
     <!-- ── Bottom controls ─────────────────────────────────────── -->
-    <div class="space-overlay surface-controls q-pa-sm q-px-md">
+    <div v-show="!entryAnimating" class="space-overlay surface-controls q-pa-sm q-px-md">
       <div class="row items-center q-gutter-x-sm no-wrap">
         <q-btn flat dense round :icon="animating ? 'pause' : 'play_arrow'"
           color="blue-grey-3" size="sm" @click="toggleAnimation">
@@ -1118,8 +1178,10 @@ function applyViewModeToScene(mode: 'natural' | 'xray' | 'dark_matter') {
         light.color.setHex(0xffffff)
         light.intensity = 1.6
       } else {
-        light.color.setHex(0x111820)
-        light.intensity = 0.8
+        const eqt = planet.value?.pl_eqt ?? null
+        if (eqt != null && eqt > 1500) { light.color.setHex(0xdd6622); light.intensity = 3.8 }
+        else if (eqt != null && eqt > 600) { light.color.setHex(0xcc8833); light.intensity = 3.0 }
+        else { light.color.setHex(0x334466); light.intensity = 1.2 }
       }
     }
   })
@@ -1205,7 +1267,7 @@ const sceneReady       = ref(false)
 const animating        = ref(true)
 const localTimeDeg     = ref(180)
 const animSpeed        = ref(0.12)   // 0–1; default slow (~2.4 deg/sec)
-const lookMode         = ref<'orbit' | 'zenith'>('orbit')
+const lookMode         = ref<'orbit' | 'zenith' | 'walk'>('orbit')
 const isRealTime       = ref(true)   // true = sky synced to Earth UTC clock
 const showChronometer  = ref(false)
 const earthClock       = ref(new Date())
@@ -1220,6 +1282,7 @@ interface CelestialHit {
 }
 
 const hoveredObject = ref<CelestialHit | null>(null)
+const selectedOrb   = ref<CelestialHit | null>(null)
 const tooltipStyle  = ref({ left: '0px', top: '0px' })
 const mouseNDC      = new THREE.Vector2()
 
@@ -1353,6 +1416,10 @@ let settlementGroup: THREE.Group | null = null
 // Terrain Y base — set in addTerrain so settlement objects align with ground
 let terrainBaseY = -20
 
+// ── Entry animation state ─────────────────────────────────────────────────────
+const entryAnimating = ref(false)
+let entryGroup: THREE.Group | null = null
+
 // ── Exomoon sky objects ───────────────────────────────────────────────────────
 
 interface MoonInfo {
@@ -1437,7 +1504,14 @@ function initScene() {
 // ── Sky builders ──────────────────────────────────────────────────────────────
 
 function addAmbientLight() {
-  scene.add(new THREE.AmbientLight(0x111820, 0.6))
+  const eqt = planet.value?.pl_eqt ?? null
+  if (eqt != null && eqt > 1500) {
+    scene.add(new THREE.AmbientLight(0xdd6622, 3.8))  // ultra-hot: volcanic orange fill
+  } else if (eqt != null && eqt > 600) {
+    scene.add(new THREE.AmbientLight(0xcc8833, 3.0))  // hot: warm amber — thermal lens
+  } else {
+    scene.add(new THREE.AmbientLight(0x334466, 1.2))
+  }
 }
 
 function addStarField() {
@@ -2222,7 +2296,9 @@ function applyLocalTime(deg: number) {
   scene.add(hostStarLight.target)
 
   const altitude   = Math.asin(Math.max(-1, Math.min(1, dir.y)))
-  hostStarLight.intensity = altitude > 0 ? Math.sin(altitude) * 2.4 : 0
+  const eqt        = planet.value?.pl_eqt ?? null
+  const nightFloor = eqt != null && eqt > 600 ? 0.30 : 0
+  hostStarLight.intensity = altitude > 0 ? Math.sin(altitude) * 2.4 : nightFloor
 
   const twilightBand = Math.max(0, 1 - Math.abs(altitude) / (Math.PI * 0.12))
   const nightColor   = new THREE.Color(0x020408)
@@ -2389,6 +2465,12 @@ function onMouseMove(e: MouseEvent) {
 function onCanvasClick() {
   if (hoveredObject.value?.isPyramid) {
     showTransitDialog.value = true
+  } else if (hoveredObject.value?.type.includes('Sustainable Land Assistant')) {
+    selectedOrb.value = selectedOrb.value?.name === hoveredObject.value.name
+      ? null
+      : hoveredObject.value
+  } else {
+    selectedOrb.value = null
   }
 }
 
@@ -2613,6 +2695,172 @@ function mulberry32(seed: number) {
   }
 }
 
+// ── Entry animation: approach from high orbit, retro-ion landing ──────────────
+//
+// Plays once after initScene(). Camera sweeps from high altitude (y=350)
+// down to normal orbit position while a small ion-drive shuttle descends
+// ahead of us and "lands" near the settlement dome.
+//
+// Design: retro hard-SF aesthetic — blunt hull, splayed engine bells,
+// pulsing blue-white ion exhaust. Tidally-locked or ultra-hot worlds skip
+// the sequence to avoid jarring entry into an already dramatic scene.
+
+function playEntryAnimation() {
+  if (!scene || !camera || !controls) return
+
+  entryAnimating.value = true
+  controls.enabled = false
+
+  // ── Build shuttle ────────────────────────────────────────────────────────
+  const sg = new THREE.Group()
+  sg.name = 'entry_shuttle'
+
+  // Hull — flattened box, nose along -Z
+  const hullMat = new THREE.MeshPhongMaterial({ color: 0x1c2535, shininess: 90, specular: 0x334466 })
+  const hullGeo = new THREE.BoxGeometry(2.8, 0.9, 7.0)
+  const hull    = new THREE.Mesh(hullGeo, hullMat)
+  sg.add(hull)
+
+  // Wings — swept low-profile slabs
+  const wingMat = new THREE.MeshPhongMaterial({ color: 0x141c28, shininess: 60 })
+  const wingGeo = new THREE.BoxGeometry(10, 0.20, 3.5)
+  const wings   = new THREE.Mesh(wingGeo, wingMat)
+  wings.position.set(0, -0.35, 0.8)
+  sg.add(wings)
+
+  // Nose cone
+  const noseMat = new THREE.MeshPhongMaterial({ color: 0x0e1520, shininess: 120 })
+  const noseGeo = new THREE.ConeGeometry(0.55, 2.5, 8)
+  const nose    = new THREE.Mesh(noseGeo, noseMat)
+  nose.position.set(0, 0, -4.25)
+  nose.rotation.x = Math.PI / 2
+  sg.add(nose)
+
+  // Navigation lights — green starboard, red port
+  const stbMat = new THREE.MeshBasicMaterial({ color: 0x00ff44, transparent: true, opacity: 0.9, fog: false })
+  const portMat = new THREE.MeshBasicMaterial({ color: 0xff2200, transparent: true, opacity: 0.9, fog: false })
+  const navGeo  = new THREE.SphereGeometry(0.18, 6, 6)
+  const stbLight = new THREE.Mesh(navGeo, stbMat);  stbLight.position.set( 5.3, 0, 0.8); sg.add(stbLight)
+  const portLight = new THREE.Mesh(navGeo, portMat); portLight.position.set(-5.3, 0, 0.8); sg.add(portLight)
+
+  // Engine bells — 3 bells at tail (+Z end)
+  const bellMat = new THREE.MeshPhongMaterial({ color: 0x2a3d55, shininess: 120, specular: 0x88aacc })
+  const bellGeo = new THREE.ConeGeometry(0.42, 1.4, 8)
+  const bellOffsets = [[-1.1, 0, 3.9], [0, 0, 3.9], [1.1, 0, 3.9]] as const
+  bellOffsets.forEach(([x, y, z]) => {
+    const bell = new THREE.Mesh(bellGeo, bellMat)
+    bell.position.set(x, y, z)
+    bell.rotation.x = -Math.PI / 2   // open end pointing +Z (behind craft)
+    sg.add(bell)
+  })
+
+  // Ion jet cones — glowing emissive, additive blending
+  const jetMat = new THREE.MeshBasicMaterial({
+    color: 0x55ccff, transparent: true, opacity: 0.72,
+    blending: THREE.AdditiveBlending, depthWrite: false, fog: false,
+  })
+  const jetGeo = new THREE.ConeGeometry(0.22, 16, 6)
+  const jetMeshes: THREE.Mesh[] = []
+  bellOffsets.forEach(([x, y, z]) => {
+    const jet = new THREE.Mesh(jetGeo, jetMat.clone() as THREE.MeshBasicMaterial)
+    jet.position.set(x, y, z + 9)   // extending behind engine bell
+    jet.rotation.x = -Math.PI / 2
+    sg.add(jet)
+    jetMeshes.push(jet)
+  })
+
+  // Engine glow PointLights
+  const glowLights: THREE.PointLight[] = []
+  bellOffsets.forEach(([x, y, z]) => {
+    const pt = new THREE.PointLight(0x44bbff, 3.0, 28)
+    pt.position.set(x, y, z + 2)
+    sg.add(pt)
+    glowLights.push(pt)
+  })
+
+  // ── Position and orient shuttle ──────────────────────────────────────────
+  // Start high above and slightly offset from the settlement
+  const startY  = terrainBaseY + 340
+  const startZ  = 120
+  sg.position.set(5, startY, startZ)
+  // Nose-down attitude for descent
+  sg.rotation.x = 0.22
+  sg.lookAt(0, terrainBaseY + 2, 20)
+
+  scene.add(sg)
+  entryGroup = sg
+
+  // ── Camera start position: high overhead looking steeply down ────────────
+  camera.position.set(0, terrainBaseY + 400, 180)
+  controls.target.set(0, terrainBaseY + 80, 60)
+  controls.update()
+
+  // ── Animation sequence ───────────────────────────────────────────────────
+
+  // Phase 1 (0–4.5s): camera sweeps down to orbit position
+  gsap.to(camera.position, {
+    x: 0, y: 4, z: 85,
+    duration: 4.5, ease: 'power2.inOut',
+    onUpdate: () => controls.update(),
+  })
+  gsap.to(controls.target, {
+    x: 0, y: 2, z: 0,
+    duration: 4.5, ease: 'power2.inOut',
+  })
+
+  // Shuttle descends toward the settlement landing zone
+  const shuttlePos = { y: startY, z: startZ }
+  gsap.to(shuttlePos, {
+    y: terrainBaseY + 3, z: 22,
+    duration: 3.8, ease: 'power2.in',
+    onUpdate: () => {
+      sg.position.y = shuttlePos.y
+      sg.position.z = shuttlePos.z
+    },
+  })
+  // Shuttle nose levels out as it lands
+  gsap.to(sg.rotation, { x: 0.0, duration: 1.2, delay: 2.8, ease: 'power2.out' })
+
+  // Phase 2 (3.6–4.5s): engines cut — jets and glow fade
+  const engineFade = { v: 1.0 }
+  gsap.to(engineFade, {
+    v: 0,
+    delay: 3.5, duration: 1.0, ease: 'power2.in',
+    onUpdate: () => {
+      jetMeshes.forEach(j => { (j.material as THREE.MeshBasicMaterial).opacity = engineFade.v * 0.72 })
+      glowLights.forEach(l => { l.intensity = engineFade.v * 3.0 })
+    },
+  })
+
+  // Phase 3 (4.8–5.4s): shuttle fades out and is removed, controls re-enable
+  const hullFade = { v: 1.0 }
+  gsap.to(hullFade, {
+    v: 0,
+    delay: 4.6, duration: 0.8, ease: 'power1.in',
+    onUpdate: () => {
+      const op = hullFade.v
+      sg.traverse(obj => {
+        const m = obj as THREE.Mesh
+        if (!m.isMesh) return
+        const mat = m.material as THREE.MeshPhongMaterial | THREE.MeshBasicMaterial
+        if (!mat.transparent) { mat.transparent = true }
+        mat.opacity = op
+      })
+    },
+    onComplete: () => {
+      scene!.remove(sg)
+      sg.traverse(o => {
+        const m = o as THREE.Mesh
+        if (m.geometry) m.geometry.dispose()
+        if (m.material && !Array.isArray(m.material)) (m.material as THREE.Material).dispose()
+      })
+      entryGroup = null
+      controls!.enabled = true
+      entryAnimating.value = false
+    },
+  })
+}
+
 // ── Lifecycle ─────────────────────────────────────────────────────────────────
 
 // Bandwidth tier detected once at mount — drives asset quality decisions.
@@ -2660,7 +2908,15 @@ onMounted(async () => {
   })
 
   initScene()
-  spatial.restoreFromUrl()   // apply ?at=<scope> / ?cam=... if present, else keep initScene's default view
+  // Skip entry animation if a spatial URL is present (direct deep-link) or planet is gaseous
+  const eqt = planet.value?.pl_eqt ?? null
+  const rade = planet.value?.pl_rade ?? 2.0
+  const isGasGiant = rade > 5.0 || (eqt != null && eqt > 1800)
+  if (!route.query.at && !route.query.cam && !isGasGiant) {
+    playEntryAnimation()
+  } else {
+    spatial.restoreFromUrl()
+  }
   _stopTick = viz.addTick(surfaceTick)
 })
 
@@ -2685,6 +2941,8 @@ onUnmounted(() => {
   hostStarLight   = null
   settlementGroup = null
   stoneCircleGlow = null
+  if (entryGroup) { scene?.remove(entryGroup); entryGroup = null }
+  entryAnimating.value = false
 })
 watch([hostname, planetName], async () => {
   cancelAnimationFrame(animId)
@@ -3458,5 +3716,217 @@ watch([hostname, planetName], async () => {
 .xray-fade-leave-active { transition: opacity 0.4s ease; }
 .xray-fade-enter-from,
 .xray-fade-leave-to     { opacity: 0; }
+
+/* ── Thermal lens HUD badge ────────────────────────────────────── */
+
+.thermal-lens-hud {
+  position:        fixed;
+  top:             52px;
+  right:           12px;
+  display:         flex;
+  align-items:     center;
+  gap:             5px;
+  background:      rgba(80, 30, 0, 0.58);
+  border:          1px solid rgba(220, 100, 20, 0.38);
+  border-radius:   4px;
+  padding:         3px 9px;
+  pointer-events:  none;
+  z-index:         20;
+  backdrop-filter: blur(4px);
+}
+
+.tlh-icon {
+  font-size:   11px;
+  color:       #ff8833;
+  line-height: 1;
+}
+
+.tlh-label {
+  font-family:     'Courier New', monospace;
+  font-size:       9px;
+  font-weight:     600;
+  letter-spacing:  0.14em;
+  color:           rgba(255, 140, 50, 0.90);
+  text-transform:  uppercase;
+}
+
+.tlh-sep {
+  color: rgba(180, 80, 20, 0.55);
+  font-size: 9px;
+}
+
+.tlh-temp {
+  font-family:  'Courier New', monospace;
+  font-size:    9px;
+  color:        rgba(255, 180, 90, 0.80);
+  letter-spacing: 0.06em;
+}
+
+/* ── Mule / soul orb interaction panel ────────────────────────── */
+
+.mule-panel {
+  position:        fixed;
+  bottom:          72px;
+  right:           12px;
+  min-width:       220px;
+  max-width:       280px;
+  background:      rgba(8, 16, 28, 0.88);
+  border:          1px solid rgba(100, 180, 255, 0.22);
+  border-radius:   6px;
+  backdrop-filter: blur(8px);
+  z-index:         25;
+}
+
+.mule-panel-header {
+  border-bottom: 1px solid rgba(80, 140, 200, 0.15);
+  padding-bottom: 6px;
+  margin-bottom:  6px;
+}
+
+.mule-orb-dot {
+  width:         10px;
+  height:        10px;
+  border-radius: 50%;
+  flex-shrink:   0;
+  box-shadow:    0 0 6px currentColor;
+}
+
+.mule-name {
+  font-size:      13px;
+  font-weight:    600;
+  color:          #d8e8f8;
+  letter-spacing: 0.02em;
+}
+
+.mule-type {
+  font-family:    'Courier New', monospace;
+  font-size:      9px;
+  color:          rgba(120, 200, 255, 0.70);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom:  6px;
+}
+
+.mule-detail-row {
+  display:         flex;
+  justify-content: space-between;
+  gap:             8px;
+  margin-bottom:   3px;
+}
+
+.mule-detail-key {
+  font-size:  10px;
+  color:      rgba(140, 160, 180, 0.70);
+  flex-shrink: 0;
+}
+
+.mule-detail-val {
+  font-size:  10px;
+  color:      rgba(200, 220, 240, 0.88);
+  text-align: right;
+}
+
+.mule-actions {
+  border-top:  1px solid rgba(80, 140, 200, 0.12);
+  padding-top: 6px;
+}
+
+/* ── Entry approach HUD ────────────────────────────────────────── */
+
+.entry-hud {
+  position:  fixed;
+  inset:     0;
+  pointer-events: none;
+  z-index:   30;
+}
+
+/* Corner bracket markers */
+.eh-corner {
+  position:  absolute;
+  width:     22px;
+  height:    22px;
+  border-color: rgba(80, 200, 255, 0.45);
+  border-style: solid;
+}
+.eh-corner--tl { top: 52px; left: 10px;  border-width: 2px 0 0 2px; }
+.eh-corner--tr { top: 52px; right: 10px; border-width: 2px 2px 0 0; }
+.eh-corner--bl { bottom: 10px; left: 10px;  border-width: 0 0 2px 2px; }
+.eh-corner--br { bottom: 10px; right: 10px; border-width: 0 2px 2px 0; }
+
+.eh-top {
+  position:       absolute;
+  top:            56px;
+  left:           50%;
+  transform:      translateX(-50%);
+  display:        flex;
+  align-items:    center;
+  gap:            8px;
+  background:     rgba(4, 12, 24, 0.62);
+  border:         1px solid rgba(60, 160, 255, 0.28);
+  border-radius:  3px;
+  padding:        4px 14px;
+}
+
+.eh-bottom {
+  position:       absolute;
+  bottom:         14px;
+  left:           50%;
+  transform:      translateX(-50%);
+  display:        flex;
+  align-items:    center;
+  gap:            8px;
+  background:     rgba(4, 12, 24, 0.55);
+  border:         1px solid rgba(60, 160, 255, 0.20);
+  border-radius:  3px;
+  padding:        3px 12px;
+}
+
+.eh-label {
+  font-family:    'Courier New', monospace;
+  font-size:      9px;
+  font-weight:    700;
+  letter-spacing: 0.18em;
+  color:          rgba(80, 200, 255, 0.90);
+  text-transform: uppercase;
+}
+
+.eh-planet {
+  font-family:    'Courier New', monospace;
+  font-size:      11px;
+  font-weight:    400;
+  letter-spacing: 0.08em;
+  color:          rgba(200, 230, 255, 0.92);
+}
+
+.eh-sys {
+  font-family:    'Courier New', monospace;
+  font-size:      9px;
+  color:          rgba(120, 180, 255, 0.75);
+  letter-spacing: 0.08em;
+}
+
+.eh-mode {
+  font-family:    'Courier New', monospace;
+  font-size:      9px;
+  letter-spacing: 0.14em;
+  color:          rgba(80, 200, 255, 0.80);
+  text-transform: uppercase;
+}
+
+.eh-sep {
+  color:          rgba(60, 130, 200, 0.50);
+  font-size:      9px;
+}
+
+.eh-blink {
+  color:    rgba(80, 200, 255, 0.90);
+  font-size: 9px;
+  animation: blink-pulse 0.9s step-end infinite;
+}
+
+@keyframes blink-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
 
 </style>

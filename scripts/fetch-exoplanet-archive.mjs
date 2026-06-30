@@ -40,9 +40,13 @@ const DETAIL_COLS = [
   'discoverymethod', 'disc_year', 'disc_facility', 'pl_controv_flag',
   'pl_orbper', 'pl_orbsmax', 'pl_rade', 'pl_radj',
   'pl_bmasse', 'pl_massj',      // pl_bmasse = composite best-estimate (Earth masses)
+  'pl_dens',                    // planet density g/cm³ (archive-computed)
   'pl_orbeccen',
   'pl_insol', 'pl_eqt',
-  'st_spectype', 'st_teff', 'st_rad', 'st_mass', 'st_age',
+  'st_spectype', 'st_teff', 'st_rad', 'st_mass',
+  'st_age',                     // stellar age Gyr — cratering history proxy
+  'st_met',                     // stellar metallicity [Fe/H] — composition proxy
+  'st_lum',                     // stellar luminosity log(L/L☉)
   'ra', 'dec', 'glon', 'glat', 'sy_dist',
 ]
 
@@ -52,10 +56,12 @@ const VIZ_COLS = new Set([
   'pl_name', 'hostname', 'ra', 'dec', 'sy_dist', 'glon', 'glat',
   'pl_rade', 'pl_eqt', 'pl_bmasse', 'pl_insol',
   'pl_orbsmax', 'pl_orbper', 'pl_orbeccen',
+  'pl_dens',                    // density: avoids recomputing M/R³ in topo generator
   'discoverymethod', 'disc_facility', 'disc_year',
   'pl_controv_flag', 'cb_flag',
   'sy_snum', 'sy_pnum', 'sy_mnum',
   'st_spectype', 'st_teff', 'st_rad',
+  'st_age', 'st_met', 'st_lum', // topo generator inputs
 ])
 
 // ── Query ─────────────────────────────────────────────────────────────────────

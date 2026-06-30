@@ -329,7 +329,7 @@ function buildScene() {
   scene.add(sky)
 
   // Directional light (host star)
-  const sun = new THREE.DirectionalLight(new THREE.Color(specColor.value), 0.9)
+  const sun = new THREE.DirectionalLight(new THREE.Color(specColor.value), 1.6)
   sun.position.set(8, 6, -4)
   scene.add(sun)
 

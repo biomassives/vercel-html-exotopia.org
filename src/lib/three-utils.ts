@@ -220,30 +220,30 @@ export interface SurfacePalette {
 
 export function surfacePaletteFor(eqt: number | null | undefined): SurfacePalette {
   if (eqt != null && eqt > 1500) return {
-    terrain:    new THREE.Color(0x3a1a08),
-    rock:       new THREE.Color(0x8b3010),
+    terrain:    new THREE.Color(0x7a3010),
+    rock:       new THREE.Color(0xc85020),
     atmosphere: new THREE.Color(0xff6a1a),
-    fog:        new THREE.Color(0x331100),
-    fogDensity: 0.0006,   // thick but not smothering
+    fog:        new THREE.Color(0x4d1800),
+    fogDensity: 0.00035,
   }
   if (eqt != null && eqt > 600) return {
-    terrain:    new THREE.Color(0x2a2010),
-    rock:       new THREE.Color(0x5a4020),
+    terrain:    new THREE.Color(0x7a5e28),
+    rock:       new THREE.Color(0xaa8840),
     atmosphere: new THREE.Color(0xe0b050),
-    fog:        new THREE.Color(0x201508),
-    fogDensity: 0.0003,
+    fog:        new THREE.Color(0x2e1a08),
+    fogDensity: 0.00016,
   }
   if (eqt != null && eqt > 200) return {
-    terrain:    new THREE.Color(0x1a2a1a),
-    rock:       new THREE.Color(0x3a5040),
+    terrain:    new THREE.Color(0x3a6040),
+    rock:       new THREE.Color(0x5a8060),
     atmosphere: new THREE.Color(0x70a0e0),
     fog:        new THREE.Color(0x0a1020),
-    fogDensity: 0.00022,  // stars visible at 600+ units
+    fogDensity: 0.00022,
   }
   // Cold / icy
   return {
-    terrain:    new THREE.Color(0x20283a),
-    rock:       new THREE.Color(0x4060a0),
+    terrain:    new THREE.Color(0x384870),
+    rock:       new THREE.Color(0x5a78b0),
     atmosphere: new THREE.Color(0x3060b0),
     fog:        new THREE.Color(0x101828),
     fogDensity: 0.00015,
