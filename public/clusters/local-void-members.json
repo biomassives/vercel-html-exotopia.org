@@ -1,0 +1,1644 @@
+{
+  "cluster": "Local Void",
+  "slug": "local-void",
+  "center_ra": 219.0,
+  "center_dec": 26.0,
+  "dist_mpc": 23.0,
+  "rvir_mpc": 45.0,
+  "richness": 1,
+  "sigma_v_kms": 85,
+  "tx_kev": 0.0,
+  "M200_1e14": 0.0,
+  "notes": "The Local Void (Tully et al. 2008, ApJ 676, 184) — the nearest major cosmic void, spanning ~45 Mpc radius adjacent to our Local Group. Centred at SGX≈−3, SGY≈11 Mpc in supergalactic coordinates, it contributes ~260 km/s to the Milky Way peculiar velocity. Interior galaxy density is <20% of mean cosmic density. Population dominated by blue, star-forming dwarf irregulars (Kreckel et al. 2012, AJ 144, 16) with elevated HI mass fractions and suppressed AGN activity. The void wall harbours IC 342, NGC 6946 (Fireworks Galaxy), and NGC 6503 — prime settlement-zone anchor galaxies. No hot ICM (tx_kev=0); no ram-pressure stripping; pristine ISM conditions throughout. Far-wall galaxies (~63-68 Mpc from us) are SDSS-detected faint irregulars on the Sculptor supercluster boundary. All system_architecture fields reflect void ecology: low ICM stress, reduced metallicity, elevated gas fractions, and minimal AGN feedback. Exoloc addresses use scope void-world (e.g. exotopia:void-world:Local-Void/NGC6503).",
+  "member_count": 50,
+  "members": [
+    {
+      "id": "NGC6503",
+      "name": "NGC 6503",
+      "aliases": [
+        "Bubble Nebula Galaxy"
+      ],
+      "hubble": "Sc",
+      "bt_mag": 10.24,
+      "lod3_params": {
+        "scene_su": 0.024,
+        "axis_ratio": 0.28,
+        "pitch_deg": 12,
+        "n_arms": 2,
+        "pa_deg": 114
+      },
+      "is_named": true,
+      "notes": "Isolated Sc spiral; textbook Local Void boundary galaxy; HI extent 4× optical disk; low surface brightness disk",
+      "system_architecture": {
+        "cluster_zone": "void_wall",
+        "anchor_telescope": "GALEX/HST",
+        "metallicity_fe_h": -0.22,
+        "icm_stress": 0.0,
+        "star_teff_k": 5820,
+        "max_orbit_au": 88.4,
+        "gas_giant_prob": 0.54,
+        "exomoon_factor": 1.4,
+        "planet_bias": "jovian_wide",
+        "estimated_planets": 4,
+        "requires_surface_render": true
+      },
+      "offset": [
+        1.0682,
+        -0.3022,
+        -0.7338
+      ]
+    },
+    {
+      "id": "NGC6946",
+      "name": "NGC 6946",
+      "aliases": [
+        "Fireworks Galaxy"
+      ],
+      "hubble": "SABcd",
+      "bt_mag": 9.61,
+      "lod3_params": {
+        "scene_su": 0.028,
+        "axis_ratio": 0.9,
+        "pitch_deg": 14,
+        "n_arms": 8,
+        "pa_deg": 60
+      },
+      "is_named": true,
+      "notes": "10 supernovae recorded since 1917; prolific star-forming grand-design spiral; at Local Void near-boundary",
+      "system_architecture": {
+        "cluster_zone": "void_wall",
+        "anchor_telescope": "JWST",
+        "metallicity_fe_h": 0.05,
+        "icm_stress": 0.0,
+        "star_teff_k": 6100,
+        "max_orbit_au": 112.3,
+        "gas_giant_prob": 0.62,
+        "exomoon_factor": 1.7,
+        "planet_bias": "jovian_wide",
+        "estimated_planets": 5,
+        "requires_surface_render": true
+      },
+      "offset": [
+        1.2308,
+        -0.2269,
+        -0.668
+      ]
+    },
+    {
+      "id": "IC342",
+      "name": "IC 342",
+      "aliases": [
+        "Hidden Galaxy",
+        "Caldwell 5"
+      ],
+      "hubble": "SABcd",
+      "bt_mag": 8.54,
+      "lod3_params": {
+        "scene_su": 0.026,
+        "axis_ratio": 0.88,
+        "pitch_deg": 10,
+        "n_arms": 4,
+        "pa_deg": 37
+      },
+      "is_named": true,
+      "notes": "Hidden behind Milky Way disk dust (A_V~2.06 mag); among the largest nearby galaxies by angular size; IC 342/Maffei Group anchor; near Local Void far-edge",
+      "system_architecture": {
+        "cluster_zone": "void_wall",
+        "anchor_telescope": "2MASS/Spitzer",
+        "metallicity_fe_h": -0.05,
+        "icm_stress": 0.0,
+        "star_teff_k": 5950,
+        "max_orbit_au": 99.2,
+        "gas_giant_prob": 0.6,
+        "exomoon_factor": 1.6,
+        "planet_bias": "jovian_wide",
+        "estimated_planets": 4,
+        "requires_surface_render": true
+      },
+      "offset": [
+        1.1161,
+        -0.468,
+        -0.9359
+      ]
+    },
+    {
+      "id": "NGC4163",
+      "name": "NGC 4163",
+      "hubble": "IBm",
+      "bt_mag": 13.78,
+      "lod3_params": {
+        "scene_su": 0.012,
+        "axis_ratio": 0.72,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 95
+      },
+      "is_named": true,
+      "notes": "Isolated dwarf irregular; Canes Venatici cloud member on Local Void boundary; GALEX UV-bright star-forming knots",
+      "system_architecture": {
+        "cluster_zone": "void_wall",
+        "anchor_telescope": "GALEX",
+        "metallicity_fe_h": -0.62,
+        "icm_stress": 0.0,
+        "star_teff_k": 7200,
+        "max_orbit_au": 45.0,
+        "gas_giant_prob": 0.41,
+        "exomoon_factor": 1.1,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 2,
+        "requires_surface_render": true
+      },
+      "offset": [
+        0.9171,
+        -0.5598,
+        -0.86
+      ]
+    },
+    {
+      "id": "NGC4068",
+      "name": "NGC 4068",
+      "hubble": "IBm",
+      "bt_mag": 13.64,
+      "lod3_params": {
+        "scene_su": 0.01,
+        "axis_ratio": 0.55,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 55
+      },
+      "is_named": true,
+      "notes": "Dwarf irregular; extremely low surface brightness; Local Void foreground",
+      "system_architecture": {
+        "cluster_zone": "void_wall",
+        "anchor_telescope": "HST",
+        "metallicity_fe_h": -0.75,
+        "icm_stress": 0.0,
+        "star_teff_k": 7400,
+        "max_orbit_au": 38.0,
+        "gas_giant_prob": 0.35,
+        "exomoon_factor": 0.9,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 1,
+        "requires_surface_render": true
+      },
+      "offset": [
+        0.968,
+        -0.5378,
+        -0.8654
+      ]
+    },
+    {
+      "id": "UGC8508",
+      "name": "UGC 8508",
+      "aliases": [
+        "DDO 185"
+      ],
+      "hubble": "Im",
+      "bt_mag": 14.08,
+      "lod3_params": {
+        "scene_su": 0.009,
+        "axis_ratio": 0.61,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 72
+      },
+      "is_named": true,
+      "notes": "Isolated dwarf Im; Canes Venatici Cloud; anomalously isolated even within void context",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "GALEX",
+        "metallicity_fe_h": -0.8,
+        "icm_stress": 0.0,
+        "star_teff_k": 7600,
+        "max_orbit_au": 32.0,
+        "gas_giant_prob": 0.31,
+        "exomoon_factor": 0.8,
+        "planet_bias": "ancient_barren",
+        "estimated_planets": 1,
+        "requires_surface_render": false
+      },
+      "offset": [
+        0.9757,
+        -0.5254,
+        -0.8281
+      ]
+    },
+    {
+      "id": "UGC9240",
+      "name": "UGC 9240",
+      "hubble": "IAm",
+      "bt_mag": 14.1,
+      "lod3_params": {
+        "scene_su": 0.009,
+        "axis_ratio": 0.8,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 140
+      },
+      "is_named": true,
+      "notes": "Irregular dwarf in the void foreground; extremely isolated; no known companions within 1 Mpc",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.68,
+        "icm_stress": 0.0,
+        "star_teff_k": 7100,
+        "max_orbit_au": 36.0,
+        "gas_giant_prob": 0.38,
+        "exomoon_factor": 1.0,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 1,
+        "requires_surface_render": false
+      },
+      "offset": [
+        0.9622,
+        -0.534,
+        -0.787
+      ]
+    },
+    {
+      "id": "DDO187",
+      "name": "DDO 187",
+      "hubble": "IAm",
+      "bt_mag": 14.97,
+      "lod3_params": {
+        "scene_su": 0.008,
+        "axis_ratio": 0.9,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 25
+      },
+      "is_named": true,
+      "notes": "Blue compact dwarf; active star formation; one of nearest void residents",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "GALEX",
+        "metallicity_fe_h": -0.88,
+        "icm_stress": 0.0,
+        "star_teff_k": 8200,
+        "max_orbit_au": 28.0,
+        "gas_giant_prob": 0.28,
+        "exomoon_factor": 0.7,
+        "planet_bias": "ancient_barren",
+        "estimated_planets": 1,
+        "requires_surface_render": false
+      },
+      "offset": [
+        0.9496,
+        -0.6153,
+        -0.8113
+      ]
+    },
+    {
+      "id": "DDO99",
+      "name": "DDO 99",
+      "hubble": "Im",
+      "bt_mag": 15.03,
+      "lod3_params": {
+        "scene_su": 0.008,
+        "axis_ratio": 0.42,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 170
+      },
+      "is_named": true,
+      "notes": "Highly elongated dwarf irregular; member of Canes Venatici I cloud on void boundary",
+      "system_architecture": {
+        "cluster_zone": "void_wall",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.71,
+        "icm_stress": 0.0,
+        "star_teff_k": 7300,
+        "max_orbit_au": 40.0,
+        "gas_giant_prob": 0.36,
+        "exomoon_factor": 0.9,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 1,
+        "requires_surface_render": false
+      },
+      "offset": [
+        0.9285,
+        -0.5576,
+        -0.8472
+      ]
+    },
+    {
+      "id": "UGCA292",
+      "name": "UGCA 292",
+      "hubble": "IAm",
+      "bt_mag": 15.2,
+      "lod3_params": {
+        "scene_su": 0.007,
+        "axis_ratio": 0.93,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 0
+      },
+      "is_named": true,
+      "notes": "Extremely diffuse isolated dwarf; Canes Venatici I cloud periphery",
+      "system_architecture": {
+        "cluster_zone": "void_wall",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.92,
+        "icm_stress": 0.0,
+        "star_teff_k": 7800,
+        "max_orbit_au": 25.0,
+        "gas_giant_prob": 0.25,
+        "exomoon_factor": 0.6,
+        "planet_bias": "ancient_barren",
+        "estimated_planets": 1,
+        "requires_surface_render": false
+      },
+      "offset": [
+        0.8955,
+        -0.5589,
+        -0.8536
+      ]
+    },
+    {
+      "id": "KKH86",
+      "name": "KKH 86",
+      "hubble": "Irr",
+      "bt_mag": 17.5,
+      "lod3_params": {
+        "scene_su": 0.006,
+        "axis_ratio": 0.8,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 90
+      },
+      "is_named": true,
+      "notes": "Faint irregular; one of the deepest void residents; no neighbors within 1 Mpc; found in 2MASS/deep optical surveys",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "2MASS",
+        "metallicity_fe_h": -1.1,
+        "icm_stress": 0.0,
+        "star_teff_k": 8400,
+        "max_orbit_au": 22.0,
+        "gas_giant_prob": 0.2,
+        "exomoon_factor": 0.5,
+        "planet_bias": "ancient_barren",
+        "estimated_planets": 1,
+        "requires_surface_render": false
+      },
+      "offset": [
+        0.9164,
+        -0.6585,
+        -0.7932
+      ]
+    },
+    {
+      "id": "NGC6217",
+      "name": "NGC 6217",
+      "hubble": "SABbc",
+      "bt_mag": 11.88,
+      "lod3_params": {
+        "scene_su": 0.02,
+        "axis_ratio": 0.88,
+        "pitch_deg": 18,
+        "n_arms": 4,
+        "pa_deg": 165
+      },
+      "is_named": true,
+      "notes": "Relatively isolated barred spiral near void center depth; notable ring structure in outer disk",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "HST",
+        "metallicity_fe_h": -0.18,
+        "icm_stress": 0.0,
+        "star_teff_k": 5700,
+        "max_orbit_au": 95.0,
+        "gas_giant_prob": 0.58,
+        "exomoon_factor": 1.5,
+        "planet_bias": "jovian_wide",
+        "estimated_planets": 4,
+        "requires_surface_render": true
+      },
+      "offset": [
+        0.9497,
+        0.8874,
+        -0.5646
+      ]
+    },
+    {
+      "id": "KK230",
+      "name": "KK 230",
+      "hubble": "Irr",
+      "bt_mag": 18.5,
+      "lod3_params": {
+        "scene_su": 0.007,
+        "axis_ratio": 0.7,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 45
+      },
+      "is_named": true,
+      "notes": "Faint irregular; deep void interior region; Karachentseva-Karachentsev catalog entry",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -1.05,
+        "icm_stress": 0.0,
+        "star_teff_k": 8000,
+        "max_orbit_au": 20.0,
+        "gas_giant_prob": 0.22,
+        "exomoon_factor": 0.5,
+        "planet_bias": "ancient_barren",
+        "estimated_planets": 1,
+        "requires_surface_render": false
+      },
+      "offset": [
+        0.6123,
+        -0.4673,
+        -0.7621
+      ]
+    },
+    {
+      "id": "UGC4483",
+      "name": "UGC 4483",
+      "hubble": "Im",
+      "bt_mag": 14.47,
+      "lod3_params": {
+        "scene_su": 0.009,
+        "axis_ratio": 0.65,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 75
+      },
+      "is_named": true,
+      "notes": "Star-forming irregular; M81 Group periphery / void edge; resolved stellar populations with HST",
+      "system_architecture": {
+        "cluster_zone": "void_wall",
+        "anchor_telescope": "HST/ACS",
+        "metallicity_fe_h": -0.55,
+        "icm_stress": 0.0,
+        "star_teff_k": 6900,
+        "max_orbit_au": 52.0,
+        "gas_giant_prob": 0.44,
+        "exomoon_factor": 1.2,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        1.024,
+        -0.4708,
+        -0.9248
+      ]
+    },
+    {
+      "id": "UGCA105",
+      "name": "UGCA 105",
+      "hubble": "Sm",
+      "bt_mag": 14.05,
+      "lod3_params": {
+        "scene_su": 0.011,
+        "axis_ratio": 0.3,
+        "pitch_deg": 8,
+        "n_arms": 2,
+        "pa_deg": 90
+      },
+      "is_named": true,
+      "notes": "Edge-on Sm spiral; loose association with IC 342/Maffei group; extended void foreground",
+      "system_architecture": {
+        "cluster_zone": "void_wall",
+        "anchor_telescope": "Spitzer",
+        "metallicity_fe_h": -0.38,
+        "icm_stress": 0.0,
+        "star_teff_k": 6300,
+        "max_orbit_au": 68.0,
+        "gas_giant_prob": 0.48,
+        "exomoon_factor": 1.3,
+        "planet_bias": "jovian_wide",
+        "estimated_planets": 3,
+        "requires_surface_render": false
+      },
+      "offset": [
+        1.0064,
+        -0.6469,
+        -1.226
+      ]
+    },
+    {
+      "id": "LVF01",
+      "hubble": "Irr",
+      "bt_mag": 18.4,
+      "lod3_params": {
+        "scene_su": 0.007,
+        "axis_ratio": 0.75,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 0
+      },
+      "is_named": false,
+      "notes": "Far-wall void resident; deep interior void galaxy approaching opposite wall boundary",
+      "system_architecture": {
+        "cluster_zone": "void_far_wall",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.8,
+        "icm_stress": 0.0,
+        "star_teff_k": 7800,
+        "max_orbit_au": 22.0,
+        "gas_giant_prob": 0.26,
+        "exomoon_factor": 0.55,
+        "planet_bias": "ancient_barren",
+        "estimated_planets": 1,
+        "requires_surface_render": false
+      },
+      "offset": [
+        -2.0631,
+        1.3622,
+        1.3273
+      ]
+    },
+    {
+      "id": "LVF02",
+      "hubble": "Sb",
+      "bt_mag": 17.8,
+      "lod3_params": {
+        "scene_su": 0.012,
+        "axis_ratio": 0.82,
+        "pitch_deg": 10,
+        "n_arms": 2,
+        "pa_deg": 30
+      },
+      "is_named": false,
+      "notes": "Far-wall spiral; void enrichment environment; low ICM pressure; probable isolated system",
+      "system_architecture": {
+        "cluster_zone": "void_far_wall",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.86,
+        "icm_stress": 0.0,
+        "star_teff_k": 7900,
+        "max_orbit_au": 20.5,
+        "gas_giant_prob": 0.24,
+        "exomoon_factor": 0.52,
+        "planet_bias": "ancient_barren",
+        "estimated_planets": 1,
+        "requires_surface_render": false
+      },
+      "offset": [
+        -1.8699,
+        0.9819,
+        1.6892
+      ]
+    },
+    {
+      "id": "LVF03",
+      "hubble": "Im",
+      "bt_mag": 19.1,
+      "lod3_params": {
+        "scene_su": 0.007,
+        "axis_ratio": 0.75,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 60
+      },
+      "is_named": false,
+      "notes": "Far-wall dwarf irregular; extreme isolation; candidate for void settlement frontier zone",
+      "system_architecture": {
+        "cluster_zone": "void_far_wall",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.92,
+        "icm_stress": 0.0,
+        "star_teff_k": 8000,
+        "max_orbit_au": 19.0,
+        "gas_giant_prob": 0.22,
+        "exomoon_factor": 0.49,
+        "planet_bias": "ancient_barren",
+        "estimated_planets": 1,
+        "requires_surface_render": false
+      },
+      "offset": [
+        -2.2894,
+        1.594,
+        0.8449
+      ]
+    },
+    {
+      "id": "LVF04",
+      "hubble": "IBm",
+      "bt_mag": 19.3,
+      "lod3_params": {
+        "scene_su": 0.007,
+        "axis_ratio": 0.75,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 90
+      },
+      "is_named": false,
+      "notes": "Far-wall blue compact; star formation triggered by void isolation; minimal tidal disruption",
+      "system_architecture": {
+        "cluster_zone": "void_far_wall",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.98,
+        "icm_stress": 0.0,
+        "star_teff_k": 8100,
+        "max_orbit_au": 17.5,
+        "gas_giant_prob": 0.2,
+        "exomoon_factor": 0.46,
+        "planet_bias": "ancient_barren",
+        "estimated_planets": 1,
+        "requires_surface_render": false
+      },
+      "offset": [
+        -1.5302,
+        0.7213,
+        2.2327
+      ]
+    },
+    {
+      "id": "LVF05",
+      "hubble": "Irr",
+      "bt_mag": 18.7,
+      "lod3_params": {
+        "scene_su": 0.007,
+        "axis_ratio": 0.75,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 120
+      },
+      "is_named": false,
+      "notes": "Far-wall irregular; estimated 42 Mpc from void center; on the far-rim filament boundary",
+      "system_architecture": {
+        "cluster_zone": "void_far_wall",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -1.04,
+        "icm_stress": 0.0,
+        "star_teff_k": 8200,
+        "max_orbit_au": 16.0,
+        "gas_giant_prob": 0.18,
+        "exomoon_factor": 0.43,
+        "planet_bias": "ancient_barren",
+        "estimated_planets": 1,
+        "requires_surface_render": false
+      },
+      "offset": [
+        -1.8374,
+        1.7292,
+        0.9501
+      ]
+    },
+    {
+      "id": "LV001",
+      "hubble": "E",
+      "bt_mag": 16.32,
+      "lod3_params": {
+        "scene_su": 0.011,
+        "axis_ratio": 0.88,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 0
+      },
+      "is_named": false,
+      "notes": "Elliptical void resident; stripped of hot ISM; ancient red stellar population",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.45,
+        "icm_stress": 0.0,
+        "star_teff_k": 5800,
+        "max_orbit_au": 31.2,
+        "gas_giant_prob": 0.38,
+        "exomoon_factor": 0.99,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        -1.7484,
+        1.7545,
+        -0.3386
+      ]
+    },
+    {
+      "id": "LV002",
+      "hubble": "Sa",
+      "bt_mag": 13.29,
+      "lod3_params": {
+        "scene_su": 0.013,
+        "axis_ratio": 0.68,
+        "pitch_deg": 8,
+        "n_arms": 2,
+        "pa_deg": 23
+      },
+      "is_named": false,
+      "notes": "Isolated Sa spiral; void-driven suppressed star formation; pure disk geometry",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.54,
+        "icm_stress": 0.0,
+        "star_teff_k": 6200,
+        "max_orbit_au": 56.4,
+        "gas_giant_prob": 0.34,
+        "exomoon_factor": 0.97,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        0.3319,
+        -0.6643,
+        -0.26
+      ]
+    },
+    {
+      "id": "LV003",
+      "hubble": "Irr",
+      "bt_mag": 14.46,
+      "lod3_params": {
+        "scene_su": 0.008,
+        "axis_ratio": 0.8,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 46
+      },
+      "is_named": false,
+      "notes": "Void irregular with UV-bright knots; GALEX-detected star-forming clumps",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.63,
+        "icm_stress": 0.0,
+        "star_teff_k": 6600,
+        "max_orbit_au": 54.1,
+        "gas_giant_prob": 0.3,
+        "exomoon_factor": 0.95,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        0.3286,
+        0.1393,
+        -0.358
+      ]
+    },
+    {
+      "id": "LV004",
+      "hubble": "Irr",
+      "bt_mag": 18.13,
+      "lod3_params": {
+        "scene_su": 0.008,
+        "axis_ratio": 0.8,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 69
+      },
+      "is_named": false,
+      "notes": "Distant void spiral on far-wall approach; likely metal-poor ISM",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.72,
+        "icm_stress": 0.0,
+        "star_teff_k": 7000,
+        "max_orbit_au": 35.6,
+        "gas_giant_prob": 0.26,
+        "exomoon_factor": 0.93,
+        "planet_bias": "ancient_barren",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        0.4716,
+        1.4791,
+        1.5122
+      ]
+    },
+    {
+      "id": "LV005",
+      "hubble": "Sb",
+      "bt_mag": 15.08,
+      "lod3_params": {
+        "scene_su": 0.014,
+        "axis_ratio": 0.6,
+        "pitch_deg": 12,
+        "n_arms": 2,
+        "pa_deg": 92
+      },
+      "is_named": false,
+      "notes": "Blue void spiral; elevated specific star-formation rate typical of void galaxies",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.81,
+        "icm_stress": 0.0,
+        "star_teff_k": 7400,
+        "max_orbit_au": 52.5,
+        "gas_giant_prob": 0.22,
+        "exomoon_factor": 0.91,
+        "planet_bias": "ancient_barren",
+        "estimated_planets": 1,
+        "requires_surface_render": false
+      },
+      "offset": [
+        -0.2671,
+        -0.3122,
+        -0.7587
+      ]
+    },
+    {
+      "id": "LV006",
+      "hubble": "Im",
+      "bt_mag": 13.21,
+      "lod3_params": {
+        "scene_su": 0.008,
+        "axis_ratio": 0.75,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 115
+      },
+      "is_named": false,
+      "notes": "Compact irregular; near Local Void inner boundary; extreme isolation from neighbors",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.9,
+        "icm_stress": 0.0,
+        "star_teff_k": 5800,
+        "max_orbit_au": 60.0,
+        "gas_giant_prob": 0.18,
+        "exomoon_factor": 0.89,
+        "planet_bias": "ancient_barren",
+        "estimated_planets": 1,
+        "requires_surface_render": false
+      },
+      "offset": [
+        0.7226,
+        -0.5276,
+        -0.4643
+      ]
+    },
+    {
+      "id": "LV007",
+      "hubble": "Irr",
+      "bt_mag": 12.96,
+      "lod3_params": {
+        "scene_su": 0.008,
+        "axis_ratio": 0.8,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 138
+      },
+      "is_named": false,
+      "notes": "Star-forming irregular in void foreground; SDSS photometric catalog entry",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.99,
+        "icm_stress": 0.0,
+        "star_teff_k": 6200,
+        "max_orbit_au": 56.9,
+        "gas_giant_prob": 0.38,
+        "exomoon_factor": 0.99,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        0.542,
+        -0.018,
+        -0.5513
+      ]
+    },
+    {
+      "id": "LV008",
+      "hubble": "Irr",
+      "bt_mag": 16.79,
+      "lod3_params": {
+        "scene_su": 0.008,
+        "axis_ratio": 0.8,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 161
+      },
+      "is_named": false,
+      "notes": "Void irregular on far-side; candidate for frontier settlement zone",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.45,
+        "icm_stress": 0.0,
+        "star_teff_k": 6600,
+        "max_orbit_au": 31.4,
+        "gas_giant_prob": 0.34,
+        "exomoon_factor": 0.97,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        -1.7473,
+        -0.6885,
+        1.5852
+      ]
+    },
+    {
+      "id": "LV009",
+      "hubble": "Irr",
+      "bt_mag": 13.87,
+      "lod3_params": {
+        "scene_su": 0.008,
+        "axis_ratio": 0.8,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 4
+      },
+      "is_named": false,
+      "notes": "Nearby irregular void resident; angular diameter measurable with moderate telescopes",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.54,
+        "icm_stress": 0.0,
+        "star_teff_k": 7000,
+        "max_orbit_au": 61.3,
+        "gas_giant_prob": 0.3,
+        "exomoon_factor": 0.95,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        0.7879,
+        -0.463,
+        -0.6637
+      ]
+    },
+    {
+      "id": "LV010",
+      "hubble": "Irr",
+      "bt_mag": 16.55,
+      "lod3_params": {
+        "scene_su": 0.008,
+        "axis_ratio": 0.8,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 27
+      },
+      "is_named": false,
+      "notes": "Void irregular at mid-depth; Tully-Fisher distance from HI 21cm width",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.63,
+        "icm_stress": 0.0,
+        "star_teff_k": 7400,
+        "max_orbit_au": 39.4,
+        "gas_giant_prob": 0.26,
+        "exomoon_factor": 0.93,
+        "planet_bias": "ancient_barren",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        -1.7039,
+        -0.9017,
+        -0.2916
+      ]
+    },
+    {
+      "id": "LV011",
+      "hubble": "Im",
+      "bt_mag": 16.04,
+      "lod3_params": {
+        "scene_su": 0.008,
+        "axis_ratio": 0.75,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 50
+      },
+      "is_named": false,
+      "notes": "Blue void Im; void environment suppresses AGN feedback; clean star-forming disk",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.72,
+        "icm_stress": 0.0,
+        "star_teff_k": 5800,
+        "max_orbit_au": 52.3,
+        "gas_giant_prob": 0.22,
+        "exomoon_factor": 0.91,
+        "planet_bias": "ancient_barren",
+        "estimated_planets": 1,
+        "requires_surface_render": false
+      },
+      "offset": [
+        0.0054,
+        0.045,
+        -0.2793
+      ]
+    },
+    {
+      "id": "LV012",
+      "hubble": "E",
+      "bt_mag": 15.66,
+      "lod3_params": {
+        "scene_su": 0.011,
+        "axis_ratio": 0.88,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 73
+      },
+      "is_named": false,
+      "notes": "Isolated elliptical; quenched inside void; fading stellar population",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.81,
+        "icm_stress": 0.0,
+        "star_teff_k": 6200,
+        "max_orbit_au": 53.1,
+        "gas_giant_prob": 0.18,
+        "exomoon_factor": 0.89,
+        "planet_bias": "ancient_barren",
+        "estimated_planets": 1,
+        "requires_surface_render": false
+      },
+      "offset": [
+        -0.2254,
+        -0.4161,
+        -0.9053
+      ]
+    },
+    {
+      "id": "LV013",
+      "hubble": "Irr",
+      "bt_mag": 15.81,
+      "lod3_params": {
+        "scene_su": 0.008,
+        "axis_ratio": 0.8,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 96
+      },
+      "is_named": false,
+      "notes": "Mid-void irregular; elongated morphology; no companion detected in 2 Mpc radius",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.9,
+        "icm_stress": 0.0,
+        "star_teff_k": 6600,
+        "max_orbit_au": 38.5,
+        "gas_giant_prob": 0.38,
+        "exomoon_factor": 0.99,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        -1.798,
+        -0.683,
+        -0.207
+      ]
+    },
+    {
+      "id": "LV014",
+      "hubble": "Irr",
+      "bt_mag": 16.15,
+      "lod3_params": {
+        "scene_su": 0.008,
+        "axis_ratio": 0.8,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 119
+      },
+      "is_named": false,
+      "notes": "Isolated void irregular; deep void interior position; minimal tidal distortion",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.99,
+        "icm_stress": 0.0,
+        "star_teff_k": 7000,
+        "max_orbit_au": 41.3,
+        "gas_giant_prob": 0.34,
+        "exomoon_factor": 0.97,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        -1.0616,
+        -0.2723,
+        0.6271
+      ]
+    },
+    {
+      "id": "LV015",
+      "hubble": "Irr",
+      "bt_mag": 15.15,
+      "lod3_params": {
+        "scene_su": 0.008,
+        "axis_ratio": 0.8,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 142
+      },
+      "is_named": false,
+      "notes": "Void Irr at 29 Mpc; moderate isolation; possible pair with adjacent void resident",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.45,
+        "icm_stress": 0.0,
+        "star_teff_k": 7400,
+        "max_orbit_au": 47.9,
+        "gas_giant_prob": 0.3,
+        "exomoon_factor": 0.95,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        -0.6833,
+        -0.233,
+        -0.2697
+      ]
+    },
+    {
+      "id": "LV016",
+      "hubble": "S0",
+      "bt_mag": 17.99,
+      "lod3_params": {
+        "scene_su": 0.01,
+        "axis_ratio": 0.35,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 165
+      },
+      "is_named": false,
+      "notes": "Lenticular galaxy in void; suppressed gas reservoir; dry evolutionary path",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.54,
+        "icm_stress": 0.0,
+        "star_teff_k": 5800,
+        "max_orbit_au": 30.2,
+        "gas_giant_prob": 0.26,
+        "exomoon_factor": 0.93,
+        "planet_bias": "ancient_barren",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        -1.6815,
+        1.7686,
+        0.3102
+      ]
+    },
+    {
+      "id": "LV017",
+      "hubble": "Irr",
+      "bt_mag": 15.07,
+      "lod3_params": {
+        "scene_su": 0.008,
+        "axis_ratio": 0.8,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 8
+      },
+      "is_named": false,
+      "notes": "Blue void irregular; elevated HI fraction vs cluster analogs; pristine ISM",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.63,
+        "icm_stress": 0.0,
+        "star_teff_k": 6200,
+        "max_orbit_au": 48.2,
+        "gas_giant_prob": 0.22,
+        "exomoon_factor": 0.91,
+        "planet_bias": "ancient_barren",
+        "estimated_planets": 1,
+        "requires_surface_render": false
+      },
+      "offset": [
+        0.1863,
+        -0.1486,
+        0.6972
+      ]
+    },
+    {
+      "id": "LV018",
+      "hubble": "Irr",
+      "bt_mag": 18.05,
+      "lod3_params": {
+        "scene_su": 0.008,
+        "axis_ratio": 0.8,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 31
+      },
+      "is_named": false,
+      "notes": "Far void Irr; near void center longitude; approaching far-wall zone",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.72,
+        "icm_stress": 0.0,
+        "star_teff_k": 6600,
+        "max_orbit_au": 32.2,
+        "gas_giant_prob": 0.18,
+        "exomoon_factor": 0.89,
+        "planet_bias": "ancient_barren",
+        "estimated_planets": 1,
+        "requires_surface_render": false
+      },
+      "offset": [
+        -1.691,
+        1.0122,
+        0.8127
+      ]
+    },
+    {
+      "id": "LV019",
+      "hubble": "Sa",
+      "bt_mag": 13.64,
+      "lod3_params": {
+        "scene_su": 0.013,
+        "axis_ratio": 0.68,
+        "pitch_deg": 8,
+        "n_arms": 2,
+        "pa_deg": 54
+      },
+      "is_named": false,
+      "notes": "Void Sa spiral; relatively metal-rich for void; possible recent infall",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.81,
+        "icm_stress": 0.0,
+        "star_teff_k": 7000,
+        "max_orbit_au": 50.3,
+        "gas_giant_prob": 0.38,
+        "exomoon_factor": 0.99,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        0.3573,
+        -0.2996,
+        0.553
+      ]
+    },
+    {
+      "id": "LV020",
+      "hubble": "Irr",
+      "bt_mag": 16.51,
+      "lod3_params": {
+        "scene_su": 0.008,
+        "axis_ratio": 0.8,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 77
+      },
+      "is_named": false,
+      "notes": "Distant void irregular; HI-detected but optically faint; low column density",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.9,
+        "icm_stress": 0.0,
+        "star_teff_k": 7400,
+        "max_orbit_au": 36.1,
+        "gas_giant_prob": 0.34,
+        "exomoon_factor": 0.97,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        0.7204,
+        0.9283,
+        1.8892
+      ]
+    },
+    {
+      "id": "LV021",
+      "hubble": "Sa",
+      "bt_mag": 18.05,
+      "lod3_params": {
+        "scene_su": 0.013,
+        "axis_ratio": 0.68,
+        "pitch_deg": 8,
+        "n_arms": 2,
+        "pa_deg": 100
+      },
+      "is_named": false,
+      "notes": "Far-wall Sa; morphologically undisturbed; no tidal features; void isolation confirmed",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.99,
+        "icm_stress": 0.0,
+        "star_teff_k": 5800,
+        "max_orbit_au": 30.1,
+        "gas_giant_prob": 0.3,
+        "exomoon_factor": 0.95,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        -1.071,
+        1.7051,
+        1.3246
+      ]
+    },
+    {
+      "id": "LV022",
+      "hubble": "Sb",
+      "bt_mag": 16.59,
+      "lod3_params": {
+        "scene_su": 0.014,
+        "axis_ratio": 0.6,
+        "pitch_deg": 12,
+        "n_arms": 2,
+        "pa_deg": 123
+      },
+      "is_named": false,
+      "notes": "Sb void galaxy; elevated star-formation efficiency; rotating disk well-defined",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.45,
+        "icm_stress": 0.0,
+        "star_teff_k": 6200,
+        "max_orbit_au": 50.1,
+        "gas_giant_prob": 0.26,
+        "exomoon_factor": 0.93,
+        "planet_bias": "ancient_barren",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        0.028,
+        0.4745,
+        -0.2733
+      ]
+    },
+    {
+      "id": "LV023",
+      "hubble": "Irr",
+      "bt_mag": 18.6,
+      "lod3_params": {
+        "scene_su": 0.008,
+        "axis_ratio": 0.8,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 146
+      },
+      "is_named": false,
+      "notes": "Far void irregular; one of outermost void residents; approaching far-rim wall",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.54,
+        "icm_stress": 0.0,
+        "star_teff_k": 6600,
+        "max_orbit_au": 32.9,
+        "gas_giant_prob": 0.22,
+        "exomoon_factor": 0.91,
+        "planet_bias": "ancient_barren",
+        "estimated_planets": 1,
+        "requires_surface_render": false
+      },
+      "offset": [
+        -0.2003,
+        0.9966,
+        2.0138
+      ]
+    },
+    {
+      "id": "LV024",
+      "hubble": "Irr",
+      "bt_mag": 17.86,
+      "lod3_params": {
+        "scene_su": 0.008,
+        "axis_ratio": 0.8,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 169
+      },
+      "is_named": false,
+      "notes": "Void Irr; in void plane perpendicular axis; bridges near and far void halves",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.63,
+        "icm_stress": 0.0,
+        "star_teff_k": 7000,
+        "max_orbit_au": 42.6,
+        "gas_giant_prob": 0.18,
+        "exomoon_factor": 0.89,
+        "planet_bias": "ancient_barren",
+        "estimated_planets": 1,
+        "requires_surface_render": false
+      },
+      "offset": [
+        -0.9269,
+        -0.3598,
+        0.5901
+      ]
+    },
+    {
+      "id": "LV025",
+      "hubble": "Irr",
+      "bt_mag": 16.57,
+      "lod3_params": {
+        "scene_su": 0.008,
+        "axis_ratio": 0.8,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 12
+      },
+      "is_named": false,
+      "notes": "Near-center void irregular; closest to void geometric center in catalog; deep interior",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.72,
+        "icm_stress": 0.0,
+        "star_teff_k": 7400,
+        "max_orbit_au": 50.6,
+        "gas_giant_prob": 0.38,
+        "exomoon_factor": 0.99,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        -0.0439,
+        0.4721,
+        -0.834
+      ]
+    },
+    {
+      "id": "LV026",
+      "hubble": "Sb",
+      "bt_mag": 16.2,
+      "lod3_params": {
+        "scene_su": 0.014,
+        "axis_ratio": 0.6,
+        "pitch_deg": 12,
+        "n_arms": 2,
+        "pa_deg": 35
+      },
+      "is_named": false,
+      "notes": "Sb spiral void galaxy; isolated disk; extended HI beyond stellar disk",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.81,
+        "icm_stress": 0.0,
+        "star_teff_k": 5800,
+        "max_orbit_au": 44.1,
+        "gas_giant_prob": 0.34,
+        "exomoon_factor": 0.97,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        -0.8912,
+        0.4206,
+        -0.2861
+      ]
+    },
+    {
+      "id": "LV027",
+      "hubble": "Im",
+      "bt_mag": 17.44,
+      "lod3_params": {
+        "scene_su": 0.008,
+        "axis_ratio": 0.75,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 58
+      },
+      "is_named": false,
+      "notes": "Isolated irregular; mid-void; no companion within 3 Mpc",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.9,
+        "icm_stress": 0.0,
+        "star_teff_k": 6200,
+        "max_orbit_au": 37.3,
+        "gas_giant_prob": 0.3,
+        "exomoon_factor": 0.95,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        -0.5325,
+        1.2452,
+        0.9324
+      ]
+    },
+    {
+      "id": "LV028",
+      "hubble": "Irr",
+      "bt_mag": 13.55,
+      "lod3_params": {
+        "scene_su": 0.008,
+        "axis_ratio": 0.8,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 81
+      },
+      "is_named": false,
+      "notes": "Compact void Irr; UV-bright; low metallicity; good analog for early universe field galaxies",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.99,
+        "icm_stress": 0.0,
+        "star_teff_k": 6600,
+        "max_orbit_au": 58.1,
+        "gas_giant_prob": 0.26,
+        "exomoon_factor": 0.93,
+        "planet_bias": "ancient_barren",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        0.4062,
+        -0.4327,
+        -0.5699
+      ]
+    },
+    {
+      "id": "LV029",
+      "hubble": "Sa",
+      "bt_mag": 15.9,
+      "lod3_params": {
+        "scene_su": 0.013,
+        "axis_ratio": 0.68,
+        "pitch_deg": 8,
+        "n_arms": 2,
+        "pa_deg": 104
+      },
+      "is_named": false,
+      "notes": "Sa void spiral; gas-rich for void morphology; minor interaction scar in outer arm",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.45,
+        "icm_stress": 0.0,
+        "star_teff_k": 7000,
+        "max_orbit_au": 45.7,
+        "gas_giant_prob": 0.22,
+        "exomoon_factor": 0.91,
+        "planet_bias": "ancient_barren",
+        "estimated_planets": 1,
+        "requires_surface_render": false
+      },
+      "offset": [
+        0.0182,
+        0.1502,
+        0.8045
+      ]
+    },
+    {
+      "id": "LV030",
+      "hubble": "Sb",
+      "bt_mag": 15.78,
+      "lod3_params": {
+        "scene_su": 0.014,
+        "axis_ratio": 0.6,
+        "pitch_deg": 12,
+        "n_arms": 2,
+        "pa_deg": 127
+      },
+      "is_named": false,
+      "notes": "Blue Sb; near Local Void boundary; star-formation elevated by isolation feedback",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.54,
+        "icm_stress": 0.0,
+        "star_teff_k": 7400,
+        "max_orbit_au": 46.0,
+        "gas_giant_prob": 0.18,
+        "exomoon_factor": 0.89,
+        "planet_bias": "ancient_barren",
+        "estimated_planets": 1,
+        "requires_surface_render": false
+      },
+      "offset": [
+        -0.2641,
+        0.9538,
+        -0.6678
+      ]
+    }
+  ]
+}

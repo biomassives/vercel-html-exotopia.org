@@ -98,6 +98,13 @@
           @click="connectDialog = true"
         />
         <span v-if="wallet.connected" class="bar-wallet-dot" />
+        <button
+          class="bar-mob-burger"
+          @click="mobileMenuOpen = !mobileMenuOpen"
+          :aria-label="mobileMenuOpen ? 'Close menu' : 'Open menu'"
+        >
+          <span class="bar-mob-burger-icon">{{ mobileMenuOpen ? '✕' : '≡' }}</span>
+        </button>
         <button v-if="isSettlementPage" class="settle-bar-x" @click="collapseToSlim" title="Hide navigation">✕</button>
       </div>
     </div>
@@ -665,6 +672,87 @@
     <!-- Backdrop -->
     <div v-if="openSection" class="exo-backdrop" @click="openSection = null" />
 
+    <!-- ── Mobile navigation overlay ────────────────────────────────────── -->
+    <Transition name="mob-menu">
+      <div v-if="mobileMenuOpen" class="exo-mob-menu" @click.self="mobileMenuOpen = false">
+        <div class="mob-menu-inner">
+          <div class="mob-menu-header">
+            <span class="mob-menu-title">Navigation</span>
+            <button class="mob-menu-close" @click="mobileMenuOpen = false" aria-label="Close">✕</button>
+          </div>
+          <nav class="mob-nav-list">
+            <button class="mob-nav-item" @click="navTo('/')">
+              <span class="mob-nav-icon">🌌</span>
+              <span class="mob-nav-text">
+                <span class="mob-nav-label">Explore</span>
+                <span class="mob-nav-sub">Cosmic Web · Galaxy · Surface</span>
+              </span>
+            </button>
+            <button class="mob-nav-item" @click="navTo('/onboard')">
+              <span class="mob-nav-icon">🌱</span>
+              <span class="mob-nav-text">
+                <span class="mob-nav-label">Get Started</span>
+                <span class="mob-nav-sub">Join · Role · Community</span>
+              </span>
+            </button>
+            <button class="mob-nav-item" @click="navTo('/eco-ops')">
+              <span class="mob-nav-icon">💧</span>
+              <span class="mob-nav-text">
+                <span class="mob-nav-label">Eco Ops</span>
+                <span class="mob-nav-sub">Monitor · Field work · Bounties</span>
+              </span>
+            </button>
+            <button class="mob-nav-item" @click="navTo('/mint')">
+              <span class="mob-nav-icon">🪐</span>
+              <span class="mob-nav-text">
+                <span class="mob-nav-label">Mint a Planet</span>
+                <span class="mob-nav-sub">Reserve your settlement</span>
+              </span>
+            </button>
+            <button class="mob-nav-item" @click="navTo('/learn')">
+              <span class="mob-nav-icon">📚</span>
+              <span class="mob-nav-text">
+                <span class="mob-nav-label">Learn</span>
+                <span class="mob-nav-sub">Curriculum · Modules</span>
+              </span>
+            </button>
+            <button class="mob-nav-item" @click="navTo('/blog')">
+              <span class="mob-nav-icon">📄</span>
+              <span class="mob-nav-text">
+                <span class="mob-nav-label">Blog</span>
+                <span class="mob-nav-sub">Articles · Updates</span>
+              </span>
+            </button>
+            <button class="mob-nav-item" @click="navTo('/docs')">
+              <span class="mob-nav-icon">📋</span>
+              <span class="mob-nav-text">
+                <span class="mob-nav-label">Docs</span>
+                <span class="mob-nav-sub">Protocol · Guides</span>
+              </span>
+            </button>
+          </nav>
+          <div class="mob-menu-footer">
+            <q-btn
+              v-if="wallet.connected"
+              flat rounded color="positive"
+              icon="account_balance_wallet"
+              :label="wallet.shortAddress || ''"
+              class="full-width"
+              @click="navTo('/mint')"
+            />
+            <q-btn
+              v-else
+              flat rounded color="blue-grey-5"
+              icon="account_balance_wallet"
+              label="Connect wallet"
+              class="full-width"
+              @click="connectDialog = true; mobileMenuOpen = false"
+            />
+          </div>
+        </div>
+      </div>
+    </Transition>
+
     <!-- ── Page area ─────────────────────────────────────────────────────── -->
     <q-page-container class="exo-page-container">
       <router-view />
@@ -675,6 +763,11 @@
 
     <!-- ── Scene-to-scene transition overlay ─────────────────────────────── -->
     <SceneTransition />
+
+    <!-- ── PWA: offline status bar + install prompt ───────────────────────── -->
+    <OfflineStatusBar />
+    <InstallPrompt />
+    <LocalDataPanel />
 
     <!-- ── Connect wallet dialog ─────────────────────────────────────────── -->
     <q-dialog v-model="connectDialog">
@@ -708,6 +801,9 @@ import { useGalaxyStore }      from 'src/stores/galaxy'
 import { usePortalStore }      from 'src/stores/portal'
 import WormholePortal          from 'src/components/WormholePortal.vue'
 import SceneTransition         from 'src/components/SceneTransition.vue'
+import OfflineStatusBar        from 'src/components/eco/OfflineStatusBar.vue'
+import InstallPrompt           from 'src/components/eco/InstallPrompt.vue'
+import LocalDataPanel          from 'src/components/eco/LocalDataPanel.vue'
 import { useVizRenderer }      from 'src/composables/useVizRenderer'
 import { recordVisit }        from 'src/composables/useRecentLocations'
 
@@ -787,6 +883,14 @@ const NAV_GROUPS: NavGroup[] = [
         cta:   'Open guide',
         route: '/planet-systems',
         color: 'rgba(60,220,160,0.90)',
+        art: { vb: '', svg: '' },
+      },
+      {
+        title: 'Black Holes',
+        desc:  'Sgr A*, M87*, and every other black hole with strong observational evidence — EHT imaging, megamaser dynamics, Gaia astrometry, X-ray binaries.',
+        cta:   'Observatory',
+        route: '/black-holes',
+        color: 'rgba(255,232,192,0.90)',
         art: { vb: '', svg: '' },
       },
     ],
@@ -1269,22 +1373,24 @@ function sessionValue(key?: string): string | null {
 
 // ── Open/close ─────────────────────────────────────────────────────────────────
 
-const openSection   = ref<string | null>(null)
-const connectDialog = ref(false)
+const openSection    = ref<string | null>(null)
+const connectDialog  = ref(false)
+const mobileMenuOpen = ref(false)
 
 function toggleSection(id: string) {
   openSection.value = openSection.value === id ? null : id
 }
 
 function navTo(path: string) {
-  openSection.value   = null
-  addressInput.value  = ''
-  searchResults.value = []
-  noResults.value     = false
+  openSection.value    = null
+  mobileMenuOpen.value = false
+  addressInput.value   = ''
+  searchResults.value  = []
+  noResults.value      = false
   void router.push(path)
 }
 
-watch(() => route.path, () => { openSection.value = null })
+watch(() => route.path, () => { openSection.value = null; mobileMenuOpen.value = false })
 watch(openSection,      () => { hoveredItem.value  = null })
 
 // Record surface/cluster page visits for quick-transit shortcuts
@@ -1327,6 +1433,8 @@ const currentLevelLabel = computed((): string => {
   if (p.startsWith('/docs'))         return 'DOCS'
   if (p.startsWith('/data-coverage'))return 'DATA'
   if (p.startsWith('/admin'))        return 'ADMIN'
+  if (p.startsWith('/black-holes'))  return 'OBSERVATORY'
+  if (p.startsWith('/bh/') || p.startsWith('/galactic-center')) return 'L3 BLACK HOLE'
   return ''
 })
 
@@ -2518,5 +2626,154 @@ const settlementBreadcrumb = computed((): BreadcrumbNode[] => {
 .settle-strip-leave-to {
   opacity: 0;
   transform: translateY(-100%);
+}
+
+/* ── Mobile hamburger button ─────────────────────────────────────────────── */
+
+.bar-mob-burger {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 36px; height: 36px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+  flex-shrink: 0;
+  transition: background 0.15s ease;
+}
+.bar-mob-burger:hover { background: rgba(0, 80, 140, 0.25); }
+.bar-mob-burger-icon {
+  font-size: 19px;
+  color: rgba(140, 185, 215, 0.80);
+  line-height: 1;
+  user-select: none;
+}
+
+/* ── Mobile nav overlay ──────────────────────────────────────────────────── */
+
+.exo-mob-menu {
+  position: fixed;
+  inset: 0;
+  z-index: 6500;
+  background: rgba(0, 2, 12, 0.96);
+  backdrop-filter: blur(22px) saturate(130%);
+  display: flex;
+  flex-direction: column;
+  overscroll-behavior: contain;
+}
+
+.mob-menu-inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.mob-menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 44px;
+  padding: 0 16px;
+  border-bottom: 1px solid rgba(0, 80, 130, 0.22);
+  flex-shrink: 0;
+}
+
+.mob-menu-title {
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: rgba(0, 180, 220, 0.55);
+  text-transform: uppercase;
+}
+
+.mob-menu-close {
+  background: none;
+  border: none;
+  color: rgba(120, 170, 210, 0.65);
+  font-size: 16px;
+  cursor: pointer;
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 6px;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+.mob-menu-close:hover {
+  color: rgba(220, 80, 80, 0.90);
+  background: rgba(200, 40, 40, 0.12);
+}
+
+.mob-nav-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 6px 0;
+}
+
+.mob-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 20px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid rgba(0, 55, 100, 0.14);
+  cursor: pointer;
+  text-align: left;
+  min-height: 60px;
+  width: 100%;
+  transition: background 0.14s ease;
+}
+.mob-nav-item:active { background: rgba(0, 50, 90, 0.60); }
+
+.mob-nav-icon {
+  font-size: 22px;
+  flex-shrink: 0;
+  width: 28px;
+  text-align: center;
+}
+
+.mob-nav-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mob-nav-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(200, 230, 250, 0.92);
+  text-align: left;
+}
+
+.mob-nav-sub {
+  font-size: 10px;
+  color: rgba(80, 140, 180, 0.52);
+  letter-spacing: 0.03em;
+  text-align: left;
+}
+
+.mob-menu-footer {
+  padding: 16px 20px;
+  border-top: 1px solid rgba(0, 80, 130, 0.18);
+  flex-shrink: 0;
+}
+
+.mob-menu-enter-active { transition: opacity 0.22s ease, transform 0.22s ease; }
+.mob-menu-leave-active { transition: opacity 0.16s ease, transform 0.16s ease; }
+.mob-menu-enter-from   { opacity: 0; transform: translateY(-6px); }
+.mob-menu-leave-to     { opacity: 0; transform: translateY(-4px); }
+
+/* ── Responsive breakpoints ──────────────────────────────────────────────── */
+
+@media (max-width: 640px) {
+  .bar-groups,
+  .bar-search-wrap,
+  .bar-level    { display: none !important; }
+  .bar-divider  { display: none; }
+  .exo-logo     { padding-right: 0; }
+  .bar-mob-burger { display: flex; }
 }
 </style>

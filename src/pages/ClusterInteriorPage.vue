@@ -1,6 +1,7 @@
 <template>
-  <q-page class="ci-page bg-black overflow-hidden">
-    <canvas ref="canvasEl" class="ci-canvas" @click="onClick" @mousemove="onMouseMove" @mouseleave="onMouseLeave" />
+  <!-- Transparent overlay — shared Three.js canvas in MainLayout renders behind -->
+  <q-page class="ci-page viz-overlay-page" :style="{ cursor: hoverName ? 'pointer' : 'default' }"
+    @click="onClick" @mousemove="onMouseMove" @mouseleave="onMouseLeave">
 
     <!-- Breadcrumb -->
     <div class="ci-breadcrumb row items-center q-gutter-xs no-wrap">
@@ -175,8 +176,10 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import * as THREE from 'three'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import type { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import gsap from 'gsap'
+import { useVizRenderer, VIZ_BAR_H } from 'src/composables/useVizRenderer'
+import { disposeScene } from 'src/lib/three-utils'
 import { prefetchClusterGalaxies, fetchGalaxyDoc, buildBackgroundField, mulberry32 } from 'src/composables/useClusterGalaxyData'
 import type { ClusterGalaxyDoc } from 'src/composables/useClusterGalaxyData'
 import { useSettlements, clusterKey } from 'src/lib/settlements'
@@ -248,7 +251,6 @@ const clickPct     = { x: 50, y: 50 }
 const clickBearing = ref(0)
 
 // ── Vue state ─────────────────────────────────────────────────────────────────
-const canvasEl    = ref<HTMLCanvasElement | null>(null)
 const loading     = ref(true)
 const clusterData = ref<ClusterData | null>(null)
 const selected    = ref<ClusterMember | null>(null)
@@ -275,13 +277,19 @@ const selectedSystem  = ref<GalSystem | null>(null)
 const galSystems      = ref<GalSystem[]>([])
 const { hasSettlement, addSettlement } = useSettlements()
 
-// ── Three.js handles ──────────────────────────────────────────────────────────
-let renderer:  THREE.WebGLRenderer
-let scene:     THREE.Scene
-let camera:    THREE.PerspectiveCamera
-let controls:  OrbitControls
-let raycaster: THREE.Raycaster
-let animId:    number
+// ── Three.js handles — shared renderer; per-page raycaster ───────────────────
+const viz = useVizRenderer()
+// Convenience aliases updated on mount (scene/camera may be null until then)
+let renderer:  THREE.WebGLRenderer     | null = null
+let scene:     THREE.Scene             | null = null
+let camera:    THREE.PerspectiveCamera | null = null
+let controls:  OrbitControls           | null = null
+const raycaster = new THREE.Raycaster()
+let _stopTick: (() => void) | null = null
+
+// Root group for all page-level scene objects — added/removed on mount/unmount
+const pageGroup = new THREE.Group()
+
 const mouseNDC       = new THREE.Vector2()
 const hitProxies:    THREE.Mesh[]    = []
 const memberSprites: THREE.Sprite[]  = []
@@ -393,33 +401,36 @@ function makeGalSprite(morph: GalMorph, col: THREE.Color, sizeSu: number): THREE
 
 // ── Scene initialisation ──────────────────────────────────────────────────────
 function initScene() {
-  if (!canvasEl.value) return
+  // Grab shared renderer refs
+  renderer = viz.renderer
+  scene    = viz.scene
+  camera   = viz.camera
+  controls = viz.controls
+  if (!renderer || !scene || !camera || !controls) return
 
-  renderer = new THREE.WebGLRenderer({ canvas: canvasEl.value, antialias: true, alpha: false })
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-  renderer.setSize(window.innerWidth, window.innerHeight)
-  renderer.setClearColor(0x000408)
+  // Configure scene appearance for the cluster-interior level
+  scene.background = new THREE.Color(0x000408)
+  scene.fog        = new THREE.FogExp2(0x000408, 0.006)
 
-  scene = new THREE.Scene()
-  scene.fog = new THREE.FogExp2(0x000408, 0.006)
-
-  camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.05, 300)
+  // Configure camera for cluster-interior scale
+  camera.fov  = 55
+  camera.near = 0.05
+  camera.far  = 300
   camera.position.set(0, 8, 26)
   camera.lookAt(0, 0, 0)
+  camera.updateProjectionMatrix()
 
-  controls = new OrbitControls(camera, renderer.domElement)
-  controls.enableDamping  = true
-  controls.dampingFactor  = 0.08
-  controls.minDistance    = 0.3
-  controls.maxDistance    = 60
-  controls.zoomToCursor   = true
+  // Configure controls for cluster-interior navigation
+  controls.minDistance  = 0.3
+  controls.maxDistance  = 60
+  controls.zoomToCursor = true
 
-  raycaster = new THREE.Raycaster()
+  scene.add(pageGroup)
 
   buildBackground()
 
-  renderer.domElement.addEventListener('wheel', onWheel, { passive: false })
-  window.addEventListener('resize', onResize)
+  // Canvas event listeners (canvas owned by MainLayout)
+  viz.canvas?.addEventListener('wheel', onWheel, { passive: false })
 }
 
 function buildBackground() {
@@ -436,7 +447,7 @@ function buildBackground() {
   const geo = new THREE.BufferGeometry()
   geo.setAttribute('position', new THREE.BufferAttribute(pos, 3))
   const mat = new THREE.PointsMaterial({ color: 0x99aabb, size: 0.18, sizeAttenuation: true, transparent: true, opacity: 0.55 })
-  scene.add(new THREE.Points(geo, mat))
+  pageGroup.add(new THREE.Points(geo, mat))
 }
 
 async function loadAndBuild() {
@@ -470,6 +481,7 @@ async function loadAndBuild() {
 
     // Re-orient camera to look at actual cluster centroid (offsets aren't always
     // centered on the origin — Virgo's members, for example, are skewed -Y)
+    if (!camera || !controls) return
     const c = clusterCenter
     controls.target.copy(c)
     camera.position.set(c.x, c.y + 10, c.z + 28)
@@ -479,7 +491,7 @@ async function loadAndBuild() {
     // Gentle intro zoom from farther back
     gsap.from(camera.position, {
       duration: 2.4, z: c.z + 55, ease: 'power3.out',
-      onUpdate: () => controls.update(),
+      onUpdate: () => controls?.update(),
     })
     // Restore selected member from URL if present
     const memberId = String(route.query.member ?? '').trim()
@@ -529,7 +541,7 @@ function buildMembers(members: ClusterMember[]) {
     const [ox, oy, oz] = m.offset
     sp.position.set((ox ?? 0) * SCENE_SCALE, (oy ?? 0) * SCENE_SCALE, (oz ?? 0) * SCENE_SCALE)
     sp.userData = { member: m }
-    scene.add(sp)
+    pageGroup.add(sp)
     memberSprites.push(sp)
 
     // Hit proxy — slightly larger than sprite so it's easy to click, but not so
@@ -542,7 +554,7 @@ function buildMembers(members: ClusterMember[]) {
     proxy.position.copy(sp.position)
     proxy.frustumCulled = false
     proxy.userData = { member: m, sprite: sp }
-    scene.add(proxy)
+    pageGroup.add(proxy)
     hitProxies.push(proxy)
   }
 
@@ -556,22 +568,17 @@ function buildMembers(members: ClusterMember[]) {
   const icmMat  = new THREE.MeshBasicMaterial({ color: 0x0a1a2e, transparent: true, opacity: 0.18, depthWrite: false, side: THREE.BackSide })
   const icmMesh = new THREE.Mesh(icmGeo, icmMat)
   icmMesh.position.copy(clusterCenter)
-  scene.add(icmMesh)
+  pageGroup.add(icmMesh)
 }
 
 // ── Animation loop ────────────────────────────────────────────────────────────
-function startLoop() {
-  const tick = () => {
-    animId = requestAnimationFrame(tick)
-    controls.update()
-    updateZoomLevel()
-    renderer.render(scene, camera)
-  }
-  tick()
+function tick() {
+  updateZoomLevel()
 }
 
 // ── Input handlers ────────────────────────────────────────────────────────────
 function onWheel() {
+  if (!camera || !controls) return
   gsap.killTweensOf(camera.position)
   gsap.killTweensOf(controls.target)
 }
@@ -590,10 +597,10 @@ function applyGalHover(newIdx: number) {
 }
 
 function onMouseMove(e: MouseEvent) {
-  const el = canvasEl.value
-  if (!el) return
-  mouseNDC.x =  (e.clientX / el.clientWidth)  * 2 - 1
-  mouseNDC.y = -(e.clientY / el.clientHeight) * 2 + 1
+  if (!camera) return
+  const w = window.innerWidth, h = window.innerHeight - VIZ_BAR_H
+  mouseNDC.x =  (e.clientX / w) * 2 - 1
+  mouseNDC.y = -((e.clientY - VIZ_BAR_H) / h) * 2 + 1
   raycaster.setFromCamera(mouseNDC, camera)
 
   if (viewMode.value === 'galaxy') {
@@ -603,11 +610,9 @@ function onMouseMove(e: MouseEvent) {
       const sys = galSystems.value[idx]
       hoverName.value = sys?.name ?? ''
       hoverPos.value  = { x: e.clientX, y: e.clientY }
-      el.style.cursor = 'pointer'
       applyGalHover(idx)
     } else {
       hoverName.value = ''
-      el.style.cursor = ''
       applyGalHover(-1)
     }
     return
@@ -618,10 +623,8 @@ function onMouseMove(e: MouseEvent) {
     const m = hits[0].object.userData.member as ClusterMember
     hoverName.value = m.name || m.id
     hoverPos.value  = { x: e.clientX, y: e.clientY }
-    el.style.cursor = 'pointer'
   } else {
     hoverName.value = ''
-    el.style.cursor = ''
   }
 }
 
@@ -631,10 +634,10 @@ function onMouseLeave() {
 }
 
 function onClick(e: MouseEvent) {
-  const el = canvasEl.value
-  if (!el) return
-  mouseNDC.x =  (e.clientX / el.clientWidth)  * 2 - 1
-  mouseNDC.y = -(e.clientY / el.clientHeight) * 2 + 1
+  if (!camera) return
+  const w = window.innerWidth, h = window.innerHeight - VIZ_BAR_H
+  mouseNDC.x =  (e.clientX / w) * 2 - 1
+  mouseNDC.y = -((e.clientY - VIZ_BAR_H) / h) * 2 + 1
   raycaster.setFromCamera(mouseNDC, camera)
 
   // ── Galaxy interior mode ──────────────────────────────────────────────────
@@ -781,12 +784,12 @@ function buildGalaxyInterior(doc: ClusterGalaxyDoc, origin: THREE.Vector3, syste
     galaxyGroup.add(dot, glow, proxy)
   }
 
-  scene.add(galaxyGroup)
+  pageGroup.add(galaxyGroup)
 }
 
 function clearGalaxyInterior() {
   if (!galaxyGroup) return
-  scene.remove(galaxyGroup)
+  pageGroup.remove(galaxyGroup)
   galaxyGroup.traverse(obj => {
     if ((obj as THREE.Mesh).isMesh || (obj as THREE.Points).isPoints) {
       (obj as THREE.Mesh).geometry?.dispose()
@@ -806,7 +809,7 @@ function clearGalaxyInterior() {
 }
 
 async function exploreGalaxy(member: ClusterMember | null) {
-  if (!member) return
+  if (!member || !camera || !controls) return
   viewMode.value = 'galaxy-loading'
   exploredMember.value = member
   selectedSystem.value = null
@@ -832,11 +835,12 @@ async function exploreGalaxy(member: ClusterMember | null) {
     }
 
     // Fly camera to ~4 su from the galaxy, looking at it
+    if (!camera || !controls) return
     const camDir = camera.position.clone().sub(origin).normalize()
     const camDest = origin.clone().addScaledVector(camDir, 4.0)
     gsap.killTweensOf(camera.position); gsap.killTweensOf(controls.target)
-    gsap.to(controls.target, { x: origin.x, y: origin.y, z: origin.z, duration: 1.0, ease: 'power2.out', onUpdate: () => controls.update() })
-    gsap.to(camera.position, { x: camDest.x, y: camDest.y, z: camDest.z, duration: 2.0, ease: 'power3.out', onUpdate: () => controls.update() })
+    gsap.to(controls.target, { x: origin.x, y: origin.y, z: origin.z, duration: 1.0, ease: 'power2.out', onUpdate: () => controls?.update() })
+    gsap.to(camera.position, { x: camDest.x, y: camDest.y, z: camDest.z, duration: 2.0, ease: 'power3.out', onUpdate: () => controls?.update() })
 
     viewMode.value = 'galaxy'
   } catch (e) {
@@ -847,6 +851,7 @@ async function exploreGalaxy(member: ClusterMember | null) {
 }
 
 function exitGalaxyExplore() {
+  if (!camera || !controls) return
   selectedSystem.value = null
   clearGalaxyInterior()
   galSystems.value = []
@@ -864,25 +869,39 @@ function exitGalaxyExplore() {
   // Fly back to cluster overview
   const c = clusterCenter
   gsap.killTweensOf(camera.position); gsap.killTweensOf(controls.target)
-  gsap.to(controls.target, { x: c.x, y: c.y, z: c.z, duration: 1.0, ease: 'power2.out', onUpdate: () => controls.update() })
-  gsap.to(camera.position, { x: c.x, y: c.y + 10, z: c.z + 28, duration: 2.0, ease: 'power3.inOut', onUpdate: () => controls.update() })
+  gsap.to(controls.target, { x: c.x, y: c.y, z: c.z, duration: 1.0, ease: 'power2.out', onUpdate: () => controls?.update() })
+  gsap.to(camera.position, { x: c.x, y: c.y + 10, z: c.z + 28, duration: 2.0, ease: 'power3.inOut', onUpdate: () => controls?.update() })
 
   exploredMember.value = null
   viewMode.value = 'cluster'
 }
 
 function selectGalSystem(sys: GalSystem) {
+  if (!camera || !controls) return
   selectedSystem.value = sys
   const fromCam = camera.position.clone().sub(sys.worldPos).normalize()
   const dest    = sys.worldPos.clone().addScaledVector(fromCam, 0.85)
   gsap.killTweensOf(camera.position); gsap.killTweensOf(controls.target)
-  gsap.to(controls.target, { x: sys.worldPos.x, y: sys.worldPos.y, z: sys.worldPos.z, duration: 0.6, ease: 'power2.out', onUpdate: () => controls.update() })
-  gsap.to(camera.position, { x: dest.x, y: dest.y, z: dest.z, duration: 1.4, ease: 'power3.out', onUpdate: () => controls.update() })
+  gsap.to(controls.target, { x: sys.worldPos.x, y: sys.worldPos.y, z: sys.worldPos.z, duration: 0.6, ease: 'power2.out', onUpdate: () => controls?.update() })
+  gsap.to(camera.position, { x: dest.x, y: dest.y, z: dest.z, duration: 1.4, ease: 'power3.out', onUpdate: () => controls?.update() })
 }
 
 async function descendToSurface(sys: GalSystem) {
   const mem = exploredMember.value
-  if (!mem) return
+  if (!mem || !camera) return
+
+  // Final in-page approach toward the system before the route change —
+  // ClusterInteriorPage and ClusterSystemPage now share the same renderer/camera.
+  if (controls) {
+    const fromCam = camera.position.clone().sub(sys.worldPos).normalize()
+    const dest    = sys.worldPos.clone().addScaledVector(fromCam, 0.15)
+    gsap.killTweensOf(camera.position); gsap.killTweensOf(controls.target)
+    await new Promise<void>(resolve => {
+      gsap.to(controls!.target, { x: sys.worldPos.x, y: sys.worldPos.y, z: sys.worldPos.z, duration: 0.4, ease: 'power2.out', onUpdate: () => controls?.update() })
+      gsap.to(camera!.position, { x: dest.x, y: dest.y, z: dest.z, duration: 0.7, ease: 'power2.out', onUpdate: () => controls?.update(), onComplete: resolve })
+    })
+  }
+
   const sc      = sys.worldPos.clone().project(camera)
   const px      = (sc.x + 1) / 2 * 100
   const py      = (1 - sc.y) / 2 * 100
@@ -913,13 +932,32 @@ function goClaimSystem(sys: GalSystem) {
 }
 
 async function navigateToGalaxy(settle = false) {
-  if (!selected.value) return
-  const id = selected.value.id
-  await transition.depart(clickPct.x, clickPct.y, 'spirograph', clickBearing.value)
+  const mem = selected.value
+  if (!mem) return
+  const id = mem.id
+
+  // In-page camera zoom toward the galaxy node before the route change
+  // (SPEC_ZOOM_DESCENT.md §4.2) — ClusterGalaxyPage still owns a private
+  // renderer, so the boundary itself is covered by a quick iris wipe rather
+  // than the old 1.5s spirograph.
+  if (camera && controls) {
+    const proxy = hitProxies.find(p => (p.userData.member as ClusterMember).id === id)
+    if (proxy) {
+      const fromCam = camera.position.clone().sub(proxy.position).normalize()
+      const dest    = proxy.position.clone().addScaledVector(fromCam, 0.35)
+      gsap.killTweensOf(camera.position); gsap.killTweensOf(controls.target)
+      await new Promise<void>(resolve => {
+        gsap.to(controls!.target, { x: proxy.position.x, y: proxy.position.y, z: proxy.position.z, duration: 0.5, ease: 'power2.out', onUpdate: () => controls?.update() })
+        gsap.to(camera!.position, { x: dest.x, y: dest.y, z: dest.z, duration: 0.9, ease: 'power2.out', onUpdate: () => controls?.update(), onComplete: resolve })
+      })
+    }
+  }
+
+  await transition.depart(clickPct.x, clickPct.y, 'iris', clickBearing.value)
   const base  = `/cluster-galaxy/${slug.value}/${encodeURIComponent(id)}`
   const query = settle
-    ? `?action=claim&bearing=${clickBearing.value.toFixed(3)}&morph=${selected.value.hubble}`
-    : `?bearing=${clickBearing.value.toFixed(3)}&morph=${selected.value.hubble}`
+    ? `?action=claim&bearing=${clickBearing.value.toFixed(3)}&morph=${mem.hubble}`
+    : `?bearing=${clickBearing.value.toFixed(3)}&morph=${mem.hubble}`
   void router.push(base + query)
 }
 
@@ -940,7 +978,7 @@ function makeRng(seed: number): () => number {
 
 function clearSystemCloud() {
   if (!systemCloudMesh) return
-  scene.remove(systemCloudMesh)
+  pageGroup.remove(systemCloudMesh)
   systemCloudMesh.geometry.dispose()
   ;(systemCloudMesh.material as THREE.PointsMaterial).dispose()
   systemCloudMesh = null
@@ -988,7 +1026,7 @@ function spawnSystemCloud(member: ClusterMember, pos: THREE.Vector3) {
   geo.setAttribute('color',    new THREE.BufferAttribute(colors, 3))
   const mat = new THREE.PointsMaterial({ size: 0.045, sizeAttenuation: true, vertexColors: true, transparent: true, opacity: 0 })
   systemCloudMesh = new THREE.Points(geo, mat)
-  scene.add(systemCloudMesh)
+  pageGroup.add(systemCloudMesh)
   gsap.to(mat, { opacity: 0.80, duration: 1.4, ease: 'power2.out' })
   systemCloudCount.value = n
 
@@ -1007,6 +1045,7 @@ function spawnSystemCloud(member: ClusterMember, pos: THREE.Vector3) {
 function updateZoomLevel() {
   // LOD cloud only relevant in cluster mode
   if (viewMode.value !== 'cluster') return
+  if (!camera || !controls) return
   const mem = selected.value
   if (!mem) {
     if (zoomLevel.value !== 'overview') { zoomLevel.value = 'overview'; clearSystemCloud() }
@@ -1024,17 +1063,19 @@ function updateZoomLevel() {
 }
 
 function flyToMember(pos: THREE.Vector3) {
+  if (!camera || !controls) return
   gsap.killTweensOf(camera.position)
   gsap.killTweensOf(controls.target)
 
   const fromCam = camera.position.clone().sub(pos).normalize()
   const dest    = pos.clone().addScaledVector(fromCam, 2.8)  // land 2.8 su from galaxy
 
-  gsap.to(controls.target, { x: pos.x, y: pos.y, z: pos.z, duration: 0.7, ease: 'power2.out', onUpdate: () => controls.update() })
-  gsap.to(camera.position, { x: dest.x, y: dest.y, z: dest.z, duration: 2.0, ease: 'power3.out', onUpdate: () => controls.update() })
+  gsap.to(controls.target, { x: pos.x, y: pos.y, z: pos.z, duration: 0.7, ease: 'power2.out', onUpdate: () => controls?.update() })
+  gsap.to(camera.position, { x: dest.x, y: dest.y, z: dest.z, duration: 2.0, ease: 'power3.out', onUpdate: () => controls?.update() })
 }
 
 function flyToSystemView() {
+  if (!camera || !controls) return
   const mem = selected.value
   if (!mem) return
   const proxy = hitProxies.find(p => (p.userData.member as ClusterMember).id === mem.id)
@@ -1045,12 +1086,13 @@ function flyToSystemView() {
 
   gsap.killTweensOf(camera.position)
   gsap.killTweensOf(controls.target)
-  gsap.to(controls.target, { x: pos.x, y: pos.y, z: pos.z, duration: 0.5, ease: 'power2.out', onUpdate: () => controls.update() })
-  gsap.to(camera.position, { x: dest.x, y: dest.y, z: dest.z, duration: 2.6, ease: 'power4.out', onUpdate: () => controls.update() })
+  gsap.to(controls.target, { x: pos.x, y: pos.y, z: pos.z, duration: 0.5, ease: 'power2.out', onUpdate: () => controls?.update() })
+  gsap.to(camera.position, { x: dest.x, y: dest.y, z: dest.z, duration: 2.6, ease: 'power4.out', onUpdate: () => controls?.update() })
 }
 
 function deselect() {
   if (!selected.value) return
+  if (!camera || !controls) return
   selected.value = null
   clearSystemCloud()
   zoomLevel.value = 'overview'
@@ -1058,33 +1100,38 @@ function deselect() {
   gsap.killTweensOf(camera.position)
   gsap.killTweensOf(controls.target)
   const c = clusterCenter
-  gsap.to(controls.target, { x: c.x, y: c.y, z: c.z, duration: 1.0, ease: 'power2.out', onUpdate: () => controls.update() })
-  gsap.to(camera.position, { x: c.x, y: c.y + 10, z: c.z + 28, duration: 1.8, ease: 'power3.inOut', onUpdate: () => controls.update() })
-}
-
-function onResize() {
-  camera.aspect = window.innerWidth / window.innerHeight
-  camera.updateProjectionMatrix()
-  renderer.setSize(window.innerWidth, window.innerHeight)
+  gsap.to(controls.target, { x: c.x, y: c.y, z: c.z, duration: 1.0, ease: 'power2.out', onUpdate: () => controls?.update() })
+  gsap.to(camera.position, { x: c.x, y: c.y + 10, z: c.z + 28, duration: 1.8, ease: 'power3.inOut', onUpdate: () => controls?.update() })
 }
 
 // ── Lifecycle ─────────────────────────────────────────────────────────────────
-onMounted(() => {
+onMounted(async () => {
+  // Await a tick so MainLayout's onMounted (which calls viz.init()) runs first —
+  // this page can otherwise mount before the shared renderer exists.
+  await Promise.resolve()
   initScene()
+  if (!camera || !controls || !renderer || !scene) return  // WebGL unavailable
+
   void loadAndBuild()
-  startLoop()
+  _stopTick = viz.addTick(tick)
 })
 
 onUnmounted(() => {
-  cancelAnimationFrame(animId)
-  window.removeEventListener('resize', onResize)
-  renderer?.domElement.removeEventListener('wheel', onWheel)
+  _stopTick?.()
+  _stopTick = null
+
+  viz.canvas?.removeEventListener('wheel', onWheel)
   clearSystemCloud()
   clearGalaxyInterior()
   _texCache.forEach(t => t.dispose())
   _texCache.clear()
-  renderer?.dispose()
-  controls?.dispose()
+
+  disposeScene(pageGroup)
+  scene?.remove(pageGroup)
+  if (scene) {
+    scene.background = null
+    scene.fog        = null
+  }
 })
 </script>
 

@@ -1,13 +1,15 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 
-const url  = import.meta.env.VITE_SUPABASE_URL  as string
-const key  = import.meta.env.VITE_SUPABASE_ANON as string
+const url  = import.meta.env.VITE_SUPABASE_URL  as string | undefined
+const key  = import.meta.env.VITE_SUPABASE_ANON as string | undefined
 
-if (!url || !key) {
-  console.warn('[supabase] VITE_SUPABASE_URL or VITE_SUPABASE_ANON not set — comments disabled')
+/** null when env vars are absent — callers must guard with `if (supabase)` */
+export const supabase: SupabaseClient | null =
+  url && key ? createClient(url, key) : null
+
+if (!supabase) {
+  console.warn('[supabase] VITE_SUPABASE_URL or VITE_SUPABASE_ANON not set — comments and auth disabled')
 }
-
-export const supabase = createClient(url ?? '', key ?? '')
 
 // ── Type helpers ─────────────────────────────────────────────
 
@@ -51,3 +53,21 @@ export interface Reaction {
 }
 
 export const EMOJIS: Reaction['emoji'][] = ['👍', '🌱', '✨', '🔬', '❤️']
+
+export interface CommentReport {
+  id:          string
+  comment_id:  string
+  reporter_id: string
+  reason:      string
+  created_at:  string
+}
+
+export interface BlockedMember {
+  id:         string
+  blocker_id: string
+  blocked_id: string
+  created_at: string
+}
+
+export const COMMENT_MAX_LENGTH  = 2000
+export const COMMENT_RATE_LIMIT  = { max: 5, windowMs: 10 * 60 * 1000 } // 5 per 10 min

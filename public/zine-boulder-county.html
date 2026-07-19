@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Exotopia / SCD Hub — Boulder County Zine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+/* ── Reset & base ─────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink:      #0d1117;
+  --paper:    #f5f1e8;
+  --space:    #060c18;
+  --cyan:     #00d4f0;
+  --green:    #3ae07a;
+  --purple:   #b87dff;
+  --gold:     #f0b429;
+  --muted:    #8899bb;
+  --light-text: #dde8f8;
+  --serif:    'Georgia', serif;
+  --sans:     'DM Sans', 'Helvetica Neue', sans-serif;
+  --display:  'Space Grotesk', 'Arial', sans-serif;
+}
+
+body {
+  font-family: var(--sans);
+  background: #222;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 20px;
+}
+
+/* ── Page geometry ────────────────────────────────────────────── */
+.page {
+  width: 5.5in;
+  height: 8.5in;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* ── Dark pages ───────────────────────────────────────────────── */
+.dark {
+  background: var(--space);
+  color: var(--light-text);
+}
+
+.dark .label {
+  font-family: var(--display);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  opacity: 0.7;
+}
+
+/* ── Light pages ──────────────────────────────────────────────── */
+.light {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.light .label {
+  font-family: var(--display);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink);
+  opacity: 0.4;
+}
+
+/* ── Shared typography ────────────────────────────────────────── */
+.display {
+  font-family: var(--display);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+p { line-height: 1.65; font-size: 10.5px; }
+strong { font-weight: 600; }
+em { font-style: italic; }
+
+/* ── Dot grid overlay for dark pages ────────────────────────────*/
+.dot-grid::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 18px 18px;
+  pointer-events: none;
+}
+
+/* ── Page 1 — Cover ──────────────────────────────────────────── */
+#p1 {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0.42in 0.4in 0.35in;
+}
+
+.p1-eyebrow {
+  font-family: var(--display);
+  font-size: 8px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  opacity: 0.7;
+}
+
+.p1-title {
+  font-family: var(--display);
+  font-size: 82px;
+  font-weight: 700;
+  letter-spacing: -0.055em;
+  line-height: 0.88;
+  color: #fff;
+  position: relative;
+  z-index: 2;
+}
+
+.p1-title span {
+  display: block;
+  color: var(--cyan);
+  font-size: 28px;
+  letter-spacing: -0.02em;
+  font-weight: 300;
+  margin-top: 6px;
+}
+
+.p1-orbit-wrap {
+  position: absolute;
+  top: 0.9in;
+  right: -0.2in;
+  width: 3.4in;
+  height: 3.4in;
+  z-index: 1;
+  opacity: 0.18;
+}
+
+.p1-tagline {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--light-text);
+  max-width: 3.4in;
+  font-weight: 300;
+  position: relative;
+  z-index: 2;
+}
+
+.p1-tagline strong { color: var(--cyan); font-weight: 500; }
+
+.p1-footer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  position: relative;
+  z-index: 2;
+}
+
+.p1-url {
+  font-family: var(--display);
+  font-size: 10px;
+  color: var(--cyan);
+  letter-spacing: 0.06em;
+}
+
+.p1-for {
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.p1-accent-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--cyan), var(--green), var(--purple));
+}
+
+/* ── Page 2 — The Problem ─────────────────────────────────────── */
+#p2 {
+  padding: 0.45in 0.45in 0.4in;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.p2-number {
+  font-family: var(--display);
+  font-size: 90px;
+  font-weight: 700;
+  color: #e8e0d4;
+  line-height: 1;
+  letter-spacing: -0.05em;
+  margin-bottom: 0.05in;
+}
+
+.p2-head {
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  color: var(--ink);
+  margin-bottom: 0.18in;
+  max-width: 3.8in;
+}
+
+.p2-body { font-size: 10.5px; color: #3a3a3a; margin-bottom: 0.14in; }
+
+.p2-flow {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin: 0.18in 0 0.16in;
+  flex-wrap: nowrap;
+}
+
+.p2-step {
+  background: var(--ink);
+  color: #fff;
+  border-radius: 4px;
+  padding: 5px 8px;
+  font-family: var(--display);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.p2-step.green  { background: #1a4a2e; color: var(--green); border: 1px solid var(--green); }
+.p2-step.cyan   { background: #0a2a35; color: var(--cyan);  border: 1px solid var(--cyan); }
+.p2-step.purple { background: #1e1035; color: var(--purple); border: 1px solid var(--purple); }
+.p2-step.gold   { background: #352010; color: var(--gold);  border: 1px solid var(--gold); }
+
+.p2-arrow {
+  font-size: 11px;
+  color: #aaa;
+  padding: 0 4px;
+  flex-shrink: 0;
+}
+
+.p2-callout {
+  margin-top: auto;
+  padding: 10px 13px;
+  background: #f0ebe0;
+  border-left: 3px solid var(--gold);
+  border-radius: 0 4px 4px 0;
+}
+
+.p2-callout p {
+  font-size: 10px;
+  color: #5a4a20;
+  line-height: 1.6;
+}
+
+.p2-callout strong { color: #3a2e10; }
+
+/* ── Page 3 — Communities ─────────────────────────────────────── */
+#p3 {
+  padding: 0.38in 0.42in 0.38in;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.p3-head {
+  font-family: var(--display);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: #fff;
+  margin-bottom: 0.08in;
+}
+
+.p3-subhead {
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 0.22in;
+}
+
+.community-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 6px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+}
+
+.community-card.active { border-color: var(--green); border-left: 3px solid var(--green); }
+.community-card.growing { border-color: var(--cyan); border-left: 3px solid var(--cyan); }
+.community-card.local { border-color: var(--gold); border-left: 3px solid var(--gold); }
+
+.cc-location {
+  font-family: var(--display);
+  font-size: 7.5px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  opacity: 0.55;
+  margin-bottom: 3px;
+}
+
+.cc-name {
+  font-family: var(--display);
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 5px;
+}
+
+.cc-body {
+  font-size: 9.5px;
+  line-height: 1.6;
+  color: #9aadcc;
+}
+
+.cc-body strong { color: var(--light-text); font-weight: 500; }
+
+.p3-bridge {
+  margin-top: auto;
+  padding: 10px 13px;
+  background: rgba(58, 224, 122, 0.07);
+  border: 1px solid rgba(58,224,122,0.2);
+  border-radius: 5px;
+}
+
+.p3-bridge p {
+  font-size: 9.5px;
+  color: #7ac99a;
+  line-height: 1.6;
+  font-style: italic;
+}
+
+/* ── Page 4 — How It Works ───────────────────────────────────── */
+#p4 {
+  padding: 0.42in 0.45in 0.4in;
+  display: flex;
+  flex-direction: column;
+}
+
+.p4-head {
+  font-family: var(--display);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  line-height: 1.15;
+  margin-bottom: 0.05in;
+  max-width: 4in;
+}
+
+.p4-sub {
+  font-size: 10px;
+  color: #666;
+  margin-bottom: 0.22in;
+  font-style: italic;
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 0.2in;
+}
+
+.feat {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 11px 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+.feat::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+
+.feat.f1::before { background: var(--green); }
+.feat.f2::before { background: var(--cyan); }
+.feat.f3::before { background: var(--purple); }
+.feat.f4::before { background: var(--gold); }
+
+.feat-icon { font-size: 18px; margin-bottom: 5px; }
+.feat-title {
+  font-family: var(--display);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 4px;
+  letter-spacing: -0.01em;
+}
+.feat-body { font-size: 9px; color: #555; line-height: 1.55; }
+
+.p4-settlement-diagram {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  background: #f0f0f8;
+  border-radius: 6px;
+  margin-bottom: 0.18in;
+}
+
+.p4-planet {
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #8b6fff, #2a1060);
+  flex-shrink: 0;
+  position: relative;
+  box-shadow: 0 0 0 1px #4a30a0, 0 4px 12px rgba(100,60,200,0.3);
+}
+
+.p4-planet::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: -8px; right: -8px;
+  height: 1px;
+  background: rgba(150,120,255,0.4);
+  transform: rotate(-12deg);
+  box-shadow: 0 3px 0 rgba(150,120,255,0.15);
+}
+
+.p4-planet-text { font-size: 9.5px; color: #444; line-height: 1.6; }
+.p4-planet-text strong { color: var(--ink); font-family: var(--display); font-size: 10px; }
+
+.p4-open {
+  margin-top: auto;
+  font-size: 9px;
+  color: #777;
+  text-align: center;
+  padding-top: 6px;
+  border-top: 1px solid #e0e0e0;
+}
+.p4-open strong { color: var(--ink); }
+
+/* ── Page 5 — Boulder County ─────────────────────────────────── */
+#p5 {
+  padding: 0.4in 0.42in 0.38in;
+  display: flex;
+  flex-direction: column;
+}
+
+.p5-eyebrow {
+  font-family: var(--display);
+  font-size: 8px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.06in;
+}
+
+.p5-head {
+  font-family: var(--display);
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+  color: #fff;
+  margin-bottom: 0.06in;
+}
+
+.p5-deck {
+  font-size: 10px;
+  color: #7a9ab8;
+  margin-bottom: 0.2in;
+  line-height: 1.6;
+}
+
+.p5-item {
+  display: flex;
+  gap: 11px;
+  margin-bottom: 11px;
+  align-items: flex-start;
+}
+
+.p5-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 5px;
+}
+
+.p5-dot.cy { background: var(--cyan); }
+.p5-dot.gn { background: var(--green); }
+.p5-dot.gd { background: var(--gold); }
+.p5-dot.pu { background: var(--purple); }
+
+.p5-item-text { font-size: 9.5px; color: #99b0cc; line-height: 1.6; }
+.p5-item-text strong { color: #dde8f8; font-weight: 500; }
+
+.p5-pfas-box {
+  margin-top: auto;
+  padding: 11px 13px;
+  background: rgba(240, 180, 41, 0.08);
+  border: 1px solid rgba(240, 180, 41, 0.3);
+  border-radius: 5px;
+}
+
+.p5-pfas-label {
+  font-family: var(--display);
+  font-size: 7.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 4px;
+}
+
+.p5-pfas-body { font-size: 9.5px; color: #b89060; line-height: 1.6; }
+.p5-pfas-body strong { color: var(--gold); font-weight: 500; }
+
+/* ── Page 6 — The Science ────────────────────────────────────── */
+#p6 {
+  padding: 0.42in 0.45in 0.4in;
+  display: flex;
+  flex-direction: column;
+}
+
+.p6-head {
+  font-family: var(--display);
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  margin-bottom: 0.05in;
+  line-height: 1.15;
+  max-width: 3.8in;
+}
+
+.p6-sub { font-size: 10px; color: #777; margin-bottom: 0.2in; font-style: italic; }
+
+.axis-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 14px;
+  margin-bottom: 0.18in;
+}
+
+.axis-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 3px 0;
+  border-bottom: 1px dashed #e0d8c8;
+}
+
+.axis-label {
+  font-family: 'Courier New', monospace;
+  font-size: 8.5px;
+  color: #888;
+  min-width: 16px;
+  flex-shrink: 0;
+}
+
+.axis-text { font-size: 9px; color: #333; line-height: 1.35; }
+
+.p6-math-box {
+  background: #f0f0f8;
+  border: 1px solid #d0c8e8;
+  border-radius: 6px;
+  padding: 11px 13px;
+  margin-bottom: 0.16in;
+}
+
+.p6-math-label {
+  font-family: var(--display);
+  font-size: 7.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #6655aa;
+  margin-bottom: 5px;
+}
+
+.p6-math-body { font-size: 9.5px; color: #444; line-height: 1.6; }
+.p6-math-body strong { color: #2a1880; font-family: 'Courier New', monospace; font-size: 10px; }
+
+.p6-open-box {
+  margin-top: auto;
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  padding: 10px 13px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.p6-open-icon { font-size: 22px; flex-shrink: 0; }
+.p6-open-text { font-size: 9.5px; color: #555; line-height: 1.6; }
+.p6-open-text strong { color: var(--ink); }
+
+/* ── Page 7 — Get Involved ───────────────────────────────────── */
+#p7 {
+  padding: 0.38in 0.42in 0.38in;
+  display: flex;
+  flex-direction: column;
+}
+
+.p7-head {
+  font-family: var(--display);
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+  color: #fff;
+  margin-bottom: 0.08in;
+}
+
+.p7-head em { color: var(--cyan); font-style: normal; }
+
+.p7-deck { font-size: 10px; color: #7a9ab8; margin-bottom: 0.22in; line-height: 1.55; }
+
+.action-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  align-items: flex-start;
+}
+
+.action-num {
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.12);
+  line-height: 1;
+  flex-shrink: 0;
+  width: 24px;
+  text-align: right;
+}
+
+.action-content {}
+.action-title {
+  font-family: var(--display);
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 2px;
+}
+
+.action-title .tag {
+  display: inline-block;
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 1px 5px;
+  border-radius: 3px;
+  margin-left: 5px;
+  vertical-align: middle;
+}
+
+.tag.monitor { background: rgba(58,224,122,0.15); color: var(--green); border: 1px solid rgba(58,224,122,0.3); }
+.tag.teach   { background: rgba(0,212,240,0.12); color: var(--cyan); border: 1px solid rgba(0,212,240,0.3); }
+.tag.build   { background: rgba(184,125,255,0.12); color: var(--purple); border: 1px solid rgba(184,125,255,0.3); }
+.tag.connect { background: rgba(240,180,41,0.1); color: var(--gold); border: 1px solid rgba(240,180,41,0.3); }
+
+.action-body { font-size: 9px; color: #7a9ab8; line-height: 1.55; }
+.action-body strong { color: #dde8f8; font-weight: 500; }
+
+.p7-contact {
+  margin-top: auto;
+  padding: 11px 14px;
+  background: rgba(0,212,240,0.06);
+  border: 1px solid rgba(0,212,240,0.2);
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.p7-contact-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.p7-contact-label {
+  font-family: var(--display);
+  font-size: 7px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  opacity: 0.6;
+  min-width: 40px;
+  flex-shrink: 0;
+}
+
+.p7-contact-val {
+  font-family: 'Courier New', monospace;
+  font-size: 9.5px;
+  color: var(--cyan);
+}
+
+/* ── Page 8 — Back Cover ─────────────────────────────────────── */
+#p8 {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0.55in 0.5in 0.45in;
+  background: #f9f5ed;
+}
+
+.p8-top {}
+
+.p8-domain {
+  font-family: var(--display);
+  font-size: 54px;
+  font-weight: 700;
+  letter-spacing: -0.05em;
+  color: var(--ink);
+  line-height: 1;
+  margin-bottom: 0.06in;
+}
+
+.p8-domain span { color: #7a9ab8; }
+
+.p8-tagline {
+  font-size: 13px;
+  color: #555;
+  max-width: 3.6in;
+  line-height: 1.55;
+  margin-bottom: 0.35in;
+  font-weight: 300;
+}
+
+.p8-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 0.35in;
+}
+
+.p8-stat-box {
+  background: #fff;
+  border: 1px solid #e0d8c8;
+  border-radius: 6px;
+  padding: 11px 13px;
+}
+
+.p8-stat-num {
+  font-family: var(--display);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  margin-bottom: 3px;
+}
+
+.p8-stat-num.cy { color: #0088aa; }
+.p8-stat-num.gn { color: #228844; }
+.p8-stat-num.pu { color: #6644aa; }
+.p8-stat-num.gd { color: #996600; }
+
+.p8-stat-label { font-size: 9px; color: #888; line-height: 1.4; }
+
+.p8-bottom { display: flex; justify-content: space-between; align-items: flex-end; }
+
+.p8-made {
+  font-size: 9px;
+  color: #999;
+  line-height: 1.7;
+}
+
+.p8-license {
+  text-align: right;
+}
+
+.p8-license-line1 {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--ink);
+  display: block;
+  margin-bottom: 2px;
+}
+
+.p8-license-line2 {
+  font-size: 8px;
+  color: #aaa;
+  display: block;
+}
+
+.p8-bar {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #0088aa, #228844, #6644aa, #996600);
+}
+
+/* ── Print styles ─────────────────────────────────────────────── */
+@media print {
+  body { background: none; padding: 0; gap: 0; }
+
+  .page { page-break-after: always; break-after: page; }
+
+  /* force B&W-safe colors */
+  .dark  { background: #000 !important; }
+  .light { background: #fff !important; }
+}
+
+@page { size: 5.5in 8.5in; margin: 0; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════════
+     PAGE 1 — COVER
+═══════════════════════════════════════════════════════════════════ -->
+<div class="page dark dot-grid" id="p1">
+
+  <!-- Large orbit SVG watermark -->
+  <div class="p1-orbit-wrap">
+    <svg viewBox="0 0 340 340" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+      <ellipse cx="170" cy="170" rx="155" ry="65" fill="none" stroke="#00d4f0" stroke-width="1" opacity="0.6"/>
+      <ellipse cx="170" cy="170" rx="115" ry="48" fill="none" stroke="#3ae07a" stroke-width="0.7" opacity="0.4"/>
+      <ellipse cx="170" cy="170" rx="75"  ry="32" fill="none" stroke="#b87dff" stroke-width="0.5" opacity="0.35"/>
+      <circle cx="170" cy="170" r="22" fill="none" stroke="#00d4f0" stroke-width="1.2" opacity="0.5"/>
+      <circle cx="170" cy="148" r="6"  fill="#00d4f0" opacity="0.8"/>
+      <circle cx="312" cy="158" r="3"  fill="#3ae07a" opacity="0.6"/>
+      <circle cx="55"  cy="185" r="4"  fill="#b87dff" opacity="0.5"/>
+      <circle cx="240" cy="215" r="2.5" fill="#f0b429" opacity="0.7"/>
+      <!-- star field -->
+      <circle cx="30"  cy="30"  r="1" fill="white" opacity="0.5"/>
+      <circle cx="80"  cy="20"  r="0.8" fill="white" opacity="0.4"/>
+      <circle cx="300" cy="40"  r="1.2" fill="white" opacity="0.6"/>
+      <circle cx="320" cy="80"  r="0.8" fill="white" opacity="0.3"/>
+      <circle cx="15"  cy="280" r="1" fill="white" opacity="0.4"/>
+      <circle cx="290" cy="300" r="0.9" fill="white" opacity="0.5"/>
+      <circle cx="50"  cy="320" r="0.7" fill="white" opacity="0.3"/>
+    </svg>
+  </div>
+
+  <!-- Content -->
+  <div>
+    <div class="p1-eyebrow">Community Science · Global Network</div>
+  </div>
+
+  <div>
+    <div class="p1-title display">
+      EXOTOPIA
+      <span>/ SCD Hub</span>
+    </div>
+  </div>
+
+  <div>
+    <p class="p1-tagline">
+      What if every community on Earth had a place in the universe —<br>
+      and a way to <strong>prove</strong> the work they do to protect it?
+    </p>
+  </div>
+
+  <div class="p1-footer">
+    <div class="p1-url">exotopia.org</div>
+    <div class="p1-for">A guide for Boulder County</div>
+  </div>
+
+  <div class="p1-accent-bar"></div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     PAGE 2 — THE PROBLEM
+═══════════════════════════════════════════════════════════════════ -->
+<div class="page light" id="p2">
+
+  <div style="position:absolute;top:0.35in;right:0.35in;opacity:0.07;">
+    <div class="display" style="font-size:120px;font-weight:700;color:#000;letter-spacing:-0.06em;line-height:1;">02</div>
+  </div>
+
+  <div style="padding:0.42in 0.45in 0.4in;display:flex;flex-direction:column;height:100%;">
+
+    <div class="label" style="margin-bottom:0.1in;">The problem</div>
+
+    <div class="p2-head display">
+      The work is real.<br>The credit isn't.
+    </div>
+
+    <p class="p2-body">
+      Community groups around the world — watershed councils, youth science groups, smallholder farmers — are doing irreplaceable environmental monitoring. Water quality. Soil health. Species counts. Tick surveillance.
+    </p>
+
+    <p class="p2-body">
+      Most of this work goes unrecognized, unpaid, and disconnected. A school in Vermont and a youth group in Kenya may be running identical stream health protocols. They have no idea the other exists. Neither receives a credential for the work. Neither can easily share what they've learned.
+    </p>
+
+    <p class="p2-body" style="margin-bottom:0.06in;">
+      SCD Hub / Exotopia is a platform designed to fix all three at once:
+    </p>
+
+    <div class="p2-flow">
+      <div class="p2-step green">Field work<br>done</div>
+      <div class="p2-arrow">→</div>
+      <div class="p2-step cyan">Verified<br>certificate</div>
+      <div class="p2-arrow">→</div>
+      <div class="p2-step gold">Bounty<br>payment</div>
+      <div class="p2-arrow">→</div>
+      <div class="p2-step purple">Global<br>network</div>
+    </div>
+
+    <p class="p2-body">
+      The platform is <strong>open source</strong>, uses <strong>open data standards</strong> (GBIF, EPA ECHO, iNaturalist), and routes income directly to the people doing the work — not to a platform middleman.
+    </p>
+
+    <div class="p2-callout">
+      <p>
+        <strong>Who's already using it:</strong> Community groups in Lamu County (Kenya), Vermont river monitoring networks, Costa Rica biodiversity projects, and Front Range Colorado citizen science groups. The tools work offline — no data plan required in the field.
+      </p>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     PAGE 3 — REAL COMMUNITIES
+═══════════════════════════════════════════════════════════════════ -->
+<div class="page dark dot-grid" id="p3">
+
+  <div style="padding:0.38in 0.42in 0.38in;display:flex;flex-direction:column;height:100%;">
+
+    <div class="p3-head display">Real communities.<br>Real work.</div>
+    <div class="p3-subhead">A sample of who's in the network</div>
+
+    <div class="community-card active">
+      <div class="cc-location">Mpeketoni, Lamu County · Kenya</div>
+      <div class="cc-name">Uni-Kibaoni Peace Youth SHG</div>
+      <div class="cc-body">
+        Led by <strong>Muirithi Jariffe</strong>, this self-help group monitors water quality and food security along the Lamu coastal plain. Five years of BMWP macroinvertebrate data, soil health records, and eco:certificate credits for monitoring work that previously went unacknowledged.
+      </div>
+    </div>
+
+    <div class="community-card growing">
+      <div class="cc-location">Vermont · Northeast USA</div>
+      <div class="cc-name">Freshwater Phenology Network participants</div>
+      <div class="cc-body">
+        Schools and watershed councils running <strong>Secchi disk, dissolved oxygen,</strong> and <strong>macroinvertebrate monitoring</strong> on local streams and lakes. Data feeds into USA-NPN's national phenology database. Curriculum units align with Vermont Agency of Education STEM frameworks.
+      </div>
+    </div>
+
+    <div class="community-card local">
+      <div class="cc-location">Front Range · Colorado</div>
+      <div class="cc-name">Boulder County citizen science groups</div>
+      <div class="cc-body">
+        <strong>You.</strong> CoCoRaHS observers. Boulder Waterkeeper stream monitors. CU Boulder field ecology students. Rocky Flats neighborhood PFAS watchers. Open Space trail monitors. The platform's protocols are designed to make your existing data globally legible.
+      </div>
+    </div>
+
+    <div class="p3-bridge">
+      <p>
+        "The monitoring a Vermont school does for their local stream is directly comparable to what Uni-Kibaoni does for their river. That's by design — we use the same open protocols so the data connects."
+      </p>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     PAGE 4 — HOW IT WORKS
+═══════════════════════════════════════════════════════════════════ -->
+<div class="page light" id="p4">
+
+  <div style="padding:0.42in 0.45in 0.4in;display:flex;flex-direction:column;height:100%;">
+
+    <div class="label" style="margin-bottom:0.1in;">Platform overview</div>
+
+    <div class="p4-head display">
+      An exoplanet settlement is a strange home for a watershed council. It works anyway.
+    </div>
+    <div class="p4-sub">Four things the platform provides, one visual metaphor holding them together</div>
+
+    <div class="feature-grid">
+
+      <div class="feat f1">
+        <div class="feat-icon">🌱</div>
+        <div class="feat-title">Eco:Certificates</div>
+        <div class="feat-body">Verifiable digital records of real field work. Each certificate is an open badge anchored on Algorand. No wallet required to earn one.</div>
+      </div>
+
+      <div class="feat f2">
+        <div class="feat-icon">🏆</div>
+        <div class="feat-title">Bounty System</div>
+        <div class="feat-body">Specific monitoring tasks, posted publicly, claimed by community members. Payment via M-Pesa, bank transfer, or Algorand. Groups can post their own bounties.</div>
+      </div>
+
+      <div class="feat f3">
+        <div class="feat-icon">📚</div>
+        <div class="feat-title">Training Library</div>
+        <div class="feat-body">Video curriculum for ecological monitoring, vocational skills (carpentry, wiring, EMT, accounting), and citizen science protocols. Works offline.</div>
+      </div>
+
+      <div class="feat f4">
+        <div class="feat-icon">🌌</div>
+        <div class="feat-title">Settlement Map</div>
+        <div class="feat-body">Each community gets a navigable "exoplanet settlement" — a visual home for their data, achievements, and identity in the global network.</div>
+      </div>
+
+    </div>
+
+    <div class="p4-settlement-diagram">
+      <div class="p4-planet"></div>
+      <div class="p4-planet-text">
+        <strong>Why exoplanets?</strong> The settlement is a persistent, visual identity for a real community. It holds their monitoring records, certificates, and connections. It's also a useful fiction: communities 300 km apart can be "neighbors" on the same planet if they're working on the same ecological problem.
+      </div>
+    </div>
+
+    <div class="p4-open">
+      Everything is <strong>open source (GPL v3)</strong> · Built with Vue/Quasar, Supabase, Algorand · Runs as an offline-capable PWA
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     PAGE 5 — BOULDER COUNTY
+═══════════════════════════════════════════════════════════════════ -->
+<div class="page dark dot-grid" id="p5">
+
+  <div style="padding:0.4in 0.42in 0.38in;display:flex;flex-direction:column;height:100%;">
+
+    <div class="p5-eyebrow">Boulder County</div>
+    <div class="p5-head display">
+      You're already doing<br>this work.
+    </div>
+    <div class="p5-deck">
+      Boulder County has some of the densest citizen science infrastructure in the country. NCAR. NOAA. CoCoRaHS (headquartered in Fort Collins). CU's ecological monitoring programmes. The Boulder Waterkeeper. Open Space trail counters. What the platform adds is <em>connection</em> — your data talking to a global network, and global data talking back.
+    </div>
+
+    <div class="p5-item">
+      <div class="p5-dot cy"></div>
+      <div class="p5-item-text">
+        <strong>Boulder Creek / St. Vrain monitoring</strong> — the platform's BMWP macroinvertebrate protocols and Secchi disk methods are identical to what Colorado's stream monitoring programmes already use. Existing records can be imported.
+      </div>
+    </div>
+
+    <div class="p5-item">
+      <div class="p5-dot gn"></div>
+      <div class="p5-item-text">
+        <strong>Front Range tick ecology</strong> — our Tick Watch Northeast curriculum applies directly to Rocky Mountain wood tick and western black-legged tick surveillance. We're actively looking for Colorado SMEs to validate and extend it.
+      </div>
+    </div>
+
+    <div class="p5-item">
+      <div class="p5-dot pu"></div>
+      <div class="p5-item-text">
+        <strong>CU Boulder / NCAR connections</strong> — the platform's phenology protocols feed directly into USA-NPN's National Phenology Database, which NCAR uses for seasonal forecasting models. Student project data can contribute.
+      </div>
+    </div>
+
+    <div class="p5-item">
+      <div class="p5-dot gd"></div>
+      <div class="p5-item-text">
+        <strong>Vocational training</strong> — our curriculum library covers carpentry, electrical wiring, EMT response, and business accounting. Workforce development orgs in Boulder County: get in touch about co-curating Front Range relevant content.
+      </div>
+    </div>
+
+    <div class="p5-pfas-box">
+      <div class="p5-pfas-label" style="margin-bottom:6px;">⚠ PFAS / PFOS — Two active fronts in Boulder County</div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px;">
+
+        <div style="padding:7px 8px;background:rgba(0,0,0,0.28);border-radius:3px;border-top:1.5px solid rgba(240,180,41,0.45);">
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:7px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);margin-bottom:3px;">Rocky Flats Legacy Site</div>
+          <div class="p5-pfas-body" style="font-size:8px;">Groundwater contamination persists for Louisville, Superior &amp; N. Jefferson County. <strong>EPA Method 533</strong> chain-of-custody guides and ECHO submission pathways are in the bounty system — free to use.</div>
+        </div>
+
+        <div style="padding:7px 8px;background:rgba(0,0,0,0.28);border-radius:3px;border-top:1.5px solid rgba(58,224,122,0.45);">
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:7px;letter-spacing:0.1em;text-transform:uppercase;color:var(--green);margin-bottom:3px;">Nederland · Active collaboration</div>
+          <div class="p5-pfas-body" style="font-size:8px;">Working with <strong>Cat</strong> (Town of Nederland sustainability manager) on zero waste education + a PFAS testing regime for the waste transfer site's <strong>Greener Mountain EarthFlow</strong> 20-yd in-vessel composter.</div>
+        </div>
+
+      </div>
+
+      <div style="padding:6px 8px;background:rgba(200,30,30,0.12);border:1px solid rgba(255,80,80,0.3);border-radius:3px;margin-bottom:5px;">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:7px;letter-spacing:0.1em;text-transform:uppercase;color:#ff7070;margin-bottom:4px;">⚠ Garden contamination pathway — direct human exposure risk</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px 10px;">
+          <div class="p5-pfas-body" style="font-size:7.8px;">• PFAS moves from amended soil into plant tissue. <strong>Leafy greens accumulate highest:</strong> lettuce, spinach, kale, chard. Root vegetables (carrots, beets) and fruiting crops (tomatoes, squash) take up less — but still measurable.</div>
+          <div class="p5-pfas-body" style="font-size:7.8px;">• Short-chain PFAS (PFBS, PFHxA) are most mobile in soil and most readily taken up by roots. Long-chain PFOS/PFOA bind to soil organic matter — but still transfer. <strong>No chain length is safe to ignore in a food garden.</strong></div>
+          <div class="p5-pfas-body" style="font-size:7.8px;">• In-vessel systems run at 55–70°C. <strong>PFAS are thermally stable — composting does not destroy them.</strong> It concentrates them: less leaching during processing means more retained in finished product.</div>
+          <div class="p5-pfas-body" style="font-size:7.8px;">• Colorado <strong>HB 23-1034</strong> (2023) restricts PFAS in food packaging 2024–2026 — this reduces future inputs. But existing feedstock contamination requires testing <em>now</em>, before compost is distributed.</div>
+        </div>
+      </div>
+
+      <div style="padding:6px 8px;background:rgba(0,0,0,0.2);border-radius:3px;">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:7px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(58,224,122,0.7);margin-bottom:4px;">Testing + mitigation steps for Nederland</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px 10px;">
+          <div class="p5-pfas-body" style="font-size:7.8px;"><strong>1. Test finished compost</strong> before any distribution to food gardens — <strong>ASTM D8421</strong> solid matrix or Maine DEP PFAS-40 panel (Eurofins, ALS, TestAmerica all offer this). Bear Creek → South Boulder Creek watershed downstream.</div>
+          <div class="p5-pfas-body" style="font-size:7.8px;"><strong>2. Establish hold threshold:</strong> Maine's agricultural trigger is 2.5 ppb total PFAS. If exceeded, hold compost for non-food uses (roads, revegetation, ornamentals) only until source streams are cleaned up.</div>
+          <div class="p5-pfas-body" style="font-size:7.8px;"><strong>3. Audit inputs upstream:</strong> identify which restaurants, food vendors, and retailers are providing PFAS-heavy packaging. Work with them on HB 23-1034 compliance. "BPI-certified compostable" is not a PFAS-free guarantee.</div>
+          <div class="p5-pfas-body" style="font-size:7.8px;"><strong>4. Interim mitigation</strong> if contamination found: activated carbon soil amendment sorbs PFAS before root uptake; avoid growing leafy greens in affected plots; increase soil organic matter to compete with PFAS for root absorption sites.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     PAGE 6 — THE SCIENCE
+═══════════════════════════════════════════════════════════════════ -->
+<div class="page light" id="p6">
+
+  <div style="padding:0.42in 0.45in 0.4in;display:flex;flex-direction:column;height:100%;">
+
+    <div class="label" style="margin-bottom:0.1in;">For the curious</div>
+
+    <div class="p6-head display">
+      The math behind the metaphor is as real as it gets.
+    </div>
+    <div class="p6-sub">A glimpse at the framework — full writeup at exotopia.org/blog</div>
+
+    <p style="font-size:10px;color:#444;line-height:1.6;margin-bottom:0.14in;">
+      Every community in the network has a profile across <strong>eight capability dimensions</strong> — the same eight that appear in our human rights and Rights of Nature framework. These eight dimensions map onto a mathematical structure called <strong>E8</strong>, one of the most symmetric objects in mathematics. "Near" communities in E8 space are working on analogous problems and have things to teach each other.
+    </p>
+
+    <div class="axis-grid">
+      <div class="axis-row"><span class="axis-label">x₁</span><span class="axis-text">Land stewardship</span></div>
+      <div class="axis-row"><span class="axis-label">x₂</span><span class="axis-text">Water & watershed</span></div>
+      <div class="axis-row"><span class="axis-label">x₃</span><span class="axis-text">Biodiversity</span></div>
+      <div class="axis-row"><span class="axis-label">x₄</span><span class="axis-text">Community governance</span></div>
+      <div class="axis-row"><span class="axis-label">x₅</span><span class="axis-text">Technology access</span></div>
+      <div class="axis-row"><span class="axis-label">x₆</span><span class="axis-text">Educational reach</span></div>
+      <div class="axis-row"><span class="axis-label">x₇</span><span class="axis-text">Economic inclusion</span></div>
+      <div class="axis-row"><span class="axis-label">x₈</span><span class="axis-text">Climate adaptation</span></div>
+    </div>
+
+    <div class="p6-math-box">
+      <div class="p6-math-label">The Leech Lattice (Λ₂₄)</div>
+      <div class="p6-math-body">
+        Three stacked E8 blocks form a 24-dimensional structure called the <strong>Leech lattice</strong>. A community's full address in this space encodes: what it currently achieves (Block 1), what its ecosystems need (Block 2), and how it relates to time and network (Block 3). Parallel "universe" simulations for what-if scenarios are different addresses in the same 24D space.
+      </div>
+    </div>
+
+    <div class="p6-open-box">
+      <div class="p6-open-icon">🔐</div>
+      <div class="p6-open-text">
+        Field work certificates use <strong>PLONK/halo2 zero-knowledge proofs</strong> — the same cryptographic infrastructure used in Ethereum's rollup ecosystem. No trusted setup. Certificates are verifiable by anyone with the public inputs, without revealing the field worker's identity. E8 root vectors serve as tamper-resistant identity slots.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     PAGE 7 — GET INVOLVED
+═══════════════════════════════════════════════════════════════════ -->
+<div class="page dark dot-grid" id="p7">
+
+  <div style="padding:0.38in 0.42in 0.38in;display:flex;flex-direction:column;height:100%;">
+
+    <div class="p7-head display">
+      Four ways to plug in<br>from <em>Boulder</em>.
+    </div>
+    <div class="p7-deck">No blockchain expertise required. No app to install. No fee.</div>
+
+    <div class="action-row">
+      <div class="action-num">1</div>
+      <div class="action-content">
+        <div class="action-title">Monitor <span class="tag monitor">Field work</span></div>
+        <div class="action-body">Use our open protocols (BMWP, Secchi disk, PFAS sampling, phenology) for monitoring work you're already doing. Your data earns eco:certificate credits and connects to the global dataset. Works offline on any Android or iPhone.</div>
+      </div>
+    </div>
+
+    <div class="action-row">
+      <div class="action-num">2</div>
+      <div class="action-content">
+        <div class="action-title">Teach <span class="tag teach">Educators</span></div>
+        <div class="action-body">Run one of our citizen science curriculum units — <strong>Tick Watch Northeast, Cyanobacteria Watch,</strong> or <strong>Freshwater Phenology Network</strong> — in your classroom, youth group, or community workshop. Full lesson plans, field protocols, and data submission guides. Free to use, adapt, and share.</div>
+      </div>
+    </div>
+
+    <div class="action-row">
+      <div class="action-num">3</div>
+      <div class="action-content">
+        <div class="action-title">Build <span class="tag build">Developers</span></div>
+        <div class="action-body">The platform is open source (GPL v3). We need Vue/Quasar developers, Supabase/PostGIS contributors, GIS specialists, and anyone who knows how to wire a PLONK proof to a front-end. GitHub: <strong>biomassives/vercel-html-exotopia.org</strong></div>
+      </div>
+    </div>
+
+    <div class="action-row">
+      <div class="action-num">4</div>
+      <div class="action-content">
+        <div class="action-title">Connect <span class="tag connect">Community orgs</span></div>
+        <div class="action-body">If you coordinate a watershed group, school science programme, community garden, or vocational training org — ask about becoming a <strong>group coordinator</strong>. Post bounties for your community's monitoring priorities. Co-curate curriculum for Front Range conditions.</div>
+      </div>
+    </div>
+
+    <div class="p7-contact">
+      <div class="p7-contact-row">
+        <div class="p7-contact-label">Email</div>
+        <div class="p7-contact-val">acmeideal@gmail.com</div>
+      </div>
+      <div class="p7-contact-row">
+        <div class="p7-contact-label">Web</div>
+        <div class="p7-contact-val">exotopia.org</div>
+      </div>
+      <div class="p7-contact-row">
+        <div class="p7-contact-label">Code</div>
+        <div class="p7-contact-val">github.com/biomassives/vercel-html-exotopia.org</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     PAGE 8 — BACK COVER
+═══════════════════════════════════════════════════════════════════ -->
+<div class="page light" id="p8">
+
+  <div class="p8-bar"></div>
+
+  <div class="p8-top">
+    <div class="p8-domain display">
+      exotopia<span>.org</span>
+    </div>
+    <div class="p8-tagline">
+      A navigable universe for community science — where every settlement on an exoplanet maps to real people doing real work on Earth.
+    </div>
+  </div>
+
+  <div class="p8-grid">
+    <div class="p8-stat-box">
+      <div class="p8-stat-num cy">24</div>
+      <div class="p8-stat-label">Leech lattice dimensions mapping community capability + nature rights + cultural memory</div>
+    </div>
+    <div class="p8-stat-box">
+      <div class="p8-stat-num gn">8</div>
+      <div class="p8-stat-label">E8 capability axes — land, water, biodiversity, governance, technology, education, economy, climate</div>
+    </div>
+    <div class="p8-stat-box">
+      <div class="p8-stat-num pu">GPL3</div>
+      <div class="p8-stat-label">Licence. Every line of code is open source. Fork it, run your own instance, adapt for your region.</div>
+    </div>
+    <div class="p8-stat-box">
+      <div class="p8-stat-num gd">0%</div>
+      <div class="p8-stat-label">Platform cut from community monitoring payments. Income goes directly to field workers and SMEs.</div>
+    </div>
+  </div>
+
+  <div class="p8-bottom">
+    <div class="p8-made">
+      Made in Boulder &amp; Nairobi &amp; Mpeketoni<br>
+      &amp; wherever someone is monitoring<br>
+      something that matters.<br><br>
+      <span style="font-size:8px;color:#bbb;">Print more. Share freely.</span>
+    </div>
+    <div class="p8-license">
+      <span class="p8-license-line1">CC BY-SA 4.0</span>
+      <span class="p8-license-line2">This zine may be reproduced,<br>remixed, and redistributed<br>with attribution.</span>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

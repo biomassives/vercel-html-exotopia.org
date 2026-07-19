@@ -1,0 +1,31 @@
+# CODEOWNERS — controls who GitHub requests review from automatically.
+# Format:  <path pattern>   <@github-handle> [<@github-handle> ...]
+#
+# Replace @biomassives with the actual handles of your maintainers.
+# Add co-maintainers as you bring people on — each path can have multiple owners.
+
+# Default: everything requires review from the project lead
+*                                   @biomassives
+
+# Eco ops field data and protocols — data steward reviews these
+docs/eco-ops-workflow-guide.md      @biomassives
+data/submissions/                   @biomassives
+docs/eco-ops-*                      @biomassives
+blog-east-coast-citizen-science*    @biomassives
+
+# Spec files — architectural decisions, requires lead sign-off
+SPEC_ECO_OPS_API.md                 @biomassives
+SPEC_*.md                           @biomassives
+
+# Payment / financial logic — restricted review
+src/lib/evm/                        @biomassives
+api/                                @biomassives
+cloudflare/                         @biomassives
+
+# Press releases — communication review before merge
+press/                              @biomassives
+
+# GitHub Actions and infra — careful review required
+.github/workflows/                  @biomassives
+vercel.json                         @biomassives
+quasar.config.js                    @biomassives

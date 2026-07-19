@@ -1,0 +1,30 @@
+name: Mirror to GitLab
+
+# Pushes every commit on main to GitLab immediately after it lands.
+# Setup required (one-time, in GitHub repo Settings → Secrets):
+#   GITLAB_TOKEN  — a GitLab "Project Access Token" with write_repository scope
+#   GITLAB_REPO   — the full GitLab project path, e.g. biomassives/exotopia-org
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:   # allow manual trigger from the Actions tab
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0      # full history required for mirror push
+
+      - name: Push to GitLab
+        env:
+          GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
+          GITLAB_REPO:  ${{ secrets.GITLAB_REPO }}
+        run: |
+          git remote add gitlab "https://oauth2:${GITLAB_TOKEN}@gitlab.com/${GITLAB_REPO}.git"
+          git push gitlab main --force-with-lease
+          echo "Mirrored to gitlab.com/${GITLAB_REPO} ✓"

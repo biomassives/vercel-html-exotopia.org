@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eco Ops API — 8 Architectural Decisions for Discussion</title>
+<style>
+
+/* ── Page geometry ────────────────────────────────────────────── */
+@page {
+  size: A4 portrait;
+  margin: 18mm 20mm 22mm 20mm;
+  @bottom-center {
+    content: "SCD Hub / Exotopia.org — Eco Ops API Decisions — " counter(page) " of " counter(pages);
+    font-size: 8pt;
+    color: #888;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+  }
+}
+
+@media print {
+  body { font-size: 9.5pt; }
+  .no-print { display: none !important; }
+  a { color: inherit; text-decoration: none; }
+}
+
+@media screen {
+  body {
+    max-width: 820px;
+    margin: 32px auto;
+    padding: 0 24px 80px;
+    font-size: 10.5pt;
+  }
+  .print-hint {
+    background: #f0f9ff;
+    border: 1px solid #bae0f7;
+    border-radius: 6px;
+    padding: 10px 16px;
+    margin-bottom: 28px;
+    font-size: 9.5pt;
+    color: #1a5276;
+  }
+}
+
+/* ── Typography ───────────────────────────────────────────────── */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  color: #111;
+  line-height: 1.55;
+  background: #fff;
+}
+
+/* ── Cover block ──────────────────────────────────────────────── */
+.cover {
+  border-bottom: 2.5pt solid #111;
+  padding-bottom: 14px;
+  margin-bottom: 20px;
+}
+.cover-label {
+  font-size: 7.5pt;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #555;
+  margin-bottom: 4px;
+}
+.cover-title {
+  font-size: 17pt;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 6px;
+}
+.cover-subtitle {
+  font-size: 10pt;
+  color: #333;
+  margin-bottom: 14px;
+}
+.cover-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0 20px;
+  margin-top: 10px;
+}
+.meta-item label {
+  display: block;
+  font-size: 7pt;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #777;
+  margin-bottom: 2px;
+}
+.meta-item .meta-value {
+  font-size: 9pt;
+  border-bottom: 0.75pt solid #aaa;
+  padding-bottom: 2px;
+  min-height: 16px;
+}
+.meta-item .meta-value.filled {
+  color: #111;
+}
+
+/* ── Context paragraph ────────────────────────────────────────── */
+.context-block {
+  background: #f7f7f7;
+  border-left: 3pt solid #ccc;
+  padding: 9px 14px;
+  margin-bottom: 20px;
+  font-size: 9pt;
+  color: #333;
+}
+.context-block strong {
+  color: #111;
+}
+
+/* ── Question cards ───────────────────────────────────────────── */
+.question {
+  border: 1pt solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 18px;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+.q-header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  background: #f2f2f2;
+  border-bottom: 1pt solid #ccc;
+  padding: 7px 12px;
+}
+.q-number {
+  font-size: 7.5pt;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #555;
+  white-space: nowrap;
+  min-width: 26px;
+}
+.q-title {
+  font-size: 10.5pt;
+  font-weight: 700;
+  color: #111;
+  flex: 1;
+}
+.q-tag {
+  font-size: 7pt;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 10px;
+  white-space: nowrap;
+}
+.tag-infra   { background: #e8f4fd; color: #1a5276; }
+.tag-data    { background: #eafaf1; color: #145a32; }
+.tag-ux      { background: #fef9e7; color: #7d6608; }
+.tag-legal   { background: #fdf2f8; color: #6c3483; }
+.tag-policy  { background: #fdebd0; color: #784212; }
+
+.q-body {
+  padding: 11px 14px;
+}
+
+.q-context {
+  font-size: 9pt;
+  color: #333;
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+/* ── Recommendation callout ───────────────────────────────────── */
+.recommendation {
+  background: #eef8f3;
+  border: 1pt solid #a9dfbf;
+  border-radius: 3px;
+  padding: 7px 11px;
+  margin-bottom: 11px;
+  font-size: 8.5pt;
+}
+.recommendation-label {
+  font-size: 7pt;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #1e8449;
+  margin-bottom: 3px;
+}
+.recommendation p {
+  color: #1a5c2a;
+  line-height: 1.45;
+}
+
+/* ── Options checkboxes ───────────────────────────────────────── */
+.options {
+  margin-bottom: 11px;
+}
+.options-label {
+  font-size: 7pt;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #666;
+  margin-bottom: 5px;
+}
+.option-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 5px;
+  font-size: 8.5pt;
+}
+.option-row .box {
+  width: 11px;
+  height: 11px;
+  border: 1pt solid #666;
+  flex-shrink: 0;
+  margin-top: 1px;
+  border-radius: 2px;
+}
+.option-row.recommended .box {
+  border-color: #1e8449;
+}
+.option-row.recommended span {
+  color: #145a32;
+}
+.option-row.recommended::after {
+  content: "← recommended";
+  font-size: 7pt;
+  color: #1e8449;
+  font-style: italic;
+  margin-left: 6px;
+  white-space: nowrap;
+}
+.option-other {
+  border-bottom: 0.75pt solid #999;
+  display: inline-block;
+  min-width: 120px;
+}
+
+/* ── Decision area ────────────────────────────────────────────── */
+.decision-area {
+  border-top: 0.75pt dashed #bbb;
+  padding-top: 9px;
+  margin-top: 2px;
+}
+.decision-label {
+  font-size: 7pt;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #666;
+  margin-bottom: 6px;
+}
+.write-line {
+  border-bottom: 0.5pt solid #bbb;
+  min-height: 18px;
+  margin-bottom: 5px;
+  display: block;
+}
+.write-line-short {
+  border-bottom: 0.5pt solid #bbb;
+  min-height: 18px;
+  display: inline-block;
+}
+.decision-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0 16px;
+  margin-top: 4px;
+}
+.decision-grid-item label {
+  font-size: 7pt;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #888;
+  display: block;
+  margin-bottom: 2px;
+}
+
+/* ── Notes section ────────────────────────────────────────────── */
+.notes-section {
+  margin-top: 22px;
+  page-break-before: auto;
+}
+.notes-header {
+  font-size: 9pt;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #555;
+  border-bottom: 1pt solid #ccc;
+  padding-bottom: 5px;
+  margin-bottom: 12px;
+}
+.notes-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.notes-line {
+  border-bottom: 0.5pt solid #ccc;
+  min-height: 18px;
+}
+
+/* ── Section divider ──────────────────────────────────────────── */
+.section-divider {
+  margin: 22px 0 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #888;
+  font-size: 7.5pt;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  page-break-after: avoid;
+  break-after: avoid;
+}
+.section-divider::before,
+.section-divider::after {
+  content: '';
+  flex: 1;
+  border-top: 0.75pt solid #ddd;
+}
+
+</style>
+</head>
+<body>
+
+<!-- Screen-only hint -->
+<div class="print-hint no-print">
+  <strong>To save as PDF:</strong> File → Print → Destination: Save as PDF → Paper size: A4 → Margins: Default → Save.
+  Or press <kbd>Ctrl+P</kbd> / <kbd>Cmd+P</kbd>.
+</div>
+
+<!-- ── Cover ───────────────────────────────────────────────────── -->
+<div class="cover">
+  <div class="cover-label">SCD Hub · Exotopia.org · Eco Ops Platform</div>
+  <div class="cover-title">Eco Ops API — 8 Architectural Decisions</div>
+  <div class="cover-subtitle">Discussion document for team review before Phase 1 build begins</div>
+
+  <div class="cover-meta">
+    <div class="meta-item">
+      <label>Meeting / Review date</label>
+      <div class="meta-value"></div>
+    </div>
+    <div class="meta-item">
+      <label>Attendees</label>
+      <div class="meta-value"></div>
+    </div>
+    <div class="meta-item">
+      <label>Version / Ref</label>
+      <div class="meta-value filled">SPEC_ECO_OPS_API.md §8 · July 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Context ─────────────────────────────────────────────────── -->
+<div class="context-block">
+  <strong>What this document is for.</strong> The Eco Ops API spec (SPEC_ECO_OPS_API.md) is ready to build against, but eight architectural questions need a team decision before work begins on Phase 1. Each question below states the issue, the options, and a staff recommendation. The goal of this session is to record a decision, a brief rationale, and an owner for each item. Unresolved questions will block specific Phase 1 work streams as noted.
+  <br><br>
+  <strong>Scope reminder.</strong> Phase 1 covers: Supabase eco_ops schema, water quality data entry wizard, site map (Leaflet), country standards table, and the water-quality-alert Edge Function. Target jurisdictions: US, Kenya, Costa Rica, Canada, UK.
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     GROUP 1: INFRASTRUCTURE
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="section-divider">Infrastructure</div>
+
+<!-- Q1 -->
+<div class="question">
+  <div class="q-header">
+    <div class="q-number">Q 1</div>
+    <div class="q-title">Supabase project — shared or dedicated?</div>
+    <div class="q-tag tag-infra">Infrastructure</div>
+  </div>
+  <div class="q-body">
+    <div class="q-context">
+      The blog commentary system (members, connections, comments) lives in the <em>public</em> schema of an existing Supabase project. The eco ops system needs its own <em>eco_ops</em> schema with eight new tables, new Row Level Security policies, and new Edge Functions. Should all of this live in the same project — sharing Auth users — or in a separate Supabase project with its own Auth?
+      <br><br>
+      <strong>If shared:</strong> a single login works across blog commentary and eco ops monitoring. Simpler for members who do both. One billing account. Schema separation keeps the tables clean.
+      <br>
+      <strong>If dedicated:</strong> clean isolation; Edge Function cold-start budgets are not shared; easier to hand off eco ops to a partner org later; requires a separate sign-in for users doing both.
+    </div>
+
+    <div class="recommendation">
+      <div class="recommendation-label">Staff recommendation</div>
+      <p>Shared project with separate <code>eco_ops</code> schema. A single Auth user table is the right choice for participants who are both community commenters and field monitors. The eco ops schema provides adequate isolation. Revisit as a dedicated project only if the Row Level Security policies become too complex to maintain alongside the public schema's policies.</p>
+    </div>
+
+    <div class="options">
+      <div class="options-label">Options</div>
+      <div class="option-row recommended">
+        <div class="box"></div>
+        <span>Shared project, separate <code>eco_ops</code> schema (recommended)</span>
+      </div>
+      <div class="option-row">
+        <div class="box"></div>
+        <span>Dedicated Supabase project — separate Auth, separate billing</span>
+      </div>
+      <div class="option-row">
+        <div class="box"></div>
+        <span>Other: <span class="option-other">&nbsp;</span></span>
+      </div>
+    </div>
+
+    <div class="decision-area">
+      <div class="decision-label">Decision</div>
+      <span class="write-line"></span>
+      <div class="decision-grid">
+        <div class="decision-grid-item">
+          <label>Decision owner</label>
+          <span class="write-line-short" style="width:100%; display:block;"></span>
+        </div>
+        <div class="decision-grid-item">
+          <label>Due / by when</label>
+          <span class="write-line-short" style="width:100%; display:block;"></span>
+        </div>
+        <div class="decision-grid-item">
+          <label>Blocks Phase 1 task</label>
+          <span style="font-size:8pt; color:#555;">Schema creation + Edge Function setup</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Q2 -->
+<div class="question">
+  <div class="q-header">
+    <div class="q-number">Q 2</div>
+    <div class="q-title">Map tile provider for Leaflet</div>
+    <div class="q-tag tag-infra">Infrastructure</div>
+  </div>
+  <div class="q-body">
+    <div class="q-context">
+      The site map (EcoOpSiteListPage.vue) uses Leaflet, which needs a tile provider for the base map. Three realistic options vary in cost, attribution requirements, and offline viability. This matters for field use: monitors in Lamu or Costa Rica may be operating on intermittent 3G.
+    </div>
+
+    <div class="recommendation">
+      <div class="recommendation-label">Staff recommendation</div>
+      <p>OpenStreetMap for Phase 1 — free, no API key, required attribution is a small footer credit. Add a Workbox service worker to cache tiles for the 20km radius around each registered site, making offline field use viable. Revisit MapLibre + self-hosted tiles in Phase 3 if tile-caching becomes complex or if we want custom styling.</p>
+    </div>
+
+    <div class="options">
+      <div class="options-label">Options</div>
+      <div class="option-row recommended">
+        <div class="box"></div>
+        <span>OpenStreetMap — free, attribution required, offline-cacheable (recommended)</span>
+      </div>
+      <div class="option-row">
+        <div class="box"></div>
+        <span>MapLibre GL + self-hosted tiles (Protomaps / pmtiles) — free, more control, more setup</span>
+      </div>
+      <div class="option-row">
+        <div class="box"></div>
+        <span>Mapbox — paid (~$5/1,000 map loads), polished, easiest to style</span>
+      </div>
+      <div class="option-row">
+        <div class="box"></div>
+        <span>Other: <span class="option-other">&nbsp;</span></span>
+      </div>
+    </div>
+
+    <div class="decision-area">
+      <div class="decision-label">Decision</div>
+      <span class="write-line"></span>
+      <div class="decision-grid">
+        <div class="decision-grid-item">
+          <label>Decision owner</label>
+          <span class="write-line-short" style="width:100%; display:block;"></span>
+        </div>
+        <div class="decision-grid-item">
+          <label>Due / by when</label>
+          <span class="write-line-short" style="width:100%; display:block;"></span>
+        </div>
+        <div class="decision-grid-item">
+          <label>Blocks Phase 1 task</label>
+          <span style="font-size:8pt; color:#555;">EcoOpSiteListPage map implementation</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     GROUP 2: DATA
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="section-divider">Data &amp; Storage</div>
+
+<!-- Q3 -->
+<div class="question">
+  <div class="q-header">
+    <div class="q-number">Q 3</div>
+    <div class="q-title">Photo storage — Supabase Storage only or IPFS archival?</div>
+    <div class="q-tag tag-data">Data</div>
+  </div>
+  <div class="q-body">
+    <div class="q-context">
+      Every monitoring record and knowledge record can include photos (bloom evidence, site conditions, drag-cloth ticks, elder knowledge sessions). Photos need to be stored, retrievable by access tier, and — for archival records — permanently accessible even if SCD Hub ceases operations.
+      <br><br>
+      Supabase Storage is built in and handles access tiers natively. IPFS (via Pinata) gives permanent content-addressed storage, which is already used for certificate SVGs. Adding IPFS for monitoring photos means any photo in an eco ops record can be independently verified and retrieved regardless of platform status — important for elder knowledge recordings and legally significant monitoring evidence (CSO events, PFAS results).
+    </div>
+
+    <div class="recommendation">
+      <div class="recommendation-label">Staff recommendation</div>
+      <p>Supabase Storage as primary (fast, access-tier-aware). IPFS via Pinata for archival pin on any record flagged as: (a) elder knowledge / language documentation, (b) regulatory evidence (PFAS, CSO event), or (c) any photo the contributing community explicitly requests to archive. This is a per-record opt-in, not all-photos-always.</p>
+    </div>
+
+    <div class="options">
+      <div class="options-label">Options</div>
+      <div class="option-row recommended">
+        <div class="box"></div>
+        <span>Supabase Storage primary + selective IPFS pin for archival records (recommended)</span>
+      </div>
+      <div class="option-row">
+        <div class="box"></div>
+        <span>Supabase Storage only — simpler, no IPFS cost or complexity</span>
+      </div>
+      <div class="option-row">
+        <div class="box"></div>
+        <span>IPFS-first (Pinata) for all photos — maximum permanence, higher cost, slower UX</span>
+      </div>
+    </div>
+
+    <div class="decision-area">
+      <div class="decision-label">Decision</div>
+      <span class="write-line"></span>
+      <div class="decision-grid">
+        <div class="decision-grid-item">
+          <label>Decision owner</label>
+          <span class="write-line-short" style="width:100%; display:block;"></span>
+        </div>
+        <div class="decision-grid-item">
+          <label>Due / by when</label>
+          <span class="write-line-short" style="width:100%; display:block;"></span>
+        </div>
+        <div class="decision-grid-item">
+          <label>Blocks Phase 1 task</label>
+          <span style="font-size:8pt; color:#555;">MonitoringEntryPage photo upload step</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Q4 -->
+<div class="question">
+  <div class="q-header">
+    <div class="q-number">Q 4</div>
+    <div class="q-title">PFAS lab integration — manual entry or lab API?</div>
+    <div class="q-tag tag-data">Data</div>
+  </div>
+  <div class="q-body">
+    <div class="q-context">
+      PFAS sample results (EPA Method 533/537.1) are produced by certified labs. Currently the spec assumes manual data entry by the user after they receive their lab report. An alternative is to partner with Eurofins, TestAmerica, or a similar network — the lab posts results via API directly to the monitoring record, bypassing manual transcription and reducing error.
+      <br><br>
+      Lab API integration would require: a partnership agreement with ≥1 lab network, a chain-of-custody token linking our sample ID to the lab's accession number, and a webhook receiver Edge Function. It is not a Phase 1 blocker, but the schema needs to accommodate it from day one (the <code>pfas_compounds</code> jsonb column already does).
+    </div>
+
+    <div class="recommendation">
+      <div class="recommendation-label">Staff recommendation</div>
+      <p>Manual entry for Phase 1 — the schema supports it. Reach out to Eurofins (US + EU + UK presence) and TestAmerica in parallel as partnership conversations, targeting Phase 3 integration. The key Phase 1 decision is whether to display a "submit to lab" button (providing a pre-filled chain-of-custody PDF) or to leave lab logistics entirely to the user.</p>
+    </div>
+
+    <div class="options">
+      <div class="options-label">Options</div>
+      <div class="option-row recommended">
+        <div class="box"></div>
+        <span>Manual entry Phase 1 + pursue lab partnership for Phase 3 API integration (recommended)</span>
+      </div>
+      <div class="option-row">
+        <div class="box"></div>
+        <span>Manual entry only — no lab API ever; simpler but more error-prone</span>
+      </div>
+      <div class="option-row">
+        <div class="box"></div>
+        <span>Prioritise lab API partnership now — delay PFAS feature until integration is ready</span>
+      </div>
+    </div>
+
+    <div class="decision-area">
+      <div class="decision-label">Decision</div>
+      <span class="write-line"></span>
+      <div class="decision-grid">
+        <div class="decision-grid-item">
+          <label>Decision owner</label>
+          <span class="write-line-short" style="width:100%; display:block;"></span>
+        </div>
+        <div class="decision-grid-item">
+          <label>Due / by when</label>
+          <span class="write-line-short" style="width:100%; display:block;"></span>
+        </div>
+        <div class="decision-grid-item">
+          <label>Blocks Phase 1 task</label>
+          <span style="font-size:8pt; color:#555;">PFAS entry form design only</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     GROUP 3: UX / FIELD
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="section-divider">User Experience &amp; Field Use</div>
+
+<!-- Q5 -->
+<div class="question">
+  <div class="q-header">
+    <div class="q-number">Q 5</div>
+    <div class="q-title">Mobile offline resilience for the monitoring wizard</div>
+    <div class="q-tag tag-ux">UX / Field</div>
+  </div>
+  <div class="q-body">
+    <div class="q-context">
+      Monitors in Lamu County, Mpeketoni, or a remote Costa Rica watershed may lose connectivity mid-entry. If the monitoring wizard (MonitoringEntryPage) does not persist its state locally, a dropped connection means lost data. The question is how much offline investment to make in Phase 1 versus deferring to Phase 4.
+      <br><br>
+      <strong>Minimum (sessionStorage):</strong> drafts survive accidental navigation away but not a closed tab or power loss. Low cost, one composable method.
+      <br>
+      <strong>Standard (localStorage + sync queue):</strong> survives closed tab; submitted data queues offline and syncs on reconnect. ~1 week of work.
+      <br>
+      <strong>Full PWA:</strong> service worker, background sync, offline map tiles, full offline-first experience. Phase 4 scope.
+    </div>
+
+    <div class="recommendation">
+      <div class="recommendation-label">Staff recommendation</div>
+      <p>Standard (localStorage + sync queue) for Phase 1 — the Lamu use case demands it. The composable <code>useMonitoringWizard.ts</code> writes to <code>localStorage</code> on every step and queues failed submissions for retry. Full PWA tile caching deferred to Phase 4. Cost: approximately 3–5 extra days in Phase 1.</p>
+    </div>
+
+    <div class="options">
+      <div class="options-label">Options</div>
+      <div class="option-row">
+        <div class="box"></div>
+        <span>Minimum — sessionStorage only (fast to build, inadequate for field use)</span>
+      </div>
+      <div class="option-row recommended">
+        <div class="box"></div>
+        <span>Standard — localStorage draft + offline submission queue (recommended)</span>
+      </div>
+      <div class="option-row">
+        <div class="box"></div>
+        <span>Full PWA now — complete offline-first; delays Phase 1 by ~3 weeks</span>
+      </div>
+    </div>
+
+    <div class="decision-area">
+      <div class="decision-label">Decision</div>
+      <span class="write-line"></span>
+      <div class="decision-grid">
+        <div class="decision-grid-item">
+          <label>Decision owner</label>
+          <span class="write-line-short" style="width:100%; display:block;"></span>
+        </div>
+        <div class="decision-grid-item">
+          <label>Due / by when</label>
+          <span class="write-line-short" style="width:100%; display:block;"></span>
+        </div>
+        <div class="decision-grid-item">
+          <label>Blocks Phase 1 task</label>
+          <span style="font-size:8pt; color:#555;">MonitoringEntryPage wizard composable</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Q6 -->
+<div class="question">
+  <div class="q-header">
+    <div class="q-number">Q 6</div>
+    <div class="q-title">UK CSO outfall ID — manual lookup or EA database widget?</div>
+    <div class="q-tag tag-ux">UX / Field</div>
+  </div>
+  <div class="q-body">
+    <div class="q-context">
+      When a UK monitor records a CSO (combined sewer overflow) event, the monitoring form asks for the EA outfall permit number — a critical field for regulatory reporting. The EA's Event Duration Monitoring (EDM) database is publicly accessible. We can either ask the user to look it up themselves (friction, likely left blank) or build an auto-complete widget that queries the EDM API by postcode or GPS coordinates and returns nearby overflow points with their permit numbers.
+    </div>
+
+    <div class="recommendation">
+      <div class="recommendation-label">Staff recommendation</div>
+      <p>Build the lookup widget. The EDM database has a public endpoint; the widget is a single composable function returning the nearest N outfall points for a coordinate. Without it, the <code>cso_outfall_id</code> field will be left blank by most users and the regulatory reporting value of the CSO record is halved. Cost: ~2 days. The UK launch story is significantly stronger with this included.</p>
+    </div>
+
+    <div class="options">
+      <div class="options-label">Options</div>
+      <div class="option-row">
+        <div class="box"></div>
+        <span>Manual text field — user looks up their outfall ID independently</span>
+      </div>
+      <div class="option-row recommended">
+        <div class="box"></div>
+        <span>EA EDM lookup widget — auto-complete by coordinates or postcode (recommended)</span>
+      </div>
+      <div class="option-row">
+        <div class="box"></div>
+        <span>Skip UK CSO feature entirely for Phase 1 — address in Phase 3</span>
+      </div>
+    </div>
+
+    <div class="decision-area">
+      <div class="decision-label">Decision</div>
+      <span class="write-line"></span>
+      <div class="decision-grid">
+        <div class="decision-grid-item">
+          <label>Decision owner</label>
+          <span class="write-line-short" style="width:100%; display:block;"></span>
+        </div>
+        <div class="decision-grid-item">
+          <label>Due / by when</label>
+          <span class="write-line-short" style="width:100%; display:block;"></span>
+        </div>
+        <div class="decision-grid-item">
+          <label>Blocks Phase 1 task</label>
+          <span style="font-size:8pt; color:#555;">UK water quality form + CSO Edge Function</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     GROUP 4: LEGAL & POLICY
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="section-divider">Legal &amp; Policy</div>
+
+<!-- Q7 -->
+<div class="question">
+  <div class="q-header">
+    <div class="q-number">Q 7</div>
+    <div class="q-title">Agency data submission — direct API or user-downloads-and-submits?</div>
+    <div class="q-tag tag-legal">Legal</div>
+  </div>
+  <div class="q-body">
+    <div class="q-context">
+      The <code>report-to-agency</code> Edge Function (§3.2) would send monitoring data to regulatory agencies: EPA Volunteer Monitoring Gateway (US), EA Data Returns API (UK), NEMA (Kenya), SENASA/SINAC (Costa Rica), provincial EAs (Canada). Submitting on behalf of users raises a question: if the data is inaccurate, does SCD Hub bear liability for a report filed with a regulator? Does the relevant agency even permit third-party submission?
+      <br><br>
+      Option (a) — direct API: maximum friction reduction, but SCD Hub is the named submitter in the agency system. Option (b) — export and self-submit: SCD Hub generates a formatted, ready-to-submit file; the user presses submit in the agency's own portal. Option (c) — MOU-first: pursue formal data sharing agreements with each agency before enabling any submission.
+    </div>
+
+    <div class="recommendation">
+      <div class="recommendation-label">Staff recommendation</div>
+      <p>Option (b) for Phase 1 across all jurisdictions. Generate a formatted export (EPA-compatible CSV, EA XML, NEMA PDF) that the user submits themselves via the relevant agency portal. Zero liability exposure, same friction reduction for the user's preparation step. Pursue MOUs with EPA and EA in parallel; unlock direct API submission per-agency as agreements are in place. Kenya and Costa Rica portals may not have submission APIs — option (b) may be the permanent model there.</p>
+    </div>
+
+    <div class="options">
+      <div class="options-label">Options</div>
+      <div class="option-row">
+        <div class="box"></div>
+        <span>(a) Direct API submission — platform submits on user's behalf</span>
+      </div>
+      <div class="option-row recommended">
+        <div class="box"></div>
+        <span>(b) Export + self-submit — platform generates the file, user submits it (recommended)</span>
+      </div>
+      <div class="option-row">
+        <div class="box"></div>
+        <span>(c) MOU-first — no submission feature until formal agency agreements are signed</span>
+      </div>
+    </div>
+
+    <div class="decision-area">
+      <div class="decision-label">Decision</div>
+      <span class="write-line"></span>
+      <div class="decision-grid">
+        <div class="decision-grid-item">
+          <label>Decision owner</label>
+          <span class="write-line-short" style="width:100%; display:block;"></span>
+        </div>
+        <div class="decision-grid-item">
+          <label>Due / by when</label>
+          <span class="write-line-short" style="width:100%; display:block;"></span>
+        </div>
+        <div class="decision-grid-item">
+          <label>Blocks Phase 1 task</label>
+          <span style="font-size:8pt; color:#555;">report-to-agency Edge Function design</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Q8 -->
+<div class="question">
+  <div class="q-header">
+    <div class="q-number">Q 8</div>
+    <div class="q-title">SME engagement model — recognition only or paid advisory?</div>
+    <div class="q-tag tag-policy">Policy</div>
+  </div>
+  <div class="q-body">
+    <div class="q-context">
+      Subject matter experts (limnologists, tick ecologists, PFAS specialists, language documentation practitioners) contribute peer review time to monitoring sites. The platform currently rewards them with: a Knowledge Contributor credential, attribution in the site library record, and — for multi-session contributors — a formal SME certification. No monetary payment pathway exists.
+      <br><br>
+      For professional SMEs giving substantive advisory time, recognition-only may be inadequate. A payment pathway would require: Stripe or PayPal for US/UK/Canada/CR; M-Pesa B2C (already built) for Kenya-based SMEs. It would also require <code>rate_per_hour</code> and <code>payment_status</code> columns in the <code>sme_engagements</code> table — easy to add in Phase 1 as nullable columns, impossible to add cleanly later without a migration.
+    </div>
+
+    <div class="recommendation">
+      <div class="recommendation-label">Staff recommendation</div>
+      <p>Recognition-only for Phase 1. Add <code>rate_per_hour NUMERIC(10,2)</code> and <code>payment_status TEXT</code> as nullable columns to <code>sme_engagements</code> now — zero cost, preserves the Phase 3 option without a breaking migration. Revisit payment pathway design in Phase 2 planning once we have real SME engagement data showing how much time contributors are actually giving.</p>
+    </div>
+
+    <div class="options">
+      <div class="options-label">Options</div>
+      <div class="option-row recommended">
+        <div class="box"></div>
+        <span>Recognition-only Phase 1 + nullable rate columns in schema for future (recommended)</span>
+      </div>
+      <div class="option-row">
+        <div class="box"></div>
+        <span>Recognition-only permanently — keep it a volunteer/community feature</span>
+      </div>
+      <div class="option-row">
+        <div class="box"></div>
+        <span>Build payment pathway in Phase 1 — Stripe + M-Pesa from the start</span>
+      </div>
+    </div>
+
+    <div class="decision-area">
+      <div class="decision-label">Decision</div>
+      <span class="write-line"></span>
+      <div class="decision-grid">
+        <div class="decision-grid-item">
+          <label>Decision owner</label>
+          <span class="write-line-short" style="width:100%; display:block;"></span>
+        </div>
+        <div class="decision-grid-item">
+          <label>Due / by when</label>
+          <span class="write-line-short" style="width:100%; display:block;"></span>
+        </div>
+        <div class="decision-grid-item">
+          <label>Blocks Phase 1 task</label>
+          <span style="font-size:8pt; color:#555;">sme_engagements table schema (column set)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── General notes ────────────────────────────────────────────── -->
+<div class="notes-section">
+  <div class="notes-header">General discussion notes</div>
+  <div class="notes-lines">
+    <div class="notes-line"></div>
+    <div class="notes-line"></div>
+    <div class="notes-line"></div>
+    <div class="notes-line"></div>
+    <div class="notes-line"></div>
+    <div class="notes-line"></div>
+    <div class="notes-line"></div>
+    <div class="notes-line"></div>
+    <div class="notes-line"></div>
+    <div class="notes-line"></div>
+    <div class="notes-line"></div>
+    <div class="notes-line"></div>
+  </div>
+</div>
+
+</body>
+</html>

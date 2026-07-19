@@ -507,6 +507,8 @@ import type { StarSystem, Planet }      from 'src/stores/galaxy'
 import DefenderNav from 'src/components/DefenderNav.vue'
 import type { DefenderNavData, PlanetStripEntry, StellarConfig, DefenderTarget } from 'src/lib/defender-nav.types'
 import { usePortalStore } from 'src/stores/portal'
+import { useSceneTransitionStore } from 'src/stores/scene-transition'
+import { BLACK_HOLE_CATALOG, bhColorHex } from 'src/data/black-holes'
 
 // ── Galaxy star shader — one draw call for all ~5 000 confirmed systems ───────
 // Vertex: size-attenuated points (pSize in scene-unit scale; 700 / depth → pixels).
@@ -537,6 +539,7 @@ void main() {
 
 const galaxyStore = useGalaxyStore()
 const portalStore = usePortalStore()
+const transition  = useSceneTransitionStore()
 const router      = useRouter()
 const route       = useRoute()
 
@@ -754,6 +757,7 @@ let _starBaseColors:    Float32Array        = new Float32Array(0)   // original 
 let theoreticalMarkers: THREE.Mesh[]      = []
 let frontierMarkers:    THREE.Mesh[]      = []
 let candidateMarkers:   THREE.Mesh[]      = []
+let catalogBhMarkers:   THREE.Mesh[]      = []
 let systemObjects:      THREE.Object3D[] = []
 let animObjects:        THREE.Mesh[]     = []
 let focusMoonObjects:   THREE.Object3D[] = []   // spawned when zoomed to a planet
@@ -1241,6 +1245,93 @@ function buildTheoreticalSystems() {
       scene.add(mesh)
       theoreticalMarkers.push(mesh)
     }
+  }
+}
+
+// ── Galactic Center marker — Sgr A* hotspot in galaxy view ───────────────────
+
+let galacticCenterMarker: THREE.Mesh | null = null
+
+function buildGalacticCenterMarker() {
+  // Sgr A* position (J2000): RA 266.4168°, Dec -29.0078°, dist 8178 pc
+  const vizDist = distToViz(8178)
+  const pos     = raDecToVec3(266.4168, -29.0078, vizDist)
+
+  // Outer glow ring
+  const ringGeo = new THREE.TorusGeometry(1.8, 0.2, 6, 40)
+  const ringMat = new THREE.MeshBasicMaterial({
+    color: 0xff8800, transparent: true, opacity: 0.35,
+  })
+  const ring = new THREE.Mesh(ringGeo, ringMat)
+  ring.position.copy(pos)
+  scene.add(ring)
+
+  // Central bright point
+  const geo = new THREE.SphereGeometry(0.75, 10, 10)
+  const mat = new THREE.MeshBasicMaterial({ color: 0xffcc66 })
+  const mesh = new THREE.Mesh(geo, mat)
+  mesh.position.copy(pos)
+  mesh.userData = {
+    type:          'galactic_center',
+    label:         'Galactic Core — Sagittarius A*',
+    spec:          '4.154 × 10⁶ M☉ · 8.2 kpc · Nuclear Star Cluster',
+    dist:          '8,178 pc',
+    hoverInfo: {
+      name:  'Galactic Core · Sagittarius A*',
+      spec:  'Supermassive black hole · 4.154 × 10⁶ M☉',
+      dist:  '8,178 pc (26,000 ly)',
+    },
+    onClickRoute:  '/galactic-center',
+  }
+  scene.add(mesh)
+  galacticCenterMarker = mesh
+  theoreticalMarkers.push(mesh)   // included in raycast targets
+}
+
+// ── Black hole catalog markers — the 9 non-Sgr-A* black holes from
+// src/data/black-holes.ts, placed at real RA/Dec/distance so the cosmic-web
+// navigation chain (CosmicPage → GalaxyPage) reaches them directly instead of
+// only through the standalone /black-holes index. M87* and NGC 4258 are
+// genuinely extragalactic (Mpc-scale) — distToViz's log scale places them at
+// the far edge of the view, and their marker/hover copy says so explicitly
+// rather than implying they're part of the Milky Way. ─────────────────────────
+
+function buildCatalogBlackHoleMarkers() {
+  for (const bh of BLACK_HOLE_CATALOG) {
+    const vizDist = distToViz(bh.dist_pc)
+    const pos     = raDecToVec3(bh.ra_deg, bh.dec_deg, vizDist)
+    const isExtragalactic = bh.dist_pc > 1e5   // > ~326 kly — well beyond the Milky Way
+
+    const ringGeo = new THREE.TorusGeometry(1.1, 0.13, 6, 32)
+    const ringMat = new THREE.MeshBasicMaterial({
+      color: bhColorHex(bh), transparent: true, opacity: 0.4,
+    })
+    const ring = new THREE.Mesh(ringGeo, ringMat)
+    ring.position.copy(pos)
+    pageGroup.add(ring)
+
+    const geo = new THREE.SphereGeometry(0.42, 10, 10)
+    const mat = new THREE.MeshBasicMaterial({ color: 0x000000 })
+    const mesh = new THREE.Mesh(geo, mat)
+    mesh.position.copy(pos)
+    const massLabel = bh.mass_msun >= 1e6
+      ? `${(bh.mass_msun / 1e6).toFixed(2)}M M☉`
+      : `${bh.mass_msun.toFixed(1)} M☉`
+    mesh.userData = {
+      type:  'catalog_black_hole',
+      bhId:  bh.id,
+      label: bh.label,
+      hoverInfo: {
+        name: bh.label,
+        type: 'Black hole · click to enter',
+        spec: massLabel,
+        dist: isExtragalactic
+          ? `${(bh.dist_pc * 3.2616 / 1e6).toFixed(1)} Mly — external galaxy, not part of the Milky Way`
+          : `${Math.round(bh.dist_pc).toLocaleString()} pc`,
+      },
+    }
+    pageGroup.add(mesh)
+    catalogBhMarkers.push(mesh)
   }
 }
 
@@ -2104,7 +2195,7 @@ function galaxyTick(_t: number) {
 // ── Interaction ───────────────────────────────────────────────────────────────
 
 function getHitTargets(): THREE.Mesh[] {
-  if (mode.value === 'galaxy') return [...galaxyMarkers, ...theoreticalMarkers, ...candidateMarkers, ...frontierMarkers]
+  if (mode.value === 'galaxy') return [...galaxyMarkers, ...theoreticalMarkers, ...candidateMarkers, ...frontierMarkers, ...catalogBhMarkers]
   return systemObjects.filter(
     o => (o as THREE.Mesh).isMesh && o.userData.type !== 'orbit_ring'
   ) as THREE.Mesh[]
@@ -2157,6 +2248,9 @@ function makeHoverInfo(obj: THREE.Mesh): HoverInfo | null {
   }
   if (t === 'theoretical_system') {
     return { name: 'Proposed system', type: 'Unsurveyed region', note: obj.userData.label }
+  }
+  if (t === 'galactic_center') {
+    return { name: 'Galactic Core · Sagittarius A*', type: 'Supermassive Black Hole · click to enter', dist: '8,178 pc' }
   }
   const label = obj.userData.label ?? obj.userData.system?.hostname
   return label ? { name: label, type: '' } : null
@@ -2267,6 +2361,11 @@ function cancelApproach() {
   clickedNonConfirmed.value = null
 }
 
+async function goToGalacticCenter(ox: number, oy: number, bearing: number) {
+  await transition.depart(ox, oy, 'iris', bearing)
+  void router.push('/galactic-center')
+}
+
 function onClick(e: MouseEvent) {
   const hits = raycast(e.clientX, e.clientY)
   if (!hits.length) { cancelApproach(); return }
@@ -2332,6 +2431,50 @@ function onClick(e: MouseEvent) {
       dist:        obj.userData.dist != null ? `${Math.round(obj.userData.dist as number)} pc` : undefined,
       note:        obj.userData.label as string | undefined,
     }
+  } else if (mode.value === 'galaxy' && t === 'galactic_center') {
+    // Zoom toward Sgr A* then navigate to the Galactic Center scene. GalaxyPage
+    // and GalacticCenterPage now share the same renderer/camera, so this reads
+    // as one continuous approach — the iris wipe below only needs to cover the
+    // pageGroup swap underneath (Milky Way content → Sgr A* content).
+    const p      = obj.position.clone()
+    const dir    = camera.position.clone().sub(p).normalize()
+    const sc     = p.clone().project(camera!)
+    const ox     = (sc.x + 1) / 2 * 100
+    const oy     = (1 - sc.y) / 2 * 100
+    const bearing = Math.atan2(oy / 100 - 0.5, ox / 100 - 0.5)
+    gsap.to(camera.position, {
+      duration: 1.4, x: p.x + dir.x * 40, y: p.y + dir.y * 40, z: p.z + dir.z * 40,
+      onUpdate: () => controls.update(),
+      onComplete: () => { void goToGalacticCenter(ox, oy, bearing) },
+    })
+    gsap.to(controls.target, {
+      duration: 1.4, x: p.x, y: p.y, z: p.z,
+      onUpdate: () => controls.update(),
+    })
+  } else if (mode.value === 'galaxy' && t === 'catalog_black_hole') {
+    // Same continuous zoom-then-iris pattern as the Sgr A* marker, routed to
+    // this specific catalog object's own scene instead of /galactic-center.
+    const bhId  = obj.userData.bhId as string
+    const p     = obj.position.clone()
+    const dir   = camera.position.clone().sub(p).normalize()
+    const sc    = p.clone().project(camera!)
+    const ox    = (sc.x + 1) / 2 * 100
+    const oy    = (1 - sc.y) / 2 * 100
+    const bearing = Math.atan2(oy / 100 - 0.5, ox / 100 - 0.5)
+    gsap.to(camera.position, {
+      duration: 1.4, x: p.x + dir.x * 40, y: p.y + dir.y * 40, z: p.z + dir.z * 40,
+      onUpdate: () => controls.update(),
+      onComplete: () => {
+        void (async () => {
+          await transition.depart(ox, oy, 'iris', bearing)
+          void router.push(`/bh/${bhId}`)
+        })()
+      },
+    })
+    gsap.to(controls.target, {
+      duration: 1.4, x: p.x, y: p.y, z: p.z,
+      onUpdate: () => controls.update(),
+    })
   } else if (mode.value === 'galaxy' && (t === 'candidate_system' || t === 'frontier_system')) {
     const p   = obj.position.clone()
     const dir = camera.position.clone().sub(p).normalize()
@@ -2379,40 +2522,43 @@ function goToSurface(planetName: string) {
   }
 }
 
+async function descendToPlanetSurface(targetRoute: string, ox: number, oy: number, bearing: number) {
+  await transition.depart(ox, oy, 'iris', bearing)
+  void router.push(targetRoute)
+}
+
 function enterPlanetSurface(pl: Planet) {
   if (enteringPlanet.value) return
   enteringPlanet.value = true
   controls.enabled = false
 
-  const srcColor = currentSystem.value
-    ? '#' + starColorFromTeff(currentSystem.value.st_teff).getHexString()
-    : undefined
+  const targetRoute = `/surface/${encodeURIComponent(pl.hostname)}/${encodeURIComponent(pl.pl_name)}`
 
-  const triggerPortal = () => portalStore.openPortal({
-    label:       pl.pl_name,
-    route:       `/surface/${encodeURIComponent(pl.hostname)}/${encodeURIComponent(pl.pl_name)}`,
-    hostname:    pl.hostname,
-    sourceColor: srcColor,
-  })
-
-  // Brief zoom toward the planet before portal fires
+  // Brief zoom toward the planet before the descent transition fires. GalaxyPage
+  // and SurfaceViewPage now share the same renderer/camera, so this reads as one
+  // continuous approach — an iris wipe covers the pageGroup swap underneath
+  // rather than the WormholePortal, which is reserved for lateral/long-haul jumps.
   const pMesh = systemObjects.find(
     o => (o as THREE.Mesh).isMesh && o.userData.type === 'planet' && o.userData.planet?.pl_name === pl.pl_name
   ) as THREE.Mesh | undefined
 
   if (pMesh) {
-    const p = pMesh.position.clone()
+    const p      = pMesh.position.clone()
+    const sc     = p.clone().project(camera!)
+    const ox     = (sc.x + 1) / 2 * 100
+    const oy     = (1 - sc.y) / 2 * 100
+    const bearing = Math.atan2(oy / 100 - 0.5, ox / 100 - 0.5)
     gsap.to(controls.target, {
       duration: 0.8, x: p.x, y: p.y, z: p.z,
       ease: 'power2.in', onUpdate: () => controls.update(),
-      onComplete: triggerPortal,
+      onComplete: () => { void descendToPlanetSurface(targetRoute, ox, oy, bearing) },
     })
     gsap.to(camera.position, {
       duration: 0.8, x: p.x, y: p.y, z: p.z + 2,
       ease: 'power2.in', onUpdate: () => controls.update(),
     })
   } else {
-    triggerPortal()
+    void descendToPlanetSurface(targetRoute, 50, 50, 0)
   }
 }
 
@@ -2695,6 +2841,8 @@ onMounted(async () => {
 
   buildGalaxyView()
   buildTheoreticalSystems()
+  buildGalacticCenterMarker()
+  buildCatalogBlackHoleMarkers()
   loaded.value = true
 
   // Supplementary tiers loaded only when user toggles them on (see showPredicted)
@@ -2737,12 +2885,14 @@ onUnmounted(() => {
   theoreticalMarkers = []
   frontierMarkers    = []
   candidateMarkers   = []
+  catalogBhMarkers   = []
   animObjects        = []
   focusMoonObjects   = []
-  galaxyStarPoints   = null
-  galaxyPipPoints    = null
-  focusedPlanetMesh  = null
-  contextLine        = null
+  galaxyStarPoints       = null
+  galaxyPipPoints        = null
+  focusedPlanetMesh      = null
+  contextLine            = null
+  galacticCenterMarker   = null
 })
 </script>
 

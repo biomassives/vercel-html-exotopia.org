@@ -39,6 +39,14 @@
             <span class="sl-lesson-grade">GRADE 12 — GRAD</span>
             <span class="sl-lesson-title">Mathematics of<br>Synthetic Skies</span>
           </button>
+          <button
+            class="sl-lesson-btn"
+            :class="{ 'sl-lesson-btn--active': activeLesson === 3 }"
+            @click="setLesson(3)"
+          >
+            <span class="sl-lesson-grade">GRAD / PUBLIC SCIENCE</span>
+            <span class="sl-lesson-title">Galactic Center<br>Astrophysics</span>
+          </button>
         </div>
 
         <!-- Section nav -->
@@ -588,6 +596,317 @@ console.log('Moon-analogue barely fits:', hillKm > 384400 ? 'NO' : 'YES (just)')
 
         </template>
 
+        <!-- ════════════════════════════════════════════════════════════════ -->
+        <!-- LESSON 3 — Galactic Center Astrophysics                        -->
+        <!-- ════════════════════════════════════════════════════════════════ -->
+        <template v-if="activeLesson === 3">
+
+          <div class="sl-lesson-header">
+            <div class="sl-lesson-badge sl-lesson-badge--adv">GRAD / PUBLIC SCIENCE</div>
+            <h1 class="sl-h1">Galactic Center Astrophysics</h1>
+            <p class="sl-intro">The math and physics behind the Sgr A* scene — from Kepler's equation and orbital elements, through Schwarzschild geometry and time dilation, to accretion disk thermophysics and the Event Horizon Telescope image. Everything in the <router-link to="/galactic-center" class="sl-inline-link">Galactic Center</router-link> visualization is grounded in these derivations.</p>
+            <div class="sl-meta">
+              <span class="sl-meta-item">Objects: Sgr A* · S2 · IRS 13E</span>
+              <span class="sl-meta-item">Math: Kepler · Schwarzschild · Kerr</span>
+              <span class="sl-meta-item">Data: GRAVITY Collaboration 2022</span>
+            </div>
+          </div>
+
+          <!-- S3.1 -->
+          <section :id="'l3-why-sgra'" class="sl-section">
+            <h2 class="sl-h2">1. Why Sagittarius A* is the most studied black hole</h2>
+            <p class="sl-p">There are two black holes whose images we have directly obtained: M87* (6.5 × 10⁹ solar masses, 55 million light-years away) and Sagittarius A* (4.154 × 10⁶ solar masses, 26,000 light-years away). Our galaxy's central black hole wins on every metric that matters for science:</p>
+            <table class="sl-table">
+              <tr><th>Property</th><th>Sgr A*</th><th>M87*</th></tr>
+              <tr><td>Mass</td><td>4.154 × 10⁶ M☉</td><td>6.5 × 10⁹ M☉</td></tr>
+              <tr><td>Distance</td><td>8,178 pc (26,000 ly)</td><td>16.8 Mpc (55 × 10⁶ ly)</td></tr>
+              <tr><td>Angular size of shadow</td><td>51.8 μas (EHT 2022)</td><td>42 μas (EHT 2019)</td></tr>
+              <tr><td>Schwarzschild radius</td><td>0.082 AU</td><td>128 AU</td></tr>
+              <tr><td>ISCO radius</td><td>~0.37 AU (Kerr a*≈0.5)</td><td>~100–384 AU</td></tr>
+              <tr><td>Event timescale</td><td>minutes (flares 5–6/day)</td><td>months–years</td></tr>
+              <tr><td>Orbital monitoring</td><td>S-stars tracked for 30+ years</td><td>no resolved stellar orbits</td></tr>
+            </table>
+            <p class="sl-p">Sgr A* appears almost the same angular size on the sky as M87* despite being 1,500× less massive and 2,000× closer — a remarkable coincidence that the Event Horizon Telescope exploited to image both. But the critical advantage is the <strong>S-star cluster</strong>: a population of hot young stars orbiting within a few light-weeks of the black hole, whose orbital motion gives us the most direct mass measurement of any black hole in the universe.</p>
+            <div class="sl-callout sl-callout--info">The S-star S2 completes one full orbit around Sgr A* every 16 years. Its periapsis approach in 2018 was measured by the GRAVITY interferometer at 1 microarcsecond precision — confirming general relativistic effects including Schwarzschild precession and gravitational redshift in a regime no prior test had reached.</div>
+          </section>
+
+          <!-- S3.2 -->
+          <section :id="'l3-kepler3'" class="sl-section">
+            <h2 class="sl-h2">2. Kepler's Third Law — weighing a black hole from a stellar orbit</h2>
+            <p class="sl-p">Newton's generalization of Kepler's Third Law connects an orbit's period P and semi-major axis a to the total mass of the system M:</p>
+            <div class="sl-code-block">P² = (4π² / GM) · a³
+
+Rearranged to solve for mass:
+  M = 4π² · a³ / (G · P²)
+
+Constants:
+  G = 6.674 × 10⁻¹¹  m³ kg⁻¹ s⁻²
+  1 AU = 1.496 × 10¹¹ m
+  1 yr = 3.156 × 10⁷ s
+  1 M☉ = 1.989 × 10³⁰ kg</div>
+            <p class="sl-p"><strong>Worked example — S2 orbit:</strong> The GRAVITY interferometer measures S2's angular semi-major axis as 125.058 milliarcseconds (mas). At the Galactic Center distance R₀ = 8,178 parsecs (1 pc = 3.086 × 10¹⁶ m), the physical semi-major axis is:</p>
+            <div class="sl-code-block">a = θ_arcsec × R₀_pc × 1 AU/arcsec
+  = 0.125058" × 8178 pc × (1 AU / 1")
+
+But 1 pc = 206,265 AU, so:
+  a = 0.125058 × 8178 × 1 AU  (in units where 1 pc subtends 1 AU at 206,265 pc)
+
+Actually: a_AU = θ_arcsec × R₀_pc = 0.125058 × 8178 = 1022.9 AU
+
+Convert to metres: a = 1022.9 × 1.496 × 10¹¹ = 1.530 × 10¹⁴ m
+
+S2 period: P = 16.0455 yr = 16.0455 × 3.156 × 10⁷ = 5.065 × 10⁸ s
+
+Sgr A* mass: M = 4π² × a³ / (G × P²)
+  a³ = (1.530 × 10¹⁴)³ = 3.582 × 10⁴² m³
+  P² = (5.065 × 10⁸)² = 2.565 × 10¹⁷ s²
+  GP² = 6.674 × 10⁻¹¹ × 2.565 × 10¹⁷ = 1.712 × 10⁷ m³ s⁻² kg⁻¹ × kg → 1.712 × 10⁷
+  M = 39.478 × 3.582 × 10⁴² / 1.712 × 10⁷ = 8.258 × 10³⁶ kg
+
+In solar masses: 8.258 × 10³⁶ / 1.989 × 10³⁰ = 4.152 × 10⁶ M☉  ✓
+
+Agrees with published value 4.154 × 10⁶ M☉ (GRAVITY Collaboration 2022)</div>
+            <div class="sl-callout sl-callout--warning">This mass measurement has no equivalent in astronomy — it directly weighs a single object with no assumptions about gas physics, light emission, or dark matter distribution. It is the most precise measurement of any supermassive black hole.</div>
+          </section>
+
+          <!-- S3.3 -->
+          <section :id="'l3-elements'" class="sl-section">
+            <h2 class="sl-h2">3. The six Keplerian orbital elements — a star's full address in space</h2>
+            <p class="sl-p">Any bound orbit in Newtonian gravity is an ellipse. Six numbers — the <strong>Keplerian orbital elements</strong> — uniquely specify the shape, orientation, and timing of that ellipse in 3D space:</p>
+            <table class="sl-table">
+              <tr><th>Symbol</th><th>Name</th><th>What it describes</th><th>S2 value</th></tr>
+              <tr><td>a</td><td>Semi-major axis</td><td>Half the longest axis of the ellipse; sets overall orbit size</td><td>1,023 AU</td></tr>
+              <tr><td>e</td><td>Eccentricity</td><td>How elongated (0 = circle, 1 = parabola). Periapsis = a(1−e), apoapsis = a(1+e)</td><td>0.8843</td></tr>
+              <tr><td>i</td><td>Inclination</td><td>Tilt of the orbital plane relative to the reference plane (here: sky plane)</td><td>134.6°</td></tr>
+              <tr><td>Ω</td><td>Longitude of ascending node</td><td>Where the orbit crosses the reference plane going "up"; measured from north celestial pole</td><td>228.2°</td></tr>
+              <tr><td>ω</td><td>Argument of periapsis</td><td>Rotation of the ellipse within its plane; angle from ascending node to periapsis</td><td>66.1°</td></tr>
+              <tr><td>t_p</td><td>Time of periapsis</td><td>When the star was closest to Sgr A*</td><td>2002.315</td></tr>
+            </table>
+            <p class="sl-p">For S2: periapsis distance = a(1 − e) = 1023 × (1 − 0.8843) = <strong>118 AU</strong>, at which point S2 travels at 7,650 km/s (2.55% of c). Apoapsis = a(1 + e) = 1023 × 1.8843 = <strong>1928 AU</strong>. At epoch 2026.5, S2 is near apoapsis (mean anomaly ≈ 180° through its current orbit).</p>
+            <p class="sl-p">To convert these six numbers into a 3D Cartesian position [x, y, z], we use a sequence of rotations: first rotate by ω in the orbital plane to get from the ascending node to the star's position, then by i to tilt the plane, then by Ω to align with the reference frame. In the Galactic Center scene this is the function <code class="sl-code">orbitalToXYZ()</code> in <code class="sl-code">src/data/galactic-center.ts</code>:</p>
+            <div class="sl-code-block">// Position in orbital plane
+xOrb = r · cos(ν)      // ν = true anomaly (angle from periapsis)
+yOrb = r · sin(ν)
+
+// Rotate to 3D frame via ω, i, Ω:
+x = (cos Ω cos ω − sin Ω sin ω cos i) xOrb + (−cos Ω sin ω − sin Ω cos ω cos i) yOrb
+y = (sin Ω cos ω + cos Ω sin ω cos i) xOrb + (−sin Ω sin ω + cos Ω cos ω cos i) yOrb
+z = (sin ω sin i) xOrb + (cos ω sin i) yOrb</div>
+          </section>
+
+          <!-- S3.4 -->
+          <section :id="'l3-keplerEq'" class="sl-section">
+            <h2 class="sl-h2">4. Kepler's equation — why orbits can't be solved with algebra</h2>
+            <p class="sl-p">Given the six orbital elements and a target time t, what is the star's actual position? This requires finding the <strong>true anomaly</strong> ν — the angle from periapsis to the current position, measured at the focus. The route from time to true anomaly has three steps:</p>
+            <div class="sl-code-block">Step 1 — Mean anomaly M (uniform, grows linearly with time):
+  M = 2π · (t − t_p) / P
+  → For S2 at 2026.5: M = 2π × (2026.5 − 2002.315) / 16.0455 = 9.467 rad ≡ 182° (mod 360°)
+
+Step 2 — Eccentric anomaly E (Kepler's equation — transcendental):
+  E − e sin(E) = M                  ← cannot be solved algebraically
+  → Solve by Newton-Raphson iteration:
+       E₀ = M  (starting guess; use π for high eccentricity e > 0.8)
+       E_{n+1} = E_n − (E_n − e sin E_n − M) / (1 − e cos E_n)
+       Repeat until |ΔE| < 10⁻¹²  (converges in 3–15 iterations for e < 0.99)
+
+  For S2 (e = 0.8843, M ≈ 3.226 rad):
+    E ≈ 3.163 rad ≈ 181.3°
+
+Step 3 — True anomaly ν from eccentric anomaly E:
+  tan(ν/2) = √((1 + e)/(1 − e)) · tan(E/2)
+  ν = 2 · atan2(√(1+e) · sin(E/2),  √(1−e) · cos(E/2))
+  → For S2 at 2026.5: ν ≈ 179.7° → near apoapsis ✓
+
+Step 4 — Radius from E:
+  r = a(1 − e cos E) = 1023 × (1 − 0.8843 × cos(181.3°)) = 1023 × 1.884 ≈ 1927 AU</div>
+            <p class="sl-p">The reason Kepler's equation is transcendental (has no closed-form solution) is that orbital motion sweeps equal areas in equal times (Kepler's second law), but the geometric angle along an ellipse does not vary uniformly — the star moves fastest near periapsis and slowest near apoapsis. The eccentric anomaly E is an intermediate "linearized" angle that accounts for this.</p>
+            <div class="sl-callout sl-callout--info">For very high eccentricities (e → 1, as in S62 at e = 0.976 or S4714 at e = 0.985), the star spends almost all its time near apoapsis and flashes through periapsis in a tiny fraction of the period. S4714's closest approach (13 AU from Sgr A*, 161 Schwarzschild radii) lasts only a few days out of its 12-year orbit.</div>
+          </section>
+
+          <!-- S3.5 -->
+          <section :id="'l3-schwarzschild'" class="sl-section">
+            <h2 class="sl-h2">5. Schwarzschild geometry — the three critical radii</h2>
+            <p class="sl-p">For a non-rotating (Schwarzschild) black hole, three radii define the structure of spacetime around it:</p>
+            <div class="sl-code-block">1. Schwarzschild radius (event horizon):
+   r_s = 2GM/c²
+
+   For 1 M☉:   r_s = 2 × 6.674×10⁻¹¹ × 1.989×10³⁰ / (2.998×10⁸)²
+                    = 2.954 × 10³ m  ≈  2.95 km
+
+   Scaling:    r_s = 2.95 km × (M / M☉)
+
+   For Sgr A* (4.154 × 10⁶ M☉):
+               r_s = 2.95 × 4.154 × 10⁶ km = 1.226 × 10⁷ km = 12.26 million km
+               r_s = 12.26 × 10⁶ / 1.496 × 10⁸ AU = 0.0820 AU ✓
+
+2. Photon sphere:
+   r_ph = 1.5 r_s = 3GM/c²
+
+   Light can orbit the BH here — but the orbit is unstable. A photon
+   displaced outward escapes; displaced inward falls in. From r_ph,
+   the entire sky collapses to a single bright ring above and below.
+
+   For Sgr A*: r_ph = 1.5 × 0.0820 AU = 0.123 AU = 18.4 million km
+
+3. Innermost Stable Circular Orbit (ISCO):
+   r_ISCO = 3 r_s = 6GM/c²   (Schwarzschild — non-rotating)
+
+   Inside r_ISCO, circular orbits are unstable: any perturbation
+   causes the object to spiral inward and fall into the BH.
+   This is the inner edge of the accretion disk and the minimum
+   safe settlement radius.
+
+   For Sgr A* (Schwarzschild): r_ISCO = 3 × 0.0820 = 0.246 AU</div>
+            <p class="sl-p">The <strong>Schwarzschild metric</strong> is the exact solution to Einstein's field equations for a spherically symmetric mass:</p>
+            <div class="sl-code-block">ds² = −(1 − r_s/r) c² dt² + (1 − r_s/r)⁻¹ dr² + r² dΩ²
+
+The key consequence for a settlement: at orbital radius r,
+the ratio of proper time (local clock) to coordinate time (distant observer) is:
+
+  dτ/dt = √(1 − r_s/r)         ← gravitational time dilation
+
+At the photon sphere (r = 1.5 r_s):  dτ/dt = √(1 − 2/3) = √(1/3) = 0.577
+At ISCO (r = 3 r_s):                 dτ/dt = √(1 − 1/3) = √(2/3) = 0.816
+At 50 r_s:                           dτ/dt = √(1 − 1/50) = √0.980 = 0.990
+At 1400 r_s (S2 periapsis):          dτ/dt = √(1 − 1/1400)      = 0.9996</div>
+          </section>
+
+          <!-- S3.6 -->
+          <section :id="'l3-kerr'" class="sl-section">
+            <h2 class="sl-h2">6. Kerr black holes — spin changes everything</h2>
+            <p class="sl-p">Real black holes rotate. The Kerr metric (1963) describes spacetime around a spinning black hole. The spin parameter a* = J/(Mc) ranges from 0 (Schwarzschild) to 1 (maximally rotating). Sgr A*'s spin is poorly constrained but estimated at 0.1–0.9; our model uses a* ≈ 0.5.</p>
+            <p class="sl-p">Spin radically changes the ISCO:</p>
+            <div class="sl-code-block">ISCO radius vs. spin parameter (prograde equatorial orbit):
+
+  a* = 0.0  (Schwarzschild):     r_ISCO = 6.0 r_s
+  a* = 0.5:                      r_ISCO ≈ 4.2 r_s
+  a* = 0.9:                      r_ISCO ≈ 2.3 r_s
+  a* = 0.998 (near-maximal):     r_ISCO ≈ 1.24 r_s
+  a* = 1.0   (extremal):         r_ISCO = 1.0 r_s  (ISCO = event horizon)
+
+  Retrograde orbit: r_ISCO grows larger — up to 9 r_s at a* = 1
+
+For Sgr A* at a* ≈ 0.5:
+  Prograde ISCO ≈ 4.2 r_s = 4.2 × 0.082 AU = 0.344 AU = 51.5 million km
+
+The Kerr metric also predicts an ergosphere — a region outside the event horizon
+where spacetime itself rotates faster than c:
+  r_ergo = r_s / 2 + √( (r_s/2)² − (a*)² cos²θ · r_s² )
+  At the equator (θ = π/2): r_ergo = r_s
+
+  Nothing inside the ergosphere can remain stationary — frame-dragging
+  forces all objects to co-rotate with the BH. Energy can be extracted
+  from the ergosphere via the Penrose process.</div>
+            <div class="sl-callout sl-callout--info">The Blandford-Znajek mechanism — electromagnetic extraction of spin energy from the ergosphere — is the leading explanation for relativistic jets. Sgr A* shows only weak jets (it's under-fed), unlike M87* where the jet extends 5,000 light-years and is visible from Earth. Future measurement of Sgr A*'s spin by the ngEHT may distinguish between competing jet models.</div>
+          </section>
+
+          <!-- S3.7 -->
+          <section :id="'l3-timedilation'" class="sl-section">
+            <h2 class="sl-h2">7. Gravitational time dilation — clocks that run differently near a black hole</h2>
+            <p class="sl-p">The Schwarzschild metric tells us that a clock at radius r runs slower than a clock far from the black hole by the factor:</p>
+            <div class="sl-code-block">τ/t = √(1 − r_s/r)          (gravitational time dilation, Schwarzschild)
+
+This has two physical consequences:
+
+1. GRAVITATIONAL REDSHIFT — photons emitted at radius r arrive at
+   infinity with wavelength stretched by:
+   λ_obs / λ_emit = 1 / √(1 − r_s/r)  = 1 / (τ/t)
+
+   At r = 3 r_s (ISCO): z = 1/0.816 − 1 = 0.225 → 22.5% redshift
+   (S2 shows z ≈ 0.000179 at periapsis due to gravitational + Doppler effects,
+    first detected by GRAVITY Collaboration 2018 — direct test of GR at BH)
+
+2. TIME EXPERIENCE — a year at the ISCO Platform (r = 4.5 r_s):
+   τ/t = √(1 − 1/4.5) = √(0.778) = 0.882
+   → 1 year passes locally for every 1.134 years far away
+   → A 10-year mission costs 11.3 years of "calendar time" outside
+
+Settlement zone comparison (Sgr A*):
+  Photon Sphere Station  r = 1.5 r_s    τ/t = 0.577   (slowest clock)
+  ISCO Platform          r = 4.5 r_s    τ/t = 0.832
+  Flare Observatory      r = 6.0 r_s    τ/t = 0.913
+  Accretion Disk Mid     r = 50  r_s    τ/t = 0.990
+  S2 Transit Deck        r = 1400 r_s   τ/t = 0.9996  (barely measurable)</div>
+            <p class="sl-p">For a complete treatment including orbital velocity (special relativistic time dilation) the formula is more complex. At periapsis S2 travels at 7,650 km/s (β = 0.0255), adding a Lorentz factor γ = 1/√(1−β²) = 1.000326 on top of the gravitational effect. Both effects were measured simultaneously by GRAVITY in 2018.</p>
+          </section>
+
+          <!-- S3.8 -->
+          <section :id="'l3-disk'" class="sl-section">
+            <h2 class="sl-h2">8. Accretion disk physics — why Sgr A* glows, flares, and heats</h2>
+            <p class="sl-p">Matter falling toward a black hole forms a disk because angular momentum prevents it from falling straight in. As material loses energy through viscosity and magnetic instability (magnetorotational instability, MRI), it spirals slowly inward, converting gravitational potential energy to heat and radiation.</p>
+            <p class="sl-p"><strong>Temperature profile:</strong> For a geometrically thin, optically thick "Shakura-Sunyaev" disk, the effective temperature at radius r is:</p>
+            <div class="sl-code-block">T(r) ∝ (M_dot / M²)^(1/4) · (r/r_s)^(-3/4) · f(r)^(1/4)
+
+where f(r) = 1 − √(r_ISCO/r)  is a correction that drives T → 0 at r_ISCO
+
+Simplified approximate temperature for Sgr A* accretion disk:
+  At r ≈ 50 r_s  (hot inner edge, ~4 AU):    T ≈ 10⁷ K   (10 million K)
+  At r ≈ 360 r_s (mid disk, ~30 AU):         T ≈ 10⁵ K   (100,000 K)
+  At r ≈ 1000 r_s (outer disk, ~82 AU):      T ≈ 10⁴ K   (10,000 K)
+
+These temperatures emit mostly as:
+  10⁷ K → X-ray  (peak: λ_peak = 2.898 mm·K / 10⁷ K = 0.29 nm)
+  10⁵ K → UV     (peak: λ_peak = 29 nm)
+  10⁴ K → near-IR/optical (peak: λ_peak = 290 nm)</div>
+            <p class="sl-p"><strong>Doppler brightening:</strong> The disk rotates at near-relativistic speeds near the ISCO. The approaching side (moving toward the observer) is <strong>relativistically beamed</strong> — photons are blue-shifted and compressed into a smaller solid angle, making that side appear 2–5× brighter. This asymmetry is the diagnostic signature of a rotating accretion disk and is visible in the EHT image of M87*. In our scene, we model this with a per-vertex color shift proportional to cos(azimuth).</p>
+            <p class="sl-p"><strong>Flares:</strong> Sgr A* is not feeding steadily. Its current accretion rate is ~10⁻⁸ M☉/year — tiny by AGN standards. Instead of a bright continuous disk, it has a dim disk punctuated by brief bright flares every few hours. JWST MIRI observations (2025) detected 5–6 major flares per day, originating from compact plasmoid structures at ~6 Schwarzschild radii — consistent with <strong>magnetic reconnection</strong> events where opposing magnetic field lines snap and release energy (like solar flares, but 10¹⁰× more energetic). Plasmoid orbital speeds at 6 r_s are ~0.3 c.</p>
+          </section>
+
+          <!-- S3.9 -->
+          <section :id="'l3-irs13e'" class="sl-section">
+            <h2 class="sl-h2">9. IRS 13E — watching an intermediate-mass black hole spiral in</h2>
+            <p class="sl-p">IRS 13E is a compact cluster of massive stars located 0.1 light-years (6,300 AU) from Sgr A*. It contains an intermediate-mass black hole (IMBH) candidate with mass ≥ 10,000 M☉, surrounded by 6 Wolf-Rayet stars being stripped by Sgr A*'s tidal field.</p>
+            <p class="sl-p"><strong>What is an IMBH?</strong> Black holes come in three established mass ranges: stellar (3–100 M☉, formed from collapsing stars), supermassive (10⁶–10¹⁰ M☉, found in galactic nuclei), and intermediate (10²–10⁶ M☉, poorly understood). IMBHs are the missing link: they are predicted to form in dense star clusters and migrate to galactic centers over billions of years, building up SMBHs through repeated mergers. IRS 13E is currently the best-studied IMBH candidate with direct evidence (multi-disk structure from VLT + ALMA + Chandra).</p>
+            <p class="sl-p"><strong>Dynamical friction:</strong> The IRS 13E cluster sinks toward Sgr A* via Chandrasekhar dynamical friction — the gravitational drag exerted by the cluster on the surrounding sea of stars and dark matter. The timescale is:</p>
+            <div class="sl-code-block">t_fric ≈ (M_cluster / M_star) × t_cross × ln(Λ)⁻¹
+
+where ln(Λ) is the Coulomb logarithm (~10 for galactic center conditions)
+and t_cross is the crossing time of the Nuclear Star Cluster.
+
+Estimate for IRS 13E at 0.1 ly from Sgr A*:
+  M_cluster ~ 5 × 10⁴ M☉
+  t_fric ~ 10 Myr → cluster will merge with Sgr A* in ~10 million years
+
+Current separation: 6,300 AU → IMBH orbital period around Sgr A*:
+  P ≈ √(a³/M) = √(6300³ / 4.154 × 10⁶) yr
+    = √(2.50 × 10¹¹ / 4.154 × 10⁶)
+    = √(6.02 × 10⁴)
+    = 245 yr   ← the cluster completes one orbit every ~245 years</div>
+            <p class="sl-p"><strong>Gravitational waves:</strong> As the IMBH spirals in, it radiates gravitational waves — an <strong>intermediate mass-ratio inspiral</strong> (IMRI). These waves are in the millihertz frequency band detectable by the future LISA space interferometer (launch 2037). When the IMBH reaches r ~ 100 r_s from Sgr A*, the inspiral enters the "plunge" phase — the last few hundred orbits produce a gravitational wave chirp of increasing frequency and amplitude. LISA is expected to detect events like IRS 13E's final inspiral throughout the galaxy, providing the most precise tests of general relativity near the ISCO ever performed.</p>
+            <div class="sl-callout sl-callout--warning">Note on data: The IMBH interpretation of IRS 13E is strong but not yet universally accepted — some models explain the multi-disk structure as an unusually massive stellar cluster without a central BH. The mass lower limit of ≥ 10,000 M☉ (Schödel et al. 2023) is firm; the question is whether it is concentrated in a single object or distributed among stellar remnants.</div>
+          </section>
+
+          <!-- S3.10 -->
+          <section :id="'l3-eht'" class="sl-section">
+            <h2 class="sl-h2">10. Event Horizon Telescope — imaging the unseeable</h2>
+            <p class="sl-p">The 2022 image of Sgr A* from the Event Horizon Telescope (EHT) is one of the most technically demanding observations in the history of astronomy. The challenge: the apparent angular diameter of Sgr A*'s shadow is only 51.8 microarcseconds (μas). For comparison, the full Moon is 1,800,000 μas — Sgr A*'s shadow is 35 million times smaller.</p>
+            <p class="sl-p"><strong>Very Long Baseline Interferometry (VLBI):</strong> To achieve this resolution, the EHT links radio telescopes at wavelength λ = 1.3 mm across a baseline D equal to Earth's diameter (12,742 km). The diffraction-limited resolution is:</p>
+            <div class="sl-code-block">θ_min = λ / D                 (angular resolution, radians)
+      = 1.3 × 10⁻³ m / 1.274 × 10⁷ m
+      = 1.020 × 10⁻¹⁰ rad
+      = 1.020 × 10⁻¹⁰ × 206,265 × 10⁶ μas
+      = 21 μas
+
+Sgr A* shadow diameter (EHT 2022): 51.8 ± 2.3 μas  ✓  (resolved at ~2.5 beam widths)
+
+Shadow diameter from the Schwarzschild radius:
+  The shadow diameter (not the event horizon but its lensed image) is:
+  θ_shadow = 5√3 × r_s / D_GC       (for a Schwarzschild BH)
+           = 5√3 × 12.26 × 10⁶ km / (8178 pc × 3.086 × 10¹³ km/pc)
+           = 8.66 × 12.26 × 10⁶ / (2.524 × 10¹⁷)
+           = 1.061 × 10⁸ / 2.524 × 10¹⁷  rad
+           = 4.20 × 10⁻¹⁰ rad = 86.7 μas (predicted without spin effects)
+
+  Spin and viewing angle reduce this slightly. Measured: 51.8 μas.
+  The factor 5√3 comes from the photon capture cross-section in GR:
+  photons inside 2.6 r_s (the photon capture radius) are absorbed by the BH,
+  creating the dark "shadow" region.</div>
+            <p class="sl-p"><strong>Why Sgr A* was harder to image than M87*:</strong> Despite similar angular sizes, Sgr A*'s mass is 1,500× smaller, so its event timescale (light crossing time of the Schwarzschild radius) is 1,500× shorter — just 20 seconds. During the hours-long EHT observation, the emission structure changes continuously. The collaboration required new imaging algorithms that average over these rapid variations. M87* is essentially static on these timescales.</p>
+            <div class="sl-callout sl-callout--info">The EHT image shows the photon ring — a bright ring of lensed light around the dark shadow. This ring is created by photons that orbit the BH once, twice, or more before escaping. The n=0 ring (direct emission) is widest; n=1 (one orbit) is thinner; n=2 etc. are exponentially fainter and thinner. Future higher-frequency VLBI (the ngEHT at 0.87 mm or 0.345 mm) aims to resolve individual photon rings and directly measure Sgr A*'s spin.</div>
+          </section>
+
+        </template>
+
       </main>
     </div>
   </q-page>
@@ -595,10 +914,12 @@ console.log('Moon-analogue barely fits:', hillKm > 384400 ? 'NO' : 'YES (just)')
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useRoute } from 'vue-router'
 
 // ── Lesson state ──────────────────────────────────────────────────────────────
 
-const activeLesson  = ref(1)
+const route = useRoute()
+const activeLesson  = ref(route.query.lesson ? Number(route.query.lesson) : 1)
 const activeSection = ref('')
 const contentEl     = ref<HTMLElement | null>(null)
 
@@ -631,8 +952,23 @@ const SECTIONS_L2 = [
   { id: 'l2-code',          label: '8. Runnable code examples'     },
 ]
 
+const SECTIONS_L3 = [
+  { id: 'l3-why-sgra',     label: '1. Why Sgr A* is unique'          },
+  { id: 'l3-kepler3',      label: '2. Weighing a black hole'         },
+  { id: 'l3-elements',     label: '3. Six orbital elements'          },
+  { id: 'l3-keplerEq',     label: '4. Kepler\'s equation'            },
+  { id: 'l3-schwarzschild',label: '5. Schwarzschild geometry'        },
+  { id: 'l3-kerr',         label: '6. Kerr BH — spin changes everything' },
+  { id: 'l3-timedilation', label: '7. Gravitational time dilation'   },
+  { id: 'l3-disk',         label: '8. Accretion disk physics'        },
+  { id: 'l3-irs13e',       label: '9. IRS 13E — IMBH dynamics'       },
+  { id: 'l3-eht',          label: '10. EHT — imaging the unseeable'  },
+]
+
 const activeSections = computed(() =>
-  activeLesson.value === 1 ? SECTIONS_L1 : SECTIONS_L2
+  activeLesson.value === 1 ? SECTIONS_L1
+  : activeLesson.value === 2 ? SECTIONS_L2
+  : SECTIONS_L3
 )
 
 // ── Scroll tracking ───────────────────────────────────────────────────────────
@@ -911,6 +1247,19 @@ onUnmounted(() => window.removeEventListener('scroll', onWindowScroll))
   border-left-color: rgba(160,100,255,0.50);
   color: rgba(190,165,240,0.80);
 }
+
+.sl-callout--warning {
+  background: rgba(50,25,0,0.40);
+  border-left-color: rgba(220,140,0,0.55);
+  color: rgba(215,175,110,0.85);
+}
+
+.sl-inline-link {
+  color: rgba(80,180,220,0.85);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.sl-inline-link:hover { color: rgba(0,220,255,0.95); }
 
 /* ── Tables ───────────────────────────────────────────────────────────────── */
 .sl-table {

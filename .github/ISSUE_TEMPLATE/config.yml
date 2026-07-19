@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Protocol guides & workflow docs
+    url: https://github.com/biomassives/vercel-html-exotopia.org/blob/main/docs/eco-ops-workflow-guide.md
+    about: Field protocols, chain of custody, site securing, FPIC guidance
+  - name: Exotopia.org platform
+    url: https://exotopia.org
+    about: Submit records, view your certificates, manage your site list
+  - name: Discord / community chat
+    url: https://discord.gg/exotopia
+    about: Ask questions, find partners for field days, get help with the platform

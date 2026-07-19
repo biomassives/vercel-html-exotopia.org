@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SME Engagement — Sample Terms</title>
+<style>
+@page {
+  size: A4 portrait;
+  margin: 20mm 22mm 24mm 22mm;
+  @bottom-center {
+    content: "SCD Hub / Exotopia.org — SME Engagement Sample Terms — " counter(page);
+    font-size: 8pt;
+    color: #888;
+    font-family: Arial, sans-serif;
+  }
+}
+@media screen {
+  body { max-width: 780px; margin: 32px auto; padding: 0 24px 80px; }
+  .print-hint {
+    background: #f0f9ff; border: 1px solid #bae0f7; border-radius: 5px;
+    padding: 10px 16px; margin-bottom: 28px; font-size: 9.5pt; color: #1a5276;
+  }
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Georgia', serif; font-size: 10pt; color: #111; line-height: 1.65; background: #fff; }
+
+.disclaimer {
+  background: #fff8e1; border: 1pt solid #f9a825; padding: 10px 14px;
+  margin-bottom: 22px; font-size: 8.5pt; color: #4a3500; border-radius: 3px;
+}
+.disclaimer strong { color: #c67c00; }
+
+.doc-header { border-bottom: 2pt solid #111; padding-bottom: 12px; margin-bottom: 20px; }
+.doc-label { font-size: 7.5pt; letter-spacing: 0.12em; text-transform: uppercase; color: #555; margin-bottom: 4px; font-family: Arial, sans-serif; }
+.doc-title { font-size: 16pt; font-weight: bold; margin-bottom: 6px; }
+.doc-sub { font-size: 9.5pt; color: #444; font-family: Arial, sans-serif; }
+
+.parties-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0 30px; margin: 18px 0;
+  border: 1pt solid #ccc; padding: 12px 14px;
+}
+.party-col label {
+  display: block; font-size: 7pt; letter-spacing: 0.1em; text-transform: uppercase;
+  color: #777; margin-bottom: 3px; font-family: Arial, sans-serif;
+}
+.fill-line {
+  border-bottom: 0.5pt solid #999; min-height: 18px; margin-bottom: 8px; display: block;
+}
+.fill-line-sm { border-bottom: 0.5pt solid #999; min-height: 16px; display: inline-block; width: 100%; }
+
+h2 {
+  font-size: 10pt; font-weight: bold; font-family: Arial, sans-serif;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  margin: 18px 0 6px; color: #111;
+}
+p { margin-bottom: 8px; font-size: 10pt; }
+.clause { margin-bottom: 14px; page-break-inside: avoid; break-inside: avoid; }
+.clause-num { font-weight: bold; margin-right: 4px; }
+
+.schedule {
+  border: 1pt solid #ccc; padding: 12px 14px; margin: 10px 0;
+  page-break-inside: avoid; break-inside: avoid;
+}
+.schedule h3 { font-size: 9.5pt; font-family: Arial, sans-serif; margin-bottom: 8px; font-weight: bold; }
+.sched-row { display: flex; gap: 16px; margin-bottom: 6px; align-items: baseline; }
+.sched-label { font-size: 8pt; color: #555; font-family: Arial, sans-serif; min-width: 120px; flex-shrink: 0; }
+
+.sig-block {
+  margin-top: 28px; display: grid; grid-template-columns: 1fr 1fr; gap: 0 40px;
+  page-break-inside: avoid; break-inside: avoid;
+}
+.sig-col label {
+  font-size: 7pt; letter-spacing: 0.1em; text-transform: uppercase; color: #777;
+  font-family: Arial, sans-serif; display: block; margin-bottom: 2px; margin-top: 12px;
+}
+.sig-line { border-bottom: 0.5pt solid #777; min-height: 28px; }
+</style>
+</head>
+<body>
+
+<div class="print-hint" style="display:none;" id="screenHint">
+  <strong>To save as PDF:</strong> Ctrl+P / Cmd+P → Save as PDF → A4 → Default margins.
+</div>
+<script>document.getElementById('screenHint').style.display='block'</script>
+
+<div class="disclaimer">
+  <strong>Not legal advice.</strong> This is a sample template provided by SCD Hub for convenience. It is not a substitute for independent legal counsel. For engagements involving significant fees or complex IP, both parties should seek advice from a qualified attorney in their jurisdiction. SCD Hub is not a party to this agreement and accepts no liability arising from its use.
+</div>
+
+<!-- ── Header ── -->
+<div class="doc-header">
+  <div class="doc-label">SCD Hub / Exotopia.org · Eco Ops Platform</div>
+  <div class="doc-title">Subject Matter Expert Engagement Agreement</div>
+  <div class="doc-sub">Sample terms — complete all shaded fields before signing</div>
+</div>
+
+<!-- ── Parties ── -->
+<div class="parties-grid">
+  <div class="party-col">
+    <label>Client (site owner / community group)</label>
+    <span class="fill-line"></span>
+    <label>Organisation (if applicable)</label>
+    <span class="fill-line"></span>
+    <label>Email</label>
+    <span class="fill-line"></span>
+    <label>Country</label>
+    <span class="fill-line-sm"></span>
+  </div>
+  <div class="party-col">
+    <label>Subject Matter Expert (SME)</label>
+    <span class="fill-line"></span>
+    <label>Organisation / practice (if applicable)</label>
+    <span class="fill-line"></span>
+    <label>Email</label>
+    <span class="fill-line"></span>
+    <label>Country</label>
+    <span class="fill-line-sm"></span>
+  </div>
+</div>
+
+<!-- ── Engagement Schedule ── -->
+<div class="schedule">
+  <h3>Schedule A — Engagement details</h3>
+  <div class="sched-row">
+    <span class="sched-label">Eco ops site name</span>
+    <span class="fill-line" style="flex:1"></span>
+  </div>
+  <div class="sched-row">
+    <span class="sched-label">Site ID (platform)</span>
+    <span class="fill-line" style="flex:1"></span>
+  </div>
+  <div class="sched-row">
+    <span class="sched-label">Scope of work</span>
+    <span class="fill-line" style="flex:1"></span>
+  </div>
+  <div class="sched-row"><span class="sched-label"></span><span class="fill-line" style="flex:1"></span></div>
+  <div class="sched-row"><span class="sched-label"></span><span class="fill-line" style="flex:1"></span></div>
+  <div class="sched-row">
+    <span class="sched-label">Deliverables</span>
+    <span class="fill-line" style="flex:1"></span>
+  </div>
+  <div class="sched-row"><span class="sched-label"></span><span class="fill-line" style="flex:1"></span></div>
+  <div class="sched-row">
+    <span class="sched-label">Start date</span>
+    <span class="fill-line" style="width:120px"></span>
+    &nbsp;&nbsp;
+    <span class="sched-label">End date / duration</span>
+    <span class="fill-line" style="flex:1"></span>
+  </div>
+</div>
+
+<!-- ── Fee Schedule ── -->
+<div class="schedule">
+  <h3>Schedule B — Fees and payment</h3>
+  <div class="sched-row">
+    <span class="sched-label">Fee type</span>
+    <span style="font-size:9pt;">
+      ☐ Hourly &nbsp;&nbsp; ☐ Fixed project fee &nbsp;&nbsp; ☐ Monthly retainer &nbsp;&nbsp; ☐ Quarterly retainer
+    </span>
+  </div>
+  <div class="sched-row">
+    <span class="sched-label">Rate / amount</span>
+    <span class="fill-line" style="width:100px"></span>
+    &nbsp; per &nbsp;
+    <span class="fill-line" style="width:80px"></span>
+    &nbsp;&nbsp;
+    <span class="sched-label">Currency</span>
+    <span class="fill-line" style="width:60px"></span>
+  </div>
+  <div class="sched-row">
+    <span class="sched-label">Estimated total</span>
+    <span class="fill-line" style="width:120px"></span>
+    &nbsp;&nbsp;
+    <span class="sched-label">Estimated hours</span>
+    <span class="fill-line" style="width:80px"></span>
+  </div>
+  <div class="sched-row">
+    <span class="sched-label">Payment schedule</span>
+    <span style="font-size:9pt;">
+      ☐ On completion &nbsp;&nbsp; ☐ Milestone (describe below) &nbsp;&nbsp; ☐ Monthly &nbsp;&nbsp; ☐ Retainer cycle
+    </span>
+  </div>
+  <div class="sched-row">
+    <span class="sched-label">Milestone / schedule notes</span>
+    <span class="fill-line" style="flex:1"></span>
+  </div>
+  <div class="sched-row"><span class="sched-label"></span><span class="fill-line" style="flex:1"></span></div>
+  <div class="sched-row">
+    <span class="sched-label">Payment method</span>
+    <span class="fill-line" style="flex:1"></span>
+  </div>
+  <div class="sched-row">
+    <span class="sched-label">Payment details</span>
+    <span class="fill-line" style="flex:1"></span>
+  </div>
+  <p style="font-size:8pt; color:#555; margin-top:6px;">
+    Payments are made directly between Client and SME. SCD Hub does not process, hold, or guarantee any payment.
+    Both parties agree to upload payment receipts to the platform engagement record within 5 business days of each payment.
+  </p>
+</div>
+
+<!-- ── Terms ── -->
+<h2>1. Services</h2>
+<div class="clause">
+  <p><span class="clause-num">1.1</span> The SME agrees to provide the services described in Schedule A on the terms set out in this agreement. The SME is an independent contractor and not an employee, agent, or partner of the Client or SCD Hub.</p>
+  <p><span class="clause-num">1.2</span> The SME will perform services to a professional standard consistent with their stated expertise. The SME is not responsible for outcomes outside their direct control, including decisions made by the Client based on the SME's advice.</p>
+</div>
+
+<h2>2. Fees and payment</h2>
+<div class="clause">
+  <p><span class="clause-num">2.1</span> The Client agrees to pay the SME the fees set out in Schedule B on the schedule described. Payment is the sole responsibility of the Client. SCD Hub has no payment obligation under this agreement.</p>
+  <p><span class="clause-num">2.2</span> If the Client disputes an invoice, they must notify the SME in writing within 10 business days of receipt. Undisputed amounts remain payable on the original schedule.</p>
+  <p><span class="clause-num">2.3</span> Both parties will record payment receipts on the SCD Hub platform within 5 business days of each payment as a shared record. Platform records are for coordination only and do not constitute legal proof of payment.</p>
+</div>
+
+<h2>3. Intellectual property</h2>
+<div class="clause">
+  <p><span class="clause-num">3.1</span> Unless otherwise agreed in writing, all work product created by the SME under this agreement and paid for in full by the Client belongs to the Client upon receipt of full payment.</p>
+  <p><span class="clause-num">3.2</span> The SME retains ownership of any pre-existing tools, methodologies, data, or materials they bring to the engagement. The Client receives a non-exclusive licence to use such materials as incorporated in the deliverables.</p>
+  <p><span class="clause-num">3.3</span> Where the engagement involves documenting traditional or community ecological knowledge, the community retains ownership of that knowledge. The SME's work product in documenting it does not transfer ownership of the underlying knowledge.</p>
+</div>
+
+<h2>4. Confidentiality</h2>
+<div class="clause">
+  <p><span class="clause-num">4.1</span> Each party will keep confidential any non-public information received from the other party in connection with this engagement, and will not disclose it to third parties without written consent, except as required by law.</p>
+  <p><span class="clause-num">4.2</span> Monitoring data and field observations generated during the engagement are owned by the Client community group and subject to the access tier they have set on the SCD Hub platform.</p>
+</div>
+
+<h2>5. Liability</h2>
+<div class="clause">
+  <p><span class="clause-num">5.1</span> The SME's total liability to the Client under or in connection with this agreement is limited to the total fees paid by the Client in the three months preceding the claim.</p>
+  <p><span class="clause-num">5.2</span> Neither party is liable for indirect, consequential, or incidental losses including loss of data, revenue, or ecological outcomes.</p>
+  <p><span class="clause-num">5.3</span> SCD Hub is not a party to this agreement and accepts no liability of any kind in connection with the engagement or any payment dispute between the parties.</p>
+</div>
+
+<h2>6. Term and termination</h2>
+<div class="clause">
+  <p><span class="clause-num">6.1</span> Either party may terminate this agreement with <span class="fill-line-sm" style="width:40px; display:inline-block;"></span> days' written notice. On termination, the Client pays for work completed to the termination date; the SME delivers all work product completed to that date.</p>
+  <p><span class="clause-num">6.2</span> Either party may terminate immediately for material breach if the breach is not remedied within 10 business days of written notice.</p>
+</div>
+
+<h2>7. Governing law</h2>
+<div class="clause">
+  <p><span class="clause-num">7.1</span> This agreement is governed by the laws of
+    <span class="fill-line-sm" style="width:180px; display:inline-block;"></span> (jurisdiction). Disputes will be resolved by negotiation in good faith before either party pursues formal proceedings.
+  </p>
+</div>
+
+<h2>8. General</h2>
+<div class="clause">
+  <p><span class="clause-num">8.1</span> This agreement constitutes the entire agreement between the parties regarding its subject matter and supersedes all prior discussions. It may only be amended in writing signed by both parties.</p>
+  <p><span class="clause-num">8.2</span> If any provision is unenforceable, the remaining provisions continue in full force.</p>
+</div>
+
+<!-- ── Signatures ── -->
+<div class="sig-block">
+  <div class="sig-col">
+    <label>Client signature</label>
+    <div class="sig-line"></div>
+    <label>Full name</label>
+    <div class="sig-line"></div>
+    <label>Date</label>
+    <div class="sig-line"></div>
+    <label>Platform username</label>
+    <div class="sig-line"></div>
+  </div>
+  <div class="sig-col">
+    <label>SME signature</label>
+    <div class="sig-line"></div>
+    <label>Full name</label>
+    <div class="sig-line"></div>
+    <label>Date</label>
+    <div class="sig-line"></div>
+    <label>Platform username</label>
+    <div class="sig-line"></div>
+  </div>
+</div>
+
+</body>
+</html>

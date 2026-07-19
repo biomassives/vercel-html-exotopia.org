@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
-export type TransitionMode = 'lightning' | 'spirograph' | 'iris'
+export type TransitionMode = 'lightning' | 'iris'
 
 export const useSceneTransitionStore = defineStore('scene-transition', () => {
   const phase   = ref<'idle' | 'departing' | 'black' | 'arriving'>('idle')
@@ -26,7 +26,7 @@ export const useSceneTransitionStore = defineStore('scene-transition', () => {
     mode.value    = m
     bearing.value = b
     phase.value   = 'departing'
-    const dur = m === 'spirograph' ? 1500 : m === 'lightning' ? 900 : 380
+    const dur = m === 'lightning' ? 900 : 380
     return new Promise(resolve => {
       setTimeout(() => { phase.value = 'black'; resolve() }, dur)
     })

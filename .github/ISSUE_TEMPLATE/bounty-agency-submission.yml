@@ -1,0 +1,147 @@
+name: "Bounty — Agency Submission"
+description: "A paid bounty for completing and submitting an official data report to a regulatory agency (EPA, EA, NEMA, SINAC, etc.)"
+title: "[BOUNTY] "
+labels: ["bounty", "agency-submission"]
+assignees: []
+body:
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Agency Submission Bounty
+        Fill in all fields. A maintainer will review and post the bounty amount.
+        To claim this issue once it's open, comment `/claim`.
+
+  - type: dropdown
+    id: region
+    attributes:
+      label: Region
+      options:
+        - "US — East Coast"
+        - "US — National"
+        - "Kenya — Coast"
+        - "Kenya — National"
+        - "Costa Rica"
+        - "UK — England & Wales"
+        - "Canada"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: agency
+    attributes:
+      label: Agency
+      description: Which agency receives this submission?
+      options:
+        - "EPA (US Environmental Protection Agency)"
+        - "State environmental agency (specify in description)"
+        - "EA — Environment Agency (UK)"
+        - "NEMA — National Environment Management Authority (Kenya)"
+        - "SINAC — National System of Conservation Areas (Costa Rica)"
+        - "SETENA — Environmental Technical Secretariat (Costa Rica)"
+        - "ECCC — Environment & Climate Change Canada"
+        - "Other (specify in description)"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: submission_type
+    attributes:
+      label: Submission type
+      options:
+        - "Water quality — full panel"
+        - "PFAS / PFOA screening data"
+        - "Macroinvertebrate BMWP survey"
+        - "CSO event observation (UK)"
+        - "HAB / cyanobacteria report"
+        - "Tick drag-cloth transect"
+        - "Phenology observation (USA-NPN)"
+        - "Biodiversity checklist"
+        - "Air quality"
+        - "Other"
+    validations:
+      required: true
+
+  - type: input
+    id: site
+    attributes:
+      label: Site name or coordinates
+      placeholder: "e.g. Mpeketoni Creek, 2.0°S 40.5°E"
+    validations:
+      required: true
+
+  - type: textarea
+    id: data_requirements
+    attributes:
+      label: Data required for submission
+      description: "List the parameters, sample counts, or records needed. Reference the protocol doc if one exists."
+      placeholder: |
+        - pH, DO, turbidity, temp (at least 3 readings)
+        - Chain of custody form signed
+        - GPS coordinates to 5 decimal places
+        - Photographic evidence of sample collection
+    validations:
+      required: true
+
+  - type: input
+    id: protocol_link
+    attributes:
+      label: Protocol or method reference
+      placeholder: "e.g. docs/eco-ops-workflow-guide.md §PFAS, or EPA Method 533"
+
+  - type: input
+    id: submission_deadline
+    attributes:
+      label: Submission deadline
+      placeholder: "e.g. 2026-09-30 (end of Q3 monitoring window)"
+
+  - type: dropdown
+    id: bounty_amount
+    attributes:
+      label: Bounty amount (USD equivalent)
+      options:
+        - "$10 — simple single-parameter reading"
+        - "$25 — standard multi-parameter record"
+        - "$50 — full panel with photos and CoC"
+        - "$75 — PFAS or specialist protocol"
+        - "$100 — full agency submission including filing"
+        - "$150 — multi-site or multi-day collection"
+        - "$200+ — SME-level review or complex report"
+        - "TBD — maintainer will set on review"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: payment_method
+    attributes:
+      label: Payment method offered
+      multiple: true
+      options:
+        - "M-Pesa (Kenya)"
+        - "Bank transfer"
+        - "Crypto (Algorand ALGO)"
+        - "Platform credit (eco:certificate)"
+    validations:
+      required: true
+
+  - type: textarea
+    id: verification
+    attributes:
+      label: Verification criteria
+      description: "How will a reviewer confirm the submission was accepted by the agency?"
+      placeholder: |
+        - Screenshot or PDF of agency confirmation email
+        - Agency tracking/reference number recorded in PR
+        - Reviewer cross-checks against online portal (if public)
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Before opening this bounty
+      options:
+        - label: "Protocol guide exists or has been linked above"
+        - label: "Submission portal / contact has been confirmed reachable"
+        - label: "Bounty amount has been approved by project maintainer"
+        - label: "Legal review complete if personal data is involved (FPIC for indigenous sites)"

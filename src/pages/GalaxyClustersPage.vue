@@ -348,6 +348,18 @@ const NAMED_CLUSTERS: NamedClusterMeta[] = [
     ra_str: '03h 36m', dec_str: '−21° 00′',
     notes: 'Sparse supergroup in southern sky. NGC1332 and NGC1395 dominant spirals.',
   },
+  {
+    slug: 'bootes-void', name: 'Boötes Void', dist_mpc: 250.0, member_count: 50,
+    tx_kev: 0,
+    ra_str: '15h 20m', dec_str: '+46° 00′',
+    notes: 'One of the largest known cosmic voids (~130 Mpc radius). Discovered Kirshner et al. 1981. Population of blue star-forming irregulars; no hot ICM.',
+  },
+  {
+    slug: 'local-void', name: 'Local Void', dist_mpc: 23.0, member_count: 50,
+    tx_kev: 0,
+    ra_str: '14h 36m', dec_str: '+26° 00′',
+    notes: 'Nearest major void adjacent to Laniakea. NGC 6503, NGC 6946 (Fireworks), IC 342 (Hidden Galaxy) on near wall. Pristine ISM; no ram-pressure stripping.',
+  },
 ]
 
 // ── Member data ───────────────────────────────────────────────────────────────

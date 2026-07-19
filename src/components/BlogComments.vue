@@ -29,6 +29,7 @@
           :key="c.id"
           :comment="c"
           :depth="0"
+          :post-slug="props.postSlug"
           @reply="openReply"
           @react="react"
           @edit="edit"
@@ -38,8 +39,13 @@
 
       <p v-else class="bc-empty">No comments yet — be the first.</p>
 
+      <!-- Youth mode: no compose -->
+      <div v-if="isYouthMode" class="bc-youth-note">
+        Comments are available once you've joined through a group coordinator.
+      </div>
+
       <!-- Compose -->
-      <div class="bc-compose">
+      <div v-else class="bc-compose">
         <div class="bc-compose-avatar">
           <span
             class="bc-avatar"
@@ -60,22 +66,32 @@
           <textarea
             v-model="draft"
             class="bc-textarea"
+            :class="{ 'bc-textarea--over': draft.length > COMMENT_MAX_LENGTH }"
             :placeholder="replyingTo ? 'Write a reply…' : 'Add a comment…'"
             rows="3"
+            :maxlength="COMMENT_MAX_LENGTH + 1"
             @keydown.ctrl.enter="submit"
             @keydown.meta.enter="submit"
           />
           <div class="bc-compose-footer">
-            <span class="bc-shortcut">⌘ / Ctrl + Enter to send</span>
+            <span class="bc-char-count" :class="{ 'bc-char-count--warn': draft.length > COMMENT_MAX_LENGTH * 0.9 }">
+              {{ draft.length }}/{{ COMMENT_MAX_LENGTH }}
+            </span>
+            <span class="bc-shortcut">⌘/Ctrl + Enter</span>
             <button
               class="bc-submit"
-              :disabled="!draft.trim() || sending"
+              :disabled="!draft.trim() || sending || draft.length > COMMENT_MAX_LENGTH"
               @click="submit"
             >{{ sending ? 'Sending…' : replyingTo ? 'Reply' : 'Comment' }}</button>
           </div>
           <p v-if="error" class="bc-err">{{ error }}</p>
         </div>
       </div>
+
+      <!-- Privacy note -->
+      <p class="bc-privacy-note">
+        Comments are only visible to members you've green-lit. Use 🚩 to report content to the platform. Use <em>block</em> to stop seeing a member's comments.
+      </p>
     </template>
   </section>
 </template>
@@ -83,8 +99,9 @@
 <script setup lang="ts">
 import { ref, onMounted, defineAsyncComponent } from 'vue'
 import { useMemberStore, initials } from 'src/stores/member'
-import { useComments } from 'src/composables/useComments'
-import type { Comment, Reaction } from 'src/lib/supabase'
+import { useComments, COMMENT_MAX_LENGTH } from 'src/composables/useComments'
+import { useGuestProfile } from 'src/composables/useGuestProfile'
+import type { Comment } from 'src/lib/supabase'
 import MemberSignIn from './MemberSignIn.vue'
 
 const CommentItem = defineAsyncComponent(() => import('./CommentItem.vue'))
@@ -92,6 +109,7 @@ const CommentItem = defineAsyncComponent(() => import('./CommentItem.vue'))
 const props = defineProps<{ postSlug: string }>()
 
 const store = useMemberStore()
+const { isYouthMode } = useGuestProfile()
 const { comments, threaded, loading, sending, error, load, post, edit, remove, react } =
   useComments(props.postSlug)
 
@@ -246,4 +264,31 @@ async function submit () {
   &:disabled { opacity: 0.4; cursor: default; }
 }
 .bc-err { font-size: 12px; color: #ff6644; margin: 0; }
+
+.bc-textarea--over { border-color: rgba(255, 80, 50, 0.45) !important; }
+
+.bc-char-count {
+  font-size: 11px;
+  color: #2a3a5a;
+  transition: color 0.15s;
+  &--warn { color: #ffaa33; }
+}
+
+.bc-youth-note {
+  padding: 12px 16px;
+  background: rgba(60, 200, 120, 0.05);
+  border: 1px solid rgba(60, 200, 120, 0.15);
+  border-radius: 6px;
+  font-size: 12px;
+  color: rgba(80, 180, 120, 0.65);
+  margin-bottom: 8px;
+}
+
+.bc-privacy-note {
+  margin: 16px 0 0;
+  font-size: 11px;
+  color: #2a3a5a;
+  line-height: 1.6;
+  em { font-style: normal; color: #3a4a6a; }
+}
 </style>

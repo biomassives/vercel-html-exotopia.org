@@ -140,70 +140,6 @@ function drawLightningFrame(
   }
 }
 
-// ── Spirograph helpers ───────────────────────────────────────────────────────
-
-interface SpiroConfig { r: number; d: number; color: string; delay: number; alpha: number }
-
-function drawSpirographFrame(
-  ctx: CanvasRenderingContext2D, W: number, H: number, elapsed: number,
-) {
-  ctx.clearRect(0, 0, W, H)
-  ctx.fillStyle = '#000006'
-  ctx.fillRect(0, 0, W, H)
-
-  const cx = W / 2, cy = H / 2
-  const R  = Math.min(W, H) * 0.44
-
-  // Subtle zoom-in effect for the Mandelbrot feel
-  const zoom = 1 + (elapsed / 4000)
-  ctx.save()
-  ctx.translate(cx, cy); ctx.scale(zoom, zoom); ctx.translate(-cx, -cy)
-
-  const configs: SpiroConfig[] = [
-    { r: R * 0.317, d: R * 0.62, color: '#00ddff', delay: 0,   alpha: 0.72 },
-    { r: R * 0.183, d: R * 0.39, color: '#ff44cc', delay: 180, alpha: 0.62 },
-    { r: R * 0.271, d: R * 0.26, color: '#ffcc00', delay: 320, alpha: 0.52 },
-    { r: R * 0.118, d: R * 0.54, color: '#44ff88', delay: 90,  alpha: 0.45 },
-    { r: R * 0.352, d: R * 0.13, color: '#aa66ff', delay: 240, alpha: 0.38 },
-    { r: R * 0.207, d: R * 0.72, color: '#ff8833', delay: 400, alpha: 0.30 },
-  ]
-
-  for (const cfg of configs) {
-    const local = elapsed - cfg.delay
-    if (local <= 0) continue
-    const maxT = Math.PI * 20
-    const tEnd = Math.min(maxT, local * (maxT / 1100))
-    const dt   = 0.035
-    const k    = (R - cfg.r) / cfg.r
-
-    ctx.beginPath()
-    ctx.strokeStyle = cfg.color
-    ctx.lineWidth   = 0.85
-    ctx.globalAlpha = cfg.alpha
-    ctx.shadowBlur  = 5
-    ctx.shadowColor = cfg.color
-
-    let first = true
-    for (let t = 0; t <= tEnd; t += dt) {
-      const x = cx + (R - cfg.r) * Math.cos(t) + cfg.d * Math.cos(k * t)
-      const y = cy + (R - cfg.r) * Math.sin(t) - cfg.d * Math.sin(k * t)
-      if (first) { ctx.moveTo(x, y); first = false } else ctx.lineTo(x, y)
-    }
-    ctx.stroke()
-  }
-
-  ctx.restore()
-  ctx.globalAlpha = 1
-  ctx.shadowBlur  = 0
-
-  // Fade to black after 1100ms
-  if (elapsed > 1100) {
-    const fade = Math.min(1, (elapsed - 1100) / 400)
-    ctx.fillStyle = `rgba(0,0,6,${fade})`
-    ctx.fillRect(0, 0, W, H)
-  }
-}
-
 // ── Arrival fade-from-black ──────────────────────────────────────────────────
 
 function drawArrivalFrame(ctx: CanvasRenderingContext2D, W: number, H: number, elapsed: number) {
@@ -243,7 +179,7 @@ function drawIrisFrame(
 
 // ── Main animation runner ────────────────────────────────────────────────────
 
-function runLoop(animType: 'depart-lightning' | 'depart-spirograph' | 'depart-iris' | 'arrive') {
+function runLoop(animType: 'depart-lightning' | 'depart-iris' | 'arrive') {
   cancelAnimationFrame(rafId)
   const start = performance.now()
 
@@ -257,13 +193,11 @@ function runLoop(animType: 'depart-lightning' | 'depart-spirograph' | 'depart-ir
     const origY   = H * (st.oy / 100)
 
     if      (animType === 'depart-lightning')  drawLightningFrame(ctx, W, H, origX, origY, elapsed)
-    else if (animType === 'depart-spirograph') drawSpirographFrame(ctx, W, H, elapsed)
     else if (animType === 'depart-iris')       drawIrisFrame(ctx, W, H, origX, origY, elapsed, true)
     else                                        drawArrivalFrame(ctx, W, H, elapsed)
 
     const running = animType === 'arrive' ? elapsed < 560 : (
-      animType === 'depart-lightning'  ? elapsed < 910  :
-      animType === 'depart-spirograph' ? elapsed < 1510 : elapsed < 390
+      animType === 'depart-lightning'  ? elapsed < 910  : elapsed < 390
     )
     if (running) rafId = requestAnimationFrame(tick)
   }
@@ -275,8 +209,7 @@ function runLoop(animType: 'depart-lightning' | 'depart-spirograph' | 'depart-ir
 watch(() => st.phase, (phase) => {
   if (phase === 'departing') {
     resize()
-    const animType = st.mode === 'spirograph' ? 'depart-spirograph'
-                   : st.mode === 'lightning'  ? 'depart-lightning'
+    const animType = st.mode === 'lightning'  ? 'depart-lightning'
                    : 'depart-iris'
     runLoop(animType)
   } else if (phase === 'arriving') {

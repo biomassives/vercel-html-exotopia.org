@@ -25,7 +25,7 @@ function markdownPlugin () {
  * Vite's HTML parser.
  */
 function staticPassthroughPlugin () {
-  const STATIC_PREFIXES = ['/gallery/', '/reportal/']
+  const STATIC_PREFIXES = ['/gallery/', '/reportal/', '/print/']
 
   return {
     name: 'static-html-passthrough',
@@ -35,10 +35,20 @@ function staticPassthroughPlugin () {
         const isLegacyPath = STATIC_PREFIXES.some(p => url.startsWith(p))
         if (!isLegacyPath) return next()
 
-        const filePath = join(process.cwd(), url)
-        if (!existsSync(filePath)) return next()
+        // Check public/ first (Quasar convention), then project root.
+        // Also try appending .html so clean URLs like /print/foo resolve to
+        // /print/foo.html — matching what Vercel's cleanUrls:true does in prod.
+        const root = process.cwd()
+        const candidates = [
+          join(root, 'public', url),
+          join(root, 'public', url + '.html'),
+          join(root, url),
+          join(root, url + '.html'),
+        ]
+        const filePath = candidates.find(p => existsSync(p))
+        if (!filePath) return next()
 
-        const ext = url.split('.').pop()?.toLowerCase()
+        const ext = filePath.split('.').pop()?.toLowerCase()
         const mime = {
           html: 'text/html',
           js:   'text/javascript',
@@ -170,7 +180,7 @@ module.exports = configure(function (/* ctx */) {
         node: 'node20',
       },
 
-      vueRouterMode: 'hash',
+      vueRouterMode: 'history',
 
       // Help Vite pre-bundle the large Three.js package
       extendViteConf (viteConf) {
@@ -232,6 +242,135 @@ module.exports = configure(function (/* ctx */) {
       swFilename: 'sw.js',
       manifestFilename: 'manifest.json',
       useCredentialsForManifestTag: false,
+
+      manifest: {
+        name: 'Exotopia Eco Ops',
+        short_name: 'Eco Ops',
+        description: 'Community environmental monitoring — works offline',
+        display: 'standalone',
+        orientation: 'portrait',
+        background_color: '#0a0f1e',
+        theme_color: '#1a73e8',
+        start_url: '/eco-ops',
+        icons: [
+          { src: 'icons/icon-128x128.png',  sizes: '128x128',  type: 'image/png' },
+          { src: 'icons/icon-192x192.png',  sizes: '192x192',  type: 'image/png' },
+          { src: 'icons/icon-256x256.png',  sizes: '256x256',  type: 'image/png' },
+          { src: 'icons/icon-384x384.png',  sizes: '384x384',  type: 'image/png' },
+          { src: 'icons/icon-512x512.png',  sizes: '512x512',  type: 'image/png', purpose: 'maskable' },
+        ],
+        shortcuts: [
+          {
+            name: 'New monitoring record',
+            short_name: 'Monitor',
+            url: '/eco-ops/monitor',
+            icons: [{ src: 'icons/icon-192x192.png', sizes: '192x192' }],
+          },
+          {
+            name: 'My sites',
+            short_name: 'Sites',
+            url: '/eco-ops/sites',
+            icons: [{ src: 'icons/icon-192x192.png', sizes: '192x192' }],
+          },
+        ],
+      },
+
+      workboxOptions: {
+        skipWaiting: true,
+        clientsClaim: true,
+
+        // ── Runtime caching strategies ──────────────────────────────
+        runtimeCaching: [
+
+          // OpenStreetMap tiles — CacheFirst, 30-day TTL, max 1500 tiles (~15MB)
+          {
+            urlPattern: /^https:\/\/[abc]\.tile\.openstreetmap\.org\/.+\.png$/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'osm-tiles-v1',
+              expiration: {
+                maxEntries: 1500,
+                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+              },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+
+          // Supabase REST API — NetworkFirst, 3s timeout, falls back to cache
+          // Covers site list, monitoring records, country standards
+          {
+            urlPattern: new RegExp('^https://.+\\.supabase\\.co/rest/v1/'),
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'supabase-api-v1',
+              networkTimeoutSeconds: 3,
+              expiration: {
+                maxEntries: 300,
+                maxAgeSeconds: 60 * 60 * 24, // 24h stale-while-revalidate
+              },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+
+          // Supabase Storage (photos, exports, print docs) — CacheFirst
+          {
+            urlPattern: new RegExp('^https://.+\\.supabase\\.co/storage/v1/object/public/'),
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'supabase-storage-v1',
+              expiration: {
+                maxEntries: 200,
+                maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
+              },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+
+          // Monitoring record POST — NetworkOnly with Background Sync queue
+          // When offline, POST is queued and retried when connection returns
+          {
+            urlPattern: new RegExp('^https://.+\\.supabase\\.co/rest/v1/eco_ops\\.monitoring_records'),
+            method: 'POST',
+            handler: 'NetworkOnly',
+            options: {
+              backgroundSync: {
+                name: 'monitoring-submit-queue',
+                options: {
+                  maxRetentionTime: 60 * 24, // retry for up to 24h
+                },
+              },
+            },
+          },
+
+          // Water quality obs POST — same Background Sync treatment
+          {
+            urlPattern: new RegExp('^https://.+\\.supabase\\.co/rest/v1/eco_ops\\.water_quality_obs'),
+            method: 'POST',
+            handler: 'NetworkOnly',
+            options: {
+              backgroundSync: {
+                name: 'monitoring-submit-queue', // same queue — processes in order
+                options: { maxRetentionTime: 60 * 24 },
+              },
+            },
+          },
+
+          // IPFS gateway — CacheFirst (content-addressed, immutable)
+          {
+            urlPattern: /^https:\/\/[^/]+\.ipfs\.(io|dweb\.link|cloudflare-ipfs\.com)\//,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'ipfs-content-v1',
+              expiration: {
+                maxEntries: 100,
+                maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year — content is immutable
+              },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+
+        ], // end runtimeCaching
+      }, // end workboxOptions
     },
   }
 })

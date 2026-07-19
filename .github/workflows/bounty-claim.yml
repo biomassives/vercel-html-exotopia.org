@@ -1,0 +1,116 @@
+name: Bounty claim handler
+
+# Listens for /claim comments on issues.
+# When someone comments "/claim" on a bounty issue, this action:
+#   1. Assigns the issue to the commenter
+#   2. Swaps status:open → status:claimed
+#   3. Posts a confirmation comment with next steps
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  handle-claim:
+    if: |
+      github.event.issue.pull_request == null &&
+      contains(github.event.comment.body, '/claim') &&
+      contains(join(github.event.issue.labels.*.name, ','), 'bounty')
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+
+    steps:
+
+      - name: Assign issue to claimer
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue   = context.payload.issue
+            const claimer = context.payload.comment.user.login
+            const labels  = issue.labels.map(l => l.name)
+
+            // Replace status:open with status:claimed
+            const updated = labels
+              .filter(l => l !== 'status:open')
+              .concat('status:claimed')
+
+            await github.rest.issues.setLabels({
+              owner:        context.repo.owner,
+              repo:         context.repo.repo,
+              issue_number: issue.number,
+              labels:       updated,
+            })
+
+            await github.rest.issues.addAssignees({
+              owner:        context.repo.owner,
+              repo:         context.repo.repo,
+              issue_number: issue.number,
+              assignees:    [claimer],
+            })
+
+            const body = `
+            👋 @${claimer} — you've claimed this bounty!
+
+            **Next steps:**
+
+            1. Read the protocol guide linked in this issue before collecting data.
+            2. Use the [Exotopia Eco Ops app](https://exotopia.org/#/eco-ops) to record your submission — it works offline.
+            3. When done, open a PR that closes this issue (\`Closes #${issue.number}\`) and fill in the Bounty Submission section of the PR template.
+            4. A maintainer will verify and arrange payment once the PR is merged.
+
+            If you can no longer complete this bounty, comment \`/unclaim\` to release it for others.
+
+            Good luck out there! 🌿
+            `.trim()
+
+            await github.rest.issues.createComment({
+              owner:        context.repo.owner,
+              repo:         context.repo.repo,
+              issue_number: issue.number,
+              body,
+            })
+
+  handle-unclaim:
+    if: |
+      github.event.issue.pull_request == null &&
+      contains(github.event.comment.body, '/unclaim') &&
+      contains(join(github.event.issue.labels.*.name, ','), 'status:claimed')
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+
+    steps:
+
+      - name: Release claimed bounty
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue   = context.payload.issue
+            const claimer = context.payload.comment.user.login
+            const labels  = issue.labels.map(l => l.name)
+
+            const updated = labels
+              .filter(l => l !== 'status:claimed')
+              .concat('status:open')
+
+            await github.rest.issues.setLabels({
+              owner:        context.repo.owner,
+              repo:         context.repo.repo,
+              issue_number: issue.number,
+              labels:       updated,
+            })
+
+            await github.rest.issues.removeAssignees({
+              owner:        context.repo.owner,
+              repo:         context.repo.repo,
+              issue_number: issue.number,
+              assignees:    [claimer],
+            })
+
+            await github.rest.issues.createComment({
+              owner:        context.repo.owner,
+              repo:         context.repo.repo,
+              issue_number: issue.number,
+              body: `@${claimer} has released this bounty. It's open again — comment \`/claim\` to pick it up.`,
+            })

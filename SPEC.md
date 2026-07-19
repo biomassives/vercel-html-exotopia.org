@@ -133,14 +133,20 @@ exo-stellar-orbital-v1:Alpha-Centauri:1.1-1.3au  (stellar habitable zone)
 - Human-readable **settlement nickname** assigned by the user (e.g. `"Aurora Basin Workshop"`, `"Proxima Sound Lab"`)
 - Displayed in the user's pon.ink dashboard profile and on their virtual settlement in Exotopia
 
-**Coordinate systems supported:**
+**Coordinate systems supported** — see [SPEC_EXOLOC_ADDRESS.md](SPEC_EXOLOC_ADDRESS.md) for the full specification including black hole orbital zones, trajectory addresses, parallel branch instances, and collaborative planning spaces:
 
-| System | Description |
-|---|---|
-| `exo-surface-v1` | Polygon on exoplanet surface (lat/long degrees) |
-| `exo-orbital-v1` | Altitude band in orbit around exoplanet |
-| `exo-lunar-orbital-v1` | Orbit around exoplanet moon |
-| `exo-stellar-orbital-v1` | Orbital radius band around host star / binary system |
+| System | Scope alias | Status | Description |
+|---|---|---|---|
+| `exo-surface-v1` | `surface` | Production | Polygon on exoplanet or moon surface (lat/long degrees) |
+| `exo-orbital-v1` | `orbital` | Production | Altitude band in orbit around exoplanet |
+| `exo-lunar-orbital-v1` | `lunar-orbital` | Production | Orbit around exoplanet moon |
+| `exo-stellar-orbital-v1` | `stellar-orbital` | Production | Orbital radius band around host star / binary system |
+| `exo-bh-orbital-v1` | `bh-orbital` | Specified | Black hole vicinity zone — photon sphere, ISCO, accretion disk, ergosphere, stable orbit |
+| `exo-trajectory-v1` | `trajectory` | Specified | Orbital path, slingshot, transfer arc, velocity/acceleration vector |
+| `exo-branch-v1` | `branch` | Specified | Parallel / private / branded / educational universe instance |
+| `exo-collab-v1` | `collab` | Specified | Multi-party collaborative settlement planning space |
+
+Canonical address format: `exotopia:{scope}:{path}` — also a valid URL path at `exotopia.org/{scope}/{path}`.
 
 ---
 

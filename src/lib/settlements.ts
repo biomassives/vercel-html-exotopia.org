@@ -5,7 +5,7 @@ const STORAGE_KEY = 'e8.1'   // opaque — was 'exotopia_settlements_v1'
 
 export interface SettlementRecord {
   key: string           // unique ID — see makeSettlementKey()
-  type: 'surface' | 'cluster' | 'moon' | 'orbital'
+  type: 'surface' | 'cluster' | 'moon' | 'orbital' | 'bh-orbital'
   planetName: string
   hostname: string
   exolocation: string   // full address string for the deed

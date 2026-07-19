@@ -63,17 +63,27 @@
   },
 
   "_coordinate_system_reference": {
-    "_note": "Use exactly one of the four coordinate_system values below. Swap the exolocation block accordingly.",
+    "_note": "Use exactly one of the eight coordinate_system values below. Full spec: SPEC_EXOLOC_ADDRESS.md. The canonical address format is: exotopia:{scope}:{path}",
+    "_address_format": "exotopia:{scope}:{host-or-bh}/{body-or-zone}/{region-or-leg}",
+    "_address_examples": [
+      "exotopia:surface:kepler-442/kepler-442b/aurora-basin",
+      "exotopia:bh-orbital:M87*/photon-sphere",
+      "exotopia:trajectory:earth→kepler-442b/slingshot/leg-2",
+      "exotopia:branch:uni-kibaoni-aspire-2030/surface:kepler-442/kepler-442b/aurora-basin",
+      "exotopia:collab:surface:kepler-442/kepler-442b/aurora-basin/build-2026"
+    ],
 
     "exo-surface-v1": {
-      "_use_when": "Colony or settlement location on an exoplanet surface owned by NFT holder(s)",
-      "reference_body.type": "exoplanet",
+      "_scope": "surface",
+      "_use_when": "Colony or settlement on an exoplanet or moon surface",
+      "reference_body.type": "exoplanet | exoplanet_moon",
       "boundary.type": "polygon | circle | named_zone",
       "boundary.coordinate_units": "degrees_surface_lat_long",
       "boundary.coordinates": "Array of [lat, lon] pairs closing back to first point"
     },
 
     "exo-orbital-v1": {
+      "_scope": "orbital",
       "_use_when": "Zone or station in orbit around an exoplanet",
       "reference_body.type": "exoplanet",
       "boundary.type": "orbital_zone",
@@ -86,10 +96,11 @@
     },
 
     "exo-lunar-orbital-v1": {
+      "_scope": "lunar-orbital",
       "_use_when": "Zone or station in orbit around a moon of an exoplanet",
       "reference_body.type": "exoplanet_moon",
       "reference_body.extra_fields": {
-        "moon_name": "string — human-readable name given by group if unnamed",
+        "moon_name": "string",
         "parent_planet": "pl_name of the exoplanet the moon orbits"
       },
       "boundary.type": "orbital_zone",
@@ -101,18 +112,101 @@
     },
 
     "exo-stellar-orbital-v1": {
-      "_use_when": "Zone in orbit around the star or binary star system of an exoplanet",
+      "_scope": "stellar-orbital",
+      "_use_when": "Zone in orbit around the host star or binary star system",
       "reference_body.type": "star | binary_star_system",
       "reference_body.extra_fields": {
         "system_name": "string",
         "primary_star": "string",
-        "secondary_star": "string | null — null if single star"
+        "secondary_star": "string | null"
       },
       "boundary.type": "orbital_zone",
       "boundary.fields": {
         "orbital_radius_au_min": "number",
         "orbital_radius_au_max": "number",
         "inclination_deg": "number"
+      }
+    },
+
+    "exo-bh-orbital-v1": {
+      "_scope": "bh-orbital",
+      "_use_when": "Station or settlement in the vicinity of a black hole — photon sphere, ISCO, accretion disk, ergosphere, or stable orbit",
+      "_zones": [
+        "event-horizon (reference only — no stable settlement)",
+        "photon-sphere",
+        "isco",
+        "ergosphere (Kerr BH only)",
+        "accretion-disk-inner",
+        "accretion-disk-mid",
+        "accretion-disk-outer",
+        "jet-cone-north",
+        "jet-cone-south",
+        "stable-orbital:{n}rs  (e.g. stable-orbital:10rs)"
+      ],
+      "bh_orbital.fields": {
+        "bh_id":               "string — e.g. M87*, Sgr-A*, NGC-1277",
+        "bh_type":             "Schwarzschild | Kerr | Kerr-Newman",
+        "spin_parameter":      "number 0–1 (Kerr only)",
+        "bh_mass_msun":        "string — scientific notation e.g. 6.5e9",
+        "zone":                "string — one of the registered zone IDs above",
+        "orbital_radius_rs":   "number — in units of Schwarzschild radii",
+        "time_dilation_factor":"number — relative to distant observer",
+        "radiation_class":     "standard | elevated | extreme"
+      }
+    },
+
+    "exo-trajectory-v1": {
+      "_scope": "trajectory",
+      "_use_when": "Orbital path, gravity-assist slingshot, transfer arc, or velocity/acceleration vector between two locations",
+      "_trajectory_types": [
+        "hohmann", "slingshot", "hyperbolic-escape",
+        "brachistochrone", "relativistic-boost",
+        "spiral-descent", "free-fall", "lagrange-transfer"
+      ],
+      "trajectory.fields": {
+        "type":               "string — one of the trajectory types above",
+        "origin":             "exoloc address string",
+        "destination":        "exoloc address string",
+        "waypoints":          "array of { body, assist_type, delta_v_kms }",
+        "state_vector": {
+          "epoch":            "ISO 8601 datetime",
+          "position_au":      "[x, y, z] in AU",
+          "velocity_kms":     "[vx, vy, vz] in km/s"
+        },
+        "acceleration_g":     "number — sustained thrust in g (0 if unpowered)",
+        "cruise_velocity_kms":"number",
+        "relativistic":       "boolean — true if Lorentz factor > 1.01",
+        "estimated_arrival":  "ISO 8601 date"
+      }
+    },
+
+    "exo-branch-v1": {
+      "_scope": "branch",
+      "_use_when": "Parallel, private, branded, research, or educational instance of any settlement or region",
+      "_branch_types": ["public", "private", "branded", "research", "educational"],
+      "branch.fields": {
+        "branch_id":        "string — {owner-slug}-{purpose}-{version}",
+        "branch_type":      "string — one of the branch types above",
+        "owner":            "wallet address or community ID",
+        "base_address":     "the canonical exoloc address this branch diverges from",
+        "divergence_note":  "string — what is different in this branch",
+        "access":           "open | invite_only | token_gated",
+        "created":          "ISO 8601 date",
+        "leech_axis":       "current | aspirational | relational | {custom}"
+      }
+    },
+
+    "exo-collab-v1": {
+      "_scope": "collab",
+      "_use_when": "Multi-party collaborative planning space attached to a settlement",
+      "_phases": ["proposal", "design", "review", "building", "active", "archived"],
+      "collab.fields": {
+        "collab_id":          "string",
+        "settlement":         "base exoloc address being planned",
+        "phase":              "string — one of the phases above",
+        "participants":       "array of { id, role }",
+        "feature_proposals":  "array of { object, status, earned_by }",
+        "version":            "string — e.g. v1, v2"
       }
     }
   }

@@ -1,18 +1,15 @@
 <template>
-  <q-page class="vi-page bg-black overflow-hidden"
-    @mousemove="onPageMouseMove"
-    @touchmove.passive="onPageTouchMove"
+  <!-- Transparent overlay — shared Three.js canvas in MainLayout renders behind -->
+  <q-page class="vi-page viz-overlay-page"
+    @click="onClick"
+    @mousedown="onDragStart"
+    @mousemove="onPageMouseMove(); onDragMove($event)"
+    @mouseup="onDragEnd"
+    @mouseleave="onDragEnd"
+    @touchstart.passive="onTouchDragStart"
+    @touchmove.passive="onPageTouchMove(); onTouchDragMove($event)"
+    @touchend="onDragEnd"
   >
-    <canvas ref="canvasEl" class="vi-canvas"
-      @click="onClick"
-      @mousedown="onDragStart"
-      @mousemove="onDragMove"
-      @mouseup="onDragEnd"
-      @mouseleave="onDragEnd"
-      @touchstart.passive="onTouchDragStart"
-      @touchmove.passive="onTouchDragMove"
-      @touchend="onDragEnd"
-    />
 
     <!-- Top overlay: breadcrumb + header (auto-hides) -->
     <transition name="vi-fade">
@@ -196,13 +193,18 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import * as THREE from 'three'
+import type { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import { useVizRenderer, VIZ_BAR_H } from 'src/composables/useVizRenderer'
+import { disposeScene } from 'src/lib/three-utils'
+import { useSceneTransitionStore } from 'src/stores/scene-transition'
 import type { VoidOracleFile, VoidGalaxy } from 'src/data/void-oracle.types'
 import { loadVoidOracle } from 'src/lib/void-oracle'
 
 // ── Route ──────────────────────────────────────────────────────────────────────
 
-const route  = useRoute()
-const router = useRouter()
+const route      = useRoute()
+const router     = useRouter()
+const transition = useSceneTransitionStore()
 
 const displayName = computed(() =>
   String(route.query.name ?? route.params.voidId ?? 'Cosmic Void').toUpperCase()
@@ -251,14 +253,17 @@ function onHudClick()      { uiVisible.value = !uiVisible.value; if (uiVisible.v
 function onPageMouseMove() { scheduleHide() }
 function onPageTouchMove() { scheduleHide() }
 
-// ── Three.js ──────────────────────────────────────────────────────────────────
+// ── Three.js — shared renderer ────────────────────────────────────────────────
 
-const canvasEl = ref<HTMLCanvasElement | null>(null)
+const viz = useVizRenderer()
+let renderer: THREE.WebGLRenderer     | null = null
+let scene:    THREE.Scene             | null = null
+let camera:   THREE.PerspectiveCamera | null = null
+let controls: OrbitControls | null = null
+let _stopTick: (() => void) | null = null
 
-let renderer: THREE.WebGLRenderer
-let scene:    THREE.Scene
-let camera:   THREE.PerspectiveCamera
-let animId:   number
+// Root group for all page-level scene objects — added/removed on mount/unmount
+const pageGroup = new THREE.Group()
 
 // Orbital camera state
 const orbit = { theta: 0.0, phi: Math.PI * 0.42 }
@@ -274,6 +279,7 @@ let agnPoints:    THREE.Points | null = null
 let dragMoved    = 0
 
 function updateCamera() {
+  if (!camera) return
   const r  = camR.value
   const sp = Math.sin(orbit.phi), cp = Math.cos(orbit.phi)
   const st = Math.sin(orbit.theta), ct = Math.cos(orbit.theta)
@@ -315,14 +321,14 @@ function onTouchDragMove(e: TouchEvent) {
 // ── Galaxy click handler ──────────────────────────────────────────────────────
 
 function onClick(e: MouseEvent) {
-  if (dragMoved > 6 || !canvasEl.value || !camera) return
-  const rect = canvasEl.value.getBoundingClientRect()
-  const rc   = new THREE.Raycaster()
+  if (dragMoved > 6 || !camera) return
+  const w = window.innerWidth, h = window.innerHeight - VIZ_BAR_H
+  const rc = new THREE.Raycaster()
   rc.params.Points = { threshold: 2.6 }
   rc.setFromCamera(
     new THREE.Vector2(
-      ((e.clientX - rect.left) / rect.width)  *  2 - 1,
-      ((e.clientY - rect.top)  / rect.height) * -2 + 1,
+      (e.clientX / w) * 2 - 1,
+      -((e.clientY - VIZ_BAR_H) / h) * 2 + 1,
     ),
     camera,
   )
@@ -338,7 +344,20 @@ function onClick(e: MouseEvent) {
   if (hideTimer) clearTimeout(hideTimer)
 }
 
-function goToGalaxy(gal: VoidGalaxy) {
+async function goToGalaxy(gal: VoidGalaxy) {
+  // This page drives the camera with fixed orbit-around-origin math (no
+  // OrbitControls target to fly toward), so there's no continuous zoom here —
+  // just an iris wipe centered on the galaxy's screen position to cover the
+  // pageGroup swap into VoidGalaxyPage (which shares the renderer).
+  let ox = 50, oy = 50
+  if (camera) {
+    const pos3d = new THREE.Vector3(...gal.pos_void).multiplyScalar(VIS_SCALE)
+    const sc    = pos3d.project(camera)
+    ox = (sc.x + 1) / 2 * 100
+    oy = (1 - sc.y) / 2 * 100
+  }
+  const bearing = Math.atan2(oy / 100 - 0.5, ox / 100 - 0.5)
+  await transition.depart(ox, oy, 'iris', bearing)
   void router.push({
     name:   'void-galaxy',
     params: { voidId: String(route.params.voidId ?? 'bootes-void'), gid: gal.gid },
@@ -387,7 +406,7 @@ function addStarField() {
   const geo = new THREE.BufferGeometry()
   geo.setAttribute('position', new THREE.BufferAttribute(pos, 3))
   geo.setAttribute('color',    new THREE.BufferAttribute(col, 3))
-  scene.add(new THREE.Points(geo, new THREE.PointsMaterial({
+  pageGroup.add(new THREE.Points(geo, new THREE.PointsMaterial({
     size: 0.46, sizeAttenuation: true, vertexColors: true,
     transparent: true, opacity: 0.58, depthWrite: false,
   })))
@@ -424,7 +443,7 @@ function addGalaxiesFromOracle(oracle: VoidOracleFile) {
       size: 0.92, sizeAttenuation: true, vertexColors: true,
       transparent: true, opacity: 0.74, depthWrite: false,
     }))
-    scene.add(wallPoints)
+    pageGroup.add(wallPoints)
   }
 
   // Interior field galaxies — sparse inside the bubble
@@ -449,7 +468,7 @@ function addGalaxiesFromOracle(oracle: VoidOracleFile) {
       size: 0.54, sizeAttenuation: true, vertexColors: true,
       transparent: true, opacity: 0.44, depthWrite: false,
     }))
-    scene.add(fieldPoints)
+    pageGroup.add(fieldPoints)
   }
 
   // AGN highlights — additive glow cores at active galactic nuclei positions
@@ -468,7 +487,7 @@ function addGalaxiesFromOracle(oracle: VoidOracleFile) {
       transparent: true, opacity: 0.20,
       blending: THREE.AdditiveBlending, depthWrite: false,
     }))
-    scene.add(agnPoints)
+    pageGroup.add(agnPoints)
   }
 
   // Wall-group halos — 12 evenly-sampled wall positions; soft glow suggests group-scale halo
@@ -483,7 +502,7 @@ function addGalaxiesFromOracle(oracle: VoidOracleFile) {
     }
     const geo = new THREE.BufferGeometry()
     geo.setAttribute('position', new THREE.BufferAttribute(pos, 3))
-    scene.add(new THREE.Points(geo, new THREE.PointsMaterial({
+    pageGroup.add(new THREE.Points(geo, new THREE.PointsMaterial({
       color: 0x5577aa, size: 9.0, sizeAttenuation: true,
       transparent: true, opacity: 0.09,
       blending: THREE.AdditiveBlending, depthWrite: false,
@@ -513,7 +532,7 @@ function addProceduralVoid() {
   const wGeo = new THREE.BufferGeometry()
   wGeo.setAttribute('position', new THREE.BufferAttribute(wPo, 3))
   wGeo.setAttribute('color',    new THREE.BufferAttribute(wCo, 3))
-  scene.add(new THREE.Points(wGeo, new THREE.PointsMaterial({
+  pageGroup.add(new THREE.Points(wGeo, new THREE.PointsMaterial({
     size: 0.9, sizeAttenuation: true, vertexColors: true,
     transparent: true, opacity: 0.62, depthWrite: false,
   })))
@@ -528,7 +547,7 @@ function addProceduralVoid() {
   }
   const fGeo = new THREE.BufferGeometry()
   fGeo.setAttribute('position', new THREE.BufferAttribute(fPo, 3))
-  scene.add(new THREE.Points(fGeo, new THREE.PointsMaterial({
+  pageGroup.add(new THREE.Points(fGeo, new THREE.PointsMaterial({
     color: 0x3a5060, size: 0.48, sizeAttenuation: true,
     transparent: true, opacity: 0.38, depthWrite: false,
   })))
@@ -537,18 +556,26 @@ function addProceduralVoid() {
 // ── Main scene setup ──────────────────────────────────────────────────────────
 
 async function buildScene() {
-  if (!canvasEl.value) return
-  const w = canvasEl.value.clientWidth  || window.innerWidth
-  const h = canvasEl.value.clientHeight || window.innerHeight
+  // Grab shared renderer refs
+  renderer = viz.renderer
+  scene    = viz.scene
+  camera   = viz.camera
+  controls = viz.controls
+  if (!renderer || !scene || !camera || !controls) return
 
-  renderer = new THREE.WebGLRenderer({ canvas: canvasEl.value, antialias: false, alpha: false })
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5))
-  renderer.setClearColor(0x000002, 1)
-  renderer.setSize(w, h)
+  // This page drives the camera with its own orbit math (no OrbitControls) —
+  // disable the shared controls so a drag here isn't double-handled by both.
+  controls.enabled = false
 
-  scene  = new THREE.Scene()
-  camera = new THREE.PerspectiveCamera(65, w / h, 0.1, 400)
+  scene.background = new THREE.Color(0x000002)
+
+  camera.fov  = 65
+  camera.near = 0.1
+  camera.far  = 400
   updateCamera()
+  camera.updateProjectionMatrix()
+
+  scene.add(pageGroup)
 
   addStarField()
 
@@ -565,61 +592,50 @@ async function buildScene() {
     const shellMat = new THREE.MeshBasicMaterial({
       color: 0x1a3a60, wireframe: true, transparent: true, opacity: 0.04, depthWrite: false,
     })
-    scene.add(new THREE.Mesh(shellGeo, shellMat))
+    pageGroup.add(new THREE.Mesh(shellGeo, shellMat))
 
     // Equatorial ring — stronger accent at void midplane
     const ringGeo = new THREE.TorusGeometry(shellR, 0.18, 4, 80)
     const ringMat = new THREE.MeshBasicMaterial({ color: 0x224466, transparent: true, opacity: 0.07, depthWrite: false })
-    scene.add(new THREE.Mesh(ringGeo, ringMat))
+    pageGroup.add(new THREE.Mesh(ringGeo, ringMat))
   }
 
-  const loop = () => {
-    animId = requestAnimationFrame(loop)
-    if (!drag.active) orbit.theta += 0.000125
-    // Sync layer visibility from reactive state
-    if (wallPoints)  wallPoints.visible  = layerWall.value
-    if (fieldPoints) fieldPoints.visible = layerField.value
-    if (agnPoints)   agnPoints.visible   = layerAGN.value
-    updateCamera()
-    renderer.render(scene, camera)
-  }
-  loop()
+  _stopTick = viz.addTick(tick)
 }
 
-function onResize() {
-  if (!canvasEl.value || !renderer) return
-  const w = canvasEl.value.clientWidth
-  const h = canvasEl.value.clientHeight
-  renderer.setSize(w, h)
-  camera.aspect = w / h
-  camera.updateProjectionMatrix()
+function tick() {
+  if (!drag.active) orbit.theta += 0.000125
+  // Sync layer visibility from reactive state
+  if (wallPoints)  wallPoints.visible  = layerWall.value
+  if (fieldPoints) fieldPoints.visible = layerField.value
+  if (agnPoints)   agnPoints.visible   = layerAGN.value
+  updateCamera()
 }
 
-onMounted(() => {
-  window.addEventListener('resize', onResize)
-  canvasEl.value?.addEventListener('wheel', onWheel, { passive: false })
+onMounted(async () => {
+  // Await a tick so MainLayout's onMounted (which calls viz.init()) runs first —
+  // this page can otherwise mount before the shared renderer exists.
+  await Promise.resolve()
+  viz.canvas?.addEventListener('wheel', onWheel, { passive: false })
   scheduleHide()
   void buildScene()
 })
 
 onUnmounted(() => {
-  window.removeEventListener('resize', onResize)
-  canvasEl.value?.removeEventListener('wheel', onWheel)
+  viz.canvas?.removeEventListener('wheel', onWheel)
+  _stopTick?.(); _stopTick = null
+  if (controls) controls.enabled = true
+
+  disposeScene(pageGroup)
+  scene?.remove(pageGroup)
+  if (scene) scene.background = null
   if (hideTimer) clearTimeout(hideTimer)
-  cancelAnimationFrame(animId)
-  renderer?.dispose()
 })
 </script>
 
 <style scoped>
 .vi-page { position: relative; width: 100%; height: 100vh; cursor: grab; }
 .vi-page:active { cursor: grabbing; }
-
-.vi-canvas {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  display: block;
-}
 
 /* ── Top overlay ─────────────────────────────────────────────────────────── */
 .vi-top-overlay {

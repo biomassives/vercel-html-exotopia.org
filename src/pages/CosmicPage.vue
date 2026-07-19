@@ -1350,7 +1350,9 @@ const _catalogCache   = new Map<string, CatalogMember[]>()
 const _starRegionCache = new Map<string, CatalogStarEntry[]>()
 
 function clusterSlug(name: string): string {
-  return name.toLowerCase()
+  return name
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')  // strip diacritics (Boötes → Bootes)
+    .toLowerCase()
     .replace(/\s+cluster/i,'').replace(/\s+concentration/i,'')
     .trim().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'')
 }
@@ -3301,9 +3303,31 @@ function voidSlug(name: string): string {
     .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '')
 }
 
-function navigateToVoid() {
+async function navigateToVoid() {
   const v = selected.value?.cosmicVoid
   if (!v) return
+
+  // Continuous in-page camera zoom toward the void before the route change
+  // (mirrors navigateToClusterInterior) — VoidInteriorPage now shares the renderer.
+  let ox = 50, oy = 50
+  if (camera && controls) {
+    const targetPos = voidScenePos(v)
+    const distNow   = camera.position.distanceTo(targetPos)
+    if (distNow > 0.5) {
+      const fromCam = camera.position.clone().sub(targetPos).normalize()
+      const dest    = targetPos.clone().addScaledVector(fromCam, 0.30)
+      gsap.killTweensOf(camera.position); gsap.killTweensOf(controls.target)
+      await new Promise<void>(resolve => {
+        gsap.to(controls!.target, { x: targetPos.x, y: targetPos.y, z: targetPos.z, duration: 1.0, ease: 'power2.inOut', onUpdate: () => controls?.update() })
+        gsap.to(camera!.position, { x: dest.x, y: dest.y, z: dest.z, duration: 1.4, ease: 'power2.inOut', onUpdate: () => controls?.update(), onComplete: resolve })
+      })
+    }
+    const sc = targetPos.clone().project(camera)
+    ox = (sc.x + 1) / 2 * 100
+    oy = (1 - sc.y) / 2 * 100
+  }
+  const bearing = Math.atan2(oy / 100 - 0.5, ox / 100 - 0.5)
+  await transition.depart(ox, oy, 'iris', bearing)
   void router.push({
     path:  `/void/${voidSlug(v.name)}`,
     query: {
@@ -3341,9 +3365,29 @@ async function navigateToClusterInterior() {
     ? selected.value.name
     : activeCluster.value?.name
   if (!name) return
-  // Project cluster scene position to screen for spirograph origin
-  let ox = 50, oy = 50
   const c = CLUSTERS.find(cl => cl.name === name)
+
+  // Continuous in-page camera zoom toward the cluster before the route change
+  // (SPEC_ZOOM_DESCENT.md §4.1). CosmicPage and ClusterInteriorPage now share
+  // the same renderer/camera, so this reads as one uninterrupted approach —
+  // the iris wipe below only needs to cover the pageGroup swap underneath.
+  if (c && camera && controls) {
+    const targetPos = clusterScenePos(c)
+    const distNow   = camera.position.distanceTo(targetPos)
+    if (distNow > 0.5) {
+      const fromCam = camera.position.clone().sub(targetPos).normalize()
+      const flyR    = 0.30
+      const dest    = targetPos.clone().addScaledVector(fromCam, flyR)
+      gsap.killTweensOf(camera.position); gsap.killTweensOf(controls.target)
+      await new Promise<void>(resolve => {
+        gsap.to(controls!.target, { x: targetPos.x, y: targetPos.y, z: targetPos.z, duration: 1.0, ease: 'power2.inOut', onUpdate: () => controls?.update() })
+        gsap.to(camera!.position, { x: dest.x, y: dest.y, z: dest.z, duration: 1.4, ease: 'power2.inOut', onUpdate: () => controls?.update(), onComplete: resolve })
+      })
+    }
+  }
+
+  // Project cluster scene position to screen for the iris origin
+  let ox = 50, oy = 50
   if (c && camera) {
     const pos3d = clusterScenePos(c)
     const sc    = pos3d.clone().project(camera)
@@ -3351,7 +3395,7 @@ async function navigateToClusterInterior() {
     oy = (1 - sc.y) / 2 * 100
   }
   const bearing = Math.atan2(oy / 100 - 0.5, ox / 100 - 0.5)
-  await transition.depart(ox, oy, 'spirograph', bearing)
+  await transition.depart(ox, oy, 'iris', bearing)
   void router.push(`/cluster-interior/${clusterSlug(name)}`)
 }
 

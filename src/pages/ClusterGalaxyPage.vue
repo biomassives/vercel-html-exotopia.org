@@ -1,7 +1,7 @@
 <template>
-  <q-page class="cg-page bg-black overflow-hidden">
-    <!-- Three.js canvas -->
-    <canvas ref="canvasEl" class="cg-canvas" />
+  <!-- Transparent overlay — shared Three.js canvas in MainLayout renders behind -->
+  <q-page class="cg-page viz-overlay-page" :style="hoveringSystem ? { cursor: 'pointer' } : {}"
+    @click="onClick" @mousemove="onMouseMove" @mouseleave="onMouseLeaveCanvas">
 
     <!-- Breadcrumb -->
     <div class="cg-breadcrumb row items-center q-gutter-xs no-wrap">
@@ -122,8 +122,9 @@
 import { ref, computed, onMounted, onBeforeUnmount, shallowRef } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import * as THREE from 'three'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import type { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import gsap from 'gsap'
+import { useVizRenderer, VIZ_BAR_H } from 'src/composables/useVizRenderer'
 import { useClusterGalaxyData, mulberry32, buildBackgroundField } from 'src/composables/useClusterGalaxyData'
 import type { ClusterGalaxyDoc } from 'src/composables/useClusterGalaxyData'
 import { useSettlements, clusterKey }                             from 'src/lib/settlements'
@@ -141,7 +142,7 @@ const memberId    = computed(() => String(route.params.memberId    ?? ''))
 const { loading, error, doc, load: loadGalaxyData } = useClusterGalaxyData(clusterSlug, memberId)
 
 // ── State ──────────────────────────────────────────────────────────────────────
-const canvasEl = ref<HTMLCanvasElement>()
+const hoveringSystem = ref(false)
 
 interface StarSystem {
   idx:        number
@@ -266,12 +267,15 @@ function mapDocToSystems(galaxyDoc: ClusterGalaxyDoc): StarSystem[] {
   })
 }
 
-// ── Three.js scene ─────────────────────────────────────────────────────────────
-let renderer: THREE.WebGLRenderer | null = null
-let scene:    THREE.Scene | null = null
+// ── Three.js scene — shared renderer; per-page raycaster ─────────────────────
+const viz = useVizRenderer()
+let renderer: THREE.WebGLRenderer     | null = null
+let scene:    THREE.Scene             | null = null
 let camera:   THREE.PerspectiveCamera | null = null
-let controls: OrbitControls | null = null
-let rafId:    number | null = null
+let controls: OrbitControls           | null = null
+
+// Root group for all page-level scene objects — added/removed on mount/unmount
+const pageGroup = new THREE.Group()
 
 const systemMeshes  = shallowRef<THREE.Mesh[]>([])
 const glowSprites:  THREE.Sprite[]  = []   // indexed by sys.idx — for hover brightening
@@ -370,25 +374,34 @@ function buildGlowSprite(sys: StarSystem): THREE.Sprite {
 }
 
 function buildScene() {
-  if (renderer || !canvasEl.value) return   // guard: only one WebGL context per mount
+  // Grab shared renderer refs
+  renderer = viz.renderer
+  scene    = viz.scene
+  camera   = viz.camera
+  controls = viz.controls
+  if (!renderer || !scene || !camera || !controls) return
 
-  renderer = new THREE.WebGLRenderer({ canvas: canvasEl.value, antialias: true, alpha: false })
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-  renderer.setSize(window.innerWidth, window.innerHeight)
-  renderer.setClearColor(0x030609)
+  // Configure scene appearance for the cluster-galaxy level
+  scene.background = new THREE.Color(0x030609)
+  scene.fog        = null
 
-  scene  = new THREE.Scene()
-  camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.001, 200)
+  // Configure camera for cluster-galaxy scale
+  camera.fov  = 55
+  camera.near = 0.001
+  camera.far  = 200
 
   // Bearing-synced arrival: approach from the direction of the click in the prior scene
   const b = parseFloat(String(route.query.bearing ?? '0')) || 0
   const entryDist = 11
   camera.position.set(Math.sin(b) * entryDist, 4.2, Math.cos(b) * entryDist)
+  camera.updateProjectionMatrix()
 
-  controls = new OrbitControls(camera, canvasEl.value)
-  controls.enableDamping = true; controls.dampingFactor = 0.06
-  controls.minDistance   = 0.06; controls.maxDistance   = 14
-  controls.autoRotate    = true; controls.autoRotateSpeed = 0.25
+  // Configure controls for cluster-galaxy navigation
+  controls.dampingFactor  = 0.06
+  controls.minDistance    = 0.06; controls.maxDistance   = 14
+  controls.autoRotate     = true; controls.autoRotateSpeed = 0.25
+
+  scene.add(pageGroup)
 
   raycaster = new THREE.Raycaster()
   raycaster.params.Points = { threshold: 0.04 }
@@ -400,26 +413,26 @@ function buildScene() {
   for (let i = 0; i < ptPos.length; i++) ptPos[i] = (Math.random() - 0.5) * 20
   ptGeo.setAttribute('position', new THREE.BufferAttribute(ptPos, 3))
   const ptMat = new THREE.PointsMaterial({ color: 0x334455, size: 0.015, transparent: true, opacity: 0.5 })
-  scene.add(new THREE.Points(ptGeo, ptMat))
+  pageGroup.add(new THREE.Points(ptGeo, ptMat))
 
   // Ambient light (very dark)
-  scene.add(new THREE.AmbientLight(0x112233, 0.4))
+  pageGroup.add(new THREE.AmbientLight(0x112233, 0.4))
 
   // Galaxy core sprite — kept in module ref so hover can pulse it
   coreSprite = buildGalaxyCoreSprite(memberHubble.value)
-  scene.add(coreSprite)
+  pageGroup.add(coreSprite)
 
   // Galaxy core glow mesh (for depth blending)
   const coreGlowGeo = new THREE.SphereGeometry(0.08, 12, 12)
   const coreGlowMat = new THREE.MeshBasicMaterial({ color: 0xffeecc, transparent: true, opacity: 0.5 })
-  scene.add(new THREE.Mesh(coreGlowGeo, coreGlowMat))
+  pageGroup.add(new THREE.Mesh(coreGlowGeo, coreGlowMat))
 
   // Subtle orbit ring
   const ringGeo = new THREE.RingGeometry(0.12, 0.13, 64)
   const ringMat = new THREE.MeshBasicMaterial({ color: 0x223344, side: THREE.DoubleSide, transparent: true, opacity: 0.4 })
   const ring    = new THREE.Mesh(ringGeo, ringMat)
   ring.rotation.x = -Math.PI / 2
-  scene.add(ring)
+  pageGroup.add(ring)
 
   // Background stellar population — THREE.Points from seed, single draw call
   if (doc.value) {
@@ -449,7 +462,7 @@ function buildScene() {
       depthWrite:      false,
       alphaTest:       0.01,
     })
-    scene.add(new THREE.Points(ptGeo, ptMat))
+    pageGroup.add(new THREE.Points(ptGeo, ptMat))
   }
 
   // Anchor system meshes + invisible hit proxies for reliable raycasting
@@ -462,7 +475,7 @@ function buildScene() {
     glow.position.copy(mesh.position)
     glow.userData.baseScale = glow.scale.x
     glowSprites[sys.idx] = glow
-    scene.add(mesh, glow)
+    pageGroup.add(mesh, glow)
 
     // Hit proxy: invisible sphere 3× the visual radius — makes clicking reliable
     const visR  = 0.022 + sys.planetCount * 0.005
@@ -473,7 +486,7 @@ function buildScene() {
     )
     proxy.position.copy(mesh.position)
     proxy.userData.sysIdx = sys.idx
-    scene.add(proxy)
+    pageGroup.add(proxy)
     meshes.push(proxy)   // raycaster targets the proxy, not the visual mesh
   }
   systemMeshes.value = meshes
@@ -488,35 +501,16 @@ function buildScene() {
   }))
   guideLine.frustumCulled = false
   guideLine.computeLineDistances()
-  scene.add(guideLine)
-
-  window.addEventListener('resize', onResize)
-  canvasEl.value.addEventListener('click', onClick)
-  canvasEl.value.addEventListener('mousemove', onMouseMove)
-  canvasEl.value.addEventListener('mouseleave', onMouseLeaveCanvas)
-
-  tick()
+  pageGroup.add(guideLine)
 }
 
 let hoveredIdx = -1
-function tick() {
-  rafId = requestAnimationFrame(tick)
-  controls?.update()
-  if (scene && camera && renderer) renderer.render(scene, camera)
-}
-
-function onResize() {
-  if (!camera || !renderer) return
-  camera.aspect = window.innerWidth / window.innerHeight
-  camera.updateProjectionMatrix()
-  renderer.setSize(window.innerWidth, window.innerHeight)
-}
 
 function raycastSystems(event: MouseEvent): StarSystem | null {
   if (!camera || !scene) return null
-  const rect = canvasEl.value!.getBoundingClientRect()
-  mouse.x = ((event.clientX - rect.left) / rect.width)  * 2 - 1
-  mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1
+  const w = window.innerWidth, h = window.innerHeight - VIZ_BAR_H
+  mouse.x =  (event.clientX / w) * 2 - 1
+  mouse.y = -((event.clientY - VIZ_BAR_H) / h) * 2 + 1
   raycaster.setFromCamera(mouse, camera)
   const hits = raycaster.intersectObjects(systemMeshes.value, false)
   if (!hits.length) return null
@@ -604,11 +598,11 @@ function applyHover(newIdx: number) {
       guideLine.computeLineDistances()
       ;(guideLine.material as THREE.LineDashedMaterial).opacity = 0.45
     }
-    canvasEl.value!.style.cursor = 'pointer'
+    hoveringSystem.value = true
   } else {
     if (coreSprite) (coreSprite.material as THREE.SpriteMaterial).opacity = 0.65
     if (guideLine) (guideLine.material as THREE.LineDashedMaterial).opacity = 0
-    canvasEl.value!.style.cursor = 'default'
+    hoveringSystem.value = false
   }
 
   hoveredIdx = newIdx
@@ -624,23 +618,35 @@ function onMouseLeaveCanvas() {
 }
 
 function teardown() {
-  if (rafId !== null) cancelAnimationFrame(rafId)
-  window.removeEventListener('resize', onResize)
-  canvasEl.value?.removeEventListener('click',      onClick)
-  canvasEl.value?.removeEventListener('mousemove',  onMouseMove)
-  canvasEl.value?.removeEventListener('mouseleave', onMouseLeaveCanvas)
-  if (scene) disposeScene(scene)
-  controls?.dispose()
-  renderer?.dispose()
-  renderer = null; scene = null; camera = null; controls = null
+  disposeScene(pageGroup)
+  scene?.remove(pageGroup)
+  if (scene) {
+    scene.background = null
+    scene.fog        = null
+  }
+  if (controls) controls.autoRotate = false
   coreSprite = null; guideLine = null; guideGeo = null
   glowSprites.length = 0
 }
 
 // ── Navigation ─────────────────────────────────────────────────────────────────
 async function descendToSurface(sys: StarSystem) {
-  // Project selected system's mesh to screen for transition origin
   const mesh = systemMeshes.value[sys.idx]
+
+  // Final in-page approach toward the system before the route change —
+  // ClusterGalaxyPage and ClusterSystemPage now share the same renderer/camera.
+  if (mesh && camera && controls) {
+    const target  = mesh.position.clone()
+    const fromCam = camera.position.clone().sub(target).normalize()
+    const dest    = target.clone().addScaledVector(fromCam, 0.15)
+    gsap.killTweensOf(camera.position); gsap.killTweensOf(controls.target)
+    await new Promise<void>(resolve => {
+      gsap.to(controls!.target, { x: target.x, y: target.y, z: target.z, duration: 0.4, ease: 'power2.out', onUpdate: () => controls?.update() })
+      gsap.to(camera!.position, { x: dest.x, y: dest.y, z: dest.z, duration: 0.7, ease: 'power2.out', onUpdate: () => controls?.update(), onComplete: resolve })
+    })
+  }
+
+  // Project selected system's mesh to screen for transition origin
   if (mesh && camera) {
     const sc = mesh.position.clone().project(camera)
     clickPct.x      = (sc.x + 1) / 2 * 100
@@ -687,13 +693,17 @@ async function loadAndBuild() {
 }
 
 // ── Lifecycle ──────────────────────────────────────────────────────────────────
-onMounted(() => { void loadAndBuild() })
+onMounted(async () => {
+  // Await a tick so MainLayout's onMounted (which calls viz.init()) runs first —
+  // this page can otherwise mount before the shared renderer exists.
+  await Promise.resolve()
+  void loadAndBuild()
+})
 onBeforeUnmount(teardown)
 </script>
 
 <style scoped>
 .cg-page    { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
-.cg-canvas  { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 
 .cg-breadcrumb {
   position: absolute; top: 12px; left: 12px; z-index: 10;

@@ -1,0 +1,1631 @@
+{
+  "cluster": "Boötes Void",
+  "slug": "bootes-void",
+  "center_ra": 230.0,
+  "center_dec": 46.0,
+  "dist_mpc": 250.0,
+  "rvir_mpc": 130.0,
+  "richness": 1,
+  "sigma_v_kms": 120,
+  "tx_kev": 0.0,
+  "M200_1e14": 0.0,
+  "notes": "The Boötes Void (Kirshner et al. 1981, ApJ 248, L57) — one of the largest known cosmic voids, ~130 Mpc radius, centred at z≈0.058 (250 Mpc). Originally discovered as a ~33,000 km/s gap in the CfA survey with only a handful of galaxies; now NED-confirmed to contain ~2,836 catalog members mostly on the void wall. Interior density <5% of cosmic mean — the deepest known emptiness in the observable universe. Population dominated by blue star-forming irregulars and Sb spirals with elevated HI fractions, suppressed AGN activity, and low metallicities (Beygu et al. 2013, Beygu+Kreckel studies). The 25 named wall galaxies here (NGC 6272, NGC 5277, IC 4572, Mrk 284, etc.) were confirmed by NED TAP queries. CGCG 166-016 and CGCG 165-007 are the deepest confirmed residents (~65-77 Mpc from centre). No hot ICM (tx_kev=0); no ram-pressure stripping. Far-wall boundary approaches the Hercules supercluster (east) and the Perseus-Pisces filament (north). Exoloc addresses: exotopia:void-world:Bootes-Void/{galaxy-id}.",
+  "member_count": 50,
+  "members": [
+    {
+      "id": "NGC6272",
+      "name": "NGC 6272",
+      "hubble": "S0",
+      "bt_mag": 16.08,
+      "lod3_params": {
+        "scene_su": 0.012,
+        "axis_ratio": 0.35,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 75
+      },
+      "is_named": true,
+      "notes": "S0 lenticular on Boötes near-wall (r_void=134 Mpc); quenched gas reservoir; AGN-quiet; companion pair in wall filament",
+      "system_architecture": {
+        "cluster_zone": "void_wall",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.42,
+        "icm_stress": 0.0,
+        "star_teff_k": 5400,
+        "max_orbit_au": 62,
+        "gas_giant_prob": 0.38,
+        "exomoon_factor": 0.89,
+        "planet_bias": "ancient_cold_rocky",
+        "estimated_planets": 2,
+        "requires_surface_render": true
+      },
+      "offset": [
+        5.1165,
+        -7.3051,
+        -0.3453
+      ]
+    },
+    {
+      "id": "NGC5277",
+      "name": "NGC 5277",
+      "hubble": "Irr",
+      "bt_mag": 17.65,
+      "lod3_params": {
+        "scene_su": 0.011,
+        "axis_ratio": 0.78,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 40
+      },
+      "is_named": true,
+      "notes": "Void irregular; star-forming knots visible in UV; paired with NGC 5280 (50 kpc separation) — rare pair in void interior",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.61,
+        "icm_stress": 0.0,
+        "star_teff_k": 7200,
+        "max_orbit_au": 48,
+        "gas_giant_prob": 0.35,
+        "exomoon_factor": 0.88,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        -1.4095,
+        -6.3309,
+        -4.6167
+      ]
+    },
+    {
+      "id": "NGC5280",
+      "name": "NGC 5280",
+      "hubble": "Irr",
+      "bt_mag": 17.75,
+      "lod3_params": {
+        "scene_su": 0.01,
+        "axis_ratio": 0.68,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 120
+      },
+      "is_named": true,
+      "notes": "Paired with NGC 5277; unusually bright for void Irr; deep NED catalog entry from CfA2 survey",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.58,
+        "icm_stress": 0.0,
+        "star_teff_k": 7000,
+        "max_orbit_au": 44,
+        "gas_giant_prob": 0.37,
+        "exomoon_factor": 0.89,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        -0.6302,
+        -6.8426,
+        -4.9789
+      ]
+    },
+    {
+      "id": "IC4572",
+      "name": "IC 4572",
+      "hubble": "Irr",
+      "bt_mag": 17.76,
+      "lod3_params": {
+        "scene_su": 0.01,
+        "axis_ratio": 0.82,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 0
+      },
+      "is_named": true,
+      "notes": "Faint irregular in void interior; first catalogued in IC supplements; isolated: no neighbour within 2 Mpc",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.67,
+        "icm_stress": 0.0,
+        "star_teff_k": 7400,
+        "max_orbit_au": 38,
+        "gas_giant_prob": 0.32,
+        "exomoon_factor": 0.86,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 1,
+        "requires_surface_render": false
+      },
+      "offset": [
+        2.7109,
+        -7.5257,
+        -1.9904
+      ]
+    },
+    {
+      "id": "IC4409",
+      "name": "IC 4409",
+      "hubble": "Sa",
+      "bt_mag": 16.44,
+      "lod3_params": {
+        "scene_su": 0.013,
+        "axis_ratio": 0.58,
+        "pitch_deg": 8,
+        "n_arms": 2,
+        "pa_deg": 160
+      },
+      "is_named": true,
+      "notes": "Sa spiral; void wall (r_void≈120 Mpc); relatively metal-rich for void environment; settled disk geometry",
+      "system_architecture": {
+        "cluster_zone": "void_wall",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.28,
+        "icm_stress": 0.0,
+        "star_teff_k": 5900,
+        "max_orbit_au": 88,
+        "gas_giant_prob": 0.52,
+        "exomoon_factor": 0.96,
+        "planet_bias": "jovian_wide",
+        "estimated_planets": 3,
+        "requires_surface_render": true
+      },
+      "offset": [
+        0.6366,
+        -6.8554,
+        -4.0344
+      ]
+    },
+    {
+      "id": "MRK284",
+      "name": "Mrk 284",
+      "hubble": "Irr",
+      "bt_mag": 17.34,
+      "lod3_params": {
+        "scene_su": 0.01,
+        "axis_ratio": 0.72,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 55
+      },
+      "is_named": true,
+      "notes": "Markarian UV-bright irregular; elevated star formation; possible AGN; near void outer wall (r_void≈140 Mpc)",
+      "system_architecture": {
+        "cluster_zone": "void_wall",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.45,
+        "icm_stress": 0.0,
+        "star_teff_k": 6800,
+        "max_orbit_au": 42,
+        "gas_giant_prob": 0.38,
+        "exomoon_factor": 0.89,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        4.7183,
+        -3.6434,
+        -7.2143
+      ]
+    },
+    {
+      "id": "MCG0536016",
+      "name": "MCG +05-36-016",
+      "hubble": "Sa",
+      "bt_mag": 17.73,
+      "lod3_params": {
+        "scene_su": 0.012,
+        "axis_ratio": 0.64,
+        "pitch_deg": 9,
+        "n_arms": 2,
+        "pa_deg": 80
+      },
+      "is_named": true,
+      "notes": "Sa spiral in void interior at 89 Mpc from centre; MCG catalog; redshift z=0.065; gas-rich for morphology",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.35,
+        "icm_stress": 0.0,
+        "star_teff_k": 6100,
+        "max_orbit_au": 72,
+        "gas_giant_prob": 0.49,
+        "exomoon_factor": 0.94,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 3,
+        "requires_surface_render": false
+      },
+      "offset": [
+        -3.0351,
+        -3.3487,
+        3.8407
+      ]
+    },
+    {
+      "id": "CGCG166016",
+      "name": "CGCG 166-016",
+      "hubble": "Sb",
+      "bt_mag": 17.61,
+      "lod3_params": {
+        "scene_su": 0.013,
+        "axis_ratio": 0.6,
+        "pitch_deg": 12,
+        "n_arms": 2,
+        "pa_deg": 35
+      },
+      "is_named": true,
+      "notes": "CGCG Sb near void centre (r_void≈65 Mpc — one of the deepest void residents in catalog); isolated; no HI detection confusion",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.5,
+        "icm_stress": 0.0,
+        "star_teff_k": 6400,
+        "max_orbit_au": 65,
+        "gas_giant_prob": 0.44,
+        "exomoon_factor": 0.92,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 3,
+        "requires_surface_render": true
+      },
+      "offset": [
+        -0.2613,
+        -3.9728,
+        1.6909
+      ]
+    },
+    {
+      "id": "CGCG165007",
+      "name": "CGCG 165-007",
+      "hubble": "Irr",
+      "bt_mag": 18.49,
+      "lod3_params": {
+        "scene_su": 0.01,
+        "axis_ratio": 0.8,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 110
+      },
+      "is_named": true,
+      "notes": "Near void geometric centre (r_void≈77 Mpc, z=0.058); NED-confirmed void resident; star-forming irregular",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.72,
+        "icm_stress": 0.0,
+        "star_teff_k": 7600,
+        "max_orbit_au": 36,
+        "gas_giant_prob": 0.3,
+        "exomoon_factor": 0.85,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 1,
+        "requires_surface_render": false
+      },
+      "offset": [
+        -2.713,
+        -4.0185,
+        1.6726
+      ]
+    },
+    {
+      "id": "CGCG16403301",
+      "name": "CGCG 164-033",
+      "hubble": "Irr",
+      "bt_mag": 18.4,
+      "lod3_params": {
+        "scene_su": 0.009,
+        "axis_ratio": 0.75,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 90
+      },
+      "is_named": true,
+      "notes": "CGCG void irregular at r_void≈75 Mpc; paired NED entry; UV-bright active star-forming knots",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.68,
+        "icm_stress": 0.0,
+        "star_teff_k": 7300,
+        "max_orbit_au": 34,
+        "gas_giant_prob": 0.31,
+        "exomoon_factor": 0.85,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 1,
+        "requires_surface_render": false
+      },
+      "offset": [
+        -2.3199,
+        -4.4111,
+        0.095
+      ]
+    },
+    {
+      "id": "UGC10049",
+      "name": "UGC 10049",
+      "hubble": "Sb",
+      "bt_mag": 16.92,
+      "lod3_params": {
+        "scene_su": 0.012,
+        "axis_ratio": 0.55,
+        "pitch_deg": 11,
+        "n_arms": 2,
+        "pa_deg": 145
+      },
+      "is_named": true,
+      "notes": "UGC catalog Sb; void near-wall (r_void≈129 Mpc); moderately isolated; HI disk well-resolved at 153 Mpc",
+      "system_architecture": {
+        "cluster_zone": "void_wall",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.38,
+        "icm_stress": 0.0,
+        "star_teff_k": 6000,
+        "max_orbit_au": 70,
+        "gas_giant_prob": 0.5,
+        "exomoon_factor": 0.95,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 3,
+        "requires_surface_render": false
+      },
+      "offset": [
+        2.3291,
+        -8.1977,
+        -0.8987
+      ]
+    },
+    {
+      "id": "UGC10693",
+      "name": "UGC 10693",
+      "hubble": "Irr",
+      "bt_mag": 17.58,
+      "lod3_params": {
+        "scene_su": 0.009,
+        "axis_ratio": 0.7,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 20
+      },
+      "is_named": true,
+      "notes": "Wall-zone irregular (r_void≈143 Mpc); Boötes wall near Hercules supercluster boundary; low luminosity",
+      "system_architecture": {
+        "cluster_zone": "void_wall",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.55,
+        "icm_stress": 0.0,
+        "star_teff_k": 7000,
+        "max_orbit_au": 38,
+        "gas_giant_prob": 0.36,
+        "exomoon_factor": 0.88,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        6.0348,
+        -6.694,
+        -3.1314
+      ]
+    },
+    {
+      "id": "CGCG222009",
+      "name": "CGCG 222-009",
+      "hubble": "Sb",
+      "bt_mag": 16.3,
+      "lod3_params": {
+        "scene_su": 0.012,
+        "axis_ratio": 0.62,
+        "pitch_deg": 10,
+        "n_arms": 2,
+        "pa_deg": 165
+      },
+      "is_named": true,
+      "notes": "Sb spiral on Boötes void wall (r_void≈131 Mpc); near Coma supercluster boundary; moderate ICM-free environment",
+      "system_architecture": {
+        "cluster_zone": "void_wall",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.32,
+        "icm_stress": 0.0,
+        "star_teff_k": 6200,
+        "max_orbit_au": 76,
+        "gas_giant_prob": 0.48,
+        "exomoon_factor": 0.94,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 3,
+        "requires_surface_render": false
+      },
+      "offset": [
+        3.7703,
+        -6.5997,
+        -4.2349
+      ]
+    },
+    {
+      "id": "CGCG319020",
+      "name": "CGCG 319-020",
+      "hubble": "Sb",
+      "bt_mag": 16.2,
+      "lod3_params": {
+        "scene_su": 0.012,
+        "axis_ratio": 0.58,
+        "pitch_deg": 9,
+        "n_arms": 2,
+        "pa_deg": 70
+      },
+      "is_named": true,
+      "notes": "Sb on northern Boötes wall (r_void≈141 Mpc); toward Perseus-Pisces direction; relatively undisturbed disk",
+      "system_architecture": {
+        "cluster_zone": "void_wall",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.3,
+        "icm_stress": 0.0,
+        "star_teff_k": 6100,
+        "max_orbit_au": 80,
+        "gas_giant_prob": 0.5,
+        "exomoon_factor": 0.95,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 3,
+        "requires_surface_render": false
+      },
+      "offset": [
+        5.5615,
+        -4.2106,
+        -6.3156
+      ]
+    },
+    {
+      "id": "CGCG161134",
+      "name": "CGCG 161-134",
+      "hubble": "Irr",
+      "bt_mag": 17.59,
+      "lod3_params": {
+        "scene_su": 0.01,
+        "axis_ratio": 0.8,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 50
+      },
+      "is_named": true,
+      "notes": "CGCG void irregular (r_void≈117 Mpc); deep interior position; UV-bright; potential Lyman-alpha emission",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.62,
+        "icm_stress": 0.0,
+        "star_teff_k": 7100,
+        "max_orbit_au": 42,
+        "gas_giant_prob": 0.34,
+        "exomoon_factor": 0.87,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        -1.5353,
+        -6.2223,
+        -4.4905
+      ]
+    },
+    {
+      "id": "BV001",
+      "hubble": "Irr",
+      "bt_mag": 18.69,
+      "lod3_params": {
+        "scene_su": 0.008,
+        "axis_ratio": 0.78,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 0
+      },
+      "is_named": false,
+      "notes": "Nearest void-centre analog; estimated r_void<15 Mpc; most isolated galaxy in Boötes dataset",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.38,
+        "icm_stress": 0.0,
+        "star_teff_k": 6000,
+        "max_orbit_au": 52.5,
+        "gas_giant_prob": 0.44,
+        "exomoon_factor": 0.92,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 3,
+        "requires_surface_render": false
+      },
+      "offset": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "id": "BV002",
+      "hubble": "Sb",
+      "bt_mag": 16.95,
+      "lod3_params": {
+        "scene_su": 0.014,
+        "axis_ratio": 0.58,
+        "pitch_deg": 12,
+        "n_arms": 2,
+        "pa_deg": 17
+      },
+      "is_named": false,
+      "notes": "Sb spiral in mid-void; gas-rich isolated disk; no visible merger scars",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.48,
+        "icm_stress": 0.0,
+        "star_teff_k": 6400,
+        "max_orbit_au": 60.8,
+        "gas_giant_prob": 0.4,
+        "exomoon_factor": 0.9,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        -0.6305,
+        -3.9854,
+        -2.5621
+      ]
+    },
+    {
+      "id": "BV003",
+      "hubble": "Im",
+      "bt_mag": 19.11,
+      "lod3_params": {
+        "scene_su": 0.008,
+        "axis_ratio": 0.72,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 34
+      },
+      "is_named": false,
+      "notes": "Compact irregular; void interior; UV-detected star-forming region",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.58,
+        "icm_stress": 0.0,
+        "star_teff_k": 6800,
+        "max_orbit_au": 58.5,
+        "gas_giant_prob": 0.36,
+        "exomoon_factor": 0.88,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        3.7993,
+        -0.9568,
+        -1.0573
+      ]
+    },
+    {
+      "id": "BV004",
+      "hubble": "Irr",
+      "bt_mag": 17.99,
+      "lod3_params": {
+        "scene_su": 0.008,
+        "axis_ratio": 0.78,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 51
+      },
+      "is_named": false,
+      "notes": "Near north void wall; SDSS photometric entry; moderately isolated",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.68,
+        "icm_stress": 0.0,
+        "star_teff_k": 7200,
+        "max_orbit_au": 65.2,
+        "gas_giant_prob": 0.32,
+        "exomoon_factor": 0.86,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        3.3547,
+        -2.4627,
+        -5.1888
+      ]
+    },
+    {
+      "id": "BV005",
+      "hubble": "Sa",
+      "bt_mag": 17.47,
+      "lod3_params": {
+        "scene_su": 0.013,
+        "axis_ratio": 0.65,
+        "pitch_deg": 8,
+        "n_arms": 2,
+        "pa_deg": 68
+      },
+      "is_named": false,
+      "notes": "Sa spiral approaching far void wall; disk tilted ≈55°",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.78,
+        "icm_stress": 0.0,
+        "star_teff_k": 7600,
+        "max_orbit_au": 47.2,
+        "gas_giant_prob": 0.28,
+        "exomoon_factor": 0.84,
+        "planet_bias": "ancient_barren",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        -1.5198,
+        -2.489,
+        4.9309
+      ]
+    },
+    {
+      "id": "BV006",
+      "hubble": "Irr",
+      "bt_mag": 18.81,
+      "lod3_params": {
+        "scene_su": 0.008,
+        "axis_ratio": 0.78,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 85
+      },
+      "is_named": false,
+      "notes": "Void irregular at western boundary; potential Lyman-alpha emitter",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.88,
+        "icm_stress": 0.0,
+        "star_teff_k": 6000,
+        "max_orbit_au": 55.5,
+        "gas_giant_prob": 0.24,
+        "exomoon_factor": 0.82,
+        "planet_bias": "ancient_barren",
+        "estimated_planets": 1,
+        "requires_surface_render": false
+      },
+      "offset": [
+        -2.3254,
+        -1.729,
+        -3.0002
+      ]
+    },
+    {
+      "id": "BV007",
+      "hubble": "Sb",
+      "bt_mag": 17.02,
+      "lod3_params": {
+        "scene_su": 0.014,
+        "axis_ratio": 0.58,
+        "pitch_deg": 12,
+        "n_arms": 2,
+        "pa_deg": 102
+      },
+      "is_named": false,
+      "notes": "Sb on eastern wall sector; coherent spiral arms in void environment",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.98,
+        "icm_stress": 0.0,
+        "star_teff_k": 6400,
+        "max_orbit_au": 63.8,
+        "gas_giant_prob": 0.44,
+        "exomoon_factor": 0.92,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 3,
+        "requires_surface_render": false
+      },
+      "offset": [
+        5.4215,
+        -3.319,
+        -1.3285
+      ]
+    },
+    {
+      "id": "BV008",
+      "hubble": "Im",
+      "bt_mag": 20.33,
+      "lod3_params": {
+        "scene_su": 0.008,
+        "axis_ratio": 0.72,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 119
+      },
+      "is_named": false,
+      "notes": "Compact void irregular near northern far-wall; z≈0.075",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.38,
+        "icm_stress": 0.0,
+        "star_teff_k": 6800,
+        "max_orbit_au": 42.0,
+        "gas_giant_prob": 0.4,
+        "exomoon_factor": 0.9,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        -0.1225,
+        6.1027,
+        -0.4678
+      ]
+    },
+    {
+      "id": "BV009",
+      "hubble": "Irr",
+      "bt_mag": 17.91,
+      "lod3_params": {
+        "scene_su": 0.008,
+        "axis_ratio": 0.78,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 136
+      },
+      "is_named": false,
+      "notes": "Void irregular (r≈125 Mpc); near Hercules supercluster infall region",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.48,
+        "icm_stress": 0.0,
+        "star_teff_k": 7200,
+        "max_orbit_au": 68.2,
+        "gas_giant_prob": 0.36,
+        "exomoon_factor": 0.88,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        3.5567,
+        -6.5835,
+        -1.8598
+      ]
+    },
+    {
+      "id": "BV010",
+      "hubble": "Sa",
+      "bt_mag": 17.47,
+      "lod3_params": {
+        "scene_su": 0.013,
+        "axis_ratio": 0.65,
+        "pitch_deg": 8,
+        "n_arms": 2,
+        "pa_deg": 153
+      },
+      "is_named": false,
+      "notes": "Sa void spiral; gas fraction 2× cluster analog at same redshift",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.58,
+        "icm_stress": 0.0,
+        "star_teff_k": 7600,
+        "max_orbit_au": 51.0,
+        "gas_giant_prob": 0.32,
+        "exomoon_factor": 0.86,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        -1.6847,
+        1.2891,
+        -2.4784
+      ]
+    },
+    {
+      "id": "BV011",
+      "hubble": "Irr",
+      "bt_mag": 18.11,
+      "lod3_params": {
+        "scene_su": 0.008,
+        "axis_ratio": 0.78,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 170
+      },
+      "is_named": false,
+      "notes": "Isolated irregular in void interior; no companion within 5 Mpc",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.68,
+        "icm_stress": 0.0,
+        "star_teff_k": 6000,
+        "max_orbit_au": 60.0,
+        "gas_giant_prob": 0.28,
+        "exomoon_factor": 0.84,
+        "planet_bias": "ancient_barren",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        3.849,
+        -2.7269,
+        0.0238
+      ]
+    },
+    {
+      "id": "BV012",
+      "hubble": "Sb",
+      "bt_mag": 17.66,
+      "lod3_params": {
+        "scene_su": 0.014,
+        "axis_ratio": 0.58,
+        "pitch_deg": 12,
+        "n_arms": 2,
+        "pa_deg": 7
+      },
+      "is_named": false,
+      "notes": "Bright Sb near far wall; elevated SFR; void galaxy with mini-starburst",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.78,
+        "icm_stress": 0.0,
+        "star_teff_k": 6400,
+        "max_orbit_au": 39.0,
+        "gas_giant_prob": 0.24,
+        "exomoon_factor": 0.82,
+        "planet_bias": "ancient_barren",
+        "estimated_planets": 1,
+        "requires_surface_render": false
+      },
+      "offset": [
+        -7.195,
+        -1.3476,
+        4.7802
+      ]
+    },
+    {
+      "id": "BV013",
+      "hubble": "Im",
+      "bt_mag": 18.65,
+      "lod3_params": {
+        "scene_su": 0.008,
+        "axis_ratio": 0.72,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 24
+      },
+      "is_named": false,
+      "notes": "Blue compact in north void; GALEX-UV detected; extreme isolation",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.88,
+        "icm_stress": 0.0,
+        "star_teff_k": 6800,
+        "max_orbit_au": 66.8,
+        "gas_giant_prob": 0.44,
+        "exomoon_factor": 0.92,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 3,
+        "requires_surface_render": false
+      },
+      "offset": [
+        4.9371,
+        -2.6238,
+        -5.2917
+      ]
+    },
+    {
+      "id": "BV014",
+      "hubble": "Irr",
+      "bt_mag": 19.11,
+      "lod3_params": {
+        "scene_su": 0.008,
+        "axis_ratio": 0.78,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 41
+      },
+      "is_named": false,
+      "notes": "Deep interior void Irr; candidate Lyman-alpha blob vicinity",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.98,
+        "icm_stress": 0.0,
+        "star_teff_k": 7200,
+        "max_orbit_au": 46.5,
+        "gas_giant_prob": 0.4,
+        "exomoon_factor": 0.9,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        -6.6,
+        -1.4593,
+        -0.7618
+      ]
+    },
+    {
+      "id": "BV015",
+      "hubble": "Sb",
+      "bt_mag": 17.36,
+      "lod3_params": {
+        "scene_su": 0.014,
+        "axis_ratio": 0.58,
+        "pitch_deg": 12,
+        "n_arms": 2,
+        "pa_deg": 58
+      },
+      "is_named": false,
+      "notes": "Sb on eastern sector; isolated disk; wide HI extent vs optical",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.38,
+        "icm_stress": 0.0,
+        "star_teff_k": 7600,
+        "max_orbit_au": 56.2,
+        "gas_giant_prob": 0.36,
+        "exomoon_factor": 0.88,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        4.5731,
+        0.4466,
+        -0.9869
+      ]
+    },
+    {
+      "id": "BV016",
+      "hubble": "Irr",
+      "bt_mag": 18.28,
+      "lod3_params": {
+        "scene_su": 0.008,
+        "axis_ratio": 0.78,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 75
+      },
+      "is_named": false,
+      "notes": "Void irregular 80 Mpc from centre; pristine ISM; no AGN signature",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.48,
+        "icm_stress": 0.0,
+        "star_teff_k": 6000,
+        "max_orbit_au": 63.0,
+        "gas_giant_prob": 0.32,
+        "exomoon_factor": 0.86,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        0.4001,
+        -4.2755,
+        -2.9601
+      ]
+    },
+    {
+      "id": "BV017",
+      "hubble": "Sa",
+      "bt_mag": 17.72,
+      "lod3_params": {
+        "scene_su": 0.013,
+        "axis_ratio": 0.65,
+        "pitch_deg": 8,
+        "n_arms": 2,
+        "pa_deg": 92
+      },
+      "is_named": false,
+      "notes": "Sa spiral near far wall; minor asymmetry in outer arm morphology",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.58,
+        "icm_stress": 0.0,
+        "star_teff_k": 6400,
+        "max_orbit_au": 44.2,
+        "gas_giant_prob": 0.28,
+        "exomoon_factor": 0.84,
+        "planet_bias": "ancient_barren",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        0.1672,
+        2.6376,
+        3.2383
+      ]
+    },
+    {
+      "id": "BV018",
+      "hubble": "Im",
+      "bt_mag": 19.3,
+      "lod3_params": {
+        "scene_su": 0.008,
+        "axis_ratio": 0.72,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 109
+      },
+      "is_named": false,
+      "notes": "Im irregular; mid-void at 65 Mpc from centre; HI 21cm detected",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.68,
+        "icm_stress": 0.0,
+        "star_teff_k": 6800,
+        "max_orbit_au": 54.0,
+        "gas_giant_prob": 0.24,
+        "exomoon_factor": 0.82,
+        "planet_bias": "ancient_barren",
+        "estimated_planets": 1,
+        "requires_surface_render": false
+      },
+      "offset": [
+        -1.4966,
+        -2.8118,
+        0.7165
+      ]
+    },
+    {
+      "id": "BV019",
+      "hubble": "Irr",
+      "bt_mag": 18.29,
+      "lod3_params": {
+        "scene_su": 0.008,
+        "axis_ratio": 0.78,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 126
+      },
+      "is_named": false,
+      "notes": "Void Irr in northeast sector; blue colour consistent with void ecology",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.78,
+        "icm_stress": 0.0,
+        "star_teff_k": 7200,
+        "max_orbit_au": 61.5,
+        "gas_giant_prob": 0.44,
+        "exomoon_factor": 0.92,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 3,
+        "requires_surface_render": false
+      },
+      "offset": [
+        4.4995,
+        -1.2471,
+        -2.836
+      ]
+    },
+    {
+      "id": "BV020",
+      "hubble": "Sb",
+      "bt_mag": 17.86,
+      "lod3_params": {
+        "scene_su": 0.014,
+        "axis_ratio": 0.58,
+        "pitch_deg": 12,
+        "n_arms": 2,
+        "pa_deg": 143
+      },
+      "is_named": false,
+      "notes": "Sb in void interior; isolated rotating disk; low ICM heating history",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.88,
+        "icm_stress": 0.0,
+        "star_teff_k": 7600,
+        "max_orbit_au": 49.5,
+        "gas_giant_prob": 0.4,
+        "exomoon_factor": 0.9,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        -3.0446,
+        0.9591,
+        -2.0589
+      ]
+    },
+    {
+      "id": "BV021",
+      "hubble": "Im",
+      "bt_mag": 18.55,
+      "lod3_params": {
+        "scene_su": 0.008,
+        "axis_ratio": 0.72,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 160
+      },
+      "is_named": false,
+      "notes": "Compact Im; southern void wall approach; 2MASS-detected",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.98,
+        "icm_stress": 0.0,
+        "star_teff_k": 6000,
+        "max_orbit_au": 66.8,
+        "gas_giant_prob": 0.36,
+        "exomoon_factor": 0.88,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        1.8248,
+        -7.1378,
+        -1.6793
+      ]
+    },
+    {
+      "id": "BV022",
+      "hubble": "Irr",
+      "bt_mag": 18.31,
+      "lod3_params": {
+        "scene_su": 0.008,
+        "axis_ratio": 0.78,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 177
+      },
+      "is_named": false,
+      "notes": "Irregular in void north; SDSS spectroscopy confirms void membership (z≈0.049)",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.38,
+        "icm_stress": 0.0,
+        "star_teff_k": 6400,
+        "max_orbit_au": 58.5,
+        "gas_giant_prob": 0.32,
+        "exomoon_factor": 0.86,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        2.6058,
+        0.5941,
+        -5.0906
+      ]
+    },
+    {
+      "id": "BV023",
+      "hubble": "Sa",
+      "bt_mag": 17.77,
+      "lod3_params": {
+        "scene_su": 0.013,
+        "axis_ratio": 0.65,
+        "pitch_deg": 8,
+        "n_arms": 2,
+        "pa_deg": 14
+      },
+      "is_named": false,
+      "notes": "Sa spiral void resident; disk stable over Gyr; no merger traces",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.48,
+        "icm_stress": 0.0,
+        "star_teff_k": 6800,
+        "max_orbit_au": 47.2,
+        "gas_giant_prob": 0.28,
+        "exomoon_factor": 0.84,
+        "planet_bias": "ancient_barren",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        1.522,
+        0.224,
+        4.4275
+      ]
+    },
+    {
+      "id": "BV024",
+      "hubble": "Irr",
+      "bt_mag": 18.22,
+      "lod3_params": {
+        "scene_su": 0.008,
+        "axis_ratio": 0.78,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 31
+      },
+      "is_named": false,
+      "notes": "Near void centre-axis (RA≈230, Dec≈46) at 75 Mpc; deepest sector",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.58,
+        "icm_stress": 0.0,
+        "star_teff_k": 7200,
+        "max_orbit_au": 63.8,
+        "gas_giant_prob": 0.24,
+        "exomoon_factor": 0.82,
+        "planet_bias": "ancient_barren",
+        "estimated_planets": 1,
+        "requires_surface_render": false
+      },
+      "offset": [
+        2.7297,
+        -2.7955,
+        -3.4481
+      ]
+    },
+    {
+      "id": "BV025",
+      "hubble": "Sb",
+      "bt_mag": 17.46,
+      "lod3_params": {
+        "scene_su": 0.014,
+        "axis_ratio": 0.58,
+        "pitch_deg": 12,
+        "n_arms": 2,
+        "pa_deg": 48
+      },
+      "is_named": false,
+      "notes": "Bright Sb near far void wall; highest luminosity in synthetic set",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.68,
+        "icm_stress": 0.0,
+        "star_teff_k": 7600,
+        "max_orbit_au": 41.2,
+        "gas_giant_prob": 0.44,
+        "exomoon_factor": 0.92,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 3,
+        "requires_surface_render": false
+      },
+      "offset": [
+        -6.5439,
+        1.3503,
+        0.924
+      ]
+    },
+    {
+      "id": "BV026",
+      "hubble": "Im",
+      "bt_mag": 19.2,
+      "lod3_params": {
+        "scene_su": 0.008,
+        "axis_ratio": 0.72,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 65
+      },
+      "is_named": false,
+      "notes": "Im in northeast void; coherent HI disk vs disrupted optical morphology",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.78,
+        "icm_stress": 0.0,
+        "star_teff_k": 6000,
+        "max_orbit_au": 54.0,
+        "gas_giant_prob": 0.4,
+        "exomoon_factor": 0.9,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        3.5635,
+        1.8674,
+        -1.872
+      ]
+    },
+    {
+      "id": "BV027",
+      "hubble": "Irr",
+      "bt_mag": 18.25,
+      "lod3_params": {
+        "scene_su": 0.008,
+        "axis_ratio": 0.78,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 82
+      },
+      "is_named": false,
+      "notes": "Void Irr at ≈60 Mpc from centre; SDSS r-band detected; blue",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.88,
+        "icm_stress": 0.0,
+        "star_teff_k": 6400,
+        "max_orbit_au": 60.8,
+        "gas_giant_prob": 0.36,
+        "exomoon_factor": 0.88,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        0.4925,
+        -2.9584,
+        -2.6117
+      ]
+    },
+    {
+      "id": "BV028",
+      "hubble": "Sa",
+      "bt_mag": 17.47,
+      "lod3_params": {
+        "scene_su": 0.013,
+        "axis_ratio": 0.65,
+        "pitch_deg": 8,
+        "n_arms": 2,
+        "pa_deg": 99
+      },
+      "is_named": false,
+      "notes": "Sa void spiral; void infall velocity ~280 km/s from peculiar velocity analysis",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.98,
+        "icm_stress": 0.0,
+        "star_teff_k": 6800,
+        "max_orbit_au": 51.0,
+        "gas_giant_prob": 0.32,
+        "exomoon_factor": 0.86,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        -0.9893,
+        -2.8037,
+        3.1721
+      ]
+    },
+    {
+      "id": "BV029",
+      "hubble": "Irr",
+      "bt_mag": 18.42,
+      "lod3_params": {
+        "scene_su": 0.008,
+        "axis_ratio": 0.78,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 116
+      },
+      "is_named": false,
+      "notes": "Void Irr near eastern wall; HI mass fraction elevated vs field average",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.38,
+        "icm_stress": 0.0,
+        "star_teff_k": 7200,
+        "max_orbit_au": 63.8,
+        "gas_giant_prob": 0.28,
+        "exomoon_factor": 0.84,
+        "planet_bias": "ancient_barren",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        4.5176,
+        -3.319,
+        -1.6309
+      ]
+    },
+    {
+      "id": "BV030",
+      "hubble": "Sb",
+      "bt_mag": 17.56,
+      "lod3_params": {
+        "scene_su": 0.014,
+        "axis_ratio": 0.58,
+        "pitch_deg": 12,
+        "n_arms": 2,
+        "pa_deg": 133
+      },
+      "is_named": false,
+      "notes": "Sb approaching far-northern wall; potential dual nucleus merger in far wall",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.48,
+        "icm_stress": 0.0,
+        "star_teff_k": 7600,
+        "max_orbit_au": 43.5,
+        "gas_giant_prob": 0.24,
+        "exomoon_factor": 0.82,
+        "planet_bias": "ancient_barren",
+        "estimated_planets": 1,
+        "requires_surface_render": false
+      },
+      "offset": [
+        -0.302,
+        5.5373,
+        -1.125
+      ]
+    },
+    {
+      "id": "BV031",
+      "hubble": "Im",
+      "bt_mag": 19.26,
+      "lod3_params": {
+        "scene_su": 0.008,
+        "axis_ratio": 0.72,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 150
+      },
+      "is_named": false,
+      "notes": "Compact Im at 65 Mpc depth; star-forming ring morphology",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.58,
+        "icm_stress": 0.0,
+        "star_teff_k": 6000,
+        "max_orbit_au": 56.2,
+        "gas_giant_prob": 0.44,
+        "exomoon_factor": 0.92,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 3,
+        "requires_surface_render": false
+      },
+      "offset": [
+        -2.4713,
+        -2.7541,
+        -2.4313
+      ]
+    },
+    {
+      "id": "BV032",
+      "hubble": "Irr",
+      "bt_mag": 18.93,
+      "lod3_params": {
+        "scene_su": 0.008,
+        "axis_ratio": 0.78,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 167
+      },
+      "is_named": false,
+      "notes": "Deep void Irr; near geometric centre; lowest overdensity region of void",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.68,
+        "icm_stress": 0.0,
+        "star_teff_k": 6400,
+        "max_orbit_au": 51.8,
+        "gas_giant_prob": 0.4,
+        "exomoon_factor": 0.9,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        2.0812,
+        -0.1798,
+        2.1222
+      ]
+    },
+    {
+      "id": "BV033",
+      "hubble": "Sa",
+      "bt_mag": 16.98,
+      "lod3_params": {
+        "scene_su": 0.013,
+        "axis_ratio": 0.65,
+        "pitch_deg": 8,
+        "n_arms": 2,
+        "pa_deg": 4
+      },
+      "is_named": false,
+      "notes": "Sa void spiral aligned with void centre vector; unusual morphological stability",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.78,
+        "icm_stress": 0.0,
+        "star_teff_k": 6800,
+        "max_orbit_au": 63.0,
+        "gas_giant_prob": 0.36,
+        "exomoon_factor": 0.88,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        0.9006,
+        -5.63,
+        -1.0733
+      ]
+    },
+    {
+      "id": "BV034",
+      "hubble": "Irr",
+      "bt_mag": 18.46,
+      "lod3_params": {
+        "scene_su": 0.008,
+        "axis_ratio": 0.78,
+        "pitch_deg": 0,
+        "n_arms": 0,
+        "pa_deg": 21
+      },
+      "is_named": false,
+      "notes": "Void irregular near centre; SDSS photo-z confirms membership",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.88,
+        "icm_stress": 0.0,
+        "star_teff_k": 7200,
+        "max_orbit_au": 54.8,
+        "gas_giant_prob": 0.32,
+        "exomoon_factor": 0.86,
+        "planet_bias": "low_metallicity_jovian",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        0.1855,
+        0.6856,
+        -3.1996
+      ]
+    },
+    {
+      "id": "BV035",
+      "hubble": "Sb",
+      "bt_mag": 17.85,
+      "lod3_params": {
+        "scene_su": 0.014,
+        "axis_ratio": 0.58,
+        "pitch_deg": 12,
+        "n_arms": 2,
+        "pa_deg": 38
+      },
+      "is_named": false,
+      "notes": "Sb on far wall approach; coherent 2-arm spiral; elevated sSFR",
+      "system_architecture": {
+        "cluster_zone": "void_interior",
+        "anchor_telescope": "SDSS",
+        "metallicity_fe_h": -0.98,
+        "icm_stress": 0.0,
+        "star_teff_k": 7600,
+        "max_orbit_au": 45.8,
+        "gas_giant_prob": 0.28,
+        "exomoon_factor": 0.84,
+        "planet_bias": "ancient_barren",
+        "estimated_planets": 2,
+        "requires_surface_render": false
+      },
+      "offset": [
+        -0.3029,
+        1.1706,
+        3.5254
+      ]
+    }
+  ]
+}

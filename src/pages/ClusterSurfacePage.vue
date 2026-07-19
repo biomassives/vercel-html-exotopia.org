@@ -1,6 +1,6 @@
 <template>
-  <q-page class="cs-page bg-black overflow-hidden">
-    <canvas ref="canvasEl" class="cs-canvas" />
+  <!-- Transparent overlay — shared Three.js canvas in MainLayout renders behind -->
+  <q-page class="cs-page viz-overlay-page">
 
     <!-- Breadcrumb -->
     <div class="cs-breadcrumb row items-center q-gutter-xs no-wrap">
@@ -91,8 +91,9 @@
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import * as THREE from 'three'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import type { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import gsap from 'gsap'
+import { useVizRenderer } from 'src/composables/useVizRenderer'
 import { surfacePaletteFor, disposeScene, type SurfacePalette } from 'src/lib/three-utils'
 import { useSettlements, clusterKey }               from 'src/lib/settlements'
 
@@ -188,13 +189,15 @@ function makeSeed(s: string) {
   return s.split('').reduce((a, c, i) => a + c.charCodeAt(0) * (i + 1), 0) & 0xFFFFFFFF
 }
 
-// ── Three.js scene ─────────────────────────────────────────────────────────────
-const canvasEl = ref<HTMLCanvasElement>()
-let renderer:  THREE.WebGLRenderer | null = null
-let scene:     THREE.Scene | null = null
+// ── Three.js scene — shared renderer ──────────────────────────────────────────
+const viz = useVizRenderer()
+let renderer:  THREE.WebGLRenderer     | null = null
+let scene:     THREE.Scene             | null = null
 let camera:    THREE.PerspectiveCamera | null = null
-let controls:  OrbitControls | null = null
-let rafId:     number | null = null
+let controls:  OrbitControls           | null = null
+
+// Root group for all page-level scene objects — added/removed on mount/unmount
+const pageGroup = new THREE.Group()
 
 function buildTerrain(pal: SurfacePalette, rng: () => number): THREE.Mesh {
   const W = 64, H = 64
@@ -306,53 +309,61 @@ function buildDome(): THREE.Group {
 }
 
 function buildScene() {
-  if (!canvasEl.value) return
+  // Grab shared renderer refs
+  renderer = viz.renderer
+  scene    = viz.scene
+  camera   = viz.camera
+  controls = viz.controls
+  if (!renderer || !scene || !camera || !controls) return
 
   const rng = mulberry32(makeSeed(`${clusterSlug.value}-${memberId.value}-${systemIdx.value}`))
 
-  renderer = new THREE.WebGLRenderer({ canvas: canvasEl.value, antialias: true })
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-  renderer.setSize(window.innerWidth, window.innerHeight)
-  renderer.setClearColor(0x02040a)
+  // Configure scene appearance for the surface level
+  scene.background = new THREE.Color(0x02040a)
 
-  scene  = new THREE.Scene()
-  camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 200)
+  // Configure camera for surface scale
+  camera.fov  = 70
+  camera.near = 0.01
+  camera.far  = 200
 
   const b      = parseFloat(String(route.query.bearing ?? '0')) || 0
   const entryD = 9
   camera.position.set(Math.sin(b) * entryD, 3.5, Math.cos(b) * entryD)
   camera.lookAt(0, 0.5, 0)
+  camera.updateProjectionMatrix()
+
+  scene.add(pageGroup)
 
   // Sky gradient (hemisphere) — tint from atmosphere color or default deep blue
   const skyColor = pal.value.atmosphere ?? new THREE.Color(0x050a14)
   const sky = new THREE.HemisphereLight(skyColor, new THREE.Color(0x02040a), 0.8)
-  scene.add(sky)
+  pageGroup.add(sky)
 
   // Directional light (host star)
   const sun = new THREE.DirectionalLight(new THREE.Color(specColor.value), 1.6)
   sun.position.set(8, 6, -4)
-  scene.add(sun)
+  pageGroup.add(sun)
 
   // Terrain
   const terrain = buildTerrain(pal.value, rng)
   terrain.position.y = -0.8
-  scene.add(terrain)
+  pageGroup.add(terrain)
 
   // Settlement dome
   const dome = buildDome()
   dome.position.set(rng() * 2 - 1, -0.8, rng() * 2 - 3)
-  scene.add(dome)
+  pageGroup.add(dome)
 
   // Host star in sky
   const star = buildHostStar(spectral.value)
   const starAngle = rng() * Math.PI * 0.6 + 0.2
   star.position.set(Math.cos(starAngle) * 12, Math.sin(starAngle) * 5 + 2, -14)
-  scene.add(star)
+  pageGroup.add(star)
 
   // Parent galaxy glow in sky
   const galaxyGlow = buildGalaxyInSky(memberHubble.value)
   galaxyGlow.position.set(-8 + rng() * 4, 3 + rng() * 2, -18)
-  scene.add(galaxyGlow)
+  pageGroup.add(galaxyGlow)
 
   // Fog
   if (pal.value.fog) scene.fog = new THREE.FogExp2(pal.value.fog.getHex(), pal.value.fogDensity)
@@ -366,7 +377,7 @@ function buildScene() {
     }))
     haze.scale.setScalar(6 + rng() * 10)
     haze.position.set((rng() - 0.5) * 40, (rng() - 0.2) * 8, -20 - rng() * 20)
-    scene.add(haze)
+    pageGroup.add(haze)
   }
 
   // Wormhole pyramid (settlement marker)
@@ -374,46 +385,30 @@ function buildScene() {
   const pyrMat = new THREE.MeshBasicMaterial({ color: 0xffcc44, wireframe: true, transparent: true, opacity: 0.55 })
   const pyr    = new THREE.Mesh(pyrGeo, pyrMat)
   pyr.position.set(0.4, -0.5, -0.5)
-  scene.add(pyr)
+  pageGroup.add(pyr)
 
-  // Orbit controls — drag to rotate, pinch/scroll to zoom, right-drag to pan
-  controls = new OrbitControls(camera, canvasEl.value)
+  // Orbit controls — drag to rotate, pinch/scroll to zoom, right-drag to pan.
+  // Polar angle is clamped so standing on a surface can't orbit below the
+  // horizon — reset on teardown since controls is shared across pages.
   controls.target.set(0, 0.5, 0)
-  controls.enableDamping  = true
   controls.dampingFactor  = 0.08
   controls.minDistance    = 0.8
   controls.maxDistance    = 16
   controls.minPolarAngle  = 0.05
   controls.maxPolarAngle  = Math.PI * 0.60
   controls.rotateSpeed    = 0.5
-  controls.mouseButtons   = { LEFT: THREE.MOUSE.ROTATE, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.PAN }
-  controls.touches        = { ONE: THREE.TOUCH.ROTATE, TWO: THREE.TOUCH.DOLLY_PAN }
   controls.update()
-
-  window.addEventListener('resize', onResize)
-  tick()
-}
-
-function tick() {
-  rafId = requestAnimationFrame(tick)
-  controls?.update()
-  if (scene && camera && renderer) renderer.render(scene, camera)
-}
-
-function onResize() {
-  if (!camera || !renderer) return
-  camera.aspect = window.innerWidth / window.innerHeight
-  camera.updateProjectionMatrix()
-  renderer.setSize(window.innerWidth, window.innerHeight)
 }
 
 function teardown() {
-  if (rafId !== null) cancelAnimationFrame(rafId)
-  window.removeEventListener('resize', onResize)
-  controls?.dispose(); controls = null
-  if (scene) disposeScene(scene)
-  renderer?.dispose()
-  renderer = null; scene = null; camera = null
+  disposeScene(pageGroup)
+  scene?.remove(pageGroup)
+  if (scene) scene.background = null
+  if (controls) {
+    controls.minPolarAngle = 0
+    controls.maxPolarAngle = Math.PI
+    controls.rotateSpeed   = 1
+  }
 }
 
 function goMoon() {
@@ -425,7 +420,10 @@ function goMoon() {
   })
 }
 
-onMounted(() => {
+onMounted(async () => {
+  // Await a tick so MainLayout's onMounted (which calls viz.init()) runs first —
+  // this page can otherwise mount before the shared renderer exists.
+  await Promise.resolve()
   buildScene()
   if (camera && controls) {
     gsap.to(camera.position, {
@@ -440,7 +438,6 @@ onBeforeUnmount(teardown)
 
 <style scoped>
 .cs-page   { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
-.cs-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 
 .cs-breadcrumb {
   position: absolute; top: 12px; left: 12px; z-index: 10;

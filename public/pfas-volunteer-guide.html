@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PFAS Packaging Audit — Volunteer Field Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink: #0f1419;
+  --paper: #faf8f3;
+  --red: #c0392b;
+  --red-bg: #fdf0ee;
+  --green: #1a6b3a;
+  --green-bg: #edf7f1;
+  --blue: #1a4a7a;
+  --blue-bg: #eef4fb;
+  --gold: #8a5a00;
+  --gold-bg: #fdf6e3;
+  --mid: #4a5568;
+  --rule: #d8d0c0;
+  --sans: 'DM Sans', sans-serif;
+  --display: 'Space Grotesk', sans-serif;
+}
+
+body {
+  font-family: var(--sans);
+  background: #bbb;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 24px;
+}
+
+/* ── Page geometry — letter size, 2 pages ── */
+.page {
+  width: 8.5in;
+  height: 11in;
+  background: var(--paper);
+  color: var(--ink);
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+
+/* ── Header band (spans full width) ── */
+.page-header {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.2in 0.4in 0.18in;
+  background: var(--ink);
+  color: #fff;
+}
+
+.ph-left {}
+.ph-title {
+  font-family: var(--display);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+.ph-sub {
+  font-size: 9px;
+  color: #aabbd0;
+  margin-top: 2px;
+  letter-spacing: 0.04em;
+}
+
+.ph-right {
+  text-align: right;
+}
+
+.ph-badge {
+  display: inline-block;
+  font-family: var(--display);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 3px;
+  border: 1px solid;
+}
+
+.ph-badge.green { background: rgba(58,224,122,0.12); color: #44dd77; border-color: rgba(58,224,122,0.3); }
+.ph-badge.gold  { background: rgba(255,190,50,0.12); color: #ffcc44; border-color: rgba(255,190,50,0.3); }
+
+.ph-collab { font-size: 8.5px; color: #6688aa; margin-top: 3px; }
+
+/* ── Column panels ── */
+.col {
+  padding: 0.22in 0.28in 0.22in;
+  border-right: 1px solid var(--rule);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.col:last-child { border-right: none; }
+
+/* ── Section heads ── */
+.sec-head {
+  font-family: var(--display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin-bottom: 6px;
+  margin-top: 14px;
+  padding-bottom: 4px;
+  border-bottom: 1.5px solid var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.sec-head:first-child { margin-top: 0; }
+
+.sec-head .tag {
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 1.5px 5px;
+  border-radius: 2px;
+}
+
+.tag-r { background: var(--red-bg);  color: var(--red);  border: 1px solid #e8b0aa; }
+.tag-g { background: var(--green-bg); color: var(--green); border: 1px solid #a0d4b0; }
+.tag-b { background: var(--blue-bg);  color: var(--blue);  border: 1px solid #a0c0e0; }
+.tag-o { background: var(--gold-bg);  color: var(--gold);  border: 1px solid #d4b060; }
+
+/* ── Body text ── */
+p { font-size: 9.5px; line-height: 1.65; color: #333; margin-bottom: 7px; }
+p strong { color: var(--ink); font-weight: 600; }
+p em { color: var(--mid); font-style: italic; }
+
+/* ── Checklist ── */
+.checklist { list-style: none; margin-bottom: 7px; }
+.checklist li {
+  display: flex;
+  gap: 6px;
+  align-items: flex-start;
+  font-size: 9px;
+  line-height: 1.55;
+  color: #3a3a3a;
+  margin-bottom: 4px;
+  padding-bottom: 4px;
+  border-bottom: 1px dashed #e0d8c8;
+}
+.checklist li:last-child { border-bottom: none; }
+
+.check-box {
+  width: 10px; height: 10px;
+  border: 1.5px solid #999;
+  border-radius: 2px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.check-box.filled { background: var(--red); border-color: var(--red); }
+.check-box.half   { background: #e8a030; border-color: #e8a030; }
+.check-box.ok     { background: var(--green); border-color: var(--green); }
+
+.item-label { font-weight: 600; color: var(--ink); }
+.item-note  { font-size: 8.5px; color: var(--mid); }
+
+/* ── Alert boxes ── */
+.alert {
+  border-radius: 4px;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  font-size: 9px;
+  line-height: 1.6;
+}
+
+.alert-r { background: var(--red-bg);   border-left: 3px solid var(--red);   color: #7a1a10; }
+.alert-g { background: var(--green-bg); border-left: 3px solid var(--green); color: #0f4020; }
+.alert-b { background: var(--blue-bg);  border-left: 3px solid var(--blue);  color: #0f2a50; }
+.alert-o { background: var(--gold-bg);  border-left: 3px solid var(--gold);  color: #5a3800; }
+
+.alert strong { font-weight: 700; }
+.alert-label {
+  font-family: var(--display);
+  font-size: 7.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 3px;
+}
+
+/* ── Table ── */
+.data-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+.data-table th {
+  font-family: var(--display);
+  font-size: 7.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--mid);
+  text-align: left;
+  padding: 3px 5px 4px;
+  border-bottom: 1.5px solid var(--ink);
+}
+.data-table td {
+  font-size: 8.5px;
+  color: #333;
+  padding: 4px 5px;
+  border-bottom: 1px dashed #e0d8c8;
+  vertical-align: top;
+  line-height: 1.45;
+}
+.data-table tr:last-child td { border-bottom: none; }
+.data-table td strong { color: var(--ink); font-weight: 600; }
+.data-table td em { color: var(--mid); }
+
+/* ── Script box ── */
+.script-box {
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+}
+.script-label {
+  font-family: var(--display);
+  font-size: 7.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--mid);
+  margin-bottom: 5px;
+  display: block;
+}
+.script-text {
+  font-size: 9.5px;
+  line-height: 1.65;
+  color: #1a2a3a;
+  font-style: italic;
+}
+
+/* ── Field form ── */
+.field-form { margin-bottom: 8px; }
+.field-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 5px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #e8e0d4;
+}
+.field-row:last-child { border-bottom: none; }
+.field-label {
+  font-family: var(--display);
+  font-size: 8px;
+  font-weight: 700;
+  color: var(--mid);
+  min-width: 0.9in;
+  flex-shrink: 0;
+  letter-spacing: 0.03em;
+}
+.field-line {
+  flex: 1;
+  border-bottom: 1px solid #aaa;
+  height: 14px;
+  min-width: 0;
+}
+
+/* ── Page footer ── */
+.page-footer {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0.4in;
+  border-top: 1px solid var(--rule);
+  margin-top: auto;
+}
+
+.pf-left  { font-size: 7.5px; color: #aaa; }
+.pf-right { font-size: 7.5px; color: #aaa; text-align: right; }
+
+/* ── Divider ── */
+.divider { border: none; border-top: 1px dashed #ddd; margin: 8px 0; }
+
+/* ── Step pills ── */
+.step-row { display: flex; gap: 5px; align-items: center; margin-bottom: 4px; }
+.step-num {
+  font-family: var(--display);
+  font-size: 8px;
+  font-weight: 700;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.step-text { font-size: 9px; color: #333; line-height: 1.5; }
+.step-text strong { color: var(--ink); }
+
+/* ── Print ── */
+@media print {
+  body { background: none; padding: 0; gap: 0; }
+  .page { page-break-after: always; break-after: page; }
+}
+@page { size: 8.5in 11in; margin: 0; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════════
+     PAGE 1 — Audit field guide
+═══════════════════════════════════════════════════════════════════ -->
+<div class="page" id="p1">
+
+  <div class="page-header">
+    <div class="ph-left">
+      <div class="ph-title">PFAS in Packaging — Volunteer Business Audit Guide</div>
+      <div class="ph-sub">Nederland Zero-Waste Programme · Upstream Producer Responsibility Initiative</div>
+    </div>
+    <div class="ph-right">
+      <span class="ph-badge green">Volunteer Field Use</span>
+      <div class="ph-collab">Collaboration: Town of Nederland Sustainability · SCD Hub / Exotopia</div>
+    </div>
+  </div>
+
+  <!-- LEFT COLUMN -->
+  <div class="col">
+
+    <div class="sec-head">Why this audit matters <span class="tag tag-r">Garden health</span></div>
+
+    <p>PFAS compounds (per- and polyfluoroalkyl substances) enter the compost stream through food service packaging — pizza boxes, "compostable" cups, deli paper, fast-food wrappers. The composter processes the organic material but <strong>cannot break down PFAS</strong>: they are thermally stable at 55–70°C. Finished compost carries PFAS into garden soil, where plants absorb it through roots. Leafy greens — lettuce, spinach, kale, chard — accumulate the highest concentrations.</p>
+
+    <p>Colorado <strong>HB 23-1034</strong> (2023) prohibits PFAS in food packaging and food service ware by 2025. This audit helps businesses get ahead of that requirement and keeps contamination out of the compost stream now.</p>
+
+    <div class="alert alert-b">
+      <span class="alert-label">Your role as a volunteer</span>
+      You are offering <strong>compliance assistance</strong>, not conducting an inspection. Most businesses don't know their "eco-friendly compostable" packaging contains PFAS. Come as a helper.
+    </div>
+
+    <div class="sec-head">The water drop test <span class="tag tag-o">DIY screen</span></div>
+
+    <p>A quick field screen before visiting — or during, with permission:</p>
+
+    <div class="step-row"><div class="step-num">1</div><div class="step-text">Place <strong>3 drops of water</strong> on the inner surface of the packaging.</div></div>
+    <div class="step-row"><div class="step-num">2</div><div class="step-text"><strong>Watch for 30 seconds.</strong></div></div>
+    <div class="step-row"><div class="step-num">3</div><div class="step-text">If water <strong>beads and rolls</strong> → likely fluorinated coating → flag for follow-up.</div></div>
+    <div class="step-row" style="margin-bottom:8px;"><div class="step-num">4</div><div class="step-text">If water <strong>absorbs quickly</strong> → more likely PFAS-free → note as probable OK.</div></div>
+
+    <div class="alert alert-o">
+      <span class="alert-label">Limitations</span>
+      The water test is a screen, not a lab result. Some PFAS-free biopolymer coatings also repel water. Suspected items should be confirmed with lab analysis (ASTM D8421). Record results in your audit form regardless.
+    </div>
+
+    <div class="sec-head">High-priority items to audit</div>
+
+    <ul class="checklist">
+      <li>
+        <div class="check-box filled"></div>
+        <div><span class="item-label">Pizza boxes</span><br>
+        <span class="item-note">Fluorinated inner surface is almost universal. Biggest volume contributor at most sites.</span></div>
+      </li>
+      <li>
+        <div class="check-box filled"></div>
+        <div><span class="item-label">"Compostable" hot and cold cups</span><br>
+        <span class="item-note">BPI/OK Compost cert ≠ PFAS-free. Water barrier in paper wall often fluorinated.</span></div>
+      </li>
+      <li>
+        <div class="check-box filled"></div>
+        <div><span class="item-label">Deli paper, sandwich wraps, butcher paper</span><br>
+        <span class="item-note">Grease barrier is key function; usually fluorinated. Test inner surface.</span></div>
+      </li>
+      <li>
+        <div class="check-box half"></div>
+        <div><span class="item-label">Paper plates (coated)</span><br>
+        <span class="item-note">Shiny/water-resistant surface. Uncoated kraft plates are usually fine.</span></div>
+      </li>
+      <li>
+        <div class="check-box half"></div>
+        <div><span class="item-label">Take-out containers (fibre/bagasse)</span><br>
+        <span class="item-note">Plain bagasse is usually PFAS-free. Oil-resistant versions may not be.</span></div>
+      </li>
+      <li>
+        <div class="check-box ok"></div>
+        <div><span class="item-label">Unlined kraft paper bags</span><br>
+        <span class="item-note">Usually PFAS-free if no grease coating. Confirm with water test.</span></div>
+      </li>
+    </ul>
+
+    <p style="font-size:8px;color:#888;font-style:italic;">■ Red = high suspicion &nbsp;◧ Orange = moderate &nbsp;□ Green = likely OK</p>
+
+  </div>
+
+  <!-- RIGHT COLUMN -->
+  <div class="col">
+
+    <div class="sec-head">Business audit form <span class="tag tag-b">Record &amp; submit</span></div>
+
+    <p style="font-size:8.5px;color:#555;">Fill in during or immediately after visit. Submit to the SCD Hub bounty system or email to Cat at Town of Nederland.</p>
+
+    <div class="field-form">
+      <div class="field-row"><div class="field-label">Business name</div><div class="field-line"></div></div>
+      <div class="field-row"><div class="field-label">Address</div><div class="field-line"></div></div>
+      <div class="field-row"><div class="field-label">Date</div><div class="field-line"></div></div>
+      <div class="field-row"><div class="field-label">Contact name</div><div class="field-line"></div></div>
+      <div class="field-row"><div class="field-label">Business type</div><div class="field-line"></div></div>
+      <div class="field-row"><div class="field-label">Packaging supplier</div><div class="field-line"></div></div>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Item observed</th>
+          <th>Water test</th>
+          <th>Current brand</th>
+          <th>Action agreed</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+        <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+        <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+        <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+        <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      </tbody>
+    </table>
+
+    <div class="field-form" style="margin-top:4px;">
+      <div class="field-row"><div class="field-label">HB 23-1034 awareness</div>
+        <div style="flex:1;font-size:8.5px;display:flex;gap:10px;align-items:center;">
+          <span>☐ Not aware</span><span>☐ Aware, needs help</span><span>☐ Already switching</span>
+        </div>
+      </div>
+      <div class="field-row" style="align-items:flex-start;">
+        <div class="field-label" style="margin-top:2px;">Notes</div>
+        <div style="flex:1;border:1px solid #ccc;border-radius:3px;height:0.55in;padding:3px 5px;"></div>
+      </div>
+    </div>
+
+    <div class="sec-head">Conversation opener <span class="tag tag-g">Script</span></div>
+
+    <div class="script-box">
+      <span class="script-label">Opening (slow period — mid-morning or mid-afternoon)</span>
+      <div class="script-text">"Hi — I'm a volunteer with the Nederland zero-waste programme, working alongside the town's sustainability manager, Cat. We're helping local businesses get ahead of Colorado's new food packaging rules. Most compostable packaging actually contains PFAS — a chemical that ends up in the compost and then in garden soil. We've got a list of PFAS-free alternatives. Do you have five minutes?"</div>
+    </div>
+
+    <div class="script-box">
+      <span class="script-label">If they ask "is this a legal visit?"</span>
+      <div class="script-text">"No — this is purely voluntary. We're community volunteers trying to help businesses prepare before the 2025 deadline. Nothing we're collecting today goes to any regulatory body."</div>
+    </div>
+
+    <div class="sec-head">After the visit</div>
+    <div class="step-row"><div class="step-num">1</div><div class="step-text"><strong>Email within one week</strong> with specific PFAS-free alternatives matching their packaging needs (see reverse).</div></div>
+    <div class="step-row"><div class="step-num">2</div><div class="step-text"><strong>Submit your audit form</strong> to the SCD Hub platform to earn an eco:certificate credit for the visit.</div></div>
+    <div class="step-row"><div class="step-num">3</div><div class="step-text"><strong>Confirmed switch?</strong> Notify Cat — the business gets listed as a Clean Compost Partner.</div></div>
+
+  </div>
+
+  <div class="page-footer">
+    <div class="pf-left">Nederland Zero-Waste + SCD Hub/Exotopia · acmeideal@gmail.com · exotopia.org · Page 1 of 2</div>
+    <div class="pf-right">CC BY-SA 4.0 · Print freely · Adapt for your watershed</div>
+  </div>
+
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     PAGE 2 — Alternatives, policy, and compost process
+═══════════════════════════════════════════════════════════════════ -->
+<div class="page" id="p2">
+
+  <div class="page-header">
+    <div class="ph-left">
+      <div class="ph-title">PFAS-Free Alternatives · Colorado HB 23-1034 · Compost Testing Protocol</div>
+      <div class="ph-sub">Reference sheet — share with business owners and compost programme coordinators</div>
+    </div>
+    <div class="ph-right">
+      <span class="ph-badge gold">Reference</span>
+      <div class="ph-collab">Nederland Zero-Waste · Town of Nederland Sustainability · SCD Hub</div>
+    </div>
+  </div>
+
+  <!-- LEFT COLUMN -->
+  <div class="col">
+
+    <div class="sec-head">PFAS-free packaging alternatives <span class="tag tag-g">For business</span></div>
+
+    <p>Share this list with businesses when you visit. Recommend they request SDS (Safety Data Sheet) or test documentation from their current distributor before ordering.</p>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Brand</th>
+          <th>Confidence</th>
+          <th>Product range</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>World Centric</strong></td>
+          <td>High — independently tested; results published 2021</td>
+          <td>Cups, plates, cutlery, take-out containers, bowls</td>
+        </tr>
+        <tr>
+          <td><strong>Vegware</strong></td>
+          <td>High — third-party tested; strong café/restaurant range</td>
+          <td>Hot cups, cold cups, plates, trays, clamshells</td>
+        </tr>
+        <tr>
+          <td><strong>GreenPaper Products</strong></td>
+          <td>High — PFAS-free certified line</td>
+          <td>Cups, plates; limited container range</td>
+        </tr>
+        <tr>
+          <td><strong>Eco-Products</strong></td>
+          <td>Good — verify specific SKUs; legacy products still in distribution</td>
+          <td>Broad range; request current PFAS-free line list</td>
+        </tr>
+        <tr>
+          <td><strong>Unlined kraft bags</strong></td>
+          <td>Always safe — no coating = no PFAS</td>
+          <td>Brown paper bags only; no grease resistance</td>
+        </tr>
+        <tr>
+          <td><strong>Plain bagasse trays</strong></td>
+          <td>Safe if uncoated — confirm no oil-resistance treatment</td>
+          <td>Sugarcane fibre plates, trays, clamshells</td>
+        </tr>
+        <tr>
+          <td><strong>Reusable (stainless, glass)</strong></td>
+          <td>Best — eliminates issue entirely</td>
+          <td>Any business considering a deposit-return programme</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="alert alert-g">
+      <span class="alert-label">Reuse programme opportunity</span>
+      Nederland's small size (approx. 1,500 residents, high tourist dwell time) makes it a strong candidate for a <strong>community reuse container network</strong> — deposit-and-return washable containers eliminating single-use packaging entirely. Boulder and Denver have piloted these. Cat's town sustainability role and vendor relationships are the exact institutional anchors such a programme needs. Contact SCD Hub to connect with running examples.
+    </div>
+
+    <div class="sec-head">Colorado HB 23-1034 — summary for businesses <span class="tag tag-b">Legal</span></div>
+
+    <table class="data-table">
+      <thead>
+        <tr><th>Year</th><th>Requirement</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>2024</strong></td>
+          <td>Manufacturers must <em>disclose</em> PFAS content to Colorado retailers and distributors. Businesses should be receiving updated SDS/disclosure forms from their packaging suppliers.</td>
+        </tr>
+        <tr>
+          <td><strong>2025</strong></td>
+          <td><strong>Prohibition</strong> on PFAS in food packaging and food service ware. No new stock containing intentionally added PFAS may be sold in Colorado.</td>
+        </tr>
+        <tr>
+          <td><strong>2026</strong></td>
+          <td>Prohibition extends to additional consumer product categories including cosmetics, textiles, and cleaning products.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="alert alert-o">
+      <span class="alert-label">What "intentionally added" means</span>
+      The prohibition applies to intentional use of PFAS in packaging. It does <strong>not</strong> guarantee zero PFAS from incidental contamination of raw materials. Testing is the only way to confirm a specific product is truly PFAS-free. Ask suppliers for third-party test documentation, not just a compliance declaration.
+    </div>
+
+  </div>
+
+  <!-- RIGHT COLUMN -->
+  <div class="col">
+
+    <div class="sec-head">Community compost testing cycle <span class="tag tag-r">For Cat / Nederland</span></div>
+
+    <p>This is the technical backbone that volunteer advocacy feeds into. Results from each step are published transparently — on the waste transfer site noticeboard and on the SCD Hub platform.</p>
+
+    <div class="step-row"><div class="step-num">1</div><div class="step-text"><strong>Baseline test (now):</strong> Send finished compost from the EarthFlow system to Eurofins, ALS Environmental, or TestAmerica (all serve Colorado). Request <strong>ASTM D8421</strong> solid-matrix PFAS-40 panel. Cost: approx. $200–350/sample.</div></div>
+    <hr class="divider">
+    <div class="step-row"><div class="step-num">2</div><div class="step-text"><strong>Input audit (months 1–3):</strong> Volunteers document and photograph packaging in the organic waste stream using this form. Prioritise high-volume sources: restaurants, the school, any food trucks operating in season.</div></div>
+    <hr class="divider">
+    <div class="step-row"><div class="step-num">3</div><div class="step-text"><strong>Targeted substitution (months 3–9):</strong> Work with businesses to switch highest-PFAS items. Focus on volume — one pizza restaurant contributing 10 boxes/night matters more than a boutique bakery contributing 3. Track confirmed switches on the platform.</div></div>
+    <hr class="divider">
+    <div class="step-row"><div class="step-num">4</div><div class="step-text"><strong>Re-test compost (month 12):</strong> Same protocol as baseline. Compare total PFAS load. This validates the work quantitatively and earns eco:certificate credentials for participating volunteers.</div></div>
+    <hr class="divider">
+    <div class="step-row" style="margin-bottom:10px;"><div class="step-num">5</div><div class="step-text"><strong>Publish and repeat:</strong> Post results at the transfer site and email to participating businesses. Start the next 12-month cycle with a narrower target list.</div></div>
+
+    <div class="sec-head">Compost distribution gate <span class="tag tag-o">Until testing is complete</span></div>
+
+    <table class="data-table">
+      <thead>
+        <tr><th>PFAS level (total)</th><th>Recommended use</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>&lt; 2.5 ppb</strong></td>
+          <td>Food gardens — label as tested and cleared</td>
+        </tr>
+        <tr>
+          <td><strong>2.5–10 ppb</strong></td>
+          <td>Avoid leafy greens; fruiting crops &amp; root veg with caution; ornamentals OK</td>
+        </tr>
+        <tr>
+          <td><strong>&gt; 10 ppb</strong></td>
+          <td>Hold for non-food uses: roads, revegetation, ornamentals, tree planting</td>
+        </tr>
+        <tr>
+          <td><em>Untested</em></td>
+          <td>Label "not yet cleared for food gardens — testing in progress"</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="alert alert-r">
+      <span class="alert-label">Soil mitigation if PFAS found</span>
+      <strong>Activated carbon / biochar amendment</strong> (10–15% by volume) reduces plant-available PFAS by 30–60% in research settings. This is an interim tool for existing contamination — not a substitute for clean inputs. Increase soil organic matter to compete with PFAS at root absorption sites. Avoid growing leafy greens in affected plots until two consecutive clean tests.
+    </div>
+
+    <div class="sec-head">Earn eco:certificate credits for this work</div>
+
+    <p>Completed business audit forms submitted to the SCD Hub platform (<strong>exotopia.org</strong>) qualify for eco:certificate credits — verifiable digital records of your contribution to community environmental health. Group coordinators can also post specific audit tasks as bounties: e.g., "Complete packaging audit at [business], document results, confirm follow-up action."</p>
+
+    <p style="font-size:8.5px;color:#555;">Contact: <strong>acmeideal@gmail.com</strong> · or through Cat at the Town of Nederland sustainability office</p>
+    <p style="font-size:8px;color:#888;">Bear Creek / South Boulder Creek watershed · Boulder County, Colorado</p>
+
+  </div>
+
+  <div class="page-footer">
+    <div class="pf-left">Nederland Zero-Waste + SCD Hub/Exotopia · acmeideal@gmail.com · exotopia.org · Page 2 of 2</div>
+    <div class="pf-right">CC BY-SA 4.0 · Print freely · Adapt for your watershed</div>
+  </div>
+
+</div>
+
+</body>
+</html>

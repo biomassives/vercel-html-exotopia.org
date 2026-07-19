@@ -1,0 +1,1734 @@
+{
+  "_schema": "scd-hub-ot7a-v1.0",
+  "_version": "7.0-alpha",
+  "_description": "Full 24-dimensional Leech lattice (\u039b\u2082\u2084) settlement library. Three stacked E8 blocks corresponding to the three-block Leech structure: Block 1 (x1\u2013x8) human capability axes; Block 2 (x9\u2013x16) nature rights counterpart axes \u2014 each paired with its Block 1 partner; Block 3 (x17\u2013x24) cultural-temporal dynamics axes encoding how settlements relate to time, network, and identity. The Golay code stitching between blocks means the three are not independent \u2014 a settlement's position in all 24 dimensions simultaneously is its \u039b\u2082\u2084 address.",
+  "_loader_note": "Root is a wrapper object; load areas via (await fetch('/ot7a.json').then(r=>r.json())).areas \u2014 distinct from ot6a.json which is a bare array.",
+  "_thinking_layer": {
+    "name": "Human Rights and Rights of Nature as Dimensional Basis",
+    "rationale": "The eight E8 capability axes were chosen to span the full space of community wellbeing. Human rights represent the closest thing to an international consensus on what that space contains \u2014 grounded in what communities have consistently said they need to thrive: secure land, clean water, living ecosystems, self-governance, useful tools, knowledge transmission, economic dignity, and a stable climate. A capability gap in a settlement's E8 profile can be named as a rights deficit, which makes it legible to the communities experiencing it, not just to institutions managing it.",
+    "rights_of_nature": {
+      "description": "Rights of Nature (RoN) extends legal personhood and enforceable rights to ecosystems, rivers, forests, and species \u2014 not as property owned by humans, but as subjects in their own right. Where human rights ask 'what do people need from nature?', Rights of Nature asks 'what does nature need to exist and flourish?' The two framings are complementary: communities cannot exercise their rights to water, land, food, and a healthy environment in the long run if the ecosystems that produce those things have no legal standing to defend themselves.",
+      "key_frameworks": [
+        "Ecuador Constitution (2008) \u2014 Pachamama / Rights of Nature as constitutional provision (Articles 71\u201374)",
+        "Bolivia Law of the Rights of Mother Earth (2010)",
+        "Whanganui River (New Zealand, 2017) \u2014 first river granted legal personhood",
+        "Ganges and Yamuna Rivers (India, 2017) \u2014 High Court ruling granting legal personhood (subsequently stayed)",
+        "Magpie River (Qu\u00e9bec, Canada, 2021) \u2014 granted nine rights by Innu Council of Ekuanitshit",
+        "Universal Declaration of Rights of Mother Earth (World People's Conference on Climate Change, Cochabamba, 2010)",
+        "Rights of Nature Tribunal \u2014 international peoples' tribunal applying RoN frameworks to cases worldwide"
+      ],
+      "integration_note": "Rights of Nature is woven into each of the eight E8 areas as a cross-cutting layer. Each area's thinking layer now asks both the human question (what do people need?) and the nature question (what does the ecosystem need to continue providing it?). The two are rarely in conflict; the conflict that appears is almost always between short-term extraction and long-term flourishing for both."
+    }
+  },
+  "_e8_axis_map": {
+    "_note": "All 24 \u039b\u2082\u2084 dimensions. Block 1 axes are active library areas. Blocks 2 and 3 are defined here for the address system; library content is planned.",
+    "block_1_human_capability": {
+      "x1": {
+        "label": "Land stewardship and soil health monitoring",
+        "area": "Land",
+        "block": 1,
+        "status": "active"
+      },
+      "x2": {
+        "label": "Water quality and watershed integrity",
+        "area": "Water",
+        "block": 1,
+        "status": "active"
+      },
+      "x3": {
+        "label": "Biodiversity and ecological community health",
+        "area": "Biodiversity",
+        "block": 1,
+        "status": "active"
+      },
+      "x4": {
+        "label": "Community governance and decision-making capacity",
+        "area": "Governance",
+        "block": 1,
+        "status": "active"
+      },
+      "x5": {
+        "label": "Technology maturity and tool access",
+        "area": "Technology",
+        "block": 1,
+        "status": "active"
+      },
+      "x6": {
+        "label": "Educational reach and intergenerational knowledge",
+        "area": "Education",
+        "block": 1,
+        "status": "active"
+      },
+      "x7": {
+        "label": "Economic inclusion and income resilience",
+        "area": "Economy",
+        "block": 1,
+        "status": "active"
+      },
+      "x8": {
+        "label": "Climate adaptation and long-term site planning",
+        "area": "Climate",
+        "block": 1,
+        "status": "active"
+      }
+    },
+    "block_2_nature_rights": {
+      "_note": "Each axis is the ecological counterpart of its Block 1 partner. The gap between a settlement's x_n and x_{n+8} score encodes ecological debt on that dimension.",
+      "x9": {
+        "label": "Soil community vitality and continuity",
+        "area": "Soil Ecology",
+        "block": 2,
+        "status": "planned",
+        "mirrors": "x1"
+      },
+      "x10": {
+        "label": "Watershed and aquatic ecosystem integrity",
+        "area": "Aquatic Systems",
+        "block": 2,
+        "status": "planned",
+        "mirrors": "x2"
+      },
+      "x11": {
+        "label": "Species richness and evolutionary process health",
+        "area": "Species & Evolution",
+        "block": 2,
+        "status": "planned",
+        "mirrors": "x3"
+      },
+      "x12": {
+        "label": "Ecosystem representation in decision-making",
+        "area": "Nature Governance",
+        "block": 2,
+        "status": "planned",
+        "mirrors": "x4"
+      },
+      "x13": {
+        "label": "Ecological sensing and self-regulation capacity",
+        "area": "Ecological Sensing",
+        "block": 2,
+        "status": "planned",
+        "mirrors": "x5"
+      },
+      "x14": {
+        "label": "Biocultural knowledge transmission and language vitality",
+        "area": "Biocultural Heritage",
+        "block": 2,
+        "status": "planned",
+        "mirrors": "x6"
+      },
+      "x15": {
+        "label": "Ecosystem service recognition and economic standing",
+        "area": "Nature Economy",
+        "block": 2,
+        "status": "planned",
+        "mirrors": "x7"
+      },
+      "x16": {
+        "label": "Atmospheric and local climate system stability",
+        "area": "Climate Systems",
+        "block": 2,
+        "status": "planned",
+        "mirrors": "x8"
+      }
+    },
+    "block_3_cultural_temporal": {
+      "_note": "Relational context axes. These capture how a settlement relates to time, cultural continuity, and its network of peer settlements. Strong Block 3 axes mean capability compounds across generations; weak Block 3 means each crisis resets progress.",
+      "x17": {
+        "label": "Generational depth and cultural memory",
+        "area": "Cultural Memory",
+        "block": 3,
+        "status": "planned"
+      },
+      "x18": {
+        "label": "Community resilience and shock recovery capacity",
+        "area": "Resilience",
+        "block": 3,
+        "status": "planned"
+      },
+      "x19": {
+        "label": "Network reciprocity and mutual aid density",
+        "area": "Mutual Aid",
+        "block": 3,
+        "status": "planned"
+      },
+      "x20": {
+        "label": "Adaptive learning and innovation diffusion rate",
+        "area": "Learning Systems",
+        "block": 3,
+        "status": "planned"
+      },
+      "x21": {
+        "label": "Conflict transformation and peace cultivation",
+        "area": "Peace & Conflict",
+        "block": 3,
+        "status": "planned"
+      },
+      "x22": {
+        "label": "Demographic vitality and migration balance",
+        "area": "Demographics",
+        "block": 3,
+        "status": "planned"
+      },
+      "x23": {
+        "label": "Institutional memory and knowledge documentation",
+        "area": "Documentation",
+        "block": 3,
+        "status": "planned"
+      },
+      "x24": {
+        "label": "Narrative coherence and shared community identity",
+        "area": "Identity & Story",
+        "block": 3,
+        "status": "planned"
+      }
+    }
+  },
+  "areas": [
+    {
+      "area": "Land",
+      "e8_axis": "x1",
+      "e8_label": "Land stewardship and soil health monitoring",
+      "featherIcon": "grid",
+      "icon": "mdi-terrain",
+      "subcategories": [
+        {
+          "uniqueId": "land-0",
+          "title": "Soil Health Assessment Methods",
+          "subtitle": "Field-accessible protocols for understanding what lives below ground",
+          "description": "Soil health cannot be captured by NPK chemistry alone. This subcategory covers biological, physical, and chemical assessment using tools available to any community group: the earthworm dig test, infiltration timing, aggregate stability jar test, NRCS four-principle framework, and the Haney Soil Health Score. Outputs are comparable across sites and seasons \u2014 building the longitudinal record that turns an observation into a monitoring programme.",
+          "tags": [
+            "soil biology",
+            "Haney test",
+            "aggregate stability",
+            "earthworms",
+            "NRCS",
+            "soil carbon",
+            "cover crops",
+            "infiltration",
+            "compaction",
+            "field assessment"
+          ],
+          "context": "Required equipment: soil probe, mason jars, stopwatch, NRCS Soil Health Card (free PDF). Optional: Cornell Soil Health app (iOS/Android, free). Connects to eco:certificate soil monitoring bounties.",
+          "videos": [
+            {
+              "title": "Understanding Soil Health \u2014 NRCS Four Principles",
+              "youtubeId": "8BZT2WTXLSI",
+              "description": "USDA NRCS introduction to the four soil health principles: minimise disturbance, maintain living roots, maintain soil cover, maximise diversity. Covers aggregate stability, the earthworm dig test, and infiltration timing \u2014 three field assessments requiring no laboratory equipment.",
+              "icon_tag_fa": "fas fa-seedling",
+              "color_tag": "#6b7c3a",
+              "localVideoFilename": "",
+              "authors": "USDA NRCS",
+              "researchReviewItems": [],
+              "contentCreatorArchive": "https://www.youtube.com/@usdanrcs",
+              "licence": "U.S. Government Work (public domain)",
+              "patreon": "",
+              "socials": {},
+              "fundraiser": "",
+              "sponsorPages": [],
+              "tags": [
+                "soil biology",
+                "NRCS",
+                "field assessment"
+              ]
+            },
+            {
+              "title": "Regenerating Degraded Land \u2014 A Smallholder Case Study",
+              "youtubeId": "PENDING",
+              "description": "PLACEHOLDER \u2014 Target: 15\u201325 min case study showing a smallholder or community group rebuilding soil organic matter over 3\u20135 seasons using cover crops, compost, and reduced tillage. Should include before/after soil tests and visible earthworm counts. Suggested sources: Rodale Institute, Africa Soil Information Service (AFSIS), or iDE global.",
+              "icon_tag_fa": "fas fa-leaf",
+              "color_tag": "#374151",
+              "localVideoFilename": "",
+              "authors": "PENDING",
+              "researchReviewItems": [],
+              "contentCreatorArchive": "",
+              "licence": "PENDING",
+              "patreon": "",
+              "socials": {},
+              "fundraiser": "",
+              "sponsorPages": [],
+              "tags": [
+                "soil carbon",
+                "cover crops",
+                "compaction"
+              ]
+            }
+          ],
+          "videoTagDirectory": {
+            "soil biology": {
+              "description": "The living community inside soil \u2014 bacteria, fungi, protozoa, nematodes, earthworms \u2014 and how management decisions shift the balance between life forms and nutrient cycling pathways.",
+              "link": "https://www.nrcs.usda.gov/conservation-basics/natural-resource-concerns/soils/soil-health",
+              "linkLabel": "NRCS Soil Health Portal"
+            },
+            "Haney test": {
+              "description": "The Haney Soil Health Test measures biological, chemical, and physical soil health in a single sample using H\u2083A extraction + CO\u2082 burst + PLFA analysis. Produces a Soil Health Score (0\u2013100) comparable across sites and seasons.",
+              "link": "https://wardlab.com/tests/haney-soil-health-test/",
+              "linkLabel": "Ward Laboratories \u2014 Haney Test Guide"
+            },
+            "aggregate stability": {
+              "description": "Aggregate stability measures how well soil particles clump into stable units. High stability means water infiltrates instead of running off; it is one of the fastest-responding indicators of improving soil biology.",
+              "link": "",
+              "linkLabel": ""
+            }
+          }
+        },
+        {
+          "uniqueId": "land-1",
+          "title": "Land Tenure, Rights Documentation & Community Mapping",
+          "subtitle": "Securing the rights to land you steward \u2014 before they are disputed",
+          "description": "Secure land tenure is a precondition for long-term stewardship investment. Communities that do not hold documented rights to their land cannot legally defend against displacement, extractive concessions, or encroachment. This subcategory covers community-based participatory mapping (CBPM), free, prior and informed consent (FPIC) documentation, and simple GIS/GPS workflows for recording customary land boundaries in formats recognisable by local land administration offices.",
+          "tags": [
+            "land tenure",
+            "FPIC",
+            "community mapping",
+            "GPS",
+            "GIS",
+            "customary rights",
+            "displacement",
+            "participatory mapping",
+            "boundary documentation"
+          ],
+          "context": "Requires: GPS-enabled smartphone + Open Street Map or Mapbox offline layer + printed boundary sketches. No GIS expertise needed for initial boundary recording. Partners: Cadasta Foundation (free community land documentation platform), Namati (community land protection legal support), LandMark (global platform of indigenous and community land).",
+          "videos": [
+            {
+              "title": "Community Mapping for Land Rights \u2014 A Practical Guide",
+              "youtubeId": "PENDING",
+              "description": "PLACEHOLDER \u2014 Target: a 20\u201330 min guide to participatory boundary mapping with community members. Should cover: walking the boundary with GPS, recording waypoints, importing to QGIS or Cadasta, printing for community validation, and submitting to local land registry. Suggested sources: Cadasta Foundation, Namati, or Rights and Resources Initiative.",
+              "icon_tag_fa": "fas fa-map-marked-alt",
+              "color_tag": "#374151",
+              "localVideoFilename": "",
+              "authors": "PENDING",
+              "researchReviewItems": [],
+              "contentCreatorArchive": "",
+              "licence": "PENDING",
+              "patreon": "",
+              "socials": {},
+              "fundraiser": "",
+              "sponsorPages": [],
+              "tags": [
+                "community mapping",
+                "GPS",
+                "land tenure"
+              ]
+            },
+            {
+              "title": "What is FPIC? Free, Prior and Informed Consent Explained",
+              "youtubeId": "PENDING",
+              "description": "PLACEHOLDER \u2014 Target: a clear 10\u201315 min explainer on FPIC \u2014 what each word means, when it applies, what consent looks like vs. consultation, and what communities can do when FPIC is not respected. Suggested sources: Forest Peoples Programme, Cultural Survival, or Oxfam FPIC toolkit video.",
+              "icon_tag_fa": "fas fa-handshake",
+              "color_tag": "#374151",
+              "localVideoFilename": "",
+              "authors": "PENDING",
+              "researchReviewItems": [],
+              "contentCreatorArchive": "",
+              "licence": "PENDING",
+              "patreon": "",
+              "socials": {},
+              "fundraiser": "",
+              "sponsorPages": [],
+              "tags": [
+                "FPIC",
+                "customary rights"
+              ]
+            }
+          ],
+          "videoTagDirectory": {
+            "FPIC": {
+              "description": "Free, Prior and Informed Consent \u2014 the right of indigenous and local communities to give or withhold consent to projects affecting their lands before those projects begin. Increasingly recognised in national laws, corporate ESG frameworks, and community land protection practice globally.",
+              "link": "https://www.forestpeoples.org/en/fpic",
+              "linkLabel": "Forest Peoples Programme \u2014 FPIC"
+            },
+            "community mapping": {
+              "description": "Community-Based Participatory Mapping (CBPM) involves community members in documenting their own land boundaries, land uses, and resource locations \u2014 producing maps that are both legally useful and culturally authoritative.",
+              "link": "https://cadasta.org/",
+              "linkLabel": "Cadasta \u2014 Community Land Documentation"
+            }
+          }
+        },
+        {
+          "uniqueId": "land-2",
+          "title": "Agroecology & Traditional Land Management",
+          "subtitle": "Productivity through ecology, not against it",
+          "description": "Agroecology applies ecological principles to the design and management of food systems. This subcategory covers agroforestry, intercropping, traditional soil knowledge, permaculture design, and the integration of livestock, trees, and crops that many indigenous farming systems have practiced for centuries. Content is curated for both tropical smallholder and temperate community farming contexts.",
+          "tags": [
+            "agroforestry",
+            "intercropping",
+            "permaculture",
+            "traditional knowledge",
+            "agroecology",
+            "companion planting",
+            "food forest",
+            "indigenous agriculture"
+          ],
+          "context": "No purchased inputs required. Emphasises locally available materials. Traditional knowledge holders within the community are the primary resource \u2014 videos provide the conceptual framework, community elders provide the site-specific knowledge.",
+          "videos": [
+            {
+              "title": "Introduction to Agroforestry \u2014 Trees as Infrastructure",
+              "youtubeId": "PENDING",
+              "description": "PLACEHOLDER \u2014 Target: a 15\u201325 min overview of agroforestry systems appropriate for East Africa, South/Central America, and South/Southeast Asia contexts \u2014 alley cropping, silvopasture, and homegardens. Should include a real farm example showing economic and ecological benefits compared to monoculture. Suggested sources: ICRAF (World Agroforestry), Agroforestry Research Trust, or CIFOR.",
+              "icon_tag_fa": "fas fa-tree",
+              "color_tag": "#374151",
+              "localVideoFilename": "",
+              "authors": "PENDING",
+              "researchReviewItems": [],
+              "contentCreatorArchive": "",
+              "licence": "PENDING",
+              "patreon": "",
+              "socials": {},
+              "fundraiser": "",
+              "sponsorPages": [],
+              "tags": [
+                "agroforestry",
+                "intercropping",
+                "food forest"
+              ]
+            }
+          ],
+          "videoTagDirectory": {
+            "agroforestry": {
+              "description": "Agroforestry deliberately combines trees with crops or livestock on the same land unit. Trees provide shade, nitrogen fixation, fodder, fruit, timber, and windbreak services while the crops or livestock underneath benefit from reduced evapotranspiration and improved soil biology.",
+              "link": "https://www.worldagroforestry.org/",
+              "linkLabel": "ICRAF \u2014 World Agroforestry"
+            },
+            "traditional knowledge": {
+              "description": "Traditional ecological knowledge (TEK) is the accumulated understanding of land, water, and species relationships developed by communities over generations. Communities hold the right to maintain, control, protect and develop their cultural heritage and traditional knowledge.",
+              "link": "",
+              "linkLabel": ""
+            }
+          }
+        }
+      ],
+      "rights_of_nature": {
+        "subject": "Soil communities \u2014 bacteria, fungi, protozoa, nematodes, earthworms \u2014 as living systems with interests in their own continuity",
+        "need": "Freedom from biocide loading, compaction, and organic matter depletion that collapse soil food webs",
+        "community_connection": "When soil communities thrive, they provide fertility without purchased inputs. When they collapse, communities lose the productive base their food system depends on. The interests are the same; the language differs.",
+        "frameworks": [
+          "Ecuador Constitution Art. 71-74 (Pachamama)",
+          "Universal Declaration of Rights of Mother Earth Art. 2"
+        ]
+      },
+      "block": 1,
+      "status": "active"
+    },
+    {
+      "area": "Water",
+      "e8_axis": "x2",
+      "e8_label": "Water quality and watershed integrity",
+      "featherIcon": "droplet",
+      "icon": "mdi-water",
+      "subcategories": [
+        {
+          "uniqueId": "water-0",
+          "title": "Water Quality Monitoring",
+          "subtitle": "Reading water as a living system \u2014 measuring health, not just clarity",
+          "description": "Chemical treatment and biological monitoring are complementary skills. This subcategory covers the field tools a community group needs to monitor its own water: Secchi disk transparency, dissolved oxygen (DO), conductivity, pH, nitrate and phosphate test kits, and the EPA Rapid Bioassessment Protocol for stream physical habitat. Results are interpretable without laboratory equipment and comparable to state and national databases.",
+          "tags": [
+            "Secchi disk",
+            "dissolved oxygen",
+            "conductivity",
+            "nitrate",
+            "phosphate",
+            "pH",
+            "rapid bioassessment",
+            "HAB",
+            "cyanobacteria",
+            "field monitoring"
+          ],
+          "context": "Equipment: Secchi disk (~$15 DIY), multiparameter meter (~$150\u2013300 for a group), Hach or API field test kits (~$30\u201380). USA: report to EPA Volunteer Monitoring Program and state environmental agencies. UK: report to Environment Agency. Kenya: NEMA community monitoring. Connects to Cyanobacteria Watch curriculum unit.",
+          "videos": [
+            {
+              "title": "How to Test Water Quality in the Field \u2014 Multiparameter Meter Basics",
+              "youtubeId": "PENDING",
+              "description": "PLACEHOLDER \u2014 Target: a practical 10\u201315 min demonstration of a YSI or Hach multiparameter meter measuring DO, pH, conductivity, and temperature in a stream or lake setting. Should cover probe calibration, recording protocol, and how to interpret results against EPA water quality criteria. Suggested source: a US state environmental agency extension video, Hach Company, or YSI Inc.",
+              "icon_tag_fa": "fas fa-tint",
+              "color_tag": "#374151",
+              "localVideoFilename": "",
+              "authors": "PENDING",
+              "researchReviewItems": [],
+              "contentCreatorArchive": "",
+              "licence": "PENDING",
+              "patreon": "",
+              "socials": {},
+              "fundraiser": "",
+              "sponsorPages": [],
+              "tags": [
+                "dissolved oxygen",
+                "conductivity",
+                "field monitoring"
+              ]
+            },
+            {
+              "title": "Harmful Algal Blooms \u2014 Identification, Reporting, and Response",
+              "youtubeId": "PENDING",
+              "description": "PLACEHOLDER \u2014 Target: a 10\u201315 min guide covering HAB visual identification (surface scum, paint-like texture, blue-green or olive colour, odour), what to document (photos, GPS, date/time), health precautions for people and pets, and how to report to EPA HABs portal or state environmental agencies. Should include a non-technical explanation of why HABs occur (nutrient loading + stratification + weather windows).",
+              "icon_tag_fa": "fas fa-biohazard",
+              "color_tag": "#374151",
+              "localVideoFilename": "",
+              "authors": "PENDING",
+              "researchReviewItems": [],
+              "contentCreatorArchive": "",
+              "licence": "PENDING",
+              "patreon": "",
+              "socials": {},
+              "fundraiser": "",
+              "sponsorPages": [],
+              "tags": [
+                "HAB",
+                "cyanobacteria",
+                "field monitoring"
+              ]
+            }
+          ],
+          "videoTagDirectory": {
+            "Secchi disk": {
+              "description": "A weighted black-and-white disk lowered until invisible then raised until visible. Average of disappearance/reappearance depths = Secchi depth. Simple, reproducible measure of water transparency and indirect indicator of algal biomass and sediment loading.",
+              "link": "https://www.secchidisk.org/",
+              "linkLabel": "Secchi Dip-In \u2014 Global Citizen Monitoring"
+            },
+            "HAB": {
+              "description": "Harmful algal blooms (HABs) occur when cyanobacteria proliferate under high-nutrient, warm, stratified conditions. Some produce cyanotoxins dangerous to humans, pets, and livestock. Early citizen reporting allows health departments to close swimming areas before illness.",
+              "link": "https://www.epa.gov/cyanohabs",
+              "linkLabel": "EPA \u2014 Cyanobacterial HABs"
+            }
+          }
+        },
+        {
+          "uniqueId": "water-1",
+          "title": "Watershed Governance & Commons Management",
+          "subtitle": "The people and agreements that protect water before it reaches treatment",
+          "description": "A watershed is a commons \u2014 everything upstream affects everyone downstream. Managing it requires governance structures, not just filters. This subcategory covers the Ostrom design principles for sustainable commons governance, watershed partnership models (US WPPs, UK Catchment Partnerships, Kenya WRMA), conflict resolution between upstream and downstream users, and how to establish a community monitoring programme that has standing with regulatory agencies.",
+          "tags": [
+            "commons governance",
+            "Ostrom principles",
+            "watershed partnership",
+            "WRMA",
+            "catchment management",
+            "upstream-downstream",
+            "water rights",
+            "conflict resolution"
+          ],
+          "context": "Connects to the Escaz\u00fa Agreement and Aarhus Convention access-to-information provisions. Community monitoring data that meets agency standards can be cited in regulatory proceedings \u2014 giving communities procedural standing they would not otherwise have.",
+          "videos": [
+            {
+              "title": "Elinor Ostrom's Eight Principles for Managing a Commons",
+              "youtubeId": "PENDING",
+              "description": "PLACEHOLDER \u2014 Target: a clear 10\u201320 min accessible explanation of Ostrom's 1990 design principles for long-lived common-pool resource institutions, applied to water governance. Should include a real watershed or irrigation commons case study. Suggested sources: Sustainable Human channel, On the Commons, or academic explainer.",
+              "icon_tag_fa": "fas fa-users",
+              "color_tag": "#374151",
+              "localVideoFilename": "",
+              "authors": "PENDING",
+              "researchReviewItems": [],
+              "contentCreatorArchive": "",
+              "licence": "PENDING",
+              "patreon": "",
+              "socials": {},
+              "fundraiser": "",
+              "sponsorPages": [],
+              "tags": [
+                "commons governance",
+                "Ostrom principles"
+              ]
+            }
+          ],
+          "videoTagDirectory": {
+            "commons governance": {
+              "description": "Elinor Ostrom (Nobel Economics 2009) demonstrated that communities can sustainably self-govern shared resources without either privatisation or state control, provided the governance institution meets eight design principles (clearly defined boundaries, locally adapted rules, collective choice, monitoring, graduated sanctions, conflict resolution, external recognition, nested enterprises).",
+              "link": "https://www.onthecommons.org/",
+              "linkLabel": "On the Commons \u2014 Ostrom Resources"
+            },
+            "watershed partnership": {
+              "description": "A formal or informal association of stakeholders in a watershed \u2014 farmers, municipalities, environmental groups, utilities \u2014 that coordinates land and water management across administrative boundaries. More effective than single-agency management because most water problems cross jurisdictions.",
+              "link": "",
+              "linkLabel": ""
+            }
+          }
+        },
+        {
+          "uniqueId": "water-2",
+          "title": "WASH, Water Justice & PFAS Accountability",
+          "subtitle": "When the right to water is violated \u2014 documentation, advocacy, and legal routes",
+          "description": "Water quality failures are not random. PFAS (per- and polyfluoroalkyl substances), lead, nitrate contamination, and dry well failures disproportionately affect communities with less political power. This subcategory covers WASH (water, sanitation, hygiene) baseline assessment, PFAS sample chain-of-custody for community-collected evidence, environmental justice mapping tools, and the legal and regulatory routes available when the right to safe water is violated.",
+          "tags": [
+            "WASH",
+            "PFAS",
+            "environmental justice",
+            "water rights",
+            "contamination",
+            "chain of custody",
+            "lead",
+            "nitrate",
+            "regulatory",
+            "legal"
+          ],
+          "context": "PFAS testing: EPA Method 533 or 537.1 for drinking water; community groups should contact their state environmental lab or a certified laboratory before sampling to ensure chain-of-custody validity. USA: EPA Safe Drinking Water Act complaints. UK: Drinking Water Inspectorate. Kenya: Water Act 2016 and WRMA.",
+          "videos": [
+            {
+              "title": "PFAS in Drinking Water \u2014 What Communities Need to Know",
+              "youtubeId": "PENDING",
+              "description": "PLACEHOLDER \u2014 Target: a community-facing 15\u201320 min explainer on PFAS: what they are, why they persist, health effects (PFOA, PFOS links to cancer, thyroid disruption, immune suppression), which communities face highest exposure (near military bases, industrial sites, airports), how to get your water tested, and what the EPA MCL of 4 ppt means in practice. Suggested sources: EWG, Earthjustice, or a state health department community outreach video.",
+              "icon_tag_fa": "fas fa-flask",
+              "color_tag": "#374151",
+              "localVideoFilename": "",
+              "authors": "PENDING",
+              "researchReviewItems": [],
+              "contentCreatorArchive": "",
+              "licence": "PENDING",
+              "patreon": "",
+              "socials": {},
+              "fundraiser": "",
+              "sponsorPages": [],
+              "tags": [
+                "PFAS",
+                "contamination",
+                "WASH"
+              ]
+            }
+          ],
+          "videoTagDirectory": {
+            "PFAS": {
+              "description": "Per- and polyfluoroalkyl substances (PFAS) are a class of ~12,000 synthetic chemicals used since the 1940s in non-stick coatings, firefighting foam, and food packaging. They do not biodegrade (hence 'forever chemicals') and accumulate in blood. EPA set enforceable limits of 4 ppt for PFOA and PFOS in drinking water in 2024.",
+              "link": "https://www.epa.gov/pfas",
+              "linkLabel": "EPA \u2014 PFAS Information"
+            },
+            "WASH": {
+              "description": "Water, Sanitation and Hygiene (WASH) \u2014 the international development framework covering access to safe drinking water, adequate sanitation, and hygiene promotion. WASH deficits are the primary driver of waterborne disease mortality, which kills more than two million people annually, predominantly children under five.",
+              "link": "https://www.who.int/teams/environment-climate-change-and-health/water-sanitation-and-hygiene",
+              "linkLabel": "WHO \u2014 WASH"
+            }
+          }
+        }
+      ],
+      "rights_of_nature": {
+        "subject": "Rivers, lakes, wetlands, and aquifers as living entities \u2014 not pipelines",
+        "need": "Minimum ecological flows, freedom from chemical loading beyond absorptive capacity, intact riparian zones",
+        "community_connection": "The Whanganui River in New Zealand now has a legal guardian who can sue on its behalf. Communities downstream of industrial discharge increasingly argue that if the river had legal standing, it could enforce its own clean water rights \u2014 which happen to be the same as the community's.",
+        "frameworks": [
+          "Whanganui River Act 2017 (New Zealand)",
+          "Mar Menor lagoon legal personhood (Spain, 2022)",
+          "Magpie River rights (Canada, 2021)"
+        ]
+      },
+      "block": 1,
+      "status": "active"
+    },
+    {
+      "area": "Biodiversity",
+      "e8_axis": "x3",
+      "e8_label": "Biodiversity and ecological community health",
+      "featherIcon": "wind",
+      "icon": "mdi-leaf",
+      "subcategories": [
+        {
+          "uniqueId": "biodiversity-0",
+          "title": "Citizen Science Monitoring Protocols",
+          "subtitle": "iNaturalist, eBird, BMWP, and pollinatorwatch \u2014 building research-grade data",
+          "description": "Citizen science biodiversity data is now a primary input to global assessments. iNaturalist Research Grade observations flow into the GBIF database powering IPBES reports. eBird checklists power global migration science. BMWP macroinvertebrate scores are legally accepted as stream health evidence in the UK and widely used elsewhere. This subcategory covers the four main protocols community groups can run without specialist training, and what makes data 'research grade' \u2014 usable by scientists and regulators, not just interesting to the observer.",
+          "tags": [
+            "iNaturalist",
+            "eBird",
+            "BMWP",
+            "macroinvertebrates",
+            "pollinators",
+            "bioblitz",
+            "GBIF",
+            "research grade",
+            "citizen science",
+            "species richness"
+          ],
+          "context": "Equipment: smartphone (iNaturalist, eBird free), binoculars (eBird), kick-net + white tray + printed ID key (BMWP, ~$40). No specialist training required for iNaturalist or eBird. BMWP benefits from a 2-hour training session. All four protocols produce data in formats accepted by national and global biodiversity databases.",
+          "videos": [
+            {
+              "title": "Getting Started with iNaturalist",
+              "youtubeId": "VVTTal7CLuY",
+              "description": "Official iNaturalist walkthrough: making an observation, how the community ID system works, what makes an observation Research Grade, and how data flows into the GBIF global biodiversity database.",
+              "icon_tag_fa": "fas fa-camera",
+              "color_tag": "#166534",
+              "localVideoFilename": "",
+              "authors": "iNaturalist",
+              "researchReviewItems": [],
+              "contentCreatorArchive": "https://www.youtube.com/@iNaturalist",
+              "licence": "Standard YouTube License",
+              "patreon": "",
+              "socials": {},
+              "fundraiser": "",
+              "sponsorPages": [],
+              "tags": [
+                "iNaturalist",
+                "citizen science",
+                "research grade"
+              ]
+            },
+            {
+              "title": "BMWP Macroinvertebrate Sampling \u2014 Kick and Sweep Demonstration",
+              "youtubeId": "PENDING",
+              "description": "PLACEHOLDER \u2014 Target: field demonstration of the 3-minute kick-sample method, white tray sorting, family-level identification, and BMWP score calculation for stream health assessment. Should show the difference between a high-scoring (clean) and low-scoring (impaired) stream. Suggested sources: UK Environment Agency, Freshwater Biological Association, or a UK river trust.",
+              "icon_tag_fa": "fas fa-water",
+              "color_tag": "#374151",
+              "localVideoFilename": "",
+              "authors": "PENDING",
+              "researchReviewItems": [],
+              "contentCreatorArchive": "",
+              "licence": "PENDING",
+              "patreon": "",
+              "socials": {},
+              "fundraiser": "",
+              "sponsorPages": [],
+              "tags": [
+                "BMWP",
+                "macroinvertebrates",
+                "citizen science"
+              ]
+            }
+          ],
+          "videoTagDirectory": {
+            "BMWP": {
+              "description": "The Biological Monitoring Working Party (BMWP) score classifies stream health using macroinvertebrate family composition. Each family has a pollution sensitivity score (1\u201310). Summed over a sample, BMWP provides a rapid biological assessment requiring no water chemistry.",
+              "link": "https://www.fba.org.uk/",
+              "linkLabel": "Freshwater Biological Association \u2014 BMWP"
+            },
+            "iNaturalist": {
+              "description": "iNaturalist is a joint initiative of the California Academy of Sciences and the National Geographic Society. Observations reaching Research Grade (community ID agreed at species level) are exported to GBIF \u2014 the primary global biodiversity data infrastructure used in IPBES assessments.",
+              "link": "https://www.inaturalist.org/",
+              "linkLabel": "iNaturalist \u2014 Start Observing"
+            },
+            "GBIF": {
+              "description": "The Global Biodiversity Information Facility (GBIF) aggregates occurrence records from 2,500+ publishing institutions including iNaturalist, eBird, and national herbaria. As of 2025, GBIF holds over 2.5 billion occurrence records and is the primary data source for global biodiversity assessments.",
+              "link": "https://www.gbif.org/",
+              "linkLabel": "GBIF \u2014 Open Biodiversity Data"
+            }
+          }
+        },
+        {
+          "uniqueId": "biodiversity-1",
+          "title": "Traditional Ecological Knowledge & Biocultural Monitoring",
+          "subtitle": "The knowledge inside communities is also biodiversity data",
+          "description": "Traditional ecological knowledge (TEK) is often the most time-deep biodiversity record available \u2014 communities may hold knowledge of species presence and behaviour across decades or centuries that no written record captures. This subcategory covers biocultural monitoring frameworks, methods for respectfully documenting TEK with proper intellectual property protections for knowledge holders, and how TEK can be combined with citizen science protocols to produce richer ecological assessments.",
+          "tags": [
+            "traditional ecological knowledge",
+            "TEK",
+            "biocultural",
+            "elder knowledge",
+            "indigenous monitoring",
+            "oral history",
+            "knowledge sovereignty",
+            "two-eyed seeing"
+          ],
+          "context": "Knowledge sovereignty is paramount. No TEK documentation should occur without explicit consent of knowledge holders and community governance structures. The Two-Eyed Seeing (Etuaptmumk) framework from Mi'kmaw Elder Albert Marshall is the recommended approach for combining indigenous and western science.",
+          "videos": [
+            {
+              "title": "Two-Eyed Seeing \u2014 Integrating Indigenous and Western Science",
+              "youtubeId": "PENDING",
+              "description": "PLACEHOLDER \u2014 Target: an explanation of the Etuaptmumk / Two-Eyed Seeing framework developed by Mi'kmaw Elder Albert Marshall, showing how indigenous ecological knowledge and western scientific methods can be held together as complementary lenses rather than competing claims. Suggested sources: Cape Breton University, Mi'kmaw Conservation Group, or Integrative Science Programme.",
+              "icon_tag_fa": "fas fa-eye",
+              "color_tag": "#374151",
+              "localVideoFilename": "",
+              "authors": "PENDING",
+              "researchReviewItems": [],
+              "contentCreatorArchive": "",
+              "licence": "PENDING",
+              "patreon": "",
+              "socials": {},
+              "fundraiser": "",
+              "sponsorPages": [],
+              "tags": [
+                "traditional ecological knowledge",
+                "two-eyed seeing",
+                "indigenous monitoring"
+              ]
+            }
+          ],
+          "videoTagDirectory": {
+            "traditional ecological knowledge": {
+              "description": "Traditional ecological knowledge (TEK) comprises the accumulated understanding of local ecosystems developed by indigenous and local communities over generations through direct interaction with their environment. TEK often provides longer time-series data on species distribution and habitat change than any written scientific record.",
+              "link": "https://www.cbd.int/traditional/",
+              "linkLabel": "CBD \u2014 Traditional Knowledge Portal"
+            },
+            "two-eyed seeing": {
+              "description": "Etuaptmumk, or Two-Eyed Seeing, is a guiding principle developed by Mi'kmaw Elder Albert Marshall and the Integrative Science Programme at Cape Breton University. It means learning to see from one eye with the strengths of indigenous knowledges and from the other eye with the strengths of western knowledges \u2014 and using both eyes together, for the benefit of all.",
+              "link": "",
+              "linkLabel": ""
+            }
+          }
+        }
+      ],
+      "rights_of_nature": {
+        "subject": "Species, ecological communities, and the evolutionary processes that generate biodiversity",
+        "need": "Habitat integrity, freedom from extinction pressure, connectivity corridors allowing adaptation to climate change",
+        "community_connection": "Biodiversity monitoring is how communities act as guardians for the species in their territory. A community with BMWP monitoring capacity is, functionally, performing the role that a legal guardian for the river ecosystem would perform.",
+        "frameworks": [
+          "Rights of Nature Tribunal species cases",
+          "Universal Declaration of Rights of Mother Earth Art. 2(b)"
+        ]
+      },
+      "block": 1,
+      "status": "active"
+    },
+    {
+      "area": "Governance",
+      "e8_axis": "x4",
+      "e8_label": "Community governance and decision-making capacity",
+      "featherIcon": "users",
+      "icon": "mdi-account-group",
+      "subcategories": [
+        {
+          "uniqueId": "governance-0",
+          "title": "Community Decision-Making Methods",
+          "subtitle": "From informal agreement to durable collective choice",
+          "description": "Most communities make decisions \u2014 but few have explicit, agreed-upon methods that survive personnel changes, conflict, or external pressure. This subcategory covers consent-based decision-making (sociocracy), consensus mapping, the ORID facilitation framework, community constitution drafting, and how to document decisions in a format useful for coordination, dispute resolution, and grant accountability.",
+          "tags": [
+            "sociocracy",
+            "consensus",
+            "facilitation",
+            "ORID",
+            "community constitution",
+            "collective decision-making",
+            "conflict resolution",
+            "meeting design",
+            "governance"
+          ],
+          "context": "No cost to learn or implement. Primary barrier is practice, not access. Sociocracy 3.0 materials are fully open-source. Connects to SCD Hub group coordinator role and the group governance templates in .github/.",
+          "videos": [
+            {
+              "title": "Introduction to Sociocracy 3.0 \u2014 Consent and Objection",
+              "youtubeId": "PENDING",
+              "description": "PLACEHOLDER \u2014 Target: a 15\u201320 min introduction to Sociocracy 3.0 (S3) covering the difference between consent (no paramount objections) and consensus (everyone agrees), how objection rounds work, and how to handle resistance constructively. Sociocracy 3.0 is fully open-source (Creative Commons) so any video produced by its community should be freely usable. Suggested source: Sociocracy 3.0 official channel or Sociocracy for All.",
+              "icon_tag_fa": "fas fa-vote-yea",
+              "color_tag": "#374151",
+              "localVideoFilename": "",
+              "authors": "PENDING",
+              "researchReviewItems": [],
+              "contentCreatorArchive": "https://sociocracy30.org/",
+              "licence": "PENDING",
+              "patreon": "",
+              "socials": {},
+              "fundraiser": "",
+              "sponsorPages": [],
+              "tags": [
+                "sociocracy",
+                "consensus",
+                "collective decision-making"
+              ]
+            }
+          ],
+          "videoTagDirectory": {
+            "sociocracy": {
+              "description": "Sociocracy is a governance method in which authority is distributed through a network of semi-autonomous circles that make decisions by consent (no paramount objections) rather than consensus (unanimous agreement). Sociocracy 3.0 (S3) is an open-source evolution with 70+ patterns for meetings, roles, agreements, and organisational structure.",
+              "link": "https://sociocracy30.org/",
+              "linkLabel": "Sociocracy 3.0 \u2014 Open Source"
+            },
+            "ORID": {
+              "description": "ORID (Objective, Reflective, Interpretive, Decisional) is a structured facilitation method for guiding groups from shared observation of facts, through emotional and associative response, to meaning-making, and finally to actionable decisions. Avoids the common failure mode of jumping to solutions before the group has shared what it actually observed.",
+              "link": "",
+              "linkLabel": ""
+            }
+          }
+        },
+        {
+          "uniqueId": "governance-1",
+          "title": "Environmental Rights & Access to Justice",
+          "subtitle": "Escaz\u00fa, Aarhus, and what to do when the legal system is the barrier",
+          "description": "The Escaz\u00fa Agreement (Latin America and Caribbean, 2018) and the Aarhus Convention (Europe and Central Asia, 1998) establish binding rights: access to environmental information held by governments, meaningful participation in environmental decisions before they are made, and access to judicial or administrative review when those rights are violated. This subcategory covers how to use these instruments, what an environmental defender is (and the specific protections ESCAZ\u00da Art. 9 provides), and how to document rights violations for treaty body complaints.",
+          "tags": [
+            "Escaz\u00fa",
+            "Aarhus",
+            "environmental defenders",
+            "access to information",
+            "public participation",
+            "environmental justice",
+            "treaty complaints",
+            "SLAPP"
+          ],
+          "context": "Escaz\u00fa is binding for its 16 current parties. Aarhus for its 46 parties. Both have compliance committees that communities can petition directly without going through national governments. Environmental defenders facing threats or SLAPPs (strategic lawsuits against public participation) can seek interim protection measures.",
+          "videos": [
+            {
+              "title": "What is the Escaz\u00fa Agreement?",
+              "youtubeId": "PENDING",
+              "description": "PLACEHOLDER \u2014 Target: a clear 10\u201315 min explainer on the Escaz\u00fa Agreement's three pillars (information, participation, justice) and the special protections for environmental defenders under Art. 9. Should explain who can access the Compliance Committee and what remedies are available. Suggested sources: CEPAL/ECLAC, ClientEarth, or AIDA (Interamerican Association for Environmental Defense).",
+              "icon_tag_fa": "fas fa-balance-scale",
+              "color_tag": "#374151",
+              "localVideoFilename": "",
+              "authors": "PENDING",
+              "researchReviewItems": [],
+              "contentCreatorArchive": "",
+              "licence": "PENDING",
+              "patreon": "",
+              "socials": {},
+              "fundraiser": "",
+              "sponsorPages": [],
+              "tags": [
+                "Escaz\u00fa",
+                "environmental defenders",
+                "access to justice"
+              ]
+            }
+          ],
+          "videoTagDirectory": {
+            "Escaz\u00fa": {
+              "description": "The Escaz\u00fa Agreement is the first environmental treaty in Latin America and the Caribbean to include specific provisions for the protection of human rights defenders in environmental matters. Currently 16 parties (2025). Compliance Committee accepts communications from the public.",
+              "link": "https://www.cepal.org/en/escazuagreement",
+              "linkLabel": "Escaz\u00fa Agreement \u2014 CEPAL"
+            },
+            "environmental defenders": {
+              "description": "Environmental defenders are individuals and groups who take peaceful actions to protect the environment, land rights, or natural resources. Globally, 200+ environmental defenders are killed each year; thousands more face SLAPPs, harassment, and imprisonment. Escaz\u00fa Art. 9 requires parties to guarantee a safe environment for defenders.",
+              "link": "https://www.globalwitness.org/en/campaigns/environmental-activists/",
+              "linkLabel": "Global Witness \u2014 Defending the Defenders"
+            }
+          }
+        }
+      ],
+      "rights_of_nature": {
+        "subject": "Ecosystems as stakeholders in governance decisions affecting them",
+        "need": "Representation in decision-making processes before those decisions are made \u2014 not just impact mitigation after",
+        "community_connection": "Some communities now include an ecosystem representative in governance structures \u2014 a person or council with explicit responsibility to ask 'what would the river vote?' in decisions about land use, development, and waste disposal. This is governance innovation, not metaphor.",
+        "frameworks": [
+          "Whanganui Te Awa Tupua governance model",
+          "Ecuador constitutional provisions requiring consultation with nature"
+        ]
+      },
+      "block": 1,
+      "status": "active"
+    },
+    {
+      "area": "Technology",
+      "e8_axis": "x5",
+      "e8_label": "Technology maturity and tool access",
+      "featherIcon": "cpu",
+      "icon": "mdi-chip",
+      "subcategories": [
+        {
+          "uniqueId": "technology-0",
+          "title": "Open-Source Tools for Community Monitoring",
+          "subtitle": "Technology you can understand, modify, and repair \u2014 without a vendor",
+          "description": "Open-source and low-cost hardware tools enable communities to build monitoring systems they control completely: no subscription fees, no vendor lock-in, no black-box algorithms. This subcategory covers the Raspberry Pi / Arduino ecosystem for environmental sensing (temperature, humidity, air quality, water level), offline-first data collection apps, and the FARM Stack (Firebase/MongoDB, API, React/Vue) for communities that want to host their own data infrastructure.",
+          "tags": [
+            "open source",
+            "Raspberry Pi",
+            "Arduino",
+            "offline-first",
+            "environmental sensing",
+            "air quality",
+            "low-cost hardware",
+            "self-hosted",
+            "maker",
+            "community tech"
+          ],
+          "context": "Cost of entry: ~$35 for a Raspberry Pi Zero 2W + basic sensors. Requires 5\u201310 hours of guided setup. After setup, maintenance is low. Pairs with SCD Hub's offline-first field data app (PWA, IndexedDB queue). All software is GPL or MIT licensed.",
+          "videos": [
+            {
+              "title": "Introduction to Arduino for Environmental Monitoring",
+              "youtubeId": "PENDING",
+              "description": "PLACEHOLDER \u2014 Target: a beginner-friendly 20\u201330 min guide to setting up an Arduino or Arduino-compatible board with a DHT22 temperature/humidity sensor, a soil moisture sensor, or a basic water quality sensor, logging data to a microSD card or transmitting via LoRa. Suggested sources: Adafruit Industries, SparkFun Electronics, or a RepRap/maker community channel with a Creative Commons licence.",
+              "icon_tag_fa": "fas fa-microchip",
+              "color_tag": "#374151",
+              "localVideoFilename": "",
+              "authors": "PENDING",
+              "researchReviewItems": [],
+              "contentCreatorArchive": "",
+              "licence": "PENDING",
+              "patreon": "",
+              "socials": {},
+              "fundraiser": "",
+              "sponsorPages": [],
+              "tags": [
+                "open source",
+                "Arduino",
+                "environmental sensing"
+              ]
+            }
+          ],
+          "videoTagDirectory": {
+            "open source": {
+              "description": "Open-source hardware and software gives communities the right to use, study, modify, and distribute technology. In a monitoring context this means: no vendor can withdraw access, communities can adapt tools to local conditions, and knowledge gained can be shared freely. GPL (software) and CERN OHL (hardware) are the primary licences.",
+              "link": "https://www.oshwa.org/",
+              "linkLabel": "Open Source Hardware Association"
+            },
+            "offline-first": {
+              "description": "Offline-first design means an application stores data locally and syncs when connectivity is available, rather than requiring a live connection to function. Essential for field work in areas with unreliable cellular coverage. SCD Hub's field data app is offline-first using a Service Worker + IndexedDB queue.",
+              "link": "",
+              "linkLabel": ""
+            }
+          }
+        },
+        {
+          "uniqueId": "technology-1",
+          "title": "Digital Literacy & Equitable Access",
+          "subtitle": "Technology that only experts can use does not increase community capability",
+          "description": "Technology access has two dimensions: physical (devices, connectivity) and cognitive (literacy, confidence, maintenance skills). This subcategory covers digital literacy frameworks for adult learners, digital security basics for communities that face surveillance or harassment risks, and the principles of appropriate technology \u2014 tools adapted to the actual conditions (power, connectivity, language, skill level) of the community rather than ideal conditions assumed by developers.",
+          "tags": [
+            "digital literacy",
+            "digital security",
+            "appropriate technology",
+            "adult learning",
+            "privacy",
+            "connectivity",
+            "language access",
+            "accessibility"
+          ],
+          "context": "Connects to the SCD Hub youth participant mode (COPPA/KOSA compliance), the comment system privacy architecture, and the offline-first field app. Digital security is especially relevant for environmental defenders (see Governance area).",
+          "videos": [
+            {
+              "title": "Security in a Box \u2014 Digital Security for Human Rights Defenders",
+              "youtubeId": "PENDING",
+              "description": "PLACEHOLDER \u2014 Target: a practical 15\u201320 min guide to basic digital security for community activists and environmental defenders \u2014 encrypted messaging (Signal), secure email (ProtonMail), device encryption, VPN basics, and threat modelling. Suggested source: Frontline Defenders, EFF SSD (Surveillance Self-Defence), or Access Now.",
+              "icon_tag_fa": "fas fa-shield-alt",
+              "color_tag": "#374151",
+              "localVideoFilename": "",
+              "authors": "PENDING",
+              "researchReviewItems": [],
+              "contentCreatorArchive": "https://securityinabox.org/",
+              "licence": "PENDING",
+              "patreon": "",
+              "socials": {},
+              "fundraiser": "",
+              "sponsorPages": [],
+              "tags": [
+                "digital security",
+                "privacy",
+                "appropriate technology"
+              ]
+            }
+          ],
+          "videoTagDirectory": {
+            "appropriate technology": {
+              "description": "Appropriate technology (AT) is technology designed to be suitable for the environmental, cultural, social and economic conditions of the community that uses it. AT prioritises local materials, local skills, local maintenance, and low dependency on external supply chains. E.F. Schumacher's 'Small is Beautiful' (1973) is the foundational text.",
+              "link": "",
+              "linkLabel": ""
+            },
+            "digital security": {
+              "description": "Digital security for community groups covers: encrypted communications, device protection, account security, safe browsing, and threat modelling (understanding who might surveil you and why). Environmental defenders face specific risks including state surveillance, corporate intelligence, and doxxing.",
+              "link": "https://ssd.eff.org/",
+              "linkLabel": "EFF Surveillance Self-Defence"
+            }
+          }
+        }
+      ],
+      "rights_of_nature": {
+        "subject": "Technology's relationship to natural systems \u2014 tools that extend sensing capacity without extractive footprint",
+        "need": "Technologies that make ecological health visible without adding to the chemical, energy, or material burden on the ecosystems they monitor",
+        "community_connection": "A Raspberry Pi soil sensor that helps a community detect compaction serves the soil community's interest in being understood. Open-source, low-energy monitoring tools are more aligned with Rights of Nature principles than proprietary, resource-intensive platforms.",
+        "frameworks": [
+          "Rights of Nature implies a preference for appropriate technology that does not instrumentalise ecosystems further"
+        ]
+      },
+      "block": 1,
+      "status": "active"
+    },
+    {
+      "area": "Education",
+      "e8_axis": "x6",
+      "e8_label": "Educational reach and intergenerational knowledge",
+      "featherIcon": "book-open",
+      "icon": "mdi-school",
+      "subcategories": [
+        {
+          "uniqueId": "education-0",
+          "title": "Community-Led & Project-Based Learning",
+          "subtitle": "Learning through doing real work on real problems",
+          "description": "Project-based learning (PBL) is the most effective pedagogy for ecological and civic skills because it is indistinguishable from the actual work. Students who monitor their watershed are not practising monitoring \u2014 they are monitoring. This subcategory covers PBL design, curriculum frameworks (Understanding by Design, Three-Dimensional Learning), facilitation of community knowledge circles, and how to structure a learning programme around the eco-ops bounty system so that skill development and meaningful data collection happen simultaneously.",
+          "tags": [
+            "project-based learning",
+            "PBL",
+            "Understanding by Design",
+            "3D learning",
+            "facilitation",
+            "community curriculum",
+            "citizen science education",
+            "inquiry"
+          ],
+          "context": "Designed for community coordinators, teacher-facilitators, and youth group leaders. Connects to the SCD Hub bounty system \u2014 bounties can be structured as learning activities with scaffolded complexity for different experience levels.",
+          "videos": [
+            {
+              "title": "What is Project-Based Learning? A Guide for Educators",
+              "youtubeId": "PENDING",
+              "description": "PLACEHOLDER \u2014 Target: a clear 10\u201315 min explainer on the PBL model covering the Gold Standard PBL framework (PBLWorks): driving question, sustained inquiry, authenticity, student voice and choice, reflection, critique and revision, and public product. Should include an example project connected to a real community or environmental question. Suggested source: PBLWorks (Buck Institute) official channel.",
+              "icon_tag_fa": "fas fa-chalkboard-teacher",
+              "color_tag": "#374151",
+              "localVideoFilename": "",
+              "authors": "PENDING",
+              "researchReviewItems": [],
+              "contentCreatorArchive": "https://www.pblworks.org/",
+              "licence": "PENDING",
+              "patreon": "",
+              "socials": {},
+              "fundraiser": "",
+              "sponsorPages": [],
+              "tags": [
+                "project-based learning",
+                "PBL",
+                "inquiry"
+              ]
+            }
+          ],
+          "videoTagDirectory": {
+            "project-based learning": {
+              "description": "Project-Based Learning (PBL) organises learning around an extended, real-world project rather than discrete lessons. In environmental contexts, the project is typically monitoring, restoration, or advocacy work \u2014 so learning and meaningful action are simultaneous. The Buck Institute's Gold Standard PBL framework is the most widely used design model.",
+              "link": "https://www.pblworks.org/",
+              "linkLabel": "PBLWorks \u2014 Gold Standard PBL"
+            }
+          }
+        },
+        {
+          "uniqueId": "education-1",
+          "title": "Intergenerational & Elder Knowledge Systems",
+          "subtitle": "The knowledge that takes generations to build \u2014 and one generation to lose",
+          "description": "Elder knowledge is not supplementary to formal education \u2014 in many ecological contexts, it is the primary curriculum. This subcategory covers oral history methods for documenting ecological knowledge, structured intergenerational learning exchange designs, archive and documentation protocols that respect knowledge sovereignty, and endangered language documentation as an ecological act \u2014 because much traditional ecological knowledge exists only in endangered languages.",
+          "tags": [
+            "elder knowledge",
+            "oral history",
+            "intergenerational",
+            "language documentation",
+            "knowledge sovereignty",
+            "indigenous education",
+            "archive",
+            "endangered languages"
+          ],
+          "context": "Partners: First Voices (language revitalisation technology), the Endangered Language Fund, ELDP (Endangered Languages Documentation Programme at SOAS), and local cultural councils. All documentation must be governed by community consent protocols.",
+          "videos": [
+            {
+              "title": "Oral History Interviewing \u2014 Methods and Ethics",
+              "youtubeId": "PENDING",
+              "description": "PLACEHOLDER \u2014 Target: a practical 20\u201330 min guide to conducting an oral history interview for ecological or cultural knowledge documentation, covering: preparing a question guide, recording consent, interview technique, transcription, community review, archive deposit, and access restrictions that protect the knowledge holder. Suggested sources: Oral History Association, British Library Oral History Collection, or Smithsonian Folkways.",
+              "icon_tag_fa": "fas fa-microphone",
+              "color_tag": "#374151",
+              "localVideoFilename": "",
+              "authors": "PENDING",
+              "researchReviewItems": [],
+              "contentCreatorArchive": "",
+              "licence": "PENDING",
+              "patreon": "",
+              "socials": {},
+              "fundraiser": "",
+              "sponsorPages": [],
+              "tags": [
+                "oral history",
+                "elder knowledge",
+                "knowledge sovereignty"
+              ]
+            }
+          ],
+          "videoTagDirectory": {
+            "knowledge sovereignty": {
+              "description": "Knowledge sovereignty is the right of communities to determine who collects, controls, and benefits from their knowledge. In practice, it means communities \u2014 not outside researchers \u2014 decide what is documented, how it is stored, who can access it, and on what terms.",
+              "link": "",
+              "linkLabel": ""
+            },
+            "endangered languages": {
+              "description": "Approximately 40% of the world's ~7,000 languages are endangered. Because much traditional ecological knowledge exists only in endangered languages \u2014 and is encoded in vocabulary, grammar, and metaphor that has no equivalent in dominant languages \u2014 language death is simultaneously ecological knowledge loss.",
+              "link": "https://www.eldp.net/",
+              "linkLabel": "Endangered Languages Documentation Programme"
+            }
+          }
+        }
+      ],
+      "rights_of_nature": {
+        "subject": "The ecological knowledge encoded in traditional languages and elder memory \u2014 itself a form of natural heritage",
+        "need": "Transmission to future generations before it is lost; protection from appropriation without community consent",
+        "community_connection": "Traditional ecological knowledge is the accumulated record of how ecosystems behave over long time periods. Losing that knowledge is an ecological loss as well as a cultural one \u2014 it removes the community's capacity to notice when the ecosystem is changing.",
+        "frameworks": [
+          "Rights of Nature Tribunal \u2014 traditional knowledge as ecological guardianship",
+          "Universal Declaration of Rights of Mother Earth Art. 3 (obligations of humans)"
+        ]
+      },
+      "block": 1,
+      "status": "active"
+    },
+    {
+      "area": "Economy",
+      "e8_axis": "x7",
+      "e8_label": "Economic inclusion and income resilience",
+      "featherIcon": "dollar-sign",
+      "icon": "mdi-currency-usd",
+      "subcategories": [
+        {
+          "uniqueId": "economy-0",
+          "title": "Cooperatives, Social Enterprise & Solidarity Economy",
+          "subtitle": "Ownership structures that keep value inside the community",
+          "description": "Cooperatives are enterprises owned and democratically controlled by their members. They are the economic form most compatible with long-term community stewardship: surplus stays in the community, decisions are made collectively, and the enterprise cannot be bought by an outside party and redirected. This subcategory covers cooperative legal structures (worker co-ops, multi-stakeholder co-ops, credit unions, ROSCAs), conversion from conventional to cooperative ownership, and the solidarity economy ecosystem of which cooperatives are one part.",
+          "tags": [
+            "cooperative",
+            "social enterprise",
+            "ROSCA",
+            "solidarity economy",
+            "worker ownership",
+            "multi-stakeholder",
+            "credit union",
+            "B-corp",
+            "fair trade",
+            "community wealth"
+          ],
+          "context": "The SCD Hub bounty system is structured so that income flows directly to individual field workers and SMEs \u2014 compatible with being organised as a cooperative. SHG (self-help group) structures prevalent in East Africa are a form of ROSCA and informal cooperative.",
+          "videos": [
+            {
+              "title": "What is a Cooperative? \u2014 Types, Principles and Examples",
+              "youtubeId": "PENDING",
+              "description": "PLACEHOLDER \u2014 Target: a 10\u201320 min accessible explainer on cooperative types (worker, consumer, producer, multi-stakeholder, platform), the ICA seven cooperative principles (voluntary membership, democratic control, member economic participation, autonomy, education, cooperation, community concern), and two or three real-world examples across different geographies. Suggested sources: ICA (International Cooperative Alliance), Democracy at Work Institute, or NRECA.",
+              "icon_tag_fa": "fas fa-people-carry",
+              "color_tag": "#374151",
+              "localVideoFilename": "",
+              "authors": "PENDING",
+              "researchReviewItems": [],
+              "contentCreatorArchive": "https://www.ica.coop/",
+              "licence": "PENDING",
+              "patreon": "",
+              "socials": {},
+              "fundraiser": "",
+              "sponsorPages": [],
+              "tags": [
+                "cooperative",
+                "solidarity economy",
+                "worker ownership"
+              ]
+            }
+          ],
+          "videoTagDirectory": {
+            "cooperative": {
+              "description": "A cooperative is an autonomous association of persons united voluntarily to meet their common economic, social and cultural needs through a jointly owned and democratically controlled enterprise. Governed by seven ICA principles. 3 million cooperatives worldwide employ 10% of the global workforce.",
+              "link": "https://www.ica.coop/",
+              "linkLabel": "International Cooperative Alliance"
+            },
+            "ROSCA": {
+              "description": "A Rotating Savings and Credit Association (ROSCA) is an informal group of individuals who make regular equal contributions to a common fund, which is then given as a lump sum to one member in rotation. Prevalent across Africa, Asia and Latin America as the primary community finance instrument outside the formal banking system.",
+              "link": "",
+              "linkLabel": ""
+            }
+          }
+        },
+        {
+          "uniqueId": "economy-1",
+          "title": "Sustainable Livelihoods & Green Jobs",
+          "subtitle": "Income that derives from \u2014 rather than degrades \u2014 ecological health",
+          "description": "A sustainable livelihood is one that can cope with and recover from stress and shocks while maintaining or enhancing its capabilities and assets without undermining the natural resource base. Green jobs in the context of community monitoring include: eco-monitoring technicians, payment for ecosystem services (PES) programmes, carbon and biodiversity credit verification roles, and the SCD Hub bounty system roles (field technician, SME reviewer, group coordinator). This subcategory covers livelihoods analysis, PES design, and the emerging voluntary carbon and biodiversity market landscape.",
+          "tags": [
+            "sustainable livelihoods",
+            "green jobs",
+            "payment for ecosystem services",
+            "PES",
+            "carbon credits",
+            "biodiversity credits",
+            "IPLC",
+            "REDD+",
+            "just transition",
+            "livelihood diversification"
+          ],
+          "context": "PES caution: markets for ecosystem services have a poor track record of benefiting local communities without strong community land tenure and governance (see x\u2084). The bounty system is a more direct model: communities are paid for verified monitoring work, not for conserving land they may be displaced from.",
+          "videos": [
+            {
+              "title": "Payment for Ecosystem Services \u2014 Promise, Reality and Community Rights",
+              "youtubeId": "PENDING",
+              "description": "PLACEHOLDER \u2014 Target: a balanced 20\u201330 min analysis of PES programmes covering both success cases (Costa Rica's national PES programme, NYC watershed PES) and failure cases (displacement of communities from carbon offset zones). Should explain what conditions are necessary for PES to benefit local communities rather than intermediaries. Suggested sources: CIFOR, Rights and Resources Initiative, or Forest Peoples Programme.",
+              "icon_tag_fa": "fas fa-hand-holding-usd",
+              "color_tag": "#374151",
+              "localVideoFilename": "",
+              "authors": "PENDING",
+              "researchReviewItems": [],
+              "contentCreatorArchive": "",
+              "licence": "PENDING",
+              "patreon": "",
+              "socials": {},
+              "fundraiser": "",
+              "sponsorPages": [],
+              "tags": [
+                "payment for ecosystem services",
+                "PES",
+                "sustainable livelihoods",
+                "IPLC"
+              ]
+            }
+          ],
+          "videoTagDirectory": {
+            "payment for ecosystem services": {
+              "description": "Payment for Ecosystem Services (PES) is a mechanism through which those who benefit from ecological services (clean water, carbon sequestration, biodiversity) pay those who provide them (typically land stewards). In principle it aligns economic incentives with conservation; in practice, poorly designed PES has led to displacement of indigenous and local communities from conservation zones.",
+              "link": "https://www.forestpeoples.org/",
+              "linkLabel": "Forest Peoples Programme \u2014 Conservation Rights"
+            },
+            "just transition": {
+              "description": "Just transition is a framework ensuring that the shift to a low-carbon economy is fair and inclusive \u2014 protecting workers and communities that depend on fossil fuel industries, and ensuring green jobs meet decent work standards. Includes rights to participate in transition planning (connecting to x\u2084 governance).",
+              "link": "https://www.ilo.org/global/topics/green-jobs/WCMS_824102/lang--en/index.htm",
+              "linkLabel": "ILO \u2014 Just Transition"
+            }
+          }
+        }
+      ],
+      "rights_of_nature": {
+        "subject": "Ecological systems as economic actors whose productivity is the basis of all material wealth",
+        "need": "Economic accounting that recognises ecosystem services as prior claims \u2014 not externalities to be priced in after the fact",
+        "community_connection": "A cooperative that certifies its water quality monitoring is performing the same function as a legal guardian for the watershed \u2014 ensuring that the ecosystem's productive capacity is not sold off in someone else's balance sheet. Income derived from ecosystem stewardship is the economic form most compatible with Rights of Nature.",
+        "frameworks": [
+          "Ecuador Rights of Nature provisions extending to economic activities affecting Pachamama",
+          "Rights of Nature Tribunal economic cases"
+        ]
+      },
+      "block": 1,
+      "status": "active"
+    },
+    {
+      "area": "Climate",
+      "e8_axis": "x8",
+      "e8_label": "Climate adaptation and long-term site planning",
+      "featherIcon": "thermometer",
+      "icon": "mdi-weather-cloudy",
+      "subcategories": [
+        {
+          "uniqueId": "climate-0",
+          "title": "Phenology & Local Climate Observation",
+          "subtitle": "Your community is already a climate sensor \u2014 it needs a recording protocol",
+          "description": "Phenology is the study of seasonal natural events: first leaf, first flower, first frost, migrant bird arrival, amphibian breeding, insect emergence. Because phenological timing is tightly linked to temperature, community phenology records are among the most sensitive local indicators of climate change. USA-NPN's Nature's Notebook and the UK Woodland Trust's Nature's Calendar both accept observations from non-specialist volunteers and feed them into national databases used for seasonal forecasting and research.",
+          "tags": [
+            "phenology",
+            "USA-NPN",
+            "Nature's Notebook",
+            "Woodland Trust",
+            "first leaf",
+            "climate observation",
+            "seasonal",
+            "temperature",
+            "migration",
+            "citizen science"
+          ],
+          "context": "Equipment: none required beyond a smartphone and a consistent observation site. 15\u201320 minutes per week per species monitored. Connections to SCD Hub: phenology records can be submitted as eco-ops field data and earn monitoring bounty credits. Long-term records generate climate impact documentation useful for adaptation planning grants.",
+          "videos": [
+            {
+              "title": "Nature's Notebook \u2014 How to Become a Phenology Observer",
+              "youtubeId": "PENDING",
+              "description": "PLACEHOLDER \u2014 Target: the USA-NPN Nature's Notebook onboarding flow \u2014 registering a site, choosing a plant or animal to follow, making an observation using the yes/no/unsure phenophase protocol, and how individual observations aggregate into the National Phenology Database. Suggested source: USA National Phenology Network official channel.",
+              "icon_tag_fa": "fas fa-leaf",
+              "color_tag": "#374151",
+              "localVideoFilename": "",
+              "authors": "PENDING",
+              "researchReviewItems": [],
+              "contentCreatorArchive": "https://www.usanpn.org/",
+              "licence": "PENDING",
+              "patreon": "",
+              "socials": {},
+              "fundraiser": "",
+              "sponsorPages": [],
+              "tags": [
+                "phenology",
+                "USA-NPN",
+                "Nature's Notebook",
+                "climate observation"
+              ]
+            }
+          ],
+          "videoTagDirectory": {
+            "phenology": {
+              "description": "Phenology is the study of cyclic and seasonal natural phenomena. Because phenological events are tightly linked to temperature, long-term phenology records are among the most sensitive indicators of local climate change \u2014 often more directly legible to communities than abstract temperature statistics.",
+              "link": "https://www.usanpn.org/natures_notebook",
+              "linkLabel": "USA-NPN \u2014 Nature's Notebook"
+            },
+            "USA-NPN": {
+              "description": "The USA National Phenology Network coordinates phenology observations from thousands of citizen observers. Data submitted via Nature's Notebook is quality-controlled and publicly available in the National Phenology Database, used in federal and state seasonal forecasting.",
+              "link": "https://www.usanpn.org/",
+              "linkLabel": "USA National Phenology Network"
+            }
+          }
+        },
+        {
+          "uniqueId": "climate-1",
+          "title": "Adaptive Management & Resilience Planning",
+          "subtitle": "Structured iteration under uncertainty \u2014 because the climate is not stable",
+          "description": "Adaptive management is a structured, iterative process: plan, implement, monitor, evaluate, adjust. It is explicitly designed for managing systems whose behaviour is uncertain and changing \u2014 which now includes almost all ecological and agricultural systems under climate change. This subcategory covers the adaptive management cycle, community resilience planning frameworks (Local Adaptation Plans of Action, USAID CRiSTAL tool), and how to design a monitoring programme that produces the right data to inform adaptation decisions.",
+          "tags": [
+            "adaptive management",
+            "resilience planning",
+            "LAPA",
+            "CRiSTAL",
+            "vulnerability assessment",
+            "early warning",
+            "scenario planning",
+            "community resilience"
+          ],
+          "context": "Adaptive management is not a one-time plan \u2014 it is an institutional habit. Communities that practise it become more capable over time at navigating uncertainty. Connects to the x\u2084 Governance area: adaptive management requires decision-making structures that can act on monitoring data, not just record it.",
+          "videos": [
+            {
+              "title": "Introduction to Community Resilience Planning \u2014 A Practical Guide",
+              "youtubeId": "PENDING",
+              "description": "PLACEHOLDER \u2014 Target: a 20\u201330 min walkthrough of a community climate resilience planning process: vulnerability and capacity assessment, identifying key climate risks, designing adaptation options, integrating monitoring, and creating a living plan that is reviewed annually. Suggested sources: CARE International, Practical Action, IIED, or the Red Cross/Red Crescent Climate Centre.",
+              "icon_tag_fa": "fas fa-sync-alt",
+              "color_tag": "#374151",
+              "localVideoFilename": "",
+              "authors": "PENDING",
+              "researchReviewItems": [],
+              "contentCreatorArchive": "",
+              "licence": "PENDING",
+              "patreon": "",
+              "socials": {},
+              "fundraiser": "",
+              "sponsorPages": [],
+              "tags": [
+                "adaptive management",
+                "resilience planning",
+                "community resilience"
+              ]
+            }
+          ],
+          "videoTagDirectory": {
+            "adaptive management": {
+              "description": "Adaptive management is a structured process for managing natural resources under uncertainty: design \u2192 implement \u2192 monitor \u2192 evaluate \u2192 adjust. It explicitly builds monitoring into the management plan and requires decision-makers to change course when evidence demands it. Originally developed for fisheries and forestry; now the standard framework for any system under climate uncertainty.",
+              "link": "",
+              "linkLabel": ""
+            },
+            "resilience planning": {
+              "description": "Climate resilience planning involves a community identifying its key climate risks and vulnerabilities, assessing its existing adaptive capacity, designing specific adaptation measures, and establishing monitoring to evaluate whether those measures are working. The USAID CRiSTAL tool and CARE's CVCA (Climate Vulnerability and Capacity Analysis) are the most widely used community-level frameworks.",
+              "link": "https://www.iisd.org/projects/community-based-risk-screening-tool-adaptation-and-livelihoods-crystal",
+              "linkLabel": "IISD \u2014 CRiSTAL Tool"
+            }
+          }
+        },
+        {
+          "uniqueId": "climate-2",
+          "title": "Climate Justice & Loss and Damage",
+          "subtitle": "The communities least responsible for climate change are experiencing it first and worst",
+          "description": "Climate justice recognises that the people facing the most severe climate impacts \u2014 small island states, subsistence farming communities, indigenous peoples in polar regions \u2014 are largely not the people who caused the climate crisis. Loss and Damage, formally recognised at COP27 (2022) and funded at COP28 (2023), is the emerging international mechanism for compensating communities for climate impacts that go beyond what adaptation can address. This subcategory covers the legal and political landscape of Loss and Damage, how communities can document their losses for compensation claims, and the ICJ Advisory Opinion on Climate Change (2024).",
+          "tags": [
+            "climate justice",
+            "loss and damage",
+            "COP27",
+            "COP28",
+            "ICJ",
+            "small island states",
+            "MICI",
+            "SIDS",
+            "compensation",
+            "climate litigation"
+          ],
+          "context": "The ICJ Advisory Opinion (July 2024) clarified that states have legal obligations under international law to protect the climate system. This opens pathways for communities to hold states accountable through national and international legal mechanisms.",
+          "videos": [
+            {
+              "title": "What is Loss and Damage? \u2014 Climate Justice Explained",
+              "youtubeId": "PENDING",
+              "description": "PLACEHOLDER \u2014 Target: a clear 10\u201315 min explanation of Loss and Damage as a concept and as a policy mechanism \u2014 the distinction from adaptation (which addresses manageable impacts) and mitigation (which reduces future emissions), what happened at COP27 and COP28, how the Fund for Responding to Loss and Damage is structured and who can access it, and what communities need to document to support a claim. Suggested sources: Climate Action Network, Germanwatch, or AOSIS (Alliance of Small Island States).",
+              "icon_tag_fa": "fas fa-gavel",
+              "color_tag": "#374151",
+              "localVideoFilename": "",
+              "authors": "PENDING",
+              "researchReviewItems": [],
+              "contentCreatorArchive": "",
+              "licence": "PENDING",
+              "patreon": "",
+              "socials": {},
+              "fundraiser": "",
+              "sponsorPages": [],
+              "tags": [
+                "climate justice",
+                "loss and damage",
+                "climate litigation"
+              ]
+            }
+          ],
+          "videoTagDirectory": {
+            "loss and damage": {
+              "description": "Loss and Damage (L&D) refers to the negative consequences of climate change that cannot be avoided through mitigation or adaptation. Formally recognised in the UNFCCC framework at COP27 (2022); the Fund for Responding to Loss and Damage was operationalised at COP28 (2023). Covers both economic losses (infrastructure, crops, property) and non-economic losses (biodiversity, cultural heritage, traditional knowledge, loss of life).",
+              "link": "https://unfccc.int/topics/adaptation-and-resilience/the-big-picture/loss-and-damage-and-the-santiago-network",
+              "linkLabel": "UNFCCC \u2014 Loss and Damage"
+            },
+            "climate justice": {
+              "description": "Climate justice frames climate change as a rights issue \u2014 recognising that the people most vulnerable to climate impacts bear the least historical responsibility for greenhouse gas emissions, and that fair climate action must address this structural inequality through both emissions reductions and compensation.",
+              "link": "https://climatejusticealliance.org/",
+              "linkLabel": "Climate Justice Alliance"
+            }
+          }
+        }
+      ],
+      "rights_of_nature": {
+        "subject": "The climate system \u2014 atmosphere, ocean circulation, cryosphere \u2014 as a planetary commons with its own right to stability",
+        "need": "Atmospheric carbon concentration compatible with the evolutionary conditions under which current life forms developed; rate of change slow enough for ecological communities to adapt",
+        "community_connection": "Climate adaptation planning is, from a Rights of Nature perspective, a community acting as guardian for the local ecosystem's capacity to survive climate change. Phenology monitoring, adaptive management, and loss documentation are all forms of advocacy for the natural system alongside advocacy for the human community.",
+        "frameworks": [
+          "Rights of Nature Tribunal climate cases",
+          "Atmospheric Trust Litigation (USA) \u2014 atmosphere as public trust resource",
+          "Universal Declaration of Rights of Mother Earth"
+        ]
+      },
+      "block": 1,
+      "status": "active"
+    },
+    {
+      "area": "Soil Ecology",
+      "e8_axis": "x9",
+      "mirrors": "x1",
+      "e8_label": "Soil community vitality and continuity",
+      "featherIcon": "layers",
+      "icon": "mdi-bacteria",
+      "block": 2,
+      "status": "planned",
+      "block_note": "Nature rights counterpart to x1 (Land). Measures what the soil ecosystem needs \u2014 not what humans extract from it. A healthy gap between x1 and x9 scores means land productivity is sustainable; a wide gap means soil communities are being depleted faster than they can recover.",
+      "planned_subcategories": [
+        "Soil Microbiome Assessment & Monitoring",
+        "Soil Community Restoration Protocols",
+        "Soil Carbon & Mycorrhizal Network Mapping"
+      ],
+      "subcategories": []
+    },
+    {
+      "area": "Aquatic Systems",
+      "e8_axis": "x10",
+      "mirrors": "x2",
+      "e8_label": "Watershed and aquatic ecosystem integrity",
+      "featherIcon": "droplet",
+      "icon": "mdi-fish",
+      "block": 2,
+      "status": "planned",
+      "block_note": "Nature rights counterpart to x2 (Water). Measures what rivers, lakes, and aquifers need to function as living systems \u2014 ecological flow, riparian integrity, freedom from chemical loading beyond absorptive capacity. Legal personhood models (Whanganui, Mar Menor) are reference cases.",
+      "planned_subcategories": [
+        "Ecological Flow Assessment & Minimum Flow Standards",
+        "Riparian Ecosystem Health & Restoration",
+        "River & Lake Legal Personhood \u2014 Case Studies & Models"
+      ],
+      "subcategories": []
+    },
+    {
+      "area": "Species & Evolution",
+      "e8_axis": "x11",
+      "mirrors": "x3",
+      "e8_label": "Species richness and evolutionary process health",
+      "featherIcon": "share-2",
+      "icon": "mdi-dna",
+      "block": 2,
+      "status": "planned",
+      "block_note": "Nature rights counterpart to x3 (Biodiversity). Where x3 measures community monitoring capacity, x11 measures what species and evolutionary processes themselves need: habitat connectivity, population viability above minimum viable population thresholds, freedom from extinction pressure at rates exceeding background.",
+      "planned_subcategories": [
+        "Population Viability Analysis \u2014 Community Methods",
+        "Habitat Connectivity & Corridor Mapping",
+        "Extinction Rate Monitoring & Red List Engagement"
+      ],
+      "subcategories": []
+    },
+    {
+      "area": "Nature Governance",
+      "e8_axis": "x12",
+      "mirrors": "x4",
+      "e8_label": "Ecosystem representation in decision-making",
+      "featherIcon": "git-branch",
+      "icon": "mdi-leaf-maple",
+      "block": 2,
+      "status": "planned",
+      "block_note": "Nature rights counterpart to x4 (Governance). Where x4 measures human decision-making capacity, x12 measures how well ecosystems are represented in those decisions \u2014 through legal guardianship, ombudsperson models, or the practice of designating a community member to speak for the ecosystem in governance meetings.",
+      "planned_subcategories": [
+        "Ecological Guardian Roles \u2014 Design & Implementation",
+        "Rights of Nature Legal Frameworks & Precedents",
+        "Ecosystem Representation in Land Use Planning"
+      ],
+      "subcategories": []
+    },
+    {
+      "area": "Ecological Sensing",
+      "e8_axis": "x13",
+      "mirrors": "x5",
+      "e8_label": "Ecological sensing and self-regulation capacity",
+      "featherIcon": "radio",
+      "icon": "mdi-access-point",
+      "block": 2,
+      "status": "planned",
+      "block_note": "Nature rights counterpart to x5 (Technology). Ecosystems have their own sensing and feedback mechanisms \u2014 indicator species, nutrient cycling signals, phenological cues. x13 measures how well these natural feedback systems are functioning and how well community technology amplifies (rather than substitutes for) them.",
+      "planned_subcategories": [
+        "Indicator Species as Ecological Sensors",
+        "Phenological Feedback Networks",
+        "Community Technology That Amplifies Natural Sensing"
+      ],
+      "subcategories": []
+    },
+    {
+      "area": "Biocultural Heritage",
+      "e8_axis": "x14",
+      "mirrors": "x6",
+      "e8_label": "Biocultural knowledge transmission and language vitality",
+      "featherIcon": "book",
+      "icon": "mdi-book-open-page-variant",
+      "block": 2,
+      "status": "planned",
+      "block_note": "Nature rights counterpart to x6 (Education). Traditional ecological knowledge and the languages that carry it are themselves part of the ecological heritage. x14 measures not what people teach each other, but what ecological knowledge is at risk of being lost \u2014 and treats that loss as an ecological event, not just a cultural one.",
+      "planned_subcategories": [
+        "Endangered Ecological Language Documentation",
+        "Seed & Plant Knowledge Archives",
+        "Intergenerational TEK Transfer Programmes"
+      ],
+      "subcategories": []
+    },
+    {
+      "area": "Nature Economy",
+      "e8_axis": "x15",
+      "mirrors": "x7",
+      "e8_label": "Ecosystem service recognition and economic standing",
+      "featherIcon": "trending-up",
+      "icon": "mdi-sprout",
+      "block": 2,
+      "status": "planned",
+      "block_note": "Nature rights counterpart to x7 (Economy). Where x7 measures community income resilience, x15 measures whether ecosystems are economically recognised \u2014 whether the services they provide (water purification, carbon sequestration, pollination, flood control) appear on any balance sheet, and whether the entities providing those services have any economic standing when they are damaged.",
+      "planned_subcategories": [
+        "Ecosystem Service Valuation \u2014 Community Methods",
+        "Natural Capital Accounting for Settlement Areas",
+        "Economic Damage Claims on Behalf of Ecosystems"
+      ],
+      "subcategories": []
+    },
+    {
+      "area": "Climate Systems",
+      "e8_axis": "x16",
+      "mirrors": "x8",
+      "e8_label": "Atmospheric and local climate system stability",
+      "featherIcon": "wind",
+      "icon": "mdi-weather-windy",
+      "block": 2,
+      "status": "planned",
+      "block_note": "Nature rights counterpart to x8 (Climate). Where x8 measures community adaptation capacity, x16 measures what the climate system itself needs: atmospheric CO\u2082 concentration compatible with evolutionary stability, rate of change slow enough for ecosystems to track, intact regional carbon sinks. The climate system as a subject with interests in its own stability.",
+      "planned_subcategories": [
+        "Local Carbon Sink Assessment & Protection",
+        "Microclimate Health Monitoring",
+        "Atmospheric Trust & Legal Standing Models"
+      ],
+      "subcategories": []
+    },
+    {
+      "area": "Cultural Memory",
+      "e8_axis": "x17",
+      "e8_label": "Generational depth and cultural memory",
+      "featherIcon": "clock",
+      "icon": "mdi-history",
+      "block": 3,
+      "status": "planned",
+      "block_note": "Relational context axis. How many generations of practice, knowledge, and identity a settlement carries. A settlement with three generations of land stewardship has a different recovery capacity after a crisis than one established last year. x17 is not a measure of age \u2014 it is a measure of how much accumulated knowledge is actively held and transmissible.",
+      "planned_subcategories": [
+        "Oral History & Community Archive Methods",
+        "Intergenerational Knowledge Mapping",
+        "Cultural Practice Frequency & Vitality Assessment"
+      ],
+      "subcategories": []
+    },
+    {
+      "area": "Resilience",
+      "e8_axis": "x18",
+      "e8_label": "Community resilience and shock recovery capacity",
+      "featherIcon": "shield",
+      "icon": "mdi-shield-half-full",
+      "block": 3,
+      "status": "planned",
+      "block_note": "Relational context axis. How quickly and completely a settlement recovers from shocks \u2014 drought, flood, displacement, economic disruption, pandemic. Resilience is not the absence of shocks; it is the presence of absorptive and adaptive capacity. Communities that practise adaptive management (x8) and have strong mutual aid networks (x19) tend to score higher here.",
+      "planned_subcategories": [
+        "Community Resilience Assessment Frameworks",
+        "Shock Recovery Case Studies",
+        "Redundancy & Diversity as Resilience Principles"
+      ],
+      "subcategories": []
+    },
+    {
+      "area": "Mutual Aid",
+      "e8_axis": "x19",
+      "e8_label": "Network reciprocity and mutual aid density",
+      "featherIcon": "git-merge",
+      "icon": "mdi-account-multiple",
+      "block": 3,
+      "status": "planned",
+      "block_note": "Relational context axis. The density and reciprocity of exchange relationships within and between settlements. Mutual aid networks are the social infrastructure that makes all other capabilities resilient \u2014 they are what communities fall back on when market and state systems fail. x19 measures how many such relationships exist, how active they are, and whether exchange flows in both directions.",
+      "planned_subcategories": [
+        "Mutual Aid Network Mapping",
+        "Reciprocal Exchange & ROSCA Models",
+        "Inter-Settlement Cooperation Protocols"
+      ],
+      "subcategories": []
+    },
+    {
+      "area": "Learning Systems",
+      "e8_axis": "x20",
+      "e8_label": "Adaptive learning and innovation diffusion rate",
+      "featherIcon": "zap",
+      "icon": "mdi-lightning-bolt",
+      "block": 3,
+      "status": "planned",
+      "block_note": "Relational context axis. How quickly useful innovations \u2014 new monitoring techniques, governance methods, cultivation practices \u2014 spread through the settlement and to its network neighbours. High x20 scores mean the settlement learns from both success and failure and shares that learning. Low scores mean each community reinvents the wheel or, worse, repeats known failures.",
+      "planned_subcategories": [
+        "Peer Learning Networks & Horizontal Exchange",
+        "Failure Documentation & Institutional Learning",
+        "Bounty System as Innovation Diffusion Mechanism"
+      ],
+      "subcategories": []
+    },
+    {
+      "area": "Peace & Conflict",
+      "e8_axis": "x21",
+      "e8_label": "Conflict transformation and peace cultivation",
+      "featherIcon": "anchor",
+      "icon": "mdi-peace",
+      "block": 3,
+      "status": "planned",
+      "block_note": "Relational context axis. The capacity to transform conflict into productive dialogue rather than escalation or suppression. Unresolved conflict is the most common way capable communities lose capability \u2014 monitoring stops, governance breaks down, members leave. x21 measures not the absence of conflict (conflict is information) but the presence of methods for working through it.",
+      "planned_subcategories": [
+        "Non-Violent Communication & Mediation Methods",
+        "Restorative Justice in Community Contexts",
+        "Conflict Early Warning & De-escalation Protocols"
+      ],
+      "subcategories": []
+    },
+    {
+      "area": "Demographics",
+      "e8_axis": "x22",
+      "e8_label": "Demographic vitality and migration balance",
+      "featherIcon": "users",
+      "icon": "mdi-account-group-outline",
+      "block": 3,
+      "status": "planned",
+      "block_note": "Relational context axis. Whether the settlement's population is stable, growing, or declining \u2014 and crucially, whether the people who leave take irreplaceable knowledge with them. A community where young people leave for economic opportunity and elders die without successors is losing capability even if its Block 1 scores look stable. x22 tracks this structural vulnerability.",
+      "planned_subcategories": [
+        "Community Demographic Mapping",
+        "Youth Retention & Return Programmes",
+        "Succession Planning for Key Knowledge Roles"
+      ],
+      "subcategories": []
+    },
+    {
+      "area": "Documentation",
+      "e8_axis": "x23",
+      "e8_label": "Institutional memory and knowledge documentation",
+      "featherIcon": "archive",
+      "icon": "mdi-file-document-multiple",
+      "block": 3,
+      "status": "planned",
+      "block_note": "Relational context axis. How well the settlement records and makes accessible its own decisions, practices, monitoring data, and history. Communities with strong x23 scores can onboard new members effectively, hold decision-makers accountable, and contribute to broader knowledge networks. This axis is where the SCD Hub platform directly adds value \u2014 eco:certificates, the eco-ledger, and bounty records are all x23 infrastructure.",
+      "planned_subcategories": [
+        "Community Record-Keeping Systems & Practices",
+        "Open Data & Knowledge Commons",
+        "Eco-Ledger & Certificate Archive Methods"
+      ],
+      "subcategories": []
+    },
+    {
+      "area": "Identity & Story",
+      "e8_axis": "x24",
+      "e8_label": "Narrative coherence and shared community identity",
+      "featherIcon": "compass",
+      "icon": "mdi-text-box-outline",
+      "block": 3,
+      "status": "planned",
+      "block_note": "Relational context axis \u2014 the 24th and final dimension of the \u039b\u2082\u2084 settlement address. Narrative coherence is what holds all other axes together: the shared story of who the community is, where it came from, and what it is trying to become. Communities that can tell this story can recruit new members, motivate stewardship, and maintain continuity through leadership transitions. It is the dimension that makes a collection of coordinates into a place.",
+      "planned_subcategories": [
+        "Community Story Mapping & Oral Narrative",
+        "Settlement Founding & Identity Documentation",
+        "Vision & Future-Facing Narrative Work"
+      ],
+      "subcategories": []
+    }
+  ],
+  "_leech_structure": {
+    "construction": "\u039b\u2082\u2084 = E8_human \u2295 E8_nature \u2295 E8_culture, stitched by the binary Golay [24,12,8] code",
+    "block_semantics": {
+      "block_1": {
+        "axes": "x1\u2013x8",
+        "name": "Human Capability (current state)",
+        "description": "What the settlement currently achieves for the people living in it. The primary capability profile. A settlement's E8 address in Block 1 is its position in the space of what it can do and knows right now.",
+        "library_status": "active"
+      },
+      "block_2": {
+        "axes": "x9\u2013x16",
+        "name": "Nature Rights (aspirational state)",
+        "description": "What the ecosystems the settlement depends on need to exist and flourish. Each axis is the direct ecological counterpart of its Block 1 partner \u2014 x9 mirrors x1, x10 mirrors x2, etc. The gap between Block 1 and Block 2 vectors encodes ecological debt: how much the settlement is extracting beyond what ecosystems can sustain. The 'aspirational state' framing holds: closing this gap is what ecological stewardship aspires toward.",
+        "library_status": "planned"
+      },
+      "block_3": {
+        "axes": "x17\u2013x24",
+        "name": "Cultural-Temporal Dynamics (relational context)",
+        "description": "How the settlement relates to time, cultural continuity, and its network. These axes capture the dynamics that determine whether Block 1 capabilities compound or erode across generations. A settlement with strong Block 3 axes can recover from shocks and transmit knowledge; a settlement with weak Block 3 axes loses capability each time a crisis hits or an elder dies. The 'relational context' framing holds: Block 3 encodes relationships across time and network.",
+        "library_status": "planned"
+      }
+    },
+    "golay_note": "The binary Golay [24,12,8] code has 4096 codewords. This means only 4096 fundamentally distinct 'shapes' of \u039b\u2082\u2084 vector exist \u2014 all settlements cluster into ~4096 structural types regardless of their specific coordinates. This classification emerges from the mathematics rather than being designed. The Monster group's 8\u00d710\u2075\u00b3 symmetries organise these types into a hierarchy whose structure we can use for nearest-neighbour matching without implementing the Monster directly."
+  }
+}

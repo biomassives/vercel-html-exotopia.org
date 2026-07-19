@@ -13,7 +13,7 @@
         <router-link to="/" class="ob-logo">
           <span class="ob-logo-exo">EXO</span><span class="ob-logo-topia">TOPIA</span>
         </router-link>
-        <span class="ob-tagline">Your real-world work earns a place in the cosmos</span>
+        <span class="ob-tagline">a project of Sustainable Community Development Hub</span>
       </div>
 
       <!-- step rail -->
@@ -38,90 +38,130 @@
 
       <Transition name="ob-step" mode="out-in">
 
-      <!-- ══ STEP 0 — Role ═══════════════════════════════════════════════════ -->
+      <!-- ══ STEP 0 — MISSION ══════════════════════════════════════════════════ -->
       <div v-if="step === 0" key="0" class="ob-card">
         <div class="ob-card-hero">
           <div class="ob-hero-icon">🌍</div>
           <h1 class="ob-card-title">Welcome to Exotopia</h1>
           <p class="ob-card-sub">
-            Every confirmed exoplanet in the observable sky is a potential settlement.
-            Your real-world activity — eco field work, cultural production, community
-            training, food pantry volunteering — earns you a permanent place in that
-            universe. No wallet needed to begin.
+            Exotopia is built by <strong>Sustainable Community Development Hub</strong>
+            to support learning, field science, community projects, and vocational
+            training — with the observable universe as the canvas.
           </p>
         </div>
 
-        <div class="ob-section-label">What best describes you?</div>
-        <div class="ob-role-grid">
-          <button
-            v-for="r in ROLES" :key="r.id"
-            class="ob-role-card"
-            :class="{ 'ob-role-card--selected': selectedRole === r.id }"
-            @click="selectedRole = r.id"
-          >
-            <span class="ob-role-icon">{{ r.icon }}</span>
-            <div class="ob-role-body">
-              <div class="ob-role-title">{{ r.title }}</div>
-              <div class="ob-role-desc">{{ r.desc }}</div>
-            </div>
-            <div v-if="selectedRole === r.id" class="ob-role-check">✓</div>
-          </button>
+        <div class="ob-mission-strip">
+          <div class="ob-mission-item">
+            <span class="ob-mission-dot" style="background:#44ff88"/>
+            <span>Teach and learn living systems — water, soil, food, energy, biodiversity</span>
+          </div>
+          <div class="ob-mission-item">
+            <span class="ob-mission-dot" style="background:#00e5ff"/>
+            <span>Document and restore ecosystems harmed by industrial production economies</span>
+          </div>
+          <div class="ob-mission-item">
+            <span class="ob-mission-dot" style="background:#ffaa33"/>
+            <span>Build vocational skills and earn certificates that carry real-world weight</span>
+          </div>
+          <div class="ob-mission-item">
+            <span class="ob-mission-dot" style="background:#cc88ff"/>
+            <span>Every contribution you make — in the field, in the community, on this platform — earns your place in the cosmos</span>
+          </div>
+        </div>
+
+        <div class="ob-cosmic-note">
+          <div class="ob-cn-label">The cosmic layer</div>
+          <p class="ob-cn-body">
+            Settlements here range from rocky exoplanet surfaces to orbital stations
+            near extreme objects. The same living-systems knowledge that applies to a
+            habitat orbiting a black hole applies to the atmosphere, watersheds, and
+            soil of the planet you're standing on right now. That's not metaphor —
+            it's the design.
+          </p>
         </div>
 
         <q-btn unelevated rounded color="teal-8" icon-right="arrow_forward"
-          label="Continue" :disable="!selectedRole"
-          class="full-width ob-next-btn" @click="step = 1"/>
+          label="Choose my path" class="full-width ob-next-btn" @click="step = 1"/>
       </div>
 
-      <!-- ══ STEP 1 — Community ══════════════════════════════════════════════ -->
+      <!-- ══ STEP 1 — PATH ═════════════════════════════════════════════════════ -->
       <div v-else-if="step === 1" key="1" class="ob-card">
         <div class="ob-card-hero">
-          <div class="ob-hero-icon">🤝</div>
-          <h2 class="ob-card-title">Your community</h2>
+          <div class="ob-hero-icon">🧭</div>
+          <h2 class="ob-card-title">What brings you here?</h2>
           <p class="ob-card-sub">
-            Exotopia settlements are community spaces. Find your group below,
-            or start building your own path solo.
+            Pick the area that fits you best. Every path leads to a settlement —
+            the difference is what grows there and what activity confirms it.
           </p>
         </div>
 
-        <div class="ob-comm-list">
+        <div class="ob-path-list">
           <button
-            v-for="c in COMMUNITIES" :key="c.id"
-            class="ob-comm-card"
-            :class="{ 'ob-comm-card--selected': selectedCommunity === c.id }"
-            @click="selectedCommunity = c.id"
+            v-for="p in PATHS" :key="p.id"
+            class="ob-path-card"
+            :class="{ 'ob-path-card--selected': selectedPath === p.id }"
+            @click="selectedPath = p.id; selectedCommitment = null"
           >
-            <div class="ob-comm-head">
-              <span class="ob-comm-icon">{{ c.icon }}</span>
-              <div>
-                <div class="ob-comm-name">{{ c.name }}</div>
-                <div class="ob-comm-loc">{{ c.location }}</div>
-              </div>
-              <div v-if="selectedCommunity === c.id" class="ob-comm-check">✓</div>
+            <span class="ob-path-icon">{{ p.icon }}</span>
+            <div class="ob-path-body">
+              <div class="ob-path-title">{{ p.title }}</div>
+              <div class="ob-path-desc">{{ p.desc }}</div>
+              <div class="ob-path-persona">{{ p.persona }}</div>
+              <div class="ob-path-example">e.g. {{ p.example }}</div>
             </div>
-            <div class="ob-comm-tags">
-              <span v-for="t in c.tags" :key="t" class="ob-comm-tag"
-                :style="`border-color:${c.color}44;color:${c.color}`">{{ t }}</span>
-            </div>
-            <p class="ob-comm-desc">{{ c.desc }}</p>
+            <div v-if="selectedPath === p.id" class="ob-path-check">✓</div>
           </button>
         </div>
 
         <div class="ob-nav-row">
           <q-btn flat rounded size="sm" color="blue-grey-5" icon="chevron_left" label="Back" @click="step--"/>
           <q-btn unelevated rounded color="teal-8" icon-right="arrow_forward"
-            label="This is my community" :disable="!selectedCommunity" @click="step = 2"/>
+            label="Continue" :disable="!selectedPath" @click="step = 2"/>
         </div>
       </div>
 
-      <!-- ══ STEP 2 — Your Place ════════════════════════════════════════════ -->
+      <!-- ══ STEP 2 — COMMIT ═══════════════════════════════════════════════════ -->
       <div v-else-if="step === 2" key="2" class="ob-card">
+        <div class="ob-card-hero">
+          <div class="ob-hero-icon">{{ activePath?.icon }}</div>
+          <h2 class="ob-card-title">{{ activePath?.commitTitle }}</h2>
+          <p class="ob-card-sub">{{ activePath?.commitSub }}</p>
+        </div>
+
+        <div class="ob-section-label">Pick one — just one</div>
+        <div class="ob-commit-list">
+          <button
+            v-for="c in activePath?.commitments ?? []" :key="c.id"
+            class="ob-commit-card"
+            :class="{ 'ob-commit-card--selected': selectedCommitment === c.id }"
+            @click="selectedCommitment = c.id"
+          >
+            <span class="ob-commit-icon">{{ c.icon }}</span>
+            <div class="ob-commit-body">
+              <div class="ob-commit-title">{{ c.title }}</div>
+              <div class="ob-commit-desc">{{ c.desc }}</div>
+            </div>
+            <div v-if="selectedCommitment === c.id" class="ob-commit-check">✓</div>
+          </button>
+        </div>
+
+        <p class="ob-commit-note">You can do more later. This is just your first step.</p>
+
+        <div class="ob-nav-row">
+          <q-btn flat rounded size="sm" color="blue-grey-5" icon="chevron_left" label="Back" @click="step--"/>
+          <q-btn unelevated rounded color="teal-8" icon-right="arrow_forward"
+            label="This is my first step" :disable="!selectedCommitment" @click="step = 3"/>
+        </div>
+      </div>
+
+      <!-- ══ STEP 3 — YOUR PLACE ═══════════════════════════════════════════════ -->
+      <div v-else-if="step === 3" key="3" class="ob-card">
         <div class="ob-card-hero">
           <div class="ob-hero-icon">🪐</div>
           <h2 class="ob-card-title">Your place in the cosmos</h2>
           <p class="ob-card-sub">
-            Enter your name and we'll reserve a real exoplanet settlement —
-            no wallet, no fee. Your first check-in confirms it.
+            Enter your name and we'll reserve a real exoplanet settlement for you.
+            No wallet, no fee. Your first activity confirms it.
           </p>
         </div>
 
@@ -143,55 +183,40 @@
             <span class="ob-planet-label">Reserved settlement</span>
           </div>
           <div class="ob-planet-name">{{ planet.name }}</div>
-          <div class="ob-planet-meta">
-            {{ planet.type }} · {{ planet.dist }} ly from Earth
-          </div>
+          <div class="ob-planet-meta">{{ planet.type }} · {{ planet.dist }} ly from Earth</div>
           <div class="ob-planet-address">
             exo-surface-v1:<span class="ob-planet-addr-host">{{ planet.host }}</span>:{{ planet.slug }}
           </div>
           <div class="ob-planet-note">
-            Confirmed by your first eco-ops check-in or community activity.
+            Confirmed when you complete: <em>{{ activeCommitment?.title }}</em>
           </div>
         </div>
         </Transition>
 
-        <div class="ob-how-it-works">
-          <div class="ob-hiw-title">How it works</div>
-          <div class="ob-hiw-item">
-            <span class="ob-hiw-dot" style="background:#44ff88"/>
-            Log real-world eco or cultural activity → your settlement is confirmed
-          </div>
-          <div class="ob-hiw-item">
-            <span class="ob-hiw-dot" style="background:#ffaa33"/>
-            Continued activity grows your settlement — more objects, bigger dome
-          </div>
-          <div class="ob-hiw-item">
-            <span class="ob-hiw-dot" style="background:#cc88ff"/>
-            Complete a training module → earn a certificate and an ecocity object
-          </div>
-          <div class="ob-hiw-item">
-            <span class="ob-hiw-dot" style="background:#00e5ff"/>
-            Make it permanent on-chain at any time — your choice, not a requirement
+        <div class="ob-path-hiw">
+          <div class="ob-hiw-title">What grows in this settlement</div>
+          <div v-for="item in activePath?.settlementItems ?? []" :key="item.text" class="ob-hiw-item">
+            <span class="ob-hiw-dot" :style="`background:${item.color}`"/>
+            {{ item.text }}
           </div>
         </div>
 
         <div class="ob-nav-row">
           <q-btn flat rounded size="sm" color="blue-grey-5" icon="chevron_left" label="Back" @click="step--"/>
           <q-btn unelevated rounded color="teal-8" icon-right="arrow_forward"
-            label="Reserve my planet" :disable="displayName.trim().length < 2"
-            @click="step = 3"/>
+            label="Reserve my settlement" :disable="displayName.trim().length < 2"
+            @click="step = 4"/>
         </div>
       </div>
 
-      <!-- ══ STEP 3 — Start ════════════════════════════════════════════════ -->
-      <div v-else-if="step === 3" key="3" class="ob-card ob-card--ready">
+      <!-- ══ STEP 4 — BEGIN ════════════════════════════════════════════════════ -->
+      <div v-else-if="step === 4" key="4" class="ob-card ob-card--ready">
         <div class="ob-card-hero">
           <div class="ob-hero-icon ob-hero-icon--pulse">🌌</div>
-          <h2 class="ob-card-title">{{ displayName.trim() }}, you're in the cosmos</h2>
+          <h2 class="ob-card-title">{{ displayName.trim() }}, you're in.</h2>
           <p class="ob-card-sub">
-            <strong>{{ planet.name }}</strong> is reserved for you in the
-            {{ activeCommunity.name }} sector.
-            Your first activity confirms it.
+            <strong>{{ planet.name }}</strong> is reserved.
+            Time for your first step.
           </p>
         </div>
 
@@ -199,47 +224,55 @@
         <div class="ob-settlement-chip">
           <span class="ob-sc-label">Your settlement</span>
           <span class="ob-sc-addr">exo-surface-v1:{{ planet.host }}:{{ planet.slug }}</span>
-          <router-link :to="`/surface-view/${encodeURIComponent(planet.host)}`" class="ob-sc-visit">
-            Visit →
-          </router-link>
-        </div>
-
-        <!-- First actions grid -->
-        <div class="ob-section-label">Choose your first step</div>
-        <div class="ob-action-grid">
           <router-link
-            v-for="a in firstActions"
-            :key="a.label"
-            :to="a.to"
-            class="ob-action-card"
-            :style="`--ac:${a.color}`"
-          >
-            <span class="ob-action-icon">{{ a.icon }}</span>
-            <div class="ob-action-title">{{ a.title }}</div>
-            <div class="ob-action-desc">{{ a.desc }}</div>
-            <div v-if="a.primary" class="ob-action-badge">Start here</div>
-          </router-link>
+            :to="`/surface/${encodeURIComponent(planet.host)}/${planet.slug}`"
+            class="ob-sc-visit"
+          >Visit →</router-link>
         </div>
 
-        <!-- Community coordination block -->
-        <div v-if="activeCommunity.id !== 'solo'" class="ob-coord-block">
-          <div class="ob-coord-head">
-            <span class="ob-coord-icon">{{ activeCommunity.icon }}</span>
-            <div>
-              <div class="ob-coord-name">{{ activeCommunity.name }}</div>
-              <div class="ob-coord-desc">{{ activeCommunity.coordDesc }}</div>
-            </div>
+        <!-- Primary CTA — commitment-specific -->
+        <router-link :to="activeCommitment?.to ?? '/'" class="ob-primary-cta">
+          <span class="ob-cta-icon">{{ activeCommitment?.icon }}</span>
+          <div class="ob-cta-body">
+            <div class="ob-cta-label">Your first commitment</div>
+            <div class="ob-cta-title">{{ activeCommitment?.title }}</div>
+            <div class="ob-cta-desc">{{ activeCommitment?.ctaDesc }}</div>
           </div>
-          <div class="ob-coord-links">
-            <a v-if="activeCommunity.coordUrl" :href="activeCommunity.coordUrl"
-              target="_blank" rel="noopener" class="ob-coord-btn">
-              {{ activeCommunity.coordLabel }} ↗
-            </a>
-            <router-link v-if="activeCommunity.internalRoute"
-              :to="activeCommunity.internalRoute" class="ob-coord-btn ob-coord-btn--alt">
-              {{ activeCommunity.internalLabel }} →
-            </router-link>
-          </div>
+          <span class="ob-cta-arrow">→</span>
+        </router-link>
+
+        <!-- PFAS context — shown only for eco path -->
+        <div v-if="selectedPath === 'eco'" class="ob-eco-context">
+          <div class="ob-eco-ctx-head">Why PFAS and microplastics?</div>
+          <p class="ob-eco-ctx-body">
+            PFOS, PFOA, and thousands of related "forever chemicals" are released by
+            semiconductor manufacturing, firefighting foam, food packaging, and textile
+            production. In 2026 they are active contaminants in watersheds on every
+            inhabited continent — and they are traceable. Citizen science mapping of
+            sources and field sampling of local water bodies directly supports
+            regulatory accountability and ecosystem restoration. Your data matters.
+          </p>
+        </div>
+
+        <!-- Secondary navigation -->
+        <div class="ob-section-label">Also available to you</div>
+        <div class="ob-secondary-grid">
+          <router-link to="/" class="ob-secondary-card">
+            <span class="ob-sec-icon">🌌</span>
+            <span class="ob-sec-title">Explore the cosmos</span>
+          </router-link>
+          <router-link to="/eco-library" class="ob-secondary-card">
+            <span class="ob-sec-icon">📚</span>
+            <span class="ob-sec-title">Eco Library</span>
+          </router-link>
+          <router-link to="/learn" class="ob-secondary-card">
+            <span class="ob-sec-icon">🎓</span>
+            <span class="ob-sec-title">Training modules</span>
+          </router-link>
+          <router-link to="/blog" class="ob-secondary-card">
+            <span class="ob-sec-icon">📡</span>
+            <span class="ob-sec-title">Working notes</span>
+          </router-link>
         </div>
 
         <!-- Optional on-chain upgrade -->
@@ -249,10 +282,9 @@
           </summary>
           <div class="ob-chain-body">
             <p>
-              Your Exotopia settlement exists and is navigable right now without a
-              blockchain wallet. When you're ready, minting a deed as an NFT gives you
-              a permanent, transferable record of ownership — and unlocks the full
-              pon.ink token economy.
+              Your settlement exists and is navigable right now without a wallet.
+              Minting it as an NFT gives you a permanent, transferable ownership record
+              and unlocks the full pon.ink token economy.
             </p>
             <router-link to="/mint" class="ob-chain-link">Go to mint page →</router-link>
           </div>
@@ -266,153 +298,305 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
+import { useGuestProfile } from 'src/composables/useGuestProfile'
 
-// ── Wizard state ──────────────────────────────────────────────────────────────
+const { profile, update, complete } = useGuestProfile()
 
-const step              = ref(0)
-const selectedRole      = ref<string | null>(null)
-const selectedCommunity = ref<string | null>(null)
-const displayName       = ref('')
+// Local state — selectedRole/selectedCommunity reused as path/commitment storage
+const step               = ref(profile.value.onboardingStep)
+const selectedPath       = ref<string | null>(profile.value.selectedRole)
+const selectedCommitment = ref<string | null>(profile.value.selectedCommunity)
+const displayName        = ref(profile.value.displayName)
 
-// ── Config ────────────────────────────────────────────────────────────────────
+watch([step, selectedPath, selectedCommitment, displayName], () =>
+  update({
+    onboardingStep:    step.value,
+    selectedRole:      selectedPath.value,
+    selectedCommunity: selectedCommitment.value,
+    displayName:       displayName.value,
+  })
+)
+
+watch(step, (s) => { if (s === 4) complete() })
+
+// ── Steps ─────────────────────────────────────────────────────────────────────
 
 const STEPS = [
-  { label: 'Role'       },
-  { label: 'Community'  },
+  { label: 'Mission'    },
+  { label: 'Path'       },
+  { label: 'Commit'     },
   { label: 'Your Place' },
-  { label: 'Start'      },
+  { label: 'Begin'      },
 ]
 
-const ROLES = [
+// ── Data types ────────────────────────────────────────────────────────────────
+
+interface Commitment {
+  id:      string
+  icon:    string
+  title:   string
+  desc:    string
+  to:      string
+  ctaDesc: string
+}
+
+interface Path {
+  id:             string
+  icon:           string
+  title:          string
+  desc:           string
+  persona:        string
+  example:        string
+  commitTitle:    string
+  commitSub:      string
+  commitments:    Commitment[]
+  settlementItems: { text: string; color: string }[]
+}
+
+// ── Paths ─────────────────────────────────────────────────────────────────────
+
+const PATHS: Path[] = [
   {
-    id:    'field',
-    icon:  '🌿',
-    title: 'Field Worker',
-    desc:  'I do eco-ops work: water quality mapping, recycling, agroforestry, or land surveys',
+    id:      'learn',
+    icon:    '📖',
+    title:   'Learning & Discovery',
+    desc:    'Explore the Eco Library — resources on PFAS contamination, living systems design, biodiversity, traditional ecological knowledge, and sustainable infrastructure. No required sequence. Follow what interests you.',
+    persona: 'Choose this if you are new to eco systems, want to understand what PFAS is and how it moves through watersheds, or want context before taking field action.',
+    example: 'Read about upstream PFAS producer responsibility',
+    commitTitle: 'What do you want to learn about first?',
+    commitSub:   'Our library draws from ApproVideo and field partners across 12 domains of sustainable living — water, soil, food, energy, biodiversity, climate, and restoration.',
+    commitments: [
+      {
+        id:      'learn-library',
+        icon:    '📚',
+        title:   'Browse the Eco Library',
+        desc:    'Explore resources across 12 living-systems domains. No quiz required — follow what interests you.',
+        to:      '/eco-library',
+        ctaDesc: 'Open the library and find something that interests you.',
+      },
+      {
+        id:      'learn-quiz',
+        icon:    '🧠',
+        title:   'Take a knowledge quiz',
+        desc:    'Short flashcard-style quizzes on water systems, PFAS basics, soil ecology, or renewable energy.',
+        to:      '/learn',
+        ctaDesc: 'Open the quiz system and pick a topic to start.',
+      },
+      {
+        id:      'learn-blog',
+        icon:    '📡',
+        title:   'Read the working notes',
+        desc:    'Our blog covers upstream PFAS producer responsibility, East Coast citizen science networks, library ecology proposals, and more.',
+        to:      '/blog',
+        ctaDesc: 'Open the blog and find a post that connects to your work.',
+      },
+    ],
+    settlementItems: [
+      { text: 'A library dome linked to your completed reading and modules', color: '#44ff88' },
+      { text: 'Knowledge certificates displayed in your dome interior',       color: '#ffaa33' },
+      { text: 'Ecocity infrastructure added as you complete each domain',     color: '#cc88ff' },
+    ],
   },
   {
-    id:    'artist',
-    icon:  '🎨',
-    title: 'Artist & Creator',
-    desc:  'I make music, visual art, film, or other cultural work that carries community stories',
+    id:      'project',
+    icon:    '🔨',
+    title:   'Make a Project',
+    desc:    'Start or join a community eco project — a water monitoring network, a restoration plan, a local species guide, a resource translation, or a direct contribution to this platform\'s tools and content.',
+    persona: 'Choose this if you have something in mind you want to build, a place you want to document, or a gap you\'ve already noticed in the available resources.',
+    example: 'Name and log a stream you want to monitor',
+    commitTitle: 'What kind of project are you closest to making?',
+    commitSub:   'Projects here connect to real places and real communities. You can start with something small and grow it over time.',
+    commitments: [
+      {
+        id:      'project-eco',
+        icon:    '🌊',
+        title:   'Start an eco field project',
+        desc:    'Name a site you want to monitor — a stream, a wetland, a garden. Log it and start building a field record.',
+        to:      '/eco-ops',
+        ctaDesc: 'Open Eco Ops and create your first field site.',
+      },
+      {
+        id:      'project-content',
+        icon:    '📝',
+        title:   'Contribute a resource to the library',
+        desc:    'Add a video, guide, or document to the Eco Library. A technique, a local species, a traditional practice — anything useful.',
+        to:      '/eco-library',
+        ctaDesc: 'Open the Eco Library and add a resource.',
+      },
+      {
+        id:      'project-platform',
+        icon:    '🛠️',
+        title:   'Improve this platform',
+        desc:    'Submit a feature idea, flag something broken, or improve documentation. Platform contributions earn settlement credits.',
+        to:      '/docs',
+        ctaDesc: 'Open the docs and find something to improve or propose.',
+      },
+    ],
+    settlementItems: [
+      { text: 'A project beacon object for each active field project you hold', color: '#00e5ff' },
+      { text: 'Site pins on your settlement map for monitored locations',       color: '#44ff88' },
+      { text: 'Contributor credits for accepted platform improvements',         color: '#ffaa33' },
+    ],
   },
   {
-    id:    'educator',
-    icon:  '📚',
-    title: 'Educator & Trainer',
-    desc:  'I run workshops, training sessions, or community education programmes',
+    id:      'certify',
+    icon:    '🎓',
+    title:   'Train & Certify',
+    desc:    'Work through vocational modules built from the ApproVideo library and SCD Hub field partners — water and sanitation, renewable energy, food systems, citizen science. Completing a module earns a certificate and an ecocity object for your settlement.',
+    persona: 'Choose this if you want verifiable credentials, are an educator building curriculum, or want a structured pathway from concept to field practice.',
+    example: 'Start the WATSAN module — about 30 minutes',
+    commitTitle: 'Which training track fits where you are right now?',
+    commitSub:   'Each track draws from the ApproVideo library and our field partners. Modules run 20–60 minutes. Completing one earns a certificate and an ecocity object for your settlement.',
+    commitments: [
+      {
+        id:      'certify-watsan',
+        icon:    '💧',
+        title:   'Water & Sanitation (WATSAN)',
+        desc:    'Biosand filtration, rainwater harvesting, water quality testing, and community water system design.',
+        to:      '/learn',
+        ctaDesc: 'Start the WATSAN module — about 30 minutes.',
+      },
+      {
+        id:      'certify-citizen',
+        icon:    '🔬',
+        title:   'Citizen Science track',
+        desc:    'PFAS monitoring basics, freshwater phenology, tick ecology, cyanobacteria identification, and community data submission.',
+        to:      '/learn',
+        ctaDesc: 'Start the Citizen Science track — pick your first module.',
+      },
+      {
+        id:      'certify-energy',
+        icon:    '☀️',
+        title:   'Renewable Energy basics',
+        desc:    'Solar sizing, battery systems, micro-hydro, community energy planning — applicable to off-grid settlements here and in the cosmos.',
+        to:      '/learn',
+        ctaDesc: 'Start the Energy module.',
+      },
+    ],
+    settlementItems: [
+      { text: 'Certificate badges displayed inside your settlement dome',               color: '#ffaa33' },
+      { text: 'Ecocity infrastructure objects matching your certification domain',      color: '#44ff88' },
+      { text: 'Educator role unlocked once you complete a full track',                  color: '#cc88ff' },
+    ],
   },
   {
-    id:    'coordinator',
-    icon:  '🤝',
-    title: 'Community Coordinator',
-    desc:  'I organise people, resources, and logistics — including food pantry and community support work',
+    id:      'help',
+    icon:    '🛠️',
+    title:   'Help Build This Platform',
+    desc:    'Report issues, propose features, improve documentation, or claim a development bounty. Every accepted contribution is credited to your settlement record and, where applicable, compensated through the bounty system.',
+    persona: 'Choose this if you have technical, documentation, or design skills — or if you just found something that doesn\'t work right and want to see it fixed.',
+    example: 'Submit a feature you wish existed',
+    commitTitle: 'How do you want to help?',
+    commitSub:   'Exotopia is open source and actively built by SCD Hub. We have open issues, documented bounties, and a lot of territory left to map. Whatever your skill, there is a place for it here.',
+    commitments: [
+      {
+        id:      'help-issues',
+        icon:    '🐛',
+        title:   'Find and report an issue',
+        desc:    'Explore the platform and report anything broken, confusing, or missing. Every valid report is logged, credited, and linked to your settlement.',
+        to:      '/docs',
+        ctaDesc: 'Explore the platform — note what you\'d fix and submit it.',
+      },
+      {
+        id:      'help-feature',
+        icon:    '💡',
+        title:   'Submit a feature request',
+        desc:    'Have an idea for something that should exist? We have a structured bounty system for proposals that get built into the platform.',
+        to:      '/docs',
+        ctaDesc: 'Open the docs and submit your feature idea.',
+      },
+      {
+        id:      'help-content',
+        icon:    '📖',
+        title:   'Add or improve content',
+        desc:    'Contribute to the eco library, improve glossary entries, add blog commentary, or help translate existing resources.',
+        to:      '/eco-library',
+        ctaDesc: 'Open the Eco Library and contribute a resource or edit.',
+      },
+    ],
+    settlementItems: [
+      { text: 'Contribution credit object added for each accepted issue or feature', color: '#00e5ff' },
+      { text: 'Builder badge displayed on your settlement profile',                  color: '#ffaa33' },
+      { text: 'Bounty earnings convertible to settlement upgrade tokens',            color: '#44ff88' },
+    ],
   },
   {
-    id:    'explorer',
-    icon:  '🔭',
-    title: 'Explorer',
-    desc:  'I\'m here to learn, look around, and see what this is all about',
+    id:      'eco',
+    icon:    '🌊',
+    title:   'Eco Field Work',
+    desc:    'Monitor water quality, map PFAS and microplastic contamination sources, conduct ecosystem surveys, or support restoration in your watershed. Data you collect feeds directly into community records accessible to regulators, researchers, and other field teams.',
+    persona: 'Choose this if you are already near a water body, industrial site, or ecosystem under stress — or if you want to connect existing field work to a broader network.',
+    example: 'Log your nearest stream as a monitoring site',
+    commitTitle: 'What field work are you closest to?',
+    commitSub:   'PFOS, PFOA, and related "forever chemicals" are active contaminants in 2026 watersheds globally. Citizen science tracking makes them visible and attributable. Where do you want to start?',
+    commitments: [
+      {
+        id:      'eco-monitor',
+        icon:    '💧',
+        title:   'Log a water monitoring site',
+        desc:    'Any stream, pond, tap, wetland, or coastline near you. Takes 2 minutes. You can add test data, photos, and notes over time.',
+        to:      '/eco-ops',
+        ctaDesc: 'Open Eco Ops and log your first monitoring site.',
+      },
+      {
+        id:      'eco-pfas',
+        icon:    '🏭',
+        title:   'Map a potential PFAS source',
+        desc:    'Document an industrial site, airport, fire station, semiconductor plant, or manufacturing facility near you — location, type, and notes.',
+        to:      '/eco-ops',
+        ctaDesc: 'Open Eco Ops and log a PFAS source near you.',
+      },
+      {
+        id:      'eco-learn',
+        icon:    '🔬',
+        title:   'Learn PFAS monitoring basics',
+        desc:    'Understand how forever chemicals move through watersheds, what field sampling looks like, and how to read public contamination databases.',
+        to:      '/eco-library',
+        ctaDesc: 'Open the Eco Library and start with the PFAS monitoring section.',
+      },
+    ],
+    settlementItems: [
+      { text: 'Water monitoring station added for each site you log',                 color: '#44ff88' },
+      { text: 'Field records linked to your settlement and visible to your network',  color: '#00e5ff' },
+      { text: 'Ecosystem restoration objects earned as your field data accumulates',  color: '#ffaa33' },
+    ],
   },
 ]
 
-const COMMUNITIES = [
-  {
-    id:            'funky-pony',
-    icon:          '🐴',
-    name:          'Funky Pony',
-    location:      'Food pantry coordination network — funkypony.space',
-    color:         '#ffcc44',
-    tags:          ['Food bank', 'Volunteers', 'Daily call queue', 'Donors', 'Coordination'],
-    desc:          'Funky Pony coordinates food pantry operations: daily phone-call queues let members claim pick-up tickets, flag stocking needs, request specific items, and route volunteers and donors to where they\'re needed — low stress, high coverage.',
-    coordDesc:     'Join the daily coordination call or log a volunteer shift. Every contribution earns activity on your Exotopia settlement.',
-    coordUrl:      'https://funkypony.space',
-    coordLabel:    'Open Funky Pony',
-    internalRoute: '/eco-ops',
-    internalLabel: 'Log a coordination activity',
-  },
-  {
-    id:            'fana-ka',
-    icon:          '🎵',
-    name:          'Fana Ka',
-    location:      'Nairobi, Kenya',
-    color:         '#ff6644',
-    tags:          ['Music', 'Youth culture', 'Rap battles', 'Events'],
-    desc:          'A Nairobi youth music and cultural movement. Rap battles, digital rights education, and community events form the foundation of their work in the cosmos.',
-    coordDesc:     'Join the Fana Ka coordination channel to find upcoming events, sessions, and how your cultural work connects to your settlement.',
-    coordUrl:      null,
-    coordLabel:    '',
-    internalRoute: '/eco-ops',
-    internalLabel: 'Log an event activity',
-  },
-  {
-    id:            'uni-kibaoni',
-    icon:          '🌿',
-    name:          'Uni-Kibaoni Peace Youth SHG',
-    location:      'Mpeketoni · Lamu County, Kenya',
-    color:         '#44ff88',
-    tags:          ['Eco-ops', 'Water quality', 'Recycling', 'Agroforestry'],
-    desc:          'A self-help group in Mpeketoni working on biosand filters, rainwater harvesting, composting, and community recycling. Led by Muirithi Jariffe.',
-    coordDesc:     'Log eco-ops field activities, water quality readings, or recycling events. Every check-in builds your planet.',
-    coordUrl:      null,
-    coordLabel:    '',
-    internalRoute: '/eco-ops',
-    internalLabel: 'Log a field check-in',
-  },
-  {
-    id:            'ot-kulcha',
-    icon:          '🎨',
-    name:          'OT Kulcha',
-    location:      'Kingston, Jamaica · Nairobi, Kenya',
-    color:         '#cc88ff',
-    tags:          ['Visual art', 'Photography', 'Pain in the Ghetto', 'Cross-diaspora'],
-    desc:          '"Pain in the Ghetto" — a Kingston-Nairobi visual art and photography collaboration documenting life, beauty, and resilience in urban communities.',
-    coordDesc:     'Submit artwork, join the gallery, or coordinate with the OT Kulcha network on upcoming projects.',
-    coordUrl:      null,
-    coordLabel:    '',
-    internalRoute: '/gallery',
-    internalLabel: 'Browse the gallery',
-  },
-  {
-    id:            'solo',
-    icon:          '🔭',
-    name:          'Starting solo',
-    location:      'Your own path',
-    color:         '#4488cc',
-    tags:          ['Independent', 'Researcher', 'Curious'],
-    desc:          'Explore Exotopia on your own terms. You can join a community group at any time, or build your settlement through individual eco-ops and learning activities.',
-    coordDesc:     '',
-    coordUrl:      null,
-    coordLabel:    '',
-    internalRoute: '/',
-    internalLabel: 'Explore the cosmos',
-  },
-]
+// ── Derived ───────────────────────────────────────────────────────────────────
+
+const activePath = computed(() =>
+  PATHS.find(p => p.id === selectedPath.value) ?? null
+)
+
+const activeCommitment = computed(() =>
+  activePath.value?.commitments.find(c => c.id === selectedCommitment.value) ?? null
+)
 
 // ── Planet pool — real confirmed exoplanets ───────────────────────────────────
 
 const PLANET_POOL = [
-  { name: 'Kepler-442 b',       host: 'Kepler-442',       slug: 'Kepler-442+b',       type: 'Rocky super-Earth',    dist: '1,206' },
-  { name: 'Kepler-22 b',        host: 'Kepler-22',         slug: 'Kepler-22+b',        type: 'Ocean-candidate',      dist: '620'   },
-  { name: 'Kepler-186 f',       host: 'Kepler-186',        slug: 'Kepler-186+f',       type: 'Rocky Earth-sized',    dist: '492'   },
-  { name: 'HD 40307 g',         host: 'HD 40307',          slug: 'HD+40307+g',         type: 'Super-Earth',          dist: '42'    },
-  { name: 'Gliese 667C c',      host: 'Gliese 667C',       slug: 'Gliese+667+Cc',      type: 'Temperate HZ world',   dist: '23'    },
-  { name: 'TRAPPIST-1 e',       host: 'TRAPPIST-1',        slug: 'TRAPPIST-1+e',       type: 'Rocky HZ candidate',   dist: '40'    },
-  { name: 'TRAPPIST-1 f',       host: 'TRAPPIST-1',        slug: 'TRAPPIST-1+f',       type: 'Rocky ocean-possible', dist: '40'    },
-  { name: 'K2-18 b',            host: 'K2-18',             slug: 'K2-18+b',            type: 'Hycean-candidate',     dist: '124'   },
-  { name: 'TOI-700 d',          host: 'TOI-700',           slug: 'TOI-700+d',          type: 'Earth-sized, HZ',      dist: '101'   },
-  { name: 'LHS 1140 b',         host: 'LHS 1140',          slug: 'LHS+1140+b',         type: 'Rocky super-Earth',    dist: '41'    },
-  { name: 'Kepler-452 b',       host: 'Kepler-452',        slug: 'Kepler-452+b',       type: 'Earth cousin, HZ',     dist: '1,402' },
-  { name: 'Kepler-62 f',        host: 'Kepler-62',         slug: 'Kepler-62+f',        type: 'Water-world candidate',dist: '1,200' },
-  { name: 'Proxima Cen b',      host: 'Proxima Cen',       slug: 'Proxima+Cen+b',      type: 'Rocky, nearest star',  dist: '4.2'  },
-  { name: 'GJ 357 d',           host: 'GJ 357',            slug: 'GJ+357+d',           type: 'Super-Earth, outer HZ',dist: '31'   },
-  { name: 'Kepler-1229 b',      host: 'Kepler-1229',       slug: 'Kepler-1229+b',      type: 'Rocky, cool star',     dist: '770'  },
-  { name: 'Wolf 1061 c',        host: 'Wolf 1061',         slug: 'Wolf+1061+c',        type: 'Super-Earth, HZ edge', dist: '14'   },
-  { name: 'Kepler-283 c',       host: 'Kepler-283',        slug: 'Kepler-283+c',       type: 'Sub-Neptune, HZ',      dist: '1,741'},
-  { name: 'GJ 3323 b',          host: 'GJ 3323',           slug: 'GJ+3323+b',          type: 'Rocky, red dwarf',     dist: '17'   },
-  { name: 'Ross 128 b',         host: 'Ross 128',          slug: 'Ross+128+b',         type: 'Temperate Earth-size', dist: '11'   },
-  { name: "Teegarden b",        host: "Teegarden's Star",  slug: 'Teegarden+b',        type: 'Earth-mass, HZ',       dist: '12'   },
+  { name: 'Kepler-442 b',  host: 'Kepler-442',       slug: 'Kepler-442+b',       type: 'Rocky super-Earth',    dist: '1,206' },
+  { name: 'Kepler-22 b',   host: 'Kepler-22',         slug: 'Kepler-22+b',        type: 'Ocean-candidate',      dist: '620'   },
+  { name: 'Kepler-186 f',  host: 'Kepler-186',        slug: 'Kepler-186+f',       type: 'Rocky Earth-sized',    dist: '492'   },
+  { name: 'HD 40307 g',    host: 'HD 40307',          slug: 'HD+40307+g',         type: 'Super-Earth',          dist: '42'    },
+  { name: 'Gliese 667C c', host: 'Gliese 667C',       slug: 'Gliese+667+Cc',      type: 'Temperate HZ world',   dist: '23'    },
+  { name: 'TRAPPIST-1 e',  host: 'TRAPPIST-1',        slug: 'TRAPPIST-1+e',       type: 'Rocky HZ candidate',   dist: '40'    },
+  { name: 'TRAPPIST-1 f',  host: 'TRAPPIST-1',        slug: 'TRAPPIST-1+f',       type: 'Rocky ocean-possible', dist: '40'    },
+  { name: 'K2-18 b',       host: 'K2-18',             slug: 'K2-18+b',            type: 'Hycean-candidate',     dist: '124'   },
+  { name: 'TOI-700 d',     host: 'TOI-700',           slug: 'TOI-700+d',          type: 'Earth-sized, HZ',      dist: '101'   },
+  { name: 'LHS 1140 b',    host: 'LHS 1140',          slug: 'LHS+1140+b',         type: 'Rocky super-Earth',    dist: '41'    },
+  { name: 'Kepler-452 b',  host: 'Kepler-452',        slug: 'Kepler-452+b',       type: 'Earth cousin, HZ',     dist: '1,402' },
+  { name: 'Kepler-62 f',   host: 'Kepler-62',         slug: 'Kepler-62+f',        type: 'Water-world candidate',dist: '1,200' },
+  { name: 'Proxima Cen b', host: 'Proxima Cen',       slug: 'Proxima+Cen+b',      type: 'Rocky, nearest star',  dist: '4.2'   },
+  { name: 'GJ 357 d',      host: 'GJ 357',            slug: 'GJ+357+d',           type: 'Super-Earth, outer HZ',dist: '31'    },
+  { name: 'Kepler-1229 b', host: 'Kepler-1229',       slug: 'Kepler-1229+b',      type: 'Rocky, cool star',     dist: '770'   },
+  { name: 'Wolf 1061 c',   host: 'Wolf 1061',         slug: 'Wolf+1061+c',        type: 'Super-Earth, HZ edge', dist: '14'    },
+  { name: 'Kepler-283 c',  host: 'Kepler-283',        slug: 'Kepler-283+c',       type: 'Sub-Neptune, HZ',      dist: '1,741' },
+  { name: 'GJ 3323 b',     host: 'GJ 3323',           slug: 'GJ+3323+b',          type: 'Rocky, red dwarf',     dist: '17'    },
+  { name: 'Ross 128 b',    host: 'Ross 128',          slug: 'Ross+128+b',         type: 'Temperate Earth-size', dist: '11'    },
+  { name: "Teegarden b",   host: "Teegarden's Star",  slug: 'Teegarden+b',        type: 'Earth-mass, HZ',       dist: '12'    },
 ]
 
 function nameHash (s: string): number {
@@ -428,44 +612,6 @@ function updatePlanet () {
   if (name.length < 2) return
   planet.value = PLANET_POOL[nameHash(name) % PLANET_POOL.length]!
 }
-
-// ── Derived ───────────────────────────────────────────────────────────────────
-
-const activeCommunity = computed(() =>
-  COMMUNITIES.find(c => c.id === selectedCommunity.value) ?? COMMUNITIES[COMMUNITIES.length - 1]!
-)
-
-const ROLE_ACTIONS: Record<string, { icon: string; title: string; desc: string; to: string; color: string; primary?: true; label?: string }[]> = {
-  field: [
-    { icon: '💧', title: 'Log a field check-in', desc: 'Record water quality data, recycling activity, or a farm observation', to: '/eco-ops', color: '#44ff88', primary: true, label: 'field-checkin' },
-    { icon: '🗺️', title: 'Map an eco site',       desc: 'Add a location to the community eco-ops map',                         to: '/eco-ops', color: '#44ff88',              label: 'field-map'     },
-    { icon: '🌌', title: 'Visit your planet',     desc: 'See your settlement, dome interior, and community objects',            to: `/surface-view/${encodeURIComponent(planet.value.host)}`, color: '#00e5ff', label: 'field-planet' },
-  ],
-  artist: [
-    { icon: '🎨', title: 'Browse the gallery',    desc: 'See community artwork from OT Kulcha and Fana Ka',                   to: '/gallery', color: '#cc88ff', primary: true, label: 'art-gallery' },
-    { icon: '🎵', title: 'Find a cultural event', desc: 'Upcoming music sessions, rap battles, and art workshops',             to: '/docs',    color: '#ff6644',              label: 'art-events'  },
-    { icon: '🌌', title: 'Visit your planet',     desc: 'See your settlement and community objects',                           to: `/surface-view/${encodeURIComponent(planet.value.host)}`, color: '#00e5ff', label: 'art-planet' },
-  ],
-  educator: [
-    { icon: '📚', title: 'Start a training module', desc: 'WATSAN, energy, shelter, or food system modules — earn a certificate',  to: '/learn',        color: '#ffaa33', primary: true, label: 'edu-train'   },
-    { icon: '🏗️', title: 'Browse ecocity designs',  desc: 'Biosand filters, rainwater harvesters, composting units',              to: '/eco-library',  color: '#44ff88',              label: 'edu-eco'     },
-    { icon: '🌌', title: 'Visit your planet',       desc: 'See your planet and training centre settlement objects',               to: `/surface-view/${encodeURIComponent(planet.value.host)}`, color: '#00e5ff', label: 'edu-planet' },
-  ],
-  coordinator: [
-    { icon: '🐴', title: 'Open Funky Pony',            desc: 'Join the daily queue call — claim a ticket, flag a need, route a donor', to: '/eco-ops', color: '#ffcc44', primary: true, label: 'coord-fp'    },
-    { icon: '📋', title: 'Log a coordination activity', desc: 'Record a group session, scheduling work, or volunteer shift',            to: '/eco-ops', color: '#ffcc44',              label: 'coord-log'   },
-    { icon: '🌌', title: 'Visit your planet',           desc: 'See your settlement and community hub objects',                          to: `/surface-view/${encodeURIComponent(planet.value.host)}`, color: '#00e5ff', label: 'coord-planet' },
-  ],
-  explorer: [
-    { icon: '🌌', title: 'Explore the cosmic map', desc: 'Navigate from galaxy clusters to exoplanet surfaces',  to: '/',       color: '#00e5ff', primary: true, label: 'exp-map'    },
-    { icon: '🪐', title: 'Visit your planet',      desc: `Land on ${planet.value.name} and see your settlement`, to: `/surface-view/${encodeURIComponent(planet.value.host)}`, color: '#4488cc', label: 'exp-planet' },
-    { icon: '📖', title: 'Read the blog',          desc: 'Working notes on astronomy data, void math, and the ecosystem', to: '/blog', color: '#8899aa', label: 'exp-blog' },
-  ],
-}
-
-const firstActions = computed(() =>
-  ROLE_ACTIONS[selectedRole.value ?? 'explorer'] ?? ROLE_ACTIONS['explorer']!
-)
 
 // ── Stars backdrop ────────────────────────────────────────────────────────────
 
@@ -501,7 +647,7 @@ const stars = Array.from({ length: 60 }, (_, i) => ({
 
 /* ── Logo ─────────────────────────────────────────────────────────────────── */
 
-.ob-logo-row { display: flex; align-items: baseline; gap: 12px; }
+.ob-logo-row { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
 .ob-logo { text-decoration: none; font-size: 14px; font-weight: 300; letter-spacing: 0.18em; }
 .ob-logo-exo   { color: #4dd0e1; }
 .ob-logo-topia { color: #90a4ae; }
@@ -575,57 +721,105 @@ const stars = Array.from({ length: 60 }, (_, i) => ({
   border-bottom: 1px solid rgba(0,80,130,0.14);
 }
 
-/* ── Role cards ───────────────────────────────────────────────────────────── */
+/* ── Mission strip (step 0) ───────────────────────────────────────────────── */
 
-.ob-role-grid { display: flex; flex-direction: column; gap: 8px; }
+.ob-mission-strip {
+  display: flex; flex-direction: column; gap: 10px;
+  padding: 16px;
+  background: rgba(0,12,22,0.60);
+  border: 1px solid rgba(0,80,130,0.15);
+  border-radius: 8px;
+}
 
-.ob-role-card {
+.ob-mission-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 10px; color: rgba(140,190,220,0.75); line-height: 1.60;
+}
+
+.ob-mission-dot {
+  width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 4px;
+}
+
+/* ── Cosmic note (step 0) ─────────────────────────────────────────────────── */
+
+.ob-cosmic-note {
+  padding: 14px 16px;
+  background: rgba(0,20,40,0.55);
+  border: 1px solid rgba(0,100,160,0.20);
+  border-radius: 8px;
+}
+
+.ob-cn-label {
+  font-size: 8px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: rgba(0,160,200,0.50); margin-bottom: 6px;
+}
+
+.ob-cn-body {
+  font-size: 10px; color: rgba(100,160,200,0.65); line-height: 1.70; margin: 0;
+}
+
+/* ── Path cards (step 1) ──────────────────────────────────────────────────── */
+
+.ob-path-list { display: flex; flex-direction: column; gap: 8px; }
+
+.ob-path-card {
   display: flex; align-items: flex-start; gap: 12px;
-  padding: 12px 14px;
+  padding: 14px;
   background: rgba(0,12,30,0.65);
   border: 1px solid rgba(0,80,130,0.20);
   border-radius: 7px; cursor: pointer; text-align: left;
   transition: border-color 0.14s, background 0.14s;
   position: relative;
 }
-.ob-role-card:hover     { border-color: rgba(60,200,120,0.35); background: rgba(0,20,40,0.82); }
-.ob-role-card--selected { border-color: rgba(60,200,120,0.60); background: rgba(0,40,25,0.50); }
+.ob-path-card:hover     { border-color: rgba(60,200,120,0.35); background: rgba(0,20,40,0.82); }
+.ob-path-card--selected { border-color: rgba(60,200,120,0.60); background: rgba(0,40,25,0.50); }
 
-.ob-role-icon  { font-size: 22px; flex-shrink: 0; padding-top: 1px; }
-.ob-role-body  { flex: 1; }
-.ob-role-title { font-size: 11px; font-weight: 600; color: rgba(200,235,210,0.90); margin-bottom: 3px; }
-.ob-role-desc  { font-size: 9px; color: rgba(100,155,125,0.65); line-height: 1.50; }
-.ob-role-check { font-size: 14px; color: rgba(60,220,120,0.90); margin-left: auto; padding-left: 8px; }
+.ob-path-icon    { font-size: 24px; flex-shrink: 0; padding-top: 2px; }
+.ob-path-body    { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.ob-path-title   { font-size: 11px; font-weight: 600; color: rgba(200,235,210,0.90); }
+.ob-path-desc    { font-size: 9px; color: rgba(100,155,125,0.65); line-height: 1.58; }
+.ob-path-persona { font-size: 8.5px; color: rgba(80,140,110,0.50); line-height: 1.50; font-style: italic; }
+.ob-path-example {
+  display: inline-block; margin-top: 2px;
+  font-size: 8px; letter-spacing: 0.06em;
+  color: rgba(0,180,140,0.55);
+  background: rgba(0,80,50,0.22);
+  border: 1px solid rgba(0,140,90,0.18);
+  border-radius: 3px; padding: 2px 7px;
+}
+.ob-path-card--selected .ob-path-example {
+  color: rgba(60,220,140,0.75);
+  background: rgba(0,100,60,0.28);
+  border-color: rgba(0,180,110,0.28);
+}
+.ob-path-check   { font-size: 14px; color: rgba(60,220,120,0.90); margin-left: auto; padding-left: 8px; flex-shrink: 0; align-self: center; }
 
-/* ── Community cards ──────────────────────────────────────────────────────── */
+/* ── Commit cards (step 2) ────────────────────────────────────────────────── */
 
-.ob-comm-list { display: flex; flex-direction: column; gap: 10px; }
+.ob-commit-list { display: flex; flex-direction: column; gap: 8px; }
 
-.ob-comm-card {
+.ob-commit-card {
+  display: flex; align-items: flex-start; gap: 12px;
   padding: 14px;
-  background: rgba(0,12,30,0.70);
+  background: rgba(0,12,30,0.65);
   border: 1px solid rgba(0,80,130,0.20);
-  border-radius: 8px; cursor: pointer; text-align: left;
-  display: flex; flex-direction: column; gap: 8px;
+  border-radius: 7px; cursor: pointer; text-align: left;
   transition: border-color 0.14s, background 0.14s;
+  position: relative;
 }
-.ob-comm-card:hover     { border-color: rgba(100,200,150,0.30); background: rgba(0,18,40,0.85); }
-.ob-comm-card--selected { border-color: rgba(60,220,120,0.50);  background: rgba(0,35,20,0.50); }
+.ob-commit-card:hover     { border-color: rgba(0,180,240,0.35); background: rgba(0,20,40,0.82); }
+.ob-commit-card--selected { border-color: rgba(0,180,240,0.60); background: rgba(0,25,50,0.60); }
 
-.ob-comm-head { display: flex; align-items: flex-start; gap: 10px; }
-.ob-comm-icon { font-size: 22px; flex-shrink: 0; }
-.ob-comm-name { font-size: 12px; font-weight: 600; color: rgba(210,240,220,0.90); }
-.ob-comm-loc  { font-size: 8.5px; letter-spacing: 0.06em; color: rgba(80,140,100,0.55); margin-top: 2px; }
-.ob-comm-check { margin-left: auto; font-size: 14px; color: rgba(60,220,120,0.90); padding-left: 8px; }
+.ob-commit-icon  { font-size: 22px; flex-shrink: 0; padding-top: 1px; }
+.ob-commit-body  { flex: 1; }
+.ob-commit-title { font-size: 11px; font-weight: 600; color: rgba(180,225,255,0.90); margin-bottom: 4px; }
+.ob-commit-desc  { font-size: 9px; color: rgba(90,140,175,0.65); line-height: 1.55; }
+.ob-commit-check { font-size: 14px; color: rgba(0,210,255,0.90); margin-left: auto; padding-left: 8px; flex-shrink: 0; }
 
-.ob-comm-tags { display: flex; flex-wrap: wrap; gap: 5px; }
-.ob-comm-tag  {
-  font-size: 8px; padding: 2px 7px; border-radius: 3px;
-  border: 1px solid; background: rgba(0,0,0,0.25);
-  letter-spacing: 0.04em;
+.ob-commit-note {
+  font-size: 9px; color: rgba(80,130,160,0.50); text-align: center;
+  font-style: italic; padding: 2px 0;
 }
-
-.ob-comm-desc { font-size: 9.5px; color: rgba(120,175,140,0.68); line-height: 1.60; margin: 0; }
 
 /* ── Name field & planet preview ──────────────────────────────────────────── */
 
@@ -669,9 +863,9 @@ const stars = Array.from({ length: 60 }, (_, i) => ({
 .ob-planet-addr-host { color: rgba(0,200,160,0.70); }
 .ob-planet-note    { font-size: 9px; color: rgba(80,160,110,0.55); font-style: italic; margin-top: 4px; }
 
-/* ── How it works ─────────────────────────────────────────────────────────── */
+/* ── Settlement growth list (step 3) ─────────────────────────────────────── */
 
-.ob-how-it-works {
+.ob-path-hiw {
   background: rgba(0,12,22,0.60);
   border: 1px solid rgba(0,80,130,0.15);
   border-radius: 7px;
@@ -696,65 +890,66 @@ const stars = Array.from({ length: 60 }, (_, i) => ({
 .ob-sc-visit { color: rgba(0,220,180,0.80); text-decoration: none; flex-shrink: 0; }
 .ob-sc-visit:hover { color: #44ffcc; }
 
-/* ── First action cards ───────────────────────────────────────────────────── */
+/* ── Primary CTA (step 4) ─────────────────────────────────────────────────── */
 
-.ob-action-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+.ob-primary-cta {
+  display: flex; align-items: center; gap: 14px;
+  padding: 16px 18px;
+  background: rgba(0,40,80,0.60);
+  border: 1px solid rgba(0,160,230,0.35);
+  border-radius: 9px; text-decoration: none;
+  transition: border-color 0.14s, background 0.14s;
 }
-@media (max-width: 520px) { .ob-action-grid { grid-template-columns: 1fr; } }
-
-.ob-action-card {
-  display: flex; flex-direction: column; align-items: center; gap: 6px;
-  padding: 16px 10px; text-decoration: none;
-  background: rgba(0,12,28,0.75);
-  border: 1px solid rgba(255,255,255,0.07);
-  border-radius: 8px; text-align: center; position: relative;
-  transition: border-color 0.14s, background 0.14s, transform 0.12s;
-}
-.ob-action-card:hover {
-  border-color: color-mix(in srgb, var(--ac) 40%, transparent);
-  background: rgba(0,20,40,0.88);
-  transform: translateY(-2px);
-}
-.ob-action-icon  { font-size: 24px; }
-.ob-action-title { font-size: 10px; font-weight: 600; color: rgba(210,240,225,0.88); }
-.ob-action-desc  { font-size: 8px; color: rgba(100,155,130,0.62); line-height: 1.50; }
-.ob-action-badge {
-  font-size: 6.5px; letter-spacing: 0.14em; padding: 2px 7px;
-  background: rgba(60,200,120,0.18); border: 1px solid rgba(60,220,120,0.35);
-  border-radius: 3px; color: rgba(60,220,120,0.85);
+.ob-primary-cta:hover {
+  border-color: rgba(0,200,255,0.55);
+  background: rgba(0,55,100,0.70);
 }
 
-/* ── Community coordination block ────────────────────────────────────────── */
+.ob-cta-icon  { font-size: 28px; flex-shrink: 0; }
+.ob-cta-body  { flex: 1; }
+.ob-cta-label { font-size: 7.5px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(0,170,220,0.50); margin-bottom: 4px; }
+.ob-cta-title { font-size: 12px; font-weight: 600; color: rgba(180,225,255,0.90); margin-bottom: 3px; }
+.ob-cta-desc  { font-size: 9px; color: rgba(80,145,190,0.65); line-height: 1.55; }
+.ob-cta-arrow { font-size: 18px; color: rgba(0,180,240,0.60); flex-shrink: 0; }
 
-.ob-coord-block {
-  background: rgba(0,15,10,0.55);
-  border: 1px solid rgba(80,180,120,0.20);
-  border-radius: 8px;
+/* ── PFAS context box (eco path, step 4) ─────────────────────────────────── */
+
+.ob-eco-context {
   padding: 14px 16px;
-  display: flex; flex-direction: column; gap: 12px;
+  background: rgba(0,30,15,0.55);
+  border: 1px solid rgba(40,160,80,0.22);
+  border-radius: 8px;
 }
-.ob-coord-head { display: flex; align-items: flex-start; gap: 10px; }
-.ob-coord-icon { font-size: 20px; flex-shrink: 0; }
-.ob-coord-name { font-size: 11px; font-weight: 600; color: rgba(200,240,215,0.88); margin-bottom: 3px; }
-.ob-coord-desc { font-size: 9px; color: rgba(100,165,130,0.65); line-height: 1.55; }
-.ob-coord-links { display: flex; flex-wrap: wrap; gap: 8px; }
+.ob-eco-ctx-head {
+  font-size: 8.5px; letter-spacing: 0.10em; text-transform: uppercase;
+  color: rgba(60,190,100,0.60); margin-bottom: 7px;
+}
+.ob-eco-ctx-body {
+  font-size: 9.5px; color: rgba(100,165,130,0.68); line-height: 1.70; margin: 0;
+}
 
-.ob-coord-btn {
-  padding: 7px 14px; text-decoration: none;
-  background: rgba(0,50,30,0.50); border: 1px solid rgba(60,180,100,0.35);
-  border-radius: 5px; font-size: 9.5px; color: rgba(80,220,140,0.85);
-  letter-spacing: 0.05em; transition: border-color 0.13s, background 0.13s;
-}
-.ob-coord-btn:hover { background: rgba(0,70,40,0.70); border-color: rgba(60,220,120,0.55); }
-.ob-coord-btn--alt {
-  background: rgba(0,20,40,0.50); border-color: rgba(0,120,180,0.30); color: rgba(80,180,220,0.80);
-}
-.ob-coord-btn--alt:hover { background: rgba(0,30,60,0.65); border-color: rgba(0,180,240,0.45); }
+/* ── Secondary grid (step 4) ─────────────────────────────────────────────── */
 
-/* ── Optional on-chain upgrade ────────────────────────────────────────────── */
+.ob-secondary-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+}
+
+.ob-secondary-card {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: 12px 6px; text-decoration: none;
+  background: rgba(0,12,28,0.65);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 7px; text-align: center;
+  transition: border-color 0.14s, background 0.14s;
+}
+.ob-secondary-card:hover {
+  border-color: rgba(0,160,200,0.30);
+  background: rgba(0,20,40,0.85);
+}
+.ob-sec-icon  { font-size: 20px; }
+.ob-sec-title { font-size: 8px; color: rgba(100,160,190,0.65); line-height: 1.40; }
+
+/* ── On-chain upgrade ─────────────────────────────────────────────────────── */
 
 .ob-chain-upgrade {
   border: 1px solid rgba(0,80,130,0.18);
@@ -801,4 +996,31 @@ details[open] .ob-chain-summary::before { content: '− '; }
 .ob-fade-enter-active { transition: opacity 0.30s ease; }
 .ob-fade-leave-active { transition: opacity 0.16s ease; }
 .ob-fade-enter-from, .ob-fade-leave-to { opacity: 0; }
+
+/* ── Mobile responsive ────────────────────────────────────────────────────── */
+
+@media (max-width: 600px) {
+  .ob-wrap { padding: 16px 14px 80px; gap: 18px; }
+  .ob-card { padding: 16px; gap: 14px; }
+  .ob-card-title { font-size: 18px; }
+  .ob-hero-icon { font-size: 36px; }
+  .ob-card-sub { font-size: 10.5px; }
+  .ob-input { font-size: 16px; }
+  .ob-nav-row { gap: 10px; }
+  .ob-next-btn { width: 100%; justify-content: center; }
+  .ob-settlement-chip { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .ob-sc-addr { font-size: 8px; }
+  .ob-planet-name { font-size: 16px; }
+  .ob-secondary-grid { grid-template-columns: repeat(2, 1fr); }
+  .ob-primary-cta { flex-wrap: wrap; }
+}
+
+@media (max-width: 380px) {
+  .ob-rail-label { display: none; }
+  .ob-rail { padding: 8px; gap: 0; }
+  .ob-rail-line { min-width: 6px; }
+  .ob-card { padding: 12px; }
+  .ob-card-title { font-size: 15px; }
+  .ob-path-card, .ob-commit-card { padding: 10px 12px; }
+}
 </style>

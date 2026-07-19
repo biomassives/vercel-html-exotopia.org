@@ -1,17 +1,15 @@
 <template>
-  <q-page class="vg-page bg-black overflow-hidden"
-    @mousemove="onPageMouseMove"
+  <!-- Transparent overlay — shared Three.js canvas in MainLayout renders behind -->
+  <q-page class="vg-page viz-overlay-page"
+    @mousedown="onDragStart"
+    @mousemove="onPageMouseMove(); onDragMove($event)"
+    @mouseup="onDragEnd"
+    @mouseleave="onDragEnd"
+    @click="onCanvasClick"
+    @touchstart.passive="onTouchStart"
+    @touchmove.passive="onTouchMove"
+    @touchend="onTouchEnd"
   >
-    <canvas ref="canvasEl" class="vg-canvas"
-      @mousedown="onDragStart"
-      @mousemove="onDragMove"
-      @mouseup="onDragEnd"
-      @mouseleave="onDragEnd"
-      @click="onCanvasClick"
-      @touchstart.passive="onTouchStart"
-      @touchmove.passive="onTouchMove"
-      @touchend="onTouchEnd"
-    />
 
     <!-- Breadcrumb (auto-hides) -->
     <transition name="vg-fade">
@@ -107,14 +105,19 @@
 import { ref, computed, shallowRef, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import * as THREE from 'three'
+import type { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import { useVizRenderer, VIZ_BAR_H } from 'src/composables/useVizRenderer'
+import { disposeScene } from 'src/lib/three-utils'
+import { useSceneTransitionStore } from 'src/stores/scene-transition'
 import type { VoidGalaxy } from 'src/data/void-oracle.types'
 import { loadVoidOracle } from 'src/lib/void-oracle'
 import { useSettlements, clusterKey } from 'src/lib/settlements'
 
 // ── Route ──────────────────────────────────────────────────────────────────────
 
-const route  = useRoute()
-const router = useRouter()
+const route      = useRoute()
+const router     = useRouter()
+const transition = useSceneTransitionStore()
 
 const voidId = computed(() => String(route.params.voidId ?? 'bootes-void'))
 const gid    = computed(() => String(route.params.gid    ?? ''))
@@ -270,7 +273,8 @@ function generateSystems(gidVal: string, morph: string): VoidStarSystem[] {
 
 const { hasSettlement, addSettlement } = useSettlements()
 
-function goBackToVoid() {
+async function goBackToVoid() {
+  await transition.depart(50, 50, 'iris', 0)
   void router.push({
     name:   'void-interior',
     params: { voidId: voidId.value },
@@ -278,7 +282,15 @@ function goBackToVoid() {
   })
 }
 
-function descendTo(sys: VoidStarSystem) {
+async function descendTo(sys: VoidStarSystem) {
+  let ox = 50, oy = 50
+  if (camera) {
+    const sc = sys.pos.clone().project(camera)
+    ox = (sc.x + 1) / 2 * 100
+    oy = (1 - sc.y) / 2 * 100
+  }
+  const bearing = Math.atan2(oy / 100 - 0.5, ox / 100 - 0.5)
+  await transition.depart(ox, oy, 'lightning', bearing)
   void router.push({
     name:   'cluster-surface',
     params: { clusterSlug: `void-${voidId.value}`, memberId: gid.value, systemIdx: sys.idx },
@@ -289,6 +301,7 @@ function descendTo(sys: VoidStarSystem) {
       planets: sys.planetCount,
       cluster: voidDisplayName.value,
       morph:   queryMorph.value,
+      bearing: bearing.toFixed(3),
     },
   })
 }
@@ -307,19 +320,22 @@ function goSettle(sys: VoidStarSystem) {
       memberId:    gid.value,
     })
   }
-  descendTo(sys)
+  void descendTo(sys)
 }
 
-// ── Three.js ──────────────────────────────────────────────────────────────────
+// ── Three.js — shared renderer ────────────────────────────────────────────────
 
-const canvasEl = ref<HTMLCanvasElement | null>(null)
-
-let renderer:   THREE.WebGLRenderer
-let scene:      THREE.Scene
-let camera:     THREE.PerspectiveCamera
-let animId:     number
+const viz = useVizRenderer()
+let renderer:   THREE.WebGLRenderer     | null = null
+let scene:      THREE.Scene             | null = null
+let camera:     THREE.PerspectiveCamera | null = null
+let controls:   OrbitControls           | null = null
+let _stopTick: (() => void) | null = null
 let sysMarkers: THREE.Mesh[]      = []
 let ringMesh:   THREE.Mesh | null = null
+
+// Root group for all page-level scene objects — added/removed on mount/unmount
+const pageGroup = new THREE.Group()
 
 const orbit = { theta: 0.0, phi: Math.PI * 0.40 }
 const drag  = { active: false, lastX: 0, lastY: 0 }
@@ -327,6 +343,7 @@ const touch = { lastX: 0, lastY: 0 }
 let dragMoved = 0
 
 function updateCamera() {
+  if (!camera) return
   const sp = Math.sin(orbit.phi), cp = Math.cos(orbit.phi)
   camera.position.set(22 * sp * Math.sin(orbit.theta), 22 * cp, 22 * sp * Math.cos(orbit.theta))
   camera.lookAt(0, 0, 0)
@@ -357,13 +374,13 @@ function onTouchMove(e: TouchEvent) {
 function onTouchEnd() { drag.active = false }
 
 function onCanvasClick(e: MouseEvent) {
-  if (dragMoved > 6 || !canvasEl.value || !camera || sysMarkers.length === 0) return
-  const rect = canvasEl.value.getBoundingClientRect()
-  const rc   = new THREE.Raycaster()
+  if (dragMoved > 6 || !camera || sysMarkers.length === 0) return
+  const w = window.innerWidth, h = window.innerHeight - VIZ_BAR_H
+  const rc = new THREE.Raycaster()
   rc.setFromCamera(
     new THREE.Vector2(
-      ((e.clientX - rect.left) / rect.width)  *  2 - 1,
-      ((e.clientY - rect.top)  / rect.height) * -2 + 1,
+      (e.clientX / w) * 2 - 1,
+      -((e.clientY - VIZ_BAR_H) / h) * 2 + 1,
     ),
     camera,
   )
@@ -377,20 +394,21 @@ function onCanvasClick(e: MouseEvent) {
 
 function clearRing() {
   if (!ringMesh) return
-  scene.remove(ringMesh)
+  pageGroup.remove(ringMesh)
   ringMesh.geometry.dispose()
   ;(ringMesh.material as THREE.Material).dispose()
   ringMesh = null
 }
 
 function placeRing(sys: VoidStarSystem) {
+  if (!camera) return
   clearRing()
   const geo  = new THREE.TorusGeometry(0.44, 0.045, 8, 32)
   const mat  = new THREE.MeshBasicMaterial({ color: 0x00e5ff, transparent: true, opacity: 0.88, depthWrite: false })
   ringMesh   = new THREE.Mesh(geo, mat)
   ringMesh.position.copy(sys.pos)
   ringMesh.lookAt(camera.position)
-  scene.add(ringMesh)
+  pageGroup.add(ringMesh)
 }
 
 // Lightweight seeded RNG for scene geometry only
@@ -405,18 +423,26 @@ const SPEC_INT_COLOR: Record<string, number> = {
 }
 
 function buildScene(sysList: VoidStarSystem[], morph: string, colHex: string) {
-  if (!canvasEl.value) return
-  const w = canvasEl.value.clientWidth  || window.innerWidth
-  const h = canvasEl.value.clientHeight || window.innerHeight
+  // Grab shared renderer refs
+  renderer = viz.renderer
+  scene    = viz.scene
+  camera   = viz.camera
+  controls = viz.controls
+  if (!renderer || !scene || !camera || !controls) return
 
-  renderer = new THREE.WebGLRenderer({ canvas: canvasEl.value, antialias: false, alpha: false })
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5))
-  renderer.setClearColor(0x000002, 1)
-  renderer.setSize(w, h)
+  // This page drives the camera with its own orbit math (no OrbitControls) —
+  // disable the shared controls so a drag here isn't double-handled by both.
+  controls.enabled = false
 
-  scene  = new THREE.Scene()
-  camera = new THREE.PerspectiveCamera(55, w / h, 0.1, 200)
+  scene.background = new THREE.Color(0x000002)
+
+  camera.fov  = 55
+  camera.near = 0.1
+  camera.far  = 200
   updateCamera()
+  camera.updateProjectionMatrix()
+
+  scene.add(pageGroup)
 
   const baseColor = new THREE.Color(`#${colHex}`)
   const rng       = sceneRng(nameHash(gid.value + 'scene'))
@@ -438,7 +464,7 @@ function buildScene(sysList: VoidStarSystem[], morph: string, colHex: string) {
   const bgGeo = new THREE.BufferGeometry()
   bgGeo.setAttribute('position', new THREE.BufferAttribute(bgPos, 3))
   bgGeo.setAttribute('color',    new THREE.BufferAttribute(bgCol, 3))
-  scene.add(new THREE.Points(bgGeo, new THREE.PointsMaterial({
+  pageGroup.add(new THREE.Points(bgGeo, new THREE.PointsMaterial({
     size: 0.28, sizeAttenuation: true, vertexColors: true,
     transparent: true, opacity: 0.35, depthWrite: false,
   })))
@@ -465,7 +491,7 @@ function buildScene(sysList: VoidStarSystem[], morph: string, colHex: string) {
   const dkGeo = new THREE.BufferGeometry()
   dkGeo.setAttribute('position', new THREE.BufferAttribute(dkPos, 3))
   dkGeo.setAttribute('color',    new THREE.BufferAttribute(dkCol, 3))
-  scene.add(new THREE.Points(dkGeo, new THREE.PointsMaterial({
+  pageGroup.add(new THREE.Points(dkGeo, new THREE.PointsMaterial({
     size: 0.25, sizeAttenuation: true, vertexColors: true,
     transparent: true, opacity: 0.50, depthWrite: false,
   })))
@@ -475,7 +501,7 @@ function buildScene(sysList: VoidStarSystem[], morph: string, colHex: string) {
   const coreMat = new THREE.MeshBasicMaterial({
     color: baseColor, transparent: true, opacity: 0.38, depthWrite: false,
   })
-  scene.add(new THREE.Mesh(coreGeo, coreMat))
+  pageGroup.add(new THREE.Mesh(coreGeo, coreMat))
 
   // AGN hot core
   if (hasAgn.value) {
@@ -484,7 +510,7 @@ function buildScene(sysList: VoidStarSystem[], morph: string, colHex: string) {
       color: 0xffe080, transparent: true, opacity: 0.90,
       blending: THREE.AdditiveBlending, depthWrite: false,
     })
-    scene.add(new THREE.Mesh(agnGeo, agnMat))
+    pageGroup.add(new THREE.Mesh(agnGeo, agnMat))
   }
 
   // ── Star system markers ────────────────────────────────────────────────────
@@ -498,7 +524,7 @@ function buildScene(sysList: VoidStarSystem[], morph: string, colHex: string) {
     const mesh = new THREE.Mesh(geo, mat)
     mesh.position.copy(sys.pos)
     mesh.userData.sysIdx = sys.idx
-    scene.add(mesh)
+    pageGroup.add(mesh)
     sysMarkers.push(mesh)
 
     // Per-system soft halo
@@ -510,30 +536,22 @@ function buildScene(sysList: VoidStarSystem[], morph: string, colHex: string) {
     })
     const hMesh = new THREE.Mesh(hGeo, hMat)
     hMesh.position.copy(sys.pos)
-    scene.add(hMesh)
+    pageGroup.add(hMesh)
   })
 
-  // ── Animation loop ─────────────────────────────────────────────────────────
-  const loop = () => {
-    animId = requestAnimationFrame(loop)
-    if (!drag.active) orbit.theta += 0.000115
-    if (ringMesh) ringMesh.lookAt(camera.position)
-    updateCamera()
-    renderer.render(scene, camera)
-  }
-  loop()
+  _stopTick = viz.addTick(tick)
 }
 
-function onResize() {
-  if (!canvasEl.value || !renderer) return
-  const w = canvasEl.value.clientWidth, h = canvasEl.value.clientHeight
-  renderer.setSize(w, h)
-  camera.aspect = w / h
-  camera.updateProjectionMatrix()
+function tick() {
+  if (!drag.active) orbit.theta += 0.000115
+  if (ringMesh && camera) ringMesh.lookAt(camera.position)
+  updateCamera()
 }
 
 onMounted(async () => {
-  window.addEventListener('resize', onResize)
+  // Await a tick so MainLayout's onMounted (which calls viz.init()) runs first —
+  // this page can otherwise mount before the shared renderer exists.
+  await Promise.resolve()
   scheduleHide()
   loading.value = true
 
@@ -553,18 +571,20 @@ onMounted(async () => {
 })
 
 onUnmounted(() => {
-  window.removeEventListener('resize', onResize)
+  _stopTick?.(); _stopTick = null
+  if (controls) controls.enabled = true
   if (hideTimer) clearTimeout(hideTimer)
-  cancelAnimationFrame(animId)
   clearRing()
-  renderer?.dispose()
+
+  disposeScene(pageGroup)
+  scene?.remove(pageGroup)
+  if (scene) scene.background = null
 })
 </script>
 
 <style scoped>
 .vg-page   { position: relative; width: 100%; height: 100vh; cursor: grab; }
 .vg-page:active { cursor: grabbing; }
-.vg-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 
 /* ── Breadcrumb ─────────────────────────────────────────────────────────── */
 .vg-breadcrumb {

@@ -1141,11 +1141,11 @@ function applyViewModeToScene(mode: 'natural' | 'xray' | 'dark_matter') {
   // CSS filter on the canvas does the heavy lifting: sepia + hue shift +
   // extreme saturation + high contrast = thermal infrared palette.
   // Dark space → near-black; bright stars → white-hot; warm terrain → red-orange.
-  if (canvas.value) {
-    canvas.value.style.filter = mode === 'xray'
+  if (viz.canvas) {
+    viz.canvas.style.filter = mode === 'xray'
       ? 'sepia(0.95) hue-rotate(-40deg) saturate(6) contrast(2.4) brightness(1.18)'
       : ''
-    canvas.value.style.transition = 'filter 0.6s ease'
+    viz.canvas.style.transition = 'filter 0.6s ease'
   }
 
   // ── Renderer exposure: blown-out for X-RAY, standard for others ──────────
@@ -2945,9 +2945,10 @@ onUnmounted(() => {
   entryAnimating.value = false
 })
 watch([hostname, planetName], async () => {
-  cancelAnimationFrame(animId)
   if (renderer) {
-    while (scene.children.length) scene.remove(scene.children[0])
+    _stopTick?.(); _stopTick = null
+    disposeScene(pageGroup)
+    pageGroup.clear()
     hitTargets   = []
     soulOrbs     = []
     moonMeshes   = []
@@ -2959,6 +2960,7 @@ watch([hostname, planetName], async () => {
   await galaxyStore.loadData()
   initScene()
   spatial.restoreFromUrl()
+  _stopTick = viz.addTick(surfaceTick)
 })
 </script>
 
@@ -3522,7 +3524,7 @@ watch([hostname, planetName], async () => {
 
 /* Canvas filter — applied via :class binding; transition in JS */
 :deep(.canvas--xray) {
-  /* CSS filter is set via canvas.value.style.filter in the script.
+  /* CSS filter is set via viz.canvas.style.filter in the script.
      This class exists for any additional canvas-level overrides. */
 }
 

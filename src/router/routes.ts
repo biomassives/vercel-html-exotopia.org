@@ -57,6 +57,26 @@ const routes: RouteRecordRaw[] = [
         meta: { title: 'Milky Way · Star Systems' },
       },
       {
+        // Galactic Center — Sgr A* and the Nuclear Star Cluster scene
+        path: 'galactic-center',
+        name: 'galactic-center',
+        component: () => import('src/pages/GalacticCenterPage.vue'),
+        meta: { title: 'Galactic Center · Sagittarius A*' },
+      },
+      {
+        // Black hole orbital scene (generic route for the catalog beyond Sgr A*)
+        path: 'bh/:bhId/:zone?',
+        name: 'bh-orbital',
+        component: () => import('src/pages/GalacticCenterPage.vue'),
+        meta: { title: 'Black Hole Orbital Scene' },
+      },
+      {
+        path: 'black-holes',
+        name: 'black-holes',
+        component: () => import('src/pages/BlackHolesPage.vue'),
+        meta: { title: 'Black Holes · Exotopia' },
+      },
+      {
         path: 'clusters',
         name: 'clusters',
         component: () => import('src/pages/GalaxyClustersPage.vue'),
@@ -245,6 +265,12 @@ const routes: RouteRecordRaw[] = [
         meta: { title: 'Void Architecture — Conduit Mathematics' },
       },
       {
+        path: 'platform',
+        name: 'platform',
+        component: () => import('src/pages/PlatformPage.vue'),
+        meta: { title: 'Platform Status & Roadmap · Exotopia' },
+      },
+      {
         path: 'blog',
         name: 'blog',
         component: () => import('src/pages/BlogIndexPage.vue'),
@@ -254,14 +280,19 @@ const routes: RouteRecordRaw[] = [
         path: 'blog/:slug',
         name: 'blog-post',
         component: () => import('src/pages/BlogPostPage.vue'),
-        meta: { title: 'Blog — SCD Hub' },
-        props: true,
+        meta: { title: 'Blog — SCD Hub' }, // actual title set dynamically in BlogPostPage.vue
       },
       {
         path: 'pon-ink',
         name: 'pon-ink',
         component: () => import('src/pages/PonInkPage.vue'),
         meta: { title: 'PON.INK · Settlement Registry' },
+      },
+      {
+        path: 'print/eco-ops-decisions',
+        name: 'print-eco-ops-decisions',
+        component: () => import('src/pages/PrintDecisionsPage.vue'),
+        meta: { title: 'Eco Ops API — 8 Decisions · Discussion' },
       },
       // Catch-all — must be inside MainLayout so ErrorNotFound gets a QLayout ancestor
       {

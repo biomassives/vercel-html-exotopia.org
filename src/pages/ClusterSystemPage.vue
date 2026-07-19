@@ -1,6 +1,7 @@
 <template>
-  <q-page class="cs-page bg-black overflow-hidden">
-    <canvas ref="canvasEl" class="cs-canvas" />
+  <!-- Transparent overlay — shared Three.js canvas in MainLayout renders behind -->
+  <q-page class="cs-page viz-overlay-page" :style="hoveringPlanet ? { cursor: 'pointer' } : {}"
+    @click="onCanvasClick" @mousemove="onCanvasMove" @mouseleave="onCanvasLeave">
 
     <!-- Breadcrumb -->
     <div class="cs-breadcrumb row items-center q-gutter-xs no-wrap">
@@ -96,8 +97,9 @@
 import { ref, computed, onMounted, onBeforeUnmount, shallowRef } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import * as THREE from 'three'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import type { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import gsap from 'gsap'
+import { useVizRenderer, VIZ_BAR_H } from 'src/composables/useVizRenderer'
 import { useClusterGalaxyData } from 'src/composables/useClusterGalaxyData'
 import type { ClusterPlanet, ClusterStarSystem } from 'src/composables/useClusterGalaxyData'
 import { useSceneTransitionStore }               from 'src/stores/scene-transition'
@@ -196,8 +198,22 @@ function tierColor(tier: string): string {
 
 // ── Navigation ─────────────────────────────────────────────────────────────────
 async function descendToPlanet(p: ClusterPlanet) {
-  // Project selected planet mesh to screen for lightning origin
   const mesh = planetMeshes.value.find(m => m.userData.planetId === p.id)
+
+  // Final in-page approach toward the planet before the route change —
+  // ClusterSystemPage and ClusterSurfacePage now share the same renderer/camera.
+  if (mesh && camera && controls) {
+    const target  = mesh.position.clone()
+    const fromCam = camera.position.clone().sub(target).normalize()
+    const dest    = target.clone().addScaledVector(fromCam, 0.15)
+    gsap.killTweensOf(camera.position); gsap.killTweensOf(controls.target)
+    await new Promise<void>(resolve => {
+      gsap.to(controls!.target, { x: target.x, y: target.y, z: target.z, duration: 0.4, ease: 'power2.out', onUpdate: () => controls?.update() })
+      gsap.to(camera!.position, { x: dest.x, y: dest.y, z: dest.z, duration: 0.7, ease: 'power2.out', onUpdate: () => controls?.update(), onComplete: resolve })
+    })
+  }
+
+  // Project selected planet mesh to screen for lightning origin
   let ox = 50, oy = 50
   if (mesh && camera) {
     const sc = mesh.position.clone().project(camera)
@@ -222,18 +238,22 @@ async function descendToPlanet(p: ClusterPlanet) {
   })
 }
 
-// ── Three.js ───────────────────────────────────────────────────────────────────
-const canvasEl    = ref<HTMLCanvasElement>()
+// ── Three.js — shared renderer ─────────────────────────────────────────────────
+const viz = useVizRenderer()
 const planetMeshes = shallowRef<THREE.Mesh[]>([])
+const hoveringPlanet = ref(false)
 
-let renderer:      THREE.WebGLRenderer | null = null
-let scene:         THREE.Scene | null = null
+let renderer:      THREE.WebGLRenderer     | null = null
+let scene:         THREE.Scene             | null = null
 let camera:        THREE.PerspectiveCamera | null = null
-let controls:      OrbitControls | null = null
-let rafId:         number | null = null
+let controls:      OrbitControls           | null = null
+let _stopTick: (() => void) | null = null
 let raycasterSys:  THREE.Raycaster | null = null
 const mouseVec     = new THREE.Vector2()
 let hoveredPlanetId: string | null = null
+
+// Root group for all page-level scene objects — added/removed on mount/unmount
+const pageGroup = new THREE.Group()
 
 const ORBIT_SCALE = 4.5   // AU → scene units; compressed for visibility
 
@@ -298,23 +318,32 @@ function buildPlanetMesh(p: ClusterPlanet, orbitR: number): THREE.Mesh {
 }
 
 function buildScene() {
-  if (renderer || !canvasEl.value) return
-  renderer = new THREE.WebGLRenderer({ canvas: canvasEl.value, antialias: true, alpha: false })
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-  renderer.setSize(window.innerWidth, window.innerHeight)
-  renderer.setClearColor(0x020508)
+  // Grab shared renderer refs
+  renderer = viz.renderer
+  scene    = viz.scene
+  camera   = viz.camera
+  controls = viz.controls
+  if (!renderer || !scene || !camera || !controls) return
 
-  scene  = new THREE.Scene()
-  camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.001, 120)
+  // Configure scene appearance for the star-system level
+  scene.background = new THREE.Color(0x020508)
+
+  // Configure camera for system scale
+  camera.fov  = 50
+  camera.near = 0.001
+  camera.far  = 120
 
   const b       = parseFloat(String(route.query.bearing ?? '0')) || 0
   const entryD  = 18
   camera.position.set(Math.sin(b) * entryD, 6.5, Math.cos(b) * entryD)
+  camera.updateProjectionMatrix()
 
-  controls = new OrbitControls(camera, canvasEl.value)
-  controls.enableDamping = true; controls.dampingFactor = 0.06
-  controls.minDistance   = 0.3;  controls.maxDistance   = 18
-  controls.autoRotate    = true; controls.autoRotateSpeed = 0.15
+  // Configure controls for system navigation
+  controls.dampingFactor  = 0.06
+  controls.minDistance    = 0.3;  controls.maxDistance   = 18
+  controls.autoRotate     = true; controls.autoRotateSpeed = 0.15
+
+  scene.add(pageGroup)
 
   // Background star field
   const bgPos = new Float32Array(2000 * 3)
@@ -322,7 +351,7 @@ function buildScene() {
   const bgGeo = new THREE.BufferGeometry()
   bgGeo.setAttribute('position', new THREE.BufferAttribute(bgPos, 3))
   const bgMat = new THREE.PointsMaterial({ color: 0x8899aa, size: 0.06, transparent: true, opacity: 0.40 })
-  scene.add(new THREE.Points(bgGeo, bgMat))
+  pageGroup.add(new THREE.Points(bgGeo, bgMat))
 
   const sys = starSystem.value
   if (!sys) return
@@ -333,8 +362,8 @@ function buildScene() {
   const starR     = Math.max(0.06, Math.min(0.18, (sys.mass_sol ?? 0.8) * 0.14))
   const starGeo   = new THREE.SphereGeometry(starR, 16, 16)
   const starMat   = new THREE.MeshBasicMaterial({ color: new THREE.Color(starCol) })
-  scene.add(new THREE.Mesh(starGeo, starMat))
-  scene.add(buildStarGlow(starCol))
+  pageGroup.add(new THREE.Mesh(starGeo, starMat))
+  pageGroup.add(buildStarGlow(starCol))
 
   // Planets
   const maxAu  = Math.max(...sys.planets.map(p => p.semi_major_au), 0.1)
@@ -342,9 +371,9 @@ function buildScene() {
 
   for (const p of sys.planets) {
     const r    = auToSu(p.semi_major_au, maxAu)
-    scene.add(buildOrbitRing(r))
+    pageGroup.add(buildOrbitRing(r))
     const mesh = buildPlanetMesh(p, r)
-    scene.add(mesh)
+    pageGroup.add(mesh)
     meshes.push(mesh)
 
     // Planet glow sprite
@@ -364,7 +393,7 @@ function buildScene() {
     gsp.userData.baseGlowScale = glowScale
     gsp.position.copy(mesh.position)
     mesh.userData.glowSprite = gsp
-    scene.add(gsp)
+    pageGroup.add(gsp)
   }
 
   planetMeshes.value = meshes
@@ -372,18 +401,14 @@ function buildScene() {
   raycasterSys = new THREE.Raycaster()
   raycasterSys.params.Mesh = {}
 
-  window.addEventListener('resize', onResize)
-  canvasEl.value.addEventListener('click',     onCanvasClick)
-  canvasEl.value.addEventListener('mousemove', onCanvasMove)
-  canvasEl.value.addEventListener('mouseleave', onCanvasLeave)
-  tick()
+  _stopTick = viz.addTick(tick)
 }
 
 function onCanvasClick(e: MouseEvent) {
   if (!raycasterSys || !camera) return
-  const rect = canvasEl.value!.getBoundingClientRect()
-  mouseVec.x =  ((e.clientX - rect.left) / rect.width)  * 2 - 1
-  mouseVec.y = -((e.clientY - rect.top)  / rect.height) * 2 + 1
+  const w = window.innerWidth, h = window.innerHeight - VIZ_BAR_H
+  mouseVec.x =  (e.clientX / w) * 2 - 1
+  mouseVec.y = -((e.clientY - VIZ_BAR_H) / h) * 2 + 1
   raycasterSys.setFromCamera(mouseVec, camera)
   const hits = raycasterSys.intersectObjects(planetMeshes.value, false)
   if (hits.length) {
@@ -395,9 +420,9 @@ function onCanvasClick(e: MouseEvent) {
 
 function onCanvasMove(e: MouseEvent) {
   if (!raycasterSys || !camera) return
-  const rect = canvasEl.value!.getBoundingClientRect()
-  mouseVec.x =  ((e.clientX - rect.left) / rect.width)  * 2 - 1
-  mouseVec.y = -((e.clientY - rect.top)  / rect.height) * 2 + 1
+  const w = window.innerWidth, h = window.innerHeight - VIZ_BAR_H
+  mouseVec.x =  (e.clientX / w) * 2 - 1
+  mouseVec.y = -((e.clientY - VIZ_BAR_H) / h) * 2 + 1
   raycasterSys.setFromCamera(mouseVec, camera)
   const hits = raycasterSys.intersectObjects(planetMeshes.value, false)
   const newId = hits.length ? (hits[0]!.object.userData.planetId as string) : null
@@ -423,9 +448,9 @@ function onCanvasMove(e: MouseEvent) {
       const gsp = next.userData.glowSprite as THREE.Sprite | undefined
       if (gsp) { gsp.scale.setScalar((gsp.userData.baseGlowScale as number) * 2.2) }
     }
-    canvasEl.value!.style.cursor = 'pointer'
+    hoveringPlanet.value = true
   } else {
-    canvasEl.value!.style.cursor = 'default'
+    hoveringPlanet.value = false
   }
   hoveredPlanetId = newId
 }
@@ -441,11 +466,10 @@ function onCanvasLeave() {
     }
     hoveredPlanetId = null
   }
+  hoveringPlanet.value = false
 }
 
 function tick() {
-  rafId = requestAnimationFrame(tick)
-  controls?.update()
   // Animate planet orbits
   for (const mesh of planetMeshes.value) {
     mesh.userData.orbitAngle += mesh.userData.orbitSpd
@@ -455,28 +479,24 @@ function tick() {
     const gsp = mesh.userData.glowSprite as THREE.Sprite | undefined
     if (gsp) gsp.position.copy(mesh.position)
   }
-  if (scene && camera && renderer) renderer.render(scene, camera)
-}
-
-function onResize() {
-  if (!camera || !renderer) return
-  camera.aspect = window.innerWidth / window.innerHeight
-  camera.updateProjectionMatrix()
-  renderer.setSize(window.innerWidth, window.innerHeight)
 }
 
 function teardown() {
-  if (rafId !== null) cancelAnimationFrame(rafId)
-  window.removeEventListener('resize', onResize)
-  canvasEl.value?.removeEventListener('click',      onCanvasClick)
-  canvasEl.value?.removeEventListener('mousemove',  onCanvasMove)
-  canvasEl.value?.removeEventListener('mouseleave', onCanvasLeave)
-  if (scene) disposeScene(scene)
-  controls?.dispose(); renderer?.dispose()
-  renderer = null; scene = null; camera = null; controls = null; raycasterSys = null
+  _stopTick?.(); _stopTick = null
+
+  disposeScene(pageGroup)
+  scene?.remove(pageGroup)
+  if (scene) scene.background = null
+  if (controls) controls.autoRotate = false
+
+  raycasterSys = null
+  hoveredPlanetId = null
 }
 
 onMounted(async () => {
+  // Await a tick so MainLayout's onMounted (which calls viz.init()) runs first —
+  // this page can otherwise mount before the shared renderer exists.
+  await Promise.resolve()
   await load()
   if (doc.value?._source !== 'generated') {
     console.warn(
@@ -498,7 +518,6 @@ onBeforeUnmount(teardown)
 
 <style scoped>
 .cs-page   { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
-.cs-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 
 .cs-breadcrumb {
   position: absolute; top: 12px; left: 12px; z-index: 10;

@@ -169,7 +169,7 @@ No environment variables required for local development. The app runs entirely c
 
 ---
 
-## Status (June 2026)
+## Status (July 2026)
 
 | Component | Status |
 |---|---|
@@ -179,12 +179,13 @@ No environment variables required for local development. The app runs entirely c
 | SurfaceViewPage (planet surface) | Complete — terrain, dome, star field |
 | XClusterPage → ClusterSurfacePage chain | Complete — full 5-level descent from X-ray cluster |
 | VoidInteriorPage | Complete — void wall + interior field galaxies |
+| OnboardPage — path-based redesign | Complete — 5 commitment paths, SCD Hub mission framing, PFAS/eco field emphasis; see blog-onboarding-path-redesign.md |
+| Letters Patent deed format (PON INK v1.0) | Complete — ERC-721 + ARC3 dual standard, exoloc_address hierarchy, trophic levels, pathway attributes, SVG deed image; first deed minted June 2026; see blog-letters-patent-deed-format.md |
 | WelcomeOverlay component | Planned — SPEC_COSMOS_ENTRY.md |
 | CosmosPage → CosmicPage merge | Planned — after DefenderNav data integration |
 | Sky-accurate surface star field | Planned — galactic coordinate transform + per-settlement catalog |
-| Orbital zone scene (StationPage) | Planned — `orbital_zone` coordinate type has no scene |
+| Orbital zone / black hole vicinity scene (StationPage) | Planned — next major scene tier; `orbital_zone` coord type exists, no 3D scene yet; BH Schwarzschild radius + accretion disk geometry specced |
 | Exomoon surface scene | Planned — `?parent=` param exists; distinct scene not built |
-| Black hole approach scene | Planned — BH as enterable object, not just label |
 | NASA ExA re-pull with `sy_dist` | Planned — one-afternoon data task, high impact |
 | ATNF Pulsar Catalog integration | Planned |
 | GWTC-3 gravitational wave rings | Planned |

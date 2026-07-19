@@ -83,7 +83,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import {
   BLOG_POSTS, SERIES_LABEL, AUDIENCE_COLOR, AUDIENCE_LABEL,
@@ -99,6 +99,10 @@ const raw    = computed(() => post.value ? getBlogContent(post.value.slug) : '')
 const html   = computed(() => raw.value ? renderMarkdown(raw.value) : '')
 const mins   = computed(() => readingTime(raw.value))
 const related = computed(() => post.value ? getRelatedPosts(post.value) : [])
+
+watch(post, (p) => {
+  document.title = p ? `${p.title} — SCD Hub` : 'Blog — SCD Hub'
+}, { immediate: true })
 </script>
 
 <style scoped lang="scss">

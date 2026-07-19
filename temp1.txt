@@ -1,0 +1,63 @@
+npm run build
+
+> exotopia@0.1.0 build
+> quasar build
+
+
+ .d88888b.
+d88P" "Y88b
+888     888
+888     888 888  888  8888b.  .d8888b   8888b.  888d888
+888     888 888  888     "88b 88K          "88b 888P"
+888 Y8b 888 888  888 .d888888 "Y8888b. .d888888 888
+Y88b.Y8b88P Y88b 888 888  888      X88 888  888 888
+ "Y888888"   "Y88888 "Y888888  88888P' "Y888888 888
+       Y8b
+
+
+ Build mode............. spa
+ Pkg quasar............. v2.19.3
+ Pkg @quasar/app-vite... v1.11.0
+ Pkg vite............... v2.9.18
+ Debugging.............. no
+ Publishing............. no
+
+ App •  WAIT  • Compiling of SPA UI with Vite in progress...
+[vite:vue] [vue/compiler-sfc] Unexpected token, expected "," (145:76)
+
+/home/solstice/Desktop/art/vercel-html-exotopia.org/src/pages/PlatformPage.vue
+375|        { url: '/void-math',         desc: 'Void math explainer — Hamaus profile, conduit placement, NFW scale', data: '' },
+376|        { url: '/docs',              desc: 'Technical docs — pipeline, catalog sources, data flow', data: '' },
+377|        { url: '/data-coverage',     desc: 'Data coverage transparency — what's real vs procedural, catalog gaps', data: '' },
+   |                                                                              ^
+378|      ],
+379|    },
+file: /home/solstice/Desktop/art/vercel-html-exotopia.org/src/pages/PlatformPage.vue:145:76
+SyntaxError: [vue/compiler-sfc] Unexpected token, expected "," (145:76)
+
+/home/solstice/Desktop/art/vercel-html-exotopia.org/src/pages/PlatformPage.vue
+375|        { url: '/void-math',         desc: 'Void math explainer — Hamaus profile, conduit placement, NFW scale', data: '' },
+376|        { url: '/docs',              desc: 'Technical docs — pipeline, catalog sources, data flow', data: '' },
+377|        { url: '/data-coverage',     desc: 'Data coverage transparency — what's real vs procedural, catalog gaps', data: '' },
+   |                                                                              ^
+378|      ],
+379|    },
+    at constructor (/home/solstice/Desktop/art/vercel-html-exotopia.org/node_modules/@babel/parser/lib/index.js:365:19)
+    at TypeScriptParserMixin.raise (/home/solstice/Desktop/art/vercel-html-exotopia.org/node_modules/@babel/parser/lib/index.js:6599:19)
+    at TypeScriptParserMixin.unexpected (/home/solstice/Desktop/art/vercel-html-exotopia.org/node_modules/@babel/parser/lib/index.js:6619:16)
+    at TypeScriptParserMixin.expect (/home/solstice/Desktop/art/vercel-html-exotopia.org/node_modules/@babel/parser/lib/index.js:6899:12)
+    at TypeScriptParserMixin.parseObjectLike (/home/solstice/Desktop/art/vercel-html-exotopia.org/node_modules/@babel/parser/lib/index.js:11822:14)
+    at TypeScriptParserMixin.parseExprAtom (/home/solstice/Desktop/art/vercel-html-exotopia.org/node_modules/@babel/parser/lib/index.js:11339:23)
+    at TypeScriptParserMixin.parseExprSubscripts (/home/solstice/Desktop/art/vercel-html-exotopia.org/node_modules/@babel/parser/lib/index.js:11081:23)
+    at TypeScriptParserMixin.parseUpdate (/home/solstice/Desktop/art/vercel-html-exotopia.org/node_modules/@babel/parser/lib/index.js:11066:21)
+    at TypeScriptParserMixin.parseMaybeUnary (/home/solstice/Desktop/art/vercel-html-exotopia.org/node_modules/@babel/parser/lib/index.js:11046:23)
+    at TypeScriptParserMixin.parseMaybeUnary (/home/solstice/Desktop/art/vercel-html-exotopia.org/node_modules/@babel/parser/lib/index.js:9837:18) {
+  code: 'PLUGIN_ERROR',
+  reasonCode: 'UnexpectedToken',
+  loc: Position { line: 145, column: 76, index: 7164 },
+  pos: 7164,
+  syntaxPlugin: undefined,
+  pluginCode: 'BABEL_PARSER_SYNTAX_ERROR',
+  plugin: 'vite:vue',
+  hook: 'transform',
+  id: '/home/solstice/Deskto

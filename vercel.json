@@ -2,7 +2,9 @@
   "buildCommand": "npx quasar build",
   "outputDirectory": "dist/spa",
   "framework": null,
+  "cleanUrls": true,
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/print/:path*", "destination": "/print/:path*" },
+    { "source": "/(.*)",         "destination": "/index.html"   }
   ]
 }

@@ -1,0 +1,116 @@
+name: "Bounty — Field Record"
+description: "A paid bounty for collecting and submitting a citizen science field record (water quality, ticks, phenology, PFAS, etc.)"
+title: "[BOUNTY] "
+labels: ["bounty", "field-record"]
+assignees: []
+body:
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Field Record Bounty
+        These bounties pay community members and field teams to collect environmental data.
+        To claim an open bounty, comment `/claim` on this issue.
+
+  - type: dropdown
+    id: record_type
+    attributes:
+      label: Record type
+      options:
+        - "Water quality — physical (pH, DO, temp, turbidity)"
+        - "Water quality — nutrients (nitrate, phosphate)"
+        - "Macroinvertebrate BMWP survey"
+        - "Tick drag-cloth transect"
+        - "Cyanobacteria / HAB observation"
+        - "PFAS field sample (lab send-out)"
+        - "Phenology observation"
+        - "CSO outfall event (UK)"
+        - "Rain garden performance monitoring"
+        - "Bird window-strike survey"
+        - "Freshwater species checklist"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: region
+    attributes:
+      label: Region / country
+      options:
+        - "US — Northeast"
+        - "US — Mid-Atlantic"
+        - "US — Southeast"
+        - "US — Other"
+        - "Kenya — Lamu / Coast"
+        - "Kenya — Other"
+        - "Costa Rica"
+        - "UK"
+        - "Canada"
+    validations:
+      required: true
+
+  - type: input
+    id: site
+    attributes:
+      label: Target site or area
+      placeholder: "e.g. Lake Champlain shoreline, VT — grid ref TBC with claimer"
+    validations:
+      required: true
+
+  - type: textarea
+    id: what_to_collect
+    attributes:
+      label: What to collect / observe
+      placeholder: |
+        - 3 water samples at 10m intervals along shore
+        - Record GPS of each sample point
+        - Photos of collection and sample labels
+        - Secchi disk depth reading
+    validations:
+      required: true
+
+  - type: input
+    id: gear_required
+    attributes:
+      label: Gear or kit required
+      placeholder: "e.g. Secchi disk, pH/DO meter, sample bottles (provided by project)"
+
+  - type: dropdown
+    id: bounty_amount
+    attributes:
+      label: Bounty amount
+      options:
+        - "$5 — quick single observation"
+        - "$10 — single-site basic reading"
+        - "$20 — multi-parameter field visit"
+        - "$35 — full survey day including photos"
+        - "$50 — specialist collection (PFAS chain of custody)"
+        - "TBD — maintainer will set on review"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: payment_method
+    attributes:
+      label: Payment method
+      multiple: true
+      options:
+        - "M-Pesa (Kenya)"
+        - "Bank transfer"
+        - "Crypto (Algorand ALGO)"
+        - "Platform credit (eco:certificate)"
+
+  - type: input
+    id: window
+    attributes:
+      label: Collection window
+      placeholder: "e.g. Any weekend in July 2026, or 2026-07-15 specifically"
+
+  - type: checkboxes
+    id: submit_requirements
+    attributes:
+      label: Submission requirements (claimer will need to provide)
+      options:
+        - label: "Data entered via platform monitoring wizard (offline OK — will sync)"
+        - label: "Minimum 2 photos of site and collection process"
+        - label: "GPS coordinates recorded"
+        - label: "PR opened referencing this issue with data file or platform record ID"

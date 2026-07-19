@@ -1,6 +1,15 @@
 import { ref, computed, onUnmounted } from 'vue'
-import { supabase, type Comment, type Reaction, EMOJIS } from 'src/lib/supabase'
+import {
+  supabase,
+  type Comment,
+  type Reaction,
+  EMOJIS,
+  COMMENT_MAX_LENGTH,
+  COMMENT_RATE_LIMIT,
+} from 'src/lib/supabase'
 import { useMemberStore } from 'src/stores/member'
+
+export { EMOJIS, COMMENT_MAX_LENGTH }
 
 export function useComments (postSlug: string) {
   const store    = useMemberStore()
@@ -9,11 +18,31 @@ export function useComments (postSlug: string) {
   const sending  = ref(false)
   const error    = ref<string | null>(null)
 
-  // Flat list → threaded tree (one level of replies)
+  // Rate-limit tracking: timestamps of recent posts
+  const recentPostTimes = ref<number[]>([])
+
+  function isRateLimited (): boolean {
+    const now = Date.now()
+    recentPostTimes.value = recentPostTimes.value.filter(
+      t => now - t < COMMENT_RATE_LIMIT.windowMs
+    )
+    return recentPostTimes.value.length >= COMMENT_RATE_LIMIT.max
+  }
+
+  // Visible author IDs: self + green-lit connections
+  function visibleIds (): string[] {
+    if (!store.userId) return []
+    return [store.userId, ...store.connectedIds]
+  }
+
+  // Flat list → threaded tree (one level of replies), filtered by blocks
   const threaded = computed<Comment[]>(() => {
+    const visible = comments.value.filter(
+      c => !store.blockedIds.has(c.author_id)
+    )
     const roots: Comment[] = []
     const map: Record<string, Comment> = {}
-    for (const c of comments.value) {
+    for (const c of visible) {
       map[c.id] = { ...c, replies: [] }
     }
     for (const c of Object.values(map)) {
@@ -23,7 +52,6 @@ export function useComments (postSlug: string) {
         roots.push(c)
       }
     }
-    // sort roots and replies by created_at asc
     const byTime = (a: Comment, b: Comment) =>
       new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
     roots.sort(byTime)
@@ -32,8 +60,12 @@ export function useComments (postSlug: string) {
   })
 
   async function load () {
+    if (!supabase) return
     loading.value = true
     error.value   = null
+
+    const ids = visibleIds()
+    if (!ids.length) { loading.value = false; return }
 
     const { data, error: e } = await supabase
       .from('comments')
@@ -43,6 +75,7 @@ export function useComments (postSlug: string) {
         reactions(id, comment_id, member_id, emoji)
       `)
       .eq('post_slug', postSlug)
+      .in('author_id', ids)           // green-light gate: only see connected members' comments
       .order('created_at', { ascending: true })
 
     loading.value = false
@@ -51,7 +84,18 @@ export function useComments (postSlug: string) {
   }
 
   async function post (body: string, parentId?: string) {
-    if (!store.userId || !body.trim()) return null
+    if (!supabase || !store.userId || !body.trim()) return null
+
+    if (body.length > COMMENT_MAX_LENGTH) {
+      error.value = `Comment must be ${COMMENT_MAX_LENGTH} characters or fewer.`
+      return null
+    }
+
+    if (isRateLimited()) {
+      error.value = `You're posting too quickly. Please wait a few minutes.`
+      return null
+    }
+
     sending.value = true
     error.value   = null
 
@@ -72,11 +116,14 @@ export function useComments (postSlug: string) {
 
     sending.value = false
     if (e) { error.value = e.message; return null }
+
+    recentPostTimes.value.push(Date.now())
     comments.value.push(data as Comment)
     return data as Comment
   }
 
   async function edit (commentId: string, newBody: string) {
+    if (!supabase || newBody.length > COMMENT_MAX_LENGTH) return false
     const { error: e } = await supabase
       .from('comments')
       .update({ body: newBody.trim(), edited_at: new Date().toISOString() })
@@ -89,24 +136,28 @@ export function useComments (postSlug: string) {
   }
 
   async function remove (commentId: string) {
+    if (!supabase) return false
     const { error: e } = await supabase
       .from('comments')
       .delete()
       .eq('id', commentId)
     if (!e) {
-      comments.value = comments.value.filter(c => c.id !== commentId && c.parent_id !== commentId)
+      comments.value = comments.value.filter(
+        c => c.id !== commentId && c.parent_id !== commentId
+      )
     }
     return !e
   }
 
   async function react (commentId: string, emoji: Reaction['emoji']) {
-    if (!store.userId) return
+    if (!supabase || !store.userId) return
     const c = comments.value.find(x => x.id === commentId)
     if (!c) return
 
-    const existing = c.reactions?.find(r => r.member_id === store.userId && r.emoji === emoji)
+    const existing = c.reactions?.find(
+      r => r.member_id === store.userId && r.emoji === emoji
+    )
     if (existing) {
-      // toggle off
       await supabase.from('reactions').delete().eq('id', existing.id)
       c.reactions = c.reactions?.filter(r => r.id !== existing.id)
     } else {
@@ -119,50 +170,69 @@ export function useComments (postSlug: string) {
     }
   }
 
-  // Realtime — subscribe to new comments and reactions on this post
+  async function report (commentId: string, reason = '') {
+    if (!supabase || !store.userId) return false
+    const { error: e } = await supabase
+      .from('comment_reports')
+      .insert({ comment_id: commentId, reporter_id: store.userId, reason })
+    return !e
+  }
+
+  // Realtime — only surfaces comments from green-lit connections
   const channel = supabase
-    .channel(`comments:${postSlug}`)
-    .on(
-      'postgres_changes',
-      { event: 'INSERT', schema: 'public', table: 'comments', filter: `post_slug=eq.${postSlug}` },
-      async (payload) => {
-        // Skip if we already have it (optimistic insert)
-        if (comments.value.find(c => c.id === payload.new.id)) return
-        // Fetch full row with joins
-        const { data } = await supabase
-          .from('comments')
-          .select('*, author:members(id,handle,display_name,avatar_color), reactions(*)')
-          .eq('id', payload.new.id)
-          .single()
-        if (data) comments.value.push(data as Comment)
-      }
-    )
-    .on(
-      'postgres_changes',
-      { event: 'INSERT', schema: 'public', table: 'reactions' },
-      (payload) => {
-        const c = comments.value.find(x => x.id === payload.new.comment_id)
-        if (c && !c.reactions?.find(r => r.id === payload.new.id)) {
-          c.reactions = [...(c.reactions ?? []), payload.new as Reaction]
-        }
-      }
-    )
-    .on(
-      'postgres_changes',
-      { event: 'DELETE', schema: 'public', table: 'reactions' },
-      (payload) => {
-        const c = comments.value.find(x => x.id === payload.old.comment_id)
-        if (c) c.reactions = c.reactions?.filter(r => r.id !== payload.old.id)
-      }
-    )
-    .subscribe()
+    ? supabase
+        .channel(`comments:${postSlug}`)
+        .on(
+          'postgres_changes',
+          {
+            event:  'INSERT',
+            schema: 'public',
+            table:  'comments',
+            filter: `post_slug=eq.${postSlug}`,
+          },
+          async (payload) => {
+            if (!supabase) return
+            if (comments.value.find(c => c.id === payload.new['id'])) return
+            // Enforce green-light gate on realtime events too
+            if (!visibleIds().includes(payload.new['author_id'] as string)) return
+            const { data } = await supabase
+              .from('comments')
+              .select('*, author:members(id,handle,display_name,avatar_color), reactions(*)')
+              .eq('id', payload.new['id'])
+              .single()
+            if (data) comments.value.push(data as Comment)
+          }
+        )
+        .on(
+          'postgres_changes',
+          { event: 'INSERT', schema: 'public', table: 'reactions' },
+          (payload) => {
+            const c = comments.value.find(x => x.id === payload.new['comment_id'])
+            if (c && !c.reactions?.find(r => r.id === payload.new['id'])) {
+              c.reactions = [...(c.reactions ?? []), payload.new as Reaction]
+            }
+          }
+        )
+        .on(
+          'postgres_changes',
+          { event: 'DELETE', schema: 'public', table: 'reactions' },
+          (payload) => {
+            const c = comments.value.find(x => x.id === payload.old['comment_id'])
+            if (c) c.reactions = c.reactions?.filter(r => r.id !== payload.old['id'])
+          }
+        )
+        .subscribe()
+    : null
 
-  onUnmounted(() => { supabase.removeChannel(channel) })
+  onUnmounted(() => { if (supabase && channel) supabase.removeChannel(channel) })
 
-  return { comments, threaded, loading, sending, error, load, post, edit, remove, react, EMOJIS }
+  return {
+    comments, threaded, loading, sending, error,
+    load, post, edit, remove, react, report,
+    EMOJIS, COMMENT_MAX_LENGTH,
+  }
 }
 
-// Relative time helper
 export function timeAgo (iso: string): string {
   const diff = Date.now() - new Date(iso).getTime()
   const m = Math.floor(diff / 60000)

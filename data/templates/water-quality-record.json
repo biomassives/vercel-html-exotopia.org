@@ -1,0 +1,55 @@
+{
+  "_template": "water-quality-record v1.0",
+  "_protocol": "docs/eco-ops-workflow-guide.md §Water quality",
+  "bounty_issue": "#",
+  "site": {
+    "name": "",
+    "country": "",
+    "lat": null,
+    "lng": null,
+    "waterbody_type": "river | lake | estuary | wetland | groundwater"
+  },
+  "collector": {
+    "github_handle": "",
+    "organisation": ""
+  },
+  "collection": {
+    "observed_at": "YYYY-MM-DDTHH:MM:SSZ",
+    "weather": "",
+    "flow_conditions": "normal | flood | drought | tidal"
+  },
+  "physical": {
+    "temp_c": null,
+    "ph": null,
+    "do_mg_l": null,
+    "do_percent_saturation": null,
+    "turbidity_ntu": null,
+    "conductivity_us_cm": null,
+    "secchi_depth_m": null
+  },
+  "nutrients": {
+    "nitrate_mg_l": null,
+    "phosphate_mg_l": null,
+    "ammonia_mg_l": null
+  },
+  "biological": {
+    "bmwp_score": null,
+    "bmwp_families_found": [],
+    "cyanobacteria_visible": false,
+    "hab_alert_filed": false
+  },
+  "photos": [],
+  "notes": "",
+  "chain_of_custody": {
+    "sample_bottles_sealed": false,
+    "lab_name": "",
+    "lab_sample_id": "",
+    "shipped_at": null
+  },
+  "agency_submission": {
+    "agency": "",
+    "portal_url": "",
+    "confirmation_number": "",
+    "submitted_at": null
+  }
+}

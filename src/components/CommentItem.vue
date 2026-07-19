@@ -50,6 +50,22 @@
             <button class="ci-act ci-act--del" @click="$emit('remove', comment.id)">delete</button>
           </span>
 
+          <!-- moderation (non-own comments only) -->
+          <span class="ci-actions" v-else>
+            <button
+              class="ci-act ci-act--report"
+              :class="{ 'ci-act--reported': reported }"
+              @click="doReport"
+              :title="reported ? 'Reported' : 'Report this comment'"
+            >{{ reported ? '🚩 reported' : '🚩' }}</button>
+            <button
+              class="ci-act ci-act--block"
+              :class="{ 'ci-act--blocked': isBlocked }"
+              @click="toggleBlock"
+              :title="isBlocked ? 'Unblock this member' : 'Block this member'"
+            >{{ isBlocked ? 'unblock' : 'block' }}</button>
+          </span>
+
           <!-- reply (only for root comments, not already-replies) -->
           <button v-if="depth === 0" class="ci-act ci-act--reply" @click="$emit('reply', comment)">
             reply
@@ -65,6 +81,7 @@
         :key="r.id"
         :comment="r"
         :depth="depth + 1"
+        :post-slug="postSlug"
         @reply="$emit('reply', $event)"
         @react="$emit('react', $event)"
         @edit="$emit('edit', $event)"
@@ -78,11 +95,12 @@
 import { ref, computed } from 'vue'
 import { useMemberStore, initials } from 'src/stores/member'
 import { type Comment, type Reaction, EMOJIS } from 'src/lib/supabase'
-import { timeAgo } from 'src/composables/useComments'
+import { timeAgo, useComments } from 'src/composables/useComments'
 
 const props = defineProps<{
-  comment: Comment
-  depth:   number
+  comment:  Comment
+  depth:    number
+  postSlug: string
 }>()
 
 const emit = defineEmits<{
@@ -92,16 +110,32 @@ const emit = defineEmits<{
   (e: 'remove', commentId: string): void
 }>()
 
-// Define component name for recursive use
 defineOptions({ name: 'CommentItem' })
 
 const store      = useMemberStore()
+const { report } = useComments(props.postSlug)
 const editing    = ref(false)
 const editDraft  = ref('')
+const reported   = ref(false)
 
-const color      = computed(() => props.comment.author?.avatar_color ?? '#5a6a8a')
-const avInitials = computed(() => initials(props.comment.author?.display_name ?? '?'))
+const color        = computed(() => props.comment.author?.avatar_color ?? '#5a6a8a')
+const avInitials   = computed(() => initials(props.comment.author?.display_name ?? '?'))
 const isOwnComment = computed(() => props.comment.author_id === store.userId)
+const isBlocked    = computed(() => store.blockedIds.has(props.comment.author_id))
+
+async function doReport () {
+  if (reported.value) return
+  await report(props.comment.id, '')
+  reported.value = true
+}
+
+async function toggleBlock () {
+  if (isBlocked.value) {
+    await store.unblockMember(props.comment.author_id)
+  } else {
+    await store.blockMember(props.comment.author_id)
+  }
+}
 
 // Simple markdown-ish: escape HTML, preserve newlines, linkify URLs
 const safeBody = computed(() => {
@@ -237,9 +271,16 @@ function saveEdit () {
   font-size: 11px; color: #3a4a6a;
   cursor: pointer;
   transition: color 0.12s;
-  &:hover { color: #7888aa; }
-  &--del:hover   { color: #ff6644; }
-  &--reply:hover { color: #00e5ff; }
+  &:hover          { color: #7888aa; }
+  &--del:hover     { color: #ff6644; }
+  &--reply:hover   { color: #00e5ff; }
+  &--report        { color: #3a4a6a; }
+  &--report:hover  { color: #ffaa33; }
+  &--reported      { color: #ffaa33; cursor: default; }
+  &--block         { color: #3a4a6a; }
+  &--block:hover   { color: #ff4444; }
+  &--blocked       { color: #ff4444; }
+  &--blocked:hover { color: #5a6a8a; }
 }
 
 .ci-replies { margin-top: 4px; }
