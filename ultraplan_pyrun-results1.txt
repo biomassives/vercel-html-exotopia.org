@@ -1,0 +1,24 @@
+python3 ultraplan_isntructions.py
+[DONE] src/lib/surface-classify.ts: created (77 lines)
+[DONE] src/lib/settlements.ts: add stellar-orbital/lunar-orbital to SettlementRecord type union
+[DONE] src/lib/settlements.ts: add orbitalKey() helper
+[DONE] src/lib/settlement-items.ts: add THREE import (needed by extracted buildItemMesh)
+[DONE] src/lib/settlement-items.ts: add CYLINDER_ZONE_POSITIONS table
+[DONE] src/lib/settlement-items.ts: add zoneMap param to autoPosition(); add exported buildItemMesh()
+[DONE] src/pages/DomeInteriorPage.vue: import shared buildItemMesh instead of defining it locally
+[DONE] src/pages/DomeInteriorPage.vue: remove local buildItemMesh (now shared via settlement-items.ts)
+[DONE] src/router/routes.ts: add station-interior route
+[DONE] src/pages/GalaxyPage.vue: import surface-classify helpers
+[DONE] src/pages/GalaxyPage.vue: enterPlanetSurface: pass Planet through instead of a pre-built route string
+[DONE] src/pages/GalaxyPage.vue: descendToPlanetSurface: classify and pick the real target route
+[DONE] src/pages/ClusterSystemPage.vue: import clusterPlanetHasNoSolidGround
+[DONE] src/pages/ClusterSystemPage.vue: descendToPlanet: branch to station-interior before any camera tween
+[DONE] src/pages/SurfaceViewPage.vue: import hasNoSolidGround
+[DONE] src/pages/SurfaceViewPage.vue: add no-solid-ground backstop before initScene()
+[DONE] src/pages/GalacticCenterPage.vue: claimSettlement: redirect to the station-interior scene instead of only /mint
+[DONE] src/pages/StationPage.vue: mint-success panel: add Enter Station button
+[DONE] src/pages/StationInteriorPage.vue: created (687 lines)
+
+Done. Review with `git diff` before committing — this script does not
+commit or push anything itself.
+

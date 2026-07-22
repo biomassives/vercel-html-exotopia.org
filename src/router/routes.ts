@@ -175,6 +175,17 @@ const routes: RouteRecordRaw[] = [
         props: true,
       },
       {
+        // Twin-cylinder station interior — bodyless orbital addresses (exo-orbital-v1,
+        // exo-stellar-orbital-v1, exo-lunar-orbital-v1, black-hole zones) and real
+        // no-solid-crust planets (gas giants, magma-ocean/lava worlds) land here
+        // instead of SurfaceViewPage's flat-terrain dome scene.
+        path: 'station-interior/:hostname/:refName?',
+        name: 'station-interior',
+        component: () => import('src/pages/StationInteriorPage.vue'),
+        meta: { title: 'Station Interior' },
+        props: true,
+      },
+      {
         path: 'mint',
         name: 'mint',
         component: () => import('src/pages/MintPage.vue'),

@@ -5,7 +5,7 @@ const STORAGE_KEY = 'e8.1'   // opaque — was 'exotopia_settlements_v1'
 
 export interface SettlementRecord {
   key: string           // unique ID — see makeSettlementKey()
-  type: 'surface' | 'cluster' | 'moon' | 'orbital' | 'bh-orbital'
+  type: 'surface' | 'cluster' | 'moon' | 'orbital' | 'bh-orbital' | 'stellar-orbital' | 'lunar-orbital'
   planetName: string
   hostname: string
   exolocation: string   // full address string for the deed
@@ -33,6 +33,11 @@ export function clusterKey(clusterSlug: string, memberId: string, systemName: st
 /** Canonical key for a moon settlement. */
 export function moonKey(planetName: string, moonIdx: number, coordVariant: string): string {
   return `moon:${planetName}:${moonIdx}:${coordVariant}`
+}
+
+/** Canonical key for a bodyless orbital settlement (stellar/planetary/lunar orbit, or a black-hole zone). */
+export function orbitalKey(coordSystem: string, hostname: string, refName?: string): string {
+  return refName ? `${coordSystem}:${hostname}:${refName}` : `${coordSystem}:${hostname}`
 }
 
 // ── Reactive store ───────────────────────────────────────────────────────────

@@ -509,6 +509,7 @@ import type { DefenderNavData, PlanetStripEntry, StellarConfig, DefenderTarget }
 import { usePortalStore } from 'src/stores/portal'
 import { useSceneTransitionStore } from 'src/stores/scene-transition'
 import { BLACK_HOLE_CATALOG, bhColorHex } from 'src/data/black-holes'
+import { getSurfaceType, NO_GROUND_SURFACE_TYPES } from 'src/lib/surface-classify'
 
 // ── Galaxy star shader — one draw call for all ~5 000 confirmed systems ───────
 // Vertex: size-attenuated points (pSize in scene-unit scale; 700 / depth → pixels).
@@ -2522,7 +2523,11 @@ function goToSurface(planetName: string) {
   }
 }
 
-async function descendToPlanetSurface(targetRoute: string, ox: number, oy: number, bearing: number) {
+async function descendToPlanetSurface(pl: Planet, ox: number, oy: number, bearing: number) {
+  const surfaceType = await getSurfaceType(pl.pl_name)
+  const targetRoute = (surfaceType != null && NO_GROUND_SURFACE_TYPES.has(surfaceType))
+    ? `/station-interior/${encodeURIComponent(pl.hostname)}/${encodeURIComponent(pl.pl_name)}?reason=no-solid-crust&surfaceType=${surfaceType}`
+    : `/surface/${encodeURIComponent(pl.hostname)}/${encodeURIComponent(pl.pl_name)}`
   await transition.depart(ox, oy, 'iris', bearing)
   void router.push(targetRoute)
 }
@@ -2532,12 +2537,13 @@ function enterPlanetSurface(pl: Planet) {
   enteringPlanet.value = true
   controls.enabled = false
 
-  const targetRoute = `/surface/${encodeURIComponent(pl.hostname)}/${encodeURIComponent(pl.pl_name)}`
-
   // Brief zoom toward the planet before the descent transition fires. GalaxyPage
   // and SurfaceViewPage now share the same renderer/camera, so this reads as one
   // continuous approach — an iris wipe covers the pageGroup swap underneath
   // rather than the WormholePortal, which is reserved for lateral/long-haul jumps.
+  // (Target route is resolved inside descendToPlanetSurface, once surface-type
+  // classification returns — kept out of this function so the classification
+  // fetch never delays the zoom's visual feedback.)
   const pMesh = systemObjects.find(
     o => (o as THREE.Mesh).isMesh && o.userData.type === 'planet' && o.userData.planet?.pl_name === pl.pl_name
   ) as THREE.Mesh | undefined
@@ -2551,14 +2557,14 @@ function enterPlanetSurface(pl: Planet) {
     gsap.to(controls.target, {
       duration: 0.8, x: p.x, y: p.y, z: p.z,
       ease: 'power2.in', onUpdate: () => controls.update(),
-      onComplete: () => { void descendToPlanetSurface(targetRoute, ox, oy, bearing) },
+      onComplete: () => { void descendToPlanetSurface(pl, ox, oy, bearing) },
     })
     gsap.to(camera.position, {
       duration: 0.8, x: p.x, y: p.y, z: p.z + 2,
       ease: 'power2.in', onUpdate: () => controls.update(),
     })
   } else {
-    void descendToPlanetSurface(targetRoute, 50, 50, 0)
+    void descendToPlanetSurface(pl, 50, 50, 0)
   }
 }
 

@@ -1443,7 +1443,7 @@ function claimSettlement(zone: SettlementZone | undefined) {
     exolocation: zone.exoloc_address,
     displayName: `${zone.label} · Sgr A*`,
   })
-  void router.push(`/mint?mode=bh-orbital&bh=Sgr-A*&zone=${encodeURIComponent(zone.id)}&addr=${encodeURIComponent(zone.exoloc_address)}`)
+  void router.push(`/station-interior/Sgr-A*/${encodeURIComponent(zone.id)}?reason=bodyless-orbital&zone=${encodeURIComponent(zone.id)}&addr=${encodeURIComponent(zone.exoloc_address)}`)
 }
 
 // ── Lifecycle ─────────────────────────────────────────────────────────────────

@@ -846,6 +846,7 @@ import type { Planet } from 'src/stores/galaxy'
 import {
   buildClimateProfile, formatTempK, formatRangeK, usesFahrenheit,
 } from 'src/lib/planet-climate'
+import { hasNoSolidGround } from 'src/lib/surface-classify'
 
 // ── Route / props ─────────────────────────────────────────────────────────────
 
@@ -2895,6 +2896,21 @@ onMounted(async () => {
   }, 1000)
 
   await galaxyStore.loadData()
+
+  // No-solid-ground backstop: bodyless/malformed addresses (planet.value is null
+  // for ANY unresolved hostname/planetName, from any entry path — deep link,
+  // bookmark, hand-edited URL), and real gas-giant/magma-ocean/lava worlds, don't
+  // get the flat-terrain dome scene. See src/lib/surface-classify.ts.
+  if (!isMoonView.value) {
+    const noGround = !planet.value || await hasNoSolidGround(planetName.value)
+    if (noGround) {
+      const reason = planet.value ? 'no-solid-crust' : 'bodyless-orbital'
+      void router.replace(
+        `/station-interior/${encodeURIComponent(hostname.value)}/${encodeURIComponent(planetName.value)}?reason=${reason}`
+      )
+      return
+    }
+  }
 
   // Log surface/moon visit for smart preset generation in MintStylePage
   logNavEvent(isMoonView.value ? 'moon_view' : 'surface_view', {
