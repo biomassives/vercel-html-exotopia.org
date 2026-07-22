@@ -1365,7 +1365,7 @@ import MintPathwayWizard    from 'src/components/MintPathwayWizard.vue'
 import type { MintPathway } from 'src/lib/mint-config'
 import CollectorCard         from 'src/components/CollectorCard.vue'
 import {
-  COLLECTOR_CARDS, RARITY_CONFIG,
+  COLLECTOR_CARDS,
 } from 'src/data/collector-cards'
 import { POLYGON_AMOY, CELO_ALFAJORES, TESTNET_CONTRACTS } from 'src/lib/evm/chains'
 import {
@@ -1395,11 +1395,11 @@ function scrollToForms() {
 // ── Hero card fan ─────────────────────────────────────────────────────────────
 
 const fanCards = [
-  COLLECTOR_CARDS[0]!,   // #1 Blue Supergiant  — Legendary
-  COLLECTOR_CARDS[6]!,   // #7 Nebula           — Rare
-  COLLECTOR_CARDS[1]!,   // #2 Wormhole Conduit — Legendary (centre)
-  COLLECTOR_CARDS[3]!,   // #4 Habitable World  — Rare
-  COLLECTOR_CARDS[2]!,   // #3 Cosmic Web       — Legendary
+  COLLECTOR_CARDS[0]!,   // #1 Blue Supergiant
+  COLLECTOR_CARDS[6]!,   // #7 Nebula
+  COLLECTOR_CARDS[1]!,   // #2 Wormhole Conduit (centre)
+  COLLECTOR_CARDS[3]!,   // #4 Habitable World
+  COLLECTOR_CARDS[2]!,   // #3 Cosmic Web
 ]
 
 const FAN_ANGLES = [-22, -9, 0, 9, 22]

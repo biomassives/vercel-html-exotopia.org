@@ -102,9 +102,6 @@
         <span v-for="c in [...COLLECTOR_CARDS, ...COLLECTOR_CARDS]" :key="c.id + '-' + c.name" class="ticker-item">
           <span class="ticker-num">#{{ String(c.id).padStart(2,'0') }}</span>
           {{ c.name }}
-          <span class="ticker-rarity" :style="{ color: RARITY_CONFIG[c.rarity].color }">
-            {{ RARITY_CONFIG[c.rarity].label }}
-          </span>
           <span class="ticker-sep">◆</span>
         </span>
       </div>
@@ -115,49 +112,19 @@
          ════════════════════════════════════════════════════════════════ -->
     <div v-if="activeView === 'cards'" class="cards-section">
 
-      <!-- Rarity filter bar -->
-      <div class="filter-bar">
-        <div class="filter-bar-left">
-          <button
-            :class="['filter-all', { 'filter-all--active': activeRarity === 'all' }]"
-            @click="activeRarity = 'all'"
-          >
-            ALL · {{ COLLECTOR_CARDS.length }}
-          </button>
-          <button
-            v-for="r in RARITY_FILTERS" :key="r.id"
-            :class="['filter-pill', { 'filter-pill--active': activeRarity === r.id }]"
-            :style="{
-              borderColor: activeRarity === r.id ? r.color : 'rgba(255,255,255,0.08)',
-              color:       activeRarity === r.id ? r.color : 'rgba(120,160,190,0.55)',
-              boxShadow:   activeRarity === r.id ? `0 0 12px ${r.color}33` : 'none',
-            }"
-            @click="activeRarity = activeRarity === r.id ? 'all' : r.id"
-          >
-            <span class="filter-pip" :style="{ background: r.color }" />
-            {{ r.label }}
-            <span class="filter-count">{{ COLLECTOR_CARDS.filter(c => c.rarity === r.id).length }}</span>
-          </button>
-        </div>
-        <div class="filter-showing">
-          showing {{ filteredCards.length }} of {{ COLLECTOR_CARDS.length }}
-        </div>
-      </div>
-
       <!-- Card grid -->
       <div class="card-grid">
         <div
-          v-for="card in filteredCards"
+          v-for="card in COLLECTOR_CARDS"
           :key="card.id"
           class="card-cell"
-          :class="`card-cell--${card.rarity}`"
           :style="{
             '--rarity-color':  card.borderColor,
             '--rarity-glow':   card.glowColor,
           }"
           @click="selectCard(card)"
         >
-          <!-- Rarity corner badge -->
+          <!-- Card number corner badge -->
           <div class="cell-corner-badge" :style="{ background: card.borderColor + '22', color: card.borderColor }">
             #{{ String(card.id).padStart(2,'0') }}
           </div>
@@ -179,15 +146,9 @@
           <div class="cell-footer">
             <div class="cell-name">{{ card.name }}</div>
             <div class="cell-sub">
-              <span class="cell-rarity" :style="{ color: card.borderColor }">
-                {{ RARITY_CONFIG[card.rarity].label }}
+              <span class="cell-edition" :style="{ color: card.borderColor }">
+                {{ card.edition }}/{{ card.maxEdition }}
               </span>
-              <span class="cell-edition">{{ card.edition }}/{{ card.maxEdition }}</span>
-            </div>
-            <!-- Score bar -->
-            <div class="cell-score-track">
-              <div class="cell-score-fill"
-                :style="{ width: (card.rarityScore / 10 * 100) + '%', background: card.borderColor }" />
             </div>
           </div>
         </div>
@@ -298,7 +259,7 @@
             {{ selectedCard.name }}
           </div>
           <div class="panel-rarity-label" :style="{ color: selectedCard.borderColor }">
-            {{ RARITY_CONFIG[selectedCard.rarity].label }}
+            {{ selectedCard.series }}
           </div>
           <q-btn flat dense round icon="close" color="blue-grey-5" size="xs"
             class="panel-close" @click="selectedCard = null" />
@@ -308,7 +269,7 @@
           <!-- Card large view -->
           <div class="panel-card-wrap">
             <CollectorCard :card="selectedCard" :width="260" :height="364" />
-            <!-- Rarity halo under card -->
+            <!-- Glow halo under card -->
             <div class="panel-card-halo" :style="{ background: selectedCard.glowColor }" />
           </div>
 
@@ -319,21 +280,6 @@
             <div class="panel-section">
               <div class="panel-section-label">ABOUT</div>
               <p class="panel-desc">{{ selectedCard.description }}</p>
-            </div>
-
-            <!-- Score bars -->
-            <div class="panel-section">
-              <div class="panel-section-label">RARITY SCORE</div>
-              <div class="score-display">
-                <span class="score-num" :style="{ color: selectedCard.borderColor }">
-                  {{ selectedCard.rarityScore }}
-                </span>
-                <span class="score-denom">/10</span>
-                <div class="score-bar">
-                  <div class="score-fill"
-                    :style="{ width: (selectedCard.rarityScore / 10 * 100) + '%', background: selectedCard.borderColor }" />
-                </div>
-              </div>
             </div>
 
             <!-- Attributes table -->
@@ -420,8 +366,7 @@ import {
   type Edition,
 } from 'src/data/editions/index'
 import {
-  RARITY_CONFIG,
-  type CollectorCard as CardType, type CardRarity,
+  type CollectorCard as CardType,
 } from 'src/data/collector-cards'
 
 // Active edition (default: edition 1)
@@ -438,16 +383,14 @@ function selectCard(card: CardType) {
   selectedCard.value = selectedCard.value?.id === card.id ? null : card
 }
 
-// ── Card fan spread — picks 5 cards from active edition for the fan ───────────
-// Selects the 3 legendaries (or highest rarity) for centre/outer positions,
-// and 2 rares for the adjacent slots. Falls back gracefully for smaller sets.
+// ── Card fan spread — picks up to 5 cards from active edition for the fan ────
+// Fixed by card order (first 5 in the edition) — no ranking system involved.
 
 const fanCards = computed(() => {
   const cards = COLLECTOR_CARDS.value
-  const leg   = cards.filter(c => c.rarity === 'legendary').slice(0, 3)
-  const rare  = cards.filter(c => c.rarity === 'rare').slice(0, 2)
-  // Fan order: outer-left, inner-left, CENTRE, inner-right, outer-right
-  const five = [leg[0], rare[0], leg[1] ?? leg[0], rare[1] ?? rare[0], leg[2] ?? leg[0]]
+  // Fan order: outer-left, inner-left, CENTRE, inner-right, outer-right.
+  // With fewer than 5 cards, repeat the last one so every slot still renders.
+  const five = [0, 1, 2, 3, 4].map(i => cards[Math.min(i, cards.length - 1)])
   return five.filter(Boolean) as typeof cards
 })
 
@@ -468,31 +411,14 @@ function fanCardWidth(i: number): number {
   return i === 2 ? 198 : (i === 1 || i === 3) ? 172 : 152
 }
 
-// ── Rarity filter ─────────────────────────────────────────────────────────────
+// ── Cards shown in the grid — the full active edition, no ranking filter ─────
 
-type RarityFilter = CardRarity | 'all'
-const activeRarity = ref<RarityFilter>('all')
-
-const RARITY_FILTERS = [
-  { id: 'legendary' as const, label: 'LEGENDARY', color: '#ffd700' },
-  { id: 'rare'      as const, label: 'RARE',      color: '#4488ff' },
-  { id: 'uncommon'  as const, label: 'UNCOMMON',  color: '#22cc66' },
-  { id: 'common'    as const, label: 'COMMON',    color: '#667788' },
-]
-
-const filteredCards = computed(() =>
-  activeRarity.value === 'all'
-    ? COLLECTOR_CARDS.value
-    : COLLECTOR_CARDS.value.filter(c => c.rarity === activeRarity.value)
-)
 
 // ── Edition stats ─────────────────────────────────────────────────────────────
 
-// Dynamic edition stats — edition-agnostic counts
 const EDITION_STATS = computed(() => [
-  { value: String(activeEdition.value.cards.filter(c => c.rarity === 'legendary').length),  label: 'LEGENDARY', color: '#ffd700' },
-  { value: String(activeEdition.value.cards.filter(c => c.rarity === 'rare').length),       label: 'RARE',      color: '#4488ff' },
-  { value: 'SVG', label: 'FORMAT', color: '#22cc66' },
+  { value: String(activeEdition.value.year),  label: 'YEAR',   color: activeEdition.value.accentColor },
+  { value: 'SVG',                             label: 'FORMAT', color: '#22cc66' },
 ])
 
 // ── Orbital gallery: status config + announcements ───────────────────────────
@@ -522,7 +448,7 @@ const ANNOUNCEMENTS: Announcement[] = [
   {
     id: 1, status: 'live',
     title:       'Collector Cards — Extrapolation Edition',
-    description: '11 hand-crafted SVG cards. Astronomical objects and Exotopia concepts. Rarity tiers from Common to Legendary. Free to mint — chain gas only.',
+    description: '11 hand-crafted SVG cards. Astronomical objects and Exotopia concepts. Free to mint — chain gas only.',
     category:    'NFT DROP',
     targets:     ['all communities', 'collectors'],
     chain:       'ALGO · SOL · MATIC',
@@ -982,77 +908,7 @@ function downloadSvg(card: CardType) {
 }
 
 .ticker-num    { color: rgba(0, 180, 220, 0.48); }
-.ticker-rarity { font-size: 7px; letter-spacing: 0.12em; }
 .ticker-sep    { color: rgba(40, 80, 110, 0.35); font-size: 6px; }
-
-/* ════════════════════════════════════════════════════════════════
-   FILTER BAR
-   ════════════════════════════════════════════════════════════════ */
-
-.filter-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 20px;
-  border-bottom: 1px solid rgba(0, 80, 120, 0.18);
-  background: rgba(0, 4, 14, 0.70);
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.filter-bar-left { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
-
-.filter-all {
-  font-family: 'Courier New', monospace;
-  font-size: 7px;
-  letter-spacing: 0.12em;
-  padding: 4px 10px;
-  border: 1px solid rgba(0, 150, 200, 0.25);
-  border-radius: 3px;
-  background: none;
-  color: rgba(0, 160, 200, 0.55);
-  cursor: pointer;
-  transition: all 0.12s;
-}
-
-.filter-all--active {
-  background: rgba(0, 150, 200, 0.14);
-  border-color: rgba(0, 220, 255, 0.45);
-  color: #00e5ff;
-}
-
-.filter-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-family: 'Courier New', monospace;
-  font-size: 7px;
-  letter-spacing: 0.10em;
-  padding: 4px 12px;
-  border: 1px solid;
-  border-radius: 14px;
-  background: rgba(0, 0, 0, 0.50);
-  cursor: pointer;
-  transition: all 0.15s;
-}
-
-.filter-pip {
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.filter-count {
-  font-size: 6px;
-  opacity: 0.60;
-  margin-left: 2px;
-}
-
-.filter-showing {
-  font-size: 7px;
-  color: rgba(60, 100, 130, 0.50);
-  letter-spacing: 0.08em;
-}
 
 /* ════════════════════════════════════════════════════════════════
    CARD GRID
@@ -1131,12 +987,6 @@ function downloadSvg(card: CardType) {
 
 .card-cell:hover::before { opacity: 0.06; }
 
-/* Rarity tints */
-.card-cell--legendary { background: rgba(4, 3, 0, 0.92); }
-.card-cell--rare      { background: rgba(0, 4, 14, 0.92); }
-.card-cell--uncommon  { background: rgba(0, 5, 2,  0.92); }
-.card-cell--common    { background: rgba(2, 3, 4,  0.92); }
-
 /* Corner badge */
 .cell-corner-badge {
   position: absolute;
@@ -1171,29 +1021,10 @@ function downloadSvg(card: CardType) {
   margin-bottom: 6px;
 }
 
-.cell-rarity {
-  font-size: 7px;
-  letter-spacing: 0.12em;
-}
-
 .cell-edition {
   font-size: 7px;
   color: rgba(70, 110, 140, 0.55);
   letter-spacing: 0.06em;
-}
-
-.cell-score-track {
-  height: 2px;
-  background: rgba(255,255,255,0.07);
-  border-radius: 1px;
-  overflow: hidden;
-}
-
-.cell-score-fill {
-  height: 100%;
-  border-radius: 1px;
-  transition: width 0.6s ease;
-  opacity: 0.70;
 }
 
 /* ════════════════════════════════════════════════════════════════
@@ -1309,25 +1140,6 @@ function downloadSvg(card: CardType) {
   color: rgba(120, 170, 200, 0.75);
   line-height: 1.68;
   margin: 0;
-}
-
-/* Score */
-.score-display { display: flex; align-items: center; gap: 6px; }
-.score-num     { font-size: 28px; font-weight: 700; line-height: 1; }
-.score-denom   { font-size: 12px; color: rgba(80, 120, 150, 0.55); }
-
-.score-bar {
-  flex: 1;
-  height: 4px;
-  background: rgba(255,255,255,0.07);
-  border-radius: 2px;
-  overflow: hidden;
-  margin-left: 8px;
-}
-
-.score-fill {
-  height: 100%;
-  border-radius: 2px;
 }
 
 /* Attributes */

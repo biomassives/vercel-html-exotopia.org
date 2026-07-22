@@ -19,7 +19,7 @@
  *   sitemap generation, and the Gallery edition selector.
  */
 
-import type { CollectorCard, CardRarity } from 'src/data/collector-cards'
+import type { CollectorCard } from 'src/data/collector-cards'
 
 // ── Edition metadata interface ────────────────────────────────────────────────
 

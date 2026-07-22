@@ -223,9 +223,6 @@
 
     <!-- 20: Mending Season — sashiko geometric stitching -->
     <g v-else-if="card.id === 20">
-      <g v-for="row in 7" :key="'mr'+row" v-for2="col in 9" :key2="'mc'+col">
-        <!-- Rendered via computed sashikoPoints -->
-      </g>
       <!-- Sashiko grid rendered from computed data -->
       <path v-for="sp in sashikoPaths" :key="sp"
         :d="sp" fill="none" :stroke="card.artColors[0]"
@@ -308,10 +305,10 @@
       #{{ String(card.edition).padStart(2,'0') }}/{{ card.maxEdition }}
     </text>
 
-    <!-- Rarity -->
+    <!-- Series -->
     <text x="236" y="362" text-anchor="end" font-family="'Courier New', monospace" font-size="7"
       :fill="card.borderColor" fill-opacity="0.45" letter-spacing="0.10">
-      {{ card.rarity.toUpperCase() }}
+      {{ card.series.toUpperCase() }}
     </text>
 
     <!-- Bottom footer line -->

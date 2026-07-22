@@ -6,9 +6,9 @@
     :viewBox="`0 0 280 392`"
     xmlns="http://www.w3.org/2000/svg"
     class="collector-card"
-    :class="`card-rarity--${card.rarity}`"
+    :style="{ '--card-glow': card.glowColor }"
     role="img"
-    :aria-label="`${card.name} — ${card.rarity}`"
+    :aria-label="`${card.name} — ${card.series}`"
   >
     <defs>
       <!-- Card background gradient -->
@@ -98,13 +98,6 @@
         #{{ String(card.edition).padStart(2, '0') }}/{{ String(card.maxEdition).padStart(2,'0') }}
       </text>
 
-      <!-- Rarity indicator -->
-      <circle cx="253" cy="33" r="3.5" :fill="card.borderColor" opacity="0.80" />
-      <text x="248" y="36.5"
-        font-family="'Courier New', monospace" font-size="5.5"
-        letter-spacing="0.10em" :fill="card.borderColor" text-anchor="end" opacity="0.75">
-        {{ RARITY_CONFIG[card.rarity].label }}
-      </text>
     </g>
 
     <!-- ── ARTWORK PANEL ──────────────────────────────────────────────────── -->
@@ -930,49 +923,32 @@
       {{ card.description.slice(0, 72) }}…
     </text>
 
-    <!-- Rarity bar -->
-    <rect x="14" y="306" width="252" height="3" rx="1.5"
-      fill="rgba(255,255,255,0.08)" />
-    <rect x="14" y="306" :width="rarityBarWidth" height="3" rx="1.5"
-      :fill="card.borderColor" opacity="0.65" />
-
     <!-- ── STATS BAR ───────────────────────────────────────────────────────── -->
     <rect x="6" y="322" width="268" height="64" rx="4"
       fill="rgba(0,0,0,0.45)" />
 
-    <!-- Rarity score -->
-    <text x="50" y="340"
-      font-family="'Courier New', monospace" font-size="8"
-      fill="rgba(150,190,220,0.55)" text-anchor="middle">RARITY</text>
-    <text x="50" y="356"
-      font-family="'Courier New', monospace" font-size="18"
-      font-weight="700" :fill="card.borderColor" text-anchor="middle">
-      {{ card.rarityScore }}<tspan font-size="10" opacity="0.55">/10</tspan>
-    </text>
-
     <!-- Edition -->
-    <text x="140" y="340"
+    <text x="93" y="340"
       font-family="'Courier New', monospace" font-size="8"
       fill="rgba(150,190,220,0.55)" text-anchor="middle">EDITION</text>
-    <text x="140" y="356"
+    <text x="93" y="356"
       font-family="'Courier New', monospace" font-size="14"
       font-weight="600" fill="rgba(200,230,255,0.80)" text-anchor="middle">
       {{ card.edition }}<tspan font-size="10" opacity="0.45">/{{ card.maxEdition }}</tspan>
     </text>
 
     <!-- Minted -->
-    <text x="228" y="340"
+    <text x="187" y="340"
       font-family="'Courier New', monospace" font-size="8"
       fill="rgba(150,190,220,0.55)" text-anchor="middle">MINTED</text>
-    <text x="228" y="356"
+    <text x="187" y="356"
       font-family="'Courier New', monospace" font-size="18"
       font-weight="700" fill="rgba(200,230,255,0.80)" text-anchor="middle">
       {{ card.mintedCount }}<tspan font-size="10" opacity="0.45">/{{ card.maxEdition }}</tspan>
     </text>
 
-    <!-- Dividers -->
-    <line x1="95" y1="328" x2="95" y2="378" stroke="rgba(255,255,255,0.08)" stroke-width="1" />
-    <line x1="185" y1="328" x2="185" y2="378" stroke="rgba(255,255,255,0.08)" stroke-width="1" />
+    <!-- Divider -->
+    <line x1="140" y1="328" x2="140" y2="378" stroke="rgba(255,255,255,0.08)" stroke-width="1" />
 
     <!-- Footer: chain + protocol -->
     <text x="140" y="374"
@@ -989,9 +965,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
 import type { CollectorCard } from 'src/data/collector-cards'
-import { RARITY_CONFIG } from 'src/data/collector-cards'
 
 const props = withDefaults(defineProps<{
   card:   CollectorCard
@@ -1003,9 +977,6 @@ const props = withDefaults(defineProps<{
 })
 
 const { card } = props
-
-// Rarity bar width (0–252 px based on score/10)
-const rarityBarWidth = computed(() => Math.round((card.rarityScore / 10) * 252))
 
 // ── Procedural geometry helpers ───────────────────────────────────────────────
 
@@ -1243,10 +1214,6 @@ const settlementStars = (() => {
 
 .collector-card:hover {
   transform: translateY(-4px) scale(1.02);
+  filter: drop-shadow(0 8px 20px var(--card-glow, rgba(120, 160, 220, 0.40)));
 }
-
-.card-rarity--legendary:hover { filter: drop-shadow(0 8px 24px rgba(255, 215, 0, 0.45)); }
-.card-rarity--rare:hover       { filter: drop-shadow(0 8px 20px rgba(68, 136, 255, 0.40)); }
-.card-rarity--uncommon:hover   { filter: drop-shadow(0 8px 18px rgba(34, 204, 102, 0.38)); }
-.card-rarity--common:hover     { filter: drop-shadow(0 6px 14px rgba(102, 119, 136, 0.30)); }
 </style>

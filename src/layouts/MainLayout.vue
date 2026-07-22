@@ -943,7 +943,7 @@ const NAV_GROUPS: NavGroup[] = [
       },
       {
         title: 'Design Gallery',
-        desc:  '11 hand-crafted SVG designs — Legendary, Rare, Uncommon, and Common collector editions.',
+        desc:  '11 hand-crafted SVG designs across the Extrapolation Edition collector series.',
         cta:   'Browse',
         route: '/gallery',
         color: 'rgba(200,140,255,0.90)',
@@ -1267,7 +1267,7 @@ const ITEM_PANELS: Record<string, ItemPanel> = {
   },
   'Design Gallery': {
     style: 'gallery', headline: 'Collector card gallery',
-    subline: '11 hand-crafted SVG cards — Legendary, Rare, Uncommon, Common.',
+    subline: '11 hand-crafted SVG cards, one collector series.',
     actions: [{ label: 'Browse gallery', route: '/gallery', primary: true }, { label: 'My collection', route: '/gallery' }],
     sessionKey: 'exo_last_gallery_card', sessionLabel: 'Last viewed',
   },
