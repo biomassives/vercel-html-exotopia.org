@@ -372,6 +372,18 @@ export const BLOG_POSTS: BlogPostMeta[] = [
       'A settlement-view bug report (intersecting geometry navigating to some Tau Cet locations) traced back to an architectural gap: the renderer only knew how to build a dome on solid ground, regardless of whether ground existed at the destination. Covers the fix — a real no-ground classifier consuming the topo-params surface_type field that was already computed and never used, four navigation entry points now checking before committing to a scene (with SurfaceViewPage itself as the real backstop), a real pre-existing black-hole-claim hardcoding bug fixed along the way — and the new twin counter-rotating cylinder station interior itself, researched against real O\'Neill-cylinder/Stanford-Torus artificial-gravity literature rather than invented from scratch. Includes a screenshot carousel and an honest list of what is not yet claimed (dim lighting, flat walking surface, the literal reported bug never reproduced live before the fix shipped).',
     editorialNote: 'Screenshots are from a local dev capture, not a production deploy — interior lighting is genuinely underlit as shipped, called out directly in the post rather than color-corrected.',
   },
+  {
+    slug:     'nft-value-framing-fix',
+    title:    'Cards Without a Ranking System',
+    subtitle: 'A legal-risk review flagged our collector cards as a securities-framing problem. Here\'s what we removed, and what a mint screen looks like when it isn\'t trying to sell you on scarcity.',
+    date:     'July 2026',
+    audience: ['community', 'dev', 'ecosystem'],
+    series:   'economy',
+    status:   'public-draft',
+    description:
+      'RISK_REDUCTION_RECOMMENDATIONS.md flagged the collector-card system\'s four-tier ranked rarity (Legendary/Rare/Uncommon/Common, with a numeric score/10) as Howey-test/securities-framing exposure. This post covers the full removal per SPEC_NFT_VALUE_FRAMING.md: CardRarity/rarityScore and the on-chain Rarity trait removed from all 27 cards across three editions (not just the marketing copy), a required and logged pre-mint disclaimer added to the one live mint path, redundant rarity filter tabs removed in favor of the edition switcher already on the page, and a real unrelated bug found and fixed along the way (every card\'s back face hardcoded "ANTI-AI SLOP DROP" regardless of its actual series). Includes a before/after screenshot carousel and is explicit that this is a product change, not a substitute for the legal review the same document also calls for.',
+    editorialNote: 'Companion to SPEC_NFT_VALUE_FRAMING.md and RISK_REDUCTION_RECOMMENDATIONS.md — this post describes a real code change, not legal advice; keep that distinction explicit if this moves off public-draft.',
+  },
 ]
 
 export function getRelatedPosts (post: BlogPostMeta, limit = 3): BlogPostMeta[] {
