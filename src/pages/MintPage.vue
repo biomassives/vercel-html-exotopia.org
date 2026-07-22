@@ -516,12 +516,12 @@
           Minted on-chain. Yours permanently.
         </p>
 
-        <!-- Rarity chips -->
+        <!-- Collection note — thematic variety, not a graded/scarcity display.
+             These are collectible art records, not an investment: no rarity
+             tiers or counts are shown here, deliberately. -->
         <div class="hero-rarities">
-          <span v-for="r in RARITY_SUMMARY" :key="r.label" class="rarity-pill"
-            :style="{ borderColor: r.color + '55', color: r.color }">
-            <span class="rarity-pip" :style="{ background: r.color }" />
-            {{ r.count }} {{ r.label }}
+          <span class="rarity-pill" style="border-color: rgba(150,170,200,0.35); color: rgba(200,215,235,0.85)">
+            11 distinct hand-crafted designs — each a different astronomical subject
           </span>
         </div>
 
@@ -876,17 +876,29 @@
             :loading="exoloLoading && !exoloResult"
             @click="dryRun('exolocation')"
           />
+
+          <!-- Explicit pre-mint disclaimer — an affirmative, logged user action
+               rather than a buried ToS clause. Required before Execute Mint
+               enables, for every mint on this page, not just this one type. -->
+          <label class="mint-disclaimer-check">
+            <q-checkbox v-model="mintDisclaimerAccepted" dense color="cyan-6" />
+            <span>This mints a collectible record. It has no cash value, no expectation of profit, and is not an investment.</span>
+          </label>
+
           <q-btn
             unelevated color="green-8"
             icon="mdi-send"
             :label="exoloLoading && exoloResult !== null ? 'Minting…' : (walletAddress ? 'Execute Mint on Polygon Amoy' : 'Connect Wallet & Mint')"
             class="full-width"
-            :disable="!exoFormValid"
+            :disable="!exoFormValid || !mintDisclaimerAccepted"
             :loading="exoloLoading && !!exoloResult"
             @click="doMint('exolocation')"
           />
           <div v-if="!exoFormValid" class="validation-hint">
             Fill in Reference Body and Settlement Name to enable minting.
+          </div>
+          <div v-else-if="!mintDisclaimerAccepted" class="validation-hint">
+            Check the box above to enable minting.
           </div>
           <div v-else-if="exoFormValid && !exoloResult" class="validation-hint validation-hint--info">
             Click <strong>Execute Mint</strong> — the contract will validate and report any issues inline.
@@ -1407,13 +1419,6 @@ function fanCardWidth(i: number): number {
   return i === 2 ? 198 : (i === 1 || i === 3) ? 172 : 152
 }
 
-const RARITY_SUMMARY = [
-  { label: 'Legendary', count: 3, color: '#ffd700' },
-  { label: 'Rare',      count: 4, color: '#4488ff' },
-  { label: 'Uncommon',  count: 3, color: '#22cc66' },
-  { label: 'Common',    count: 1, color: '#667788' },
-]
-
 const heroStars = Array.from({ length: 40 }, (_, i) => {
   const rng = (n: number) => ((Math.sin(n * 127.1 + 17) * 43758.5) % 1 + 1) / 2
   return { id: i, x: rng(i*4)*100, y: rng(i*4+1)*100, r: 0.8+rng(i*4+2)*1.4, o: 0.15+rng(i*4+3)*0.45, d: rng(i)*4 }
@@ -1774,6 +1779,23 @@ const exoloDryResult = ref<DryRunResult | null>(null)
 const exoloResult    = ref<MintResult   | null>(null)
 const exoloLoading   = ref(false)
 
+// ── Pre-mint disclaimer — required for every mint type on this page ──────────
+// An affirmative, timestamped click-through beats a buried ToS clause under
+// consumer-protection review. Logged to localStorage (one entry per accepted
+// mint action) rather than only held in memory, so it survives page reload.
+const mintDisclaimerAccepted = ref(false)
+
+function logMintDisclaimerAcceptance(mintType: string) {
+  const record = { mintType, acceptedAt: new Date().toISOString() }
+  try {
+    const key = 'exo.mint-disclaimer-log'
+    const existing = JSON.parse(localStorage.getItem(key) ?? '[]') as unknown[]
+    existing.push(record)
+    localStorage.setItem(key, JSON.stringify(existing))
+  } catch { /* private mode / storage unavailable — non-fatal, mint still proceeds */ }
+  console.info('[MINT DISCLAIMER ACCEPTED]', record)
+}
+
 // ── Actions ───────────────────────────────────────────────────────────────────
 
 async function dryRun(type: string) {
@@ -1873,6 +1895,11 @@ const arc69Preview = computed((): string => {
 })
 
 async function doMint(type: string) {
+  if (!mintDisclaimerAccepted.value) {
+    exoloResult.value = { success: false, error: 'Please accept the disclaimer above before minting.' }
+    return
+  }
+
   if (type !== 'exolocation') {
     refreshMetaPreview()
     metaPreviewOpen.value = true
@@ -1901,6 +1928,7 @@ async function doMint(type: string) {
     if (!addr) { exoloResult.value = { success: false, error: 'No wallet connected. Install MetaMask or another EVM wallet.' }; return }
     walletAddress.value = addr
 
+    logMintDisclaimerAcceptance(type)
     const meta = buildExolocMeta({ ...buildExolocParams(), minted_by: addr })
     exoloResult.value = await evmExecuteMint(meta, POLYGON_AMOY, contract, addr)
   } finally {
@@ -2193,6 +2221,18 @@ async function celoExecute() {
 }
 .validation-hint--info {
   color: rgba(80, 180, 220, 0.65);
+}
+
+.mint-disclaimer-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin: 8px 0;
+  font-family: 'Courier New', monospace;
+  font-size: 9.5px;
+  line-height: 1.5;
+  color: rgba(180, 200, 220, 0.80);
+  cursor: pointer;
 }
 
 /* ── Live metadata preview ────────────────────────────────────── */
@@ -2573,12 +2613,6 @@ async function celoExecute() {
   border: 1px solid;
   border-radius: 12px;
   background: rgba(0, 0, 0, 0.40);
-}
-
-.rarity-pip {
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  flex-shrink: 0;
 }
 
 .hero-meta {

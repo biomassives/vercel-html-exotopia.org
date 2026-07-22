@@ -4646,7 +4646,11 @@ function onDefenderCosmicFlyTo(target: DefenderTarget) {
     if (entry) { zoomToXrayCluster(entry); return }
     const named = namedLodEntries.find(e => e.cluster.name === target.id)
     if (named) {
-      // Reuse the elevated vista logic via a local inline
+      // Reuse the elevated vista logic via a local inline.
+      // fromCam: unit vector FROM cluster TOWARD camera — landing must ADD this
+      // (same convention as enterCluster()) so the camera stops on the approach
+      // side of the cluster. Subtracting it lands on the mirror/far side, which
+      // reads as flying straight through the cluster and out the other end.
       const fromCam = camera.position.clone().sub(named.pos).normalize()
       const right   = new THREE.Vector3().crossVectors(fromCam, new THREE.Vector3(0, 1, 0)).normalize()
       const flyR    = Math.max(0.22, named.physR * 1.8)
@@ -4657,9 +4661,9 @@ function onDefenderCosmicFlyTo(target: DefenderTarget) {
       })
       gsap.to(camera.position, {
         duration: 5.0,
-        x: named.pos.x - fromCam.x * flyR + right.x * flyR * 0.25,
+        x: named.pos.x + fromCam.x * flyR + right.x * flyR * 0.25,
         y: named.pos.y + flyR * 0.35,
-        z: named.pos.z - fromCam.z * flyR + right.z * flyR * 0.25,
+        z: named.pos.z + fromCam.z * flyR + right.z * flyR * 0.25,
         ease: 'power4.inOut', onUpdate: () => controls.update(),
       })
     }
