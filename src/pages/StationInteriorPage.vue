@@ -428,7 +428,7 @@ function tick() {
   }
 
   if (selectionRing?.visible) {
-    ;(selectionRing.material as THREE.MeshBasicMaterial).opacity = 0.40 + Math.sin(t * 3) * 0.25
+    (selectionRing.material as THREE.MeshBasicMaterial).opacity = 0.40 + Math.sin(t * 3) * 0.25
     selectionRing.rotation.z = t * 0.6
   }
 
