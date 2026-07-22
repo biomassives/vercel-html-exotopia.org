@@ -283,10 +283,10 @@
 
     <!-- ── COMMON BACK HEADER ──────────────────────────────────────────── -->
 
-    <!-- Edition badge (top centre) -->
+    <!-- Series badge (top centre) -->
     <text x="140" y="36" text-anchor="middle"
       font-family="'Courier New', monospace" font-size="7"
-      :fill="card.borderColor" fill-opacity="0.55" letter-spacing="0.18">ANTI-AI SLOP DROP</text>
+      :fill="card.borderColor" fill-opacity="0.55" letter-spacing="0.18">{{ card.series.toUpperCase() }}</text>
     <line x1="40" y1="42" x2="240" y2="42"
       :stroke="card.borderColor" stroke-width="0.4" stroke-opacity="0.20"/>
 
