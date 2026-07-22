@@ -130,6 +130,21 @@
         </div>
         <p class="pcs-p" style="margin-top:8px"><strong>Lowering real cost:</strong> {{ POOLED_SAMPLING_NOTE }}</p>
 
+        <h2 class="pcs-h2" style="margin-top:24px">Regulatory Context — What "Actionable" Actually Means</h2>
+        <p class="pcs-p">
+          US-specific, since concentration entries in this tool are logged in ppt. This is a live,
+          currently-shifting regulatory picture, not a settled fact — each item below is dated and
+          should be re-verified, not assumed current.
+        </p>
+        <div v-for="r in REGULATORY_CONTEXT" :key="r.title" class="pcs-reg">
+          <div class="pcs-reg__head">
+            <span class="pcs-reg__title">{{ r.title }}</span>
+            <span class="pcs-reg__status" :class="`pcs-reg__status--${r.status}`">{{ r.status.replace('-', ' ') }}</span>
+          </div>
+          <p class="pcs-p">{{ r.body }}</p>
+          <p class="pcs-p pcs-p--dim">Verified as of {{ r.asOf }}</p>
+        </div>
+
         <h2 class="pcs-h2" style="margin-top:24px">Legal &amp; Safe Sampling</h2>
         <div v-for="g in LEGAL_SAMPLING_GUIDANCE" :key="g.title" class="pcs-guidance">
           <div class="pcs-guidance__title">{{ g.title }}</div>
@@ -174,7 +189,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useMemberStore } from 'src/stores/member'
 import { usePfasCitizenScienceStore, type DeconProject } from 'src/stores/pfas-citizen-science'
-import { REMEDIATION_METHODS, LEGAL_SAMPLING_GUIDANCE, SAMPLING_COST_TIERS, POOLED_SAMPLING_NOTE } from 'src/data/pfas-methods-library'
+import { REMEDIATION_METHODS, LEGAL_SAMPLING_GUIDANCE, SAMPLING_COST_TIERS, POOLED_SAMPLING_NOTE, REGULATORY_CONTEXT } from 'src/data/pfas-methods-library'
 import { LOGGING_STREAK_THRESHOLD_WEEKS } from 'src/data/rewards-catalog'
 import { useLoggingStreak } from 'src/composables/useLoggingStreak'
 import { useSettlements } from 'src/lib/settlements'
@@ -368,6 +383,14 @@ async function submitProject() {
 .pcs-method__media { font-size: 9px; color: rgba(120,170,205,0.55); }
 .pcs-citations { display: flex; flex-direction: column; gap: 3px; margin-top: 8px; }
 .pcs-citation { font-size: 9px; color: rgba(120,170,205,0.55); }
+
+.pcs-reg { background: rgba(0,8,22,0.45); border-left: 3px solid rgba(0,190,230,0.35); border-radius: 0 8px 8px 0; padding: 12px 16px; margin-bottom: 10px; }
+.pcs-reg__head { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; flex-wrap: wrap; }
+.pcs-reg__title { font-size: 12px; font-weight: 600; color: rgba(215,238,255,0.92); }
+.pcs-reg__status { font-size: 8px; letter-spacing: 0.08em; padding: 2px 6px; border-radius: 3px; text-transform: uppercase; }
+.pcs-reg__status--enforceable { background: rgba(80,230,130,0.15); color: rgba(100,240,150,0.85); }
+.pcs-reg__status--proposed-change { background: rgba(255,180,60,0.15); color: rgba(255,195,90,0.85); }
+.pcs-reg__status--rescission-proposed { background: rgba(255,90,90,0.15); color: rgba(255,140,140,0.85); }
 
 .pcs-guidance { margin-bottom: 12px; }
 .pcs-guidance__title { font-size: 11.5px; font-weight: 600; color: rgba(210,235,255,0.90); margin-bottom: 4px; }

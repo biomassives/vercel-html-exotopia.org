@@ -152,7 +152,49 @@ export const LEGAL_SAMPLING_GUIDANCE: LegalGuidanceItem[] = [
   },
   {
     title: 'Know when to notify, not just log',
-    body:  'If sampling reveals contamination significantly above an actionable guideline, or reveals what looks like an active, undisclosed source, that may warrant notifying the relevant environmental regulator directly, separate from and in addition to logging it here.',
+    body:  'If sampling reveals contamination significantly above an actionable guideline, or reveals what looks like an active, undisclosed source, that may warrant notifying the relevant environmental regulator directly, separate from and in addition to logging it here. See REGULATORY_CONTEXT below for the actual current numbers — "significantly above guideline" is not useful on its own without knowing what the guideline is.',
+  },
+]
+
+// ── Regulatory context — the actual numbers "actionable guideline" means ────
+// US-specific, since the app's PFAS field-work concentration inputs are in
+// ppt (parts per trillion / ng/L), matching how these are actually reported
+// in the US regulatory context. Dated deliberately — this is a live,
+// currently-shifting regulatory picture (see the status note below), not a
+// settled fact to state once and forget. Update the date and re-verify
+// before trusting this for anything more than orientation.
+
+export interface RegulatoryNote {
+  title:  string
+  body:   string
+  asOf:   string   // ISO date this was last verified — re-check, don't assume it's still current
+  status: 'enforceable' | 'proposed-change' | 'rescission-proposed'
+}
+
+export const REGULATORY_CONTEXT: RegulatoryNote[] = [
+  {
+    title: 'PFOA / PFOS Maximum Contaminant Level (MCL) — 4.0 ppt each',
+    body:  'EPA\'s final PFAS National Primary Drinking Water Regulation (April 10, 2024) set legally enforceable MCLs of 4.0 ppt (ng/L) for PFOA and 4.0 ppt for PFOS individually in drinking water — a project log or method proposal citing "significantly above guideline" for either compound means meaningfully above this number, not an arbitrary threshold. Original compliance deadline was April 2029.',
+    asOf: '2026-07-22',
+    status: 'enforceable',
+  },
+  {
+    title: 'PFOA / PFOS compliance deadline — proposed extension to 2031',
+    body:  'A 2026 EPA proposed rule would keep the 4.0 ppt PFOA/PFOS MCLs in place but let public water systems request two additional years (to 2031) to reach compliance. The MCL numbers themselves are not what\'s being proposed for change here — the timeline is.',
+    asOf: '2026-07-22',
+    status: 'proposed-change',
+  },
+  {
+    title: 'PFHxS / PFNA / HFPO-DA (GenX) / Hazard Index mixture — rescission proposed',
+    body:  'The same 2024 regulation also set enforceable limits for PFHxS, PFNA, HFPO-DA (GenX), and a Hazard Index calculation for mixtures of those three plus PFBS. A separate 2026 EPA proposed rule would rescind these specific standards, leaving the 4.0 ppt PFOA/PFOS MCLs as the only ones remaining enforceable. If you\'re logging or citing a concentration for any of these four beyond PFOA/PFOS, treat "the regulatory limit" as actively in flux, not settled.',
+    asOf: '2026-07-22',
+    status: 'rescission-proposed',
+  },
+  {
+    title: "Public comment period — closes July 20, 2026",
+    body:  'Both 2026 proposed rules above had public comment periods closing July 20, 2026, with a public hearing July 7, 2026. By the time you read this, that window has likely closed and a final rule may already exist — verify current status at epa.gov/sdwa before treating anything above as final rather than proposed.',
+    asOf: '2026-07-22',
+    status: 'proposed-change',
   },
 ]
 
