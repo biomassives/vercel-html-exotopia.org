@@ -408,6 +408,8 @@
             {{ form.stationName }} is established at {{ form.planetName }}.
           </div>
           <div class="row q-gutter-sm q-mt-md justify-center">
+            <q-btn unelevated color="cyan-8" icon="mdi-space-station" label="Enter Station"
+              @click="$router.push(`/station-interior/${encodeURIComponent(form.hostname)}/${encodeURIComponent(form.planetName)}`)" />
             <q-btn unelevated color="cyan-8" icon="scatter_plot" label="Milky Way Map"
               @click="$router.push('/galaxy')" />
             <q-btn outline color="blue-grey-5" label="Build another"

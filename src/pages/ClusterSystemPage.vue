@@ -104,6 +104,7 @@ import { useClusterGalaxyData } from 'src/composables/useClusterGalaxyData'
 import type { ClusterPlanet, ClusterStarSystem } from 'src/composables/useClusterGalaxyData'
 import { useSceneTransitionStore }               from 'src/stores/scene-transition'
 import { disposeScene }                          from 'src/lib/three-utils'
+import { clusterPlanetHasNoSolidGround }          from 'src/lib/surface-classify'
 
 // ── Route ──────────────────────────────────────────────────────────────────────
 const route      = useRoute()
@@ -198,6 +199,21 @@ function tierColor(tier: string): string {
 
 // ── Navigation ─────────────────────────────────────────────────────────────────
 async function descendToPlanet(p: ClusterPlanet) {
+  if (clusterPlanetHasNoSolidGround(p.type)) {
+    void router.push({
+      name: 'station-interior',
+      params: { hostname: systemLabel.value, refName: p.id },
+      query: {
+        reason:      'no-solid-crust',
+        surfaceType: p.type,
+        clusterSlug: clusterSlug.value,
+        memberId:    memberId.value,
+        systemIdx:   systemIdx.value,
+      },
+    })
+    return
+  }
+
   const mesh = planetMeshes.value.find(m => m.userData.planetId === p.id)
 
   // Final in-page approach toward the planet before the route change —
