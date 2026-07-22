@@ -360,6 +360,18 @@ export const BLOG_POSTS: BlogPostMeta[] = [
       'An accountability post: the June 2026 Kenya press release described a working ZK-proof field-verification + M-Pesa payout system for the Mpeketoni Eco Ops Group that does not exist in code, and the Platform page promised a finance-literacy settlement reward before any ledger existed to back it. This post names both gaps directly, reports what actually shipped instead (a Supabase rewards ledger covering finance literacy, volunteering, and mentor credit — no payments, no ZK proof, self-reported trust model except for server-enforced mentor confirmation), covers the unrelated void-navigation feature shipped the same pass including a real camera bug fix and an honestly-labeled data gap, and commits to a standing practice of describing what is running rather than what is specified. Companion to the new SPEC.md §21-23.',
     editorialNote: 'Sensitive — names a real credibility gap involving a named external community partner (Muirithi Jariffe / Mpeketoni Eco Ops Group) and a specific prior press release. Confirm with Greg before moving off public-draft.',
   },
+  {
+    slug:     'twin-cylinder-station-interior',
+    title:    'The Twin-Cylinder Station',
+    subtitle: 'Some locations were never going to have a garden and a dome. Here\'s what we built instead, for orbits, black holes, and worlds with no ground to stand on.',
+    date:     'July 2026',
+    audience: ['community', 'dev'],
+    series:   'navigation',
+    status:   'public-draft',
+    description:
+      'A settlement-view bug report (intersecting geometry navigating to some Tau Cet locations) traced back to an architectural gap: the renderer only knew how to build a dome on solid ground, regardless of whether ground existed at the destination. Covers the fix — a real no-ground classifier consuming the topo-params surface_type field that was already computed and never used, four navigation entry points now checking before committing to a scene (with SurfaceViewPage itself as the real backstop), a real pre-existing black-hole-claim hardcoding bug fixed along the way — and the new twin counter-rotating cylinder station interior itself, researched against real O\'Neill-cylinder/Stanford-Torus artificial-gravity literature rather than invented from scratch. Includes a screenshot carousel and an honest list of what is not yet claimed (dim lighting, flat walking surface, the literal reported bug never reproduced live before the fix shipped).',
+    editorialNote: 'Screenshots are from a local dev capture, not a production deploy — interior lighting is genuinely underlit as shipped, called out directly in the post rather than color-corrected.',
+  },
 ]
 
 export function getRelatedPosts (post: BlogPostMeta, limit = 3): BlogPostMeta[] {
