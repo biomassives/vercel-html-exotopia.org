@@ -1,10 +1,10 @@
 # SPEC: NFT Value & Rarity Framing — Integrated Solution
 
-**Status:** Proposed
+**Status:** Implemented — 2026-07-22
 **Date:** 2026-07-22
 **Scope:** Every place rarity/scarcity language, numeric rarity scores, and on-chain "Rarity" metadata traits appear across the collector-card/editions subsystem
 **Relates to:** `RISK_REDUCTION_RECOMMENDATIONS.md` §1 (NFT/investment-framing risk), `SPEC_NFT_FRONTIER.md`
-**Partially shipped:** `MintPage.vue`'s pre-mint hero display and disclaimer (§2 below) — everything else here is proposed, not built
+**Shipped:** all of §5/§6 below — schema, `CollectorCard.vue`, `GalleryPage.vue`, `MainLayout.vue` copy. Universal disclaimer generalization (§6, last row) remains blocked on an editions mint path going live.
 
 ---
 
@@ -66,11 +66,13 @@ This is a single design decision (tiered scarcity as the organizing metaphor for
 |---|---|
 | MintPage.vue hero reframe | ✅ Shipped |
 | MintPage.vue pre-mint disclaimer + logged acceptance | ✅ Shipped |
-| `CardRarity`/`rarityScore`/on-chain `Rarity` trait removed from data files | 🔲 Proposed, not built |
-| `CollectorCard.vue` score bar + rarity label removed | 🔲 Proposed, not built |
-| `GalleryPage.vue` rarity filters/counts/ticker/score bar removed | 🔲 Proposed, not built |
-| `MainLayout.vue` marketing copy updated | 🔲 Proposed, not built |
-| Universal pre-mint disclaimer (generalized beyond exolocation) | 🔲 Proposed — depends on an editions mint path actually going live first; currently `doMint()` shows "chain integration is in development" for every type except exolocation |
+| `CardRarity`/`rarityScore`/on-chain `Rarity` trait removed from data files | ✅ Shipped — all 27 cards, 3 editions; `collector-cards.ts` also converted from a fake shim (was actually an already-drifted independent duplicate) into a real re-export |
+| `CollectorCard.vue` score bar + rarity label removed | ✅ Shipped — stats bar rebalanced to Edition/Minted; per-tier hover glow replaced with a per-card `--card-glow` custom property |
+| `GalleryPage.vue` rarity filters/counts/ticker/score bar removed | ✅ Shipped — filter tabs removed outright (redundant with the edition switcher already on the page); hero-fan selection now fixed by card order instead of rarity |
+| `MainLayout.vue` marketing copy updated | ✅ Shipped |
+| Universal pre-mint disclaimer (generalized beyond exolocation) | 🔲 Still blocked on an editions mint path actually going live first; currently `doMint()` shows "chain integration is in development" for every type except exolocation |
+
+**One unrelated bug fixed along the way:** verifying cross-edition browsing surfaced a genuine pre-existing crash in `CollectorCardBack.vue` — a broken `v-for2`/`:key2` (not real Vue syntax, dead/non-functional markup) on card #20's decoration, plus a stale `card.rarity.toUpperCase()` call — both threw and crashed the whole gallery page when switching to Edition 2. Neither was introduced by this change; both blocked verifying it, so both are fixed in the same commit.
 
 ## 7. Explicitly not part of this
 
