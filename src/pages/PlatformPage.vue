@@ -27,6 +27,7 @@
         <router-link to="/galactic-center" class="pl-quick-link">/galactic-center</router-link>
         <router-link to="/clusters" class="pl-quick-link">/clusters</router-link>
         <router-link to="/eco-ops" class="pl-quick-link">/eco-ops</router-link>
+        <router-link to="/rewards" class="pl-quick-link">/rewards</router-link>
         <router-link to="/blog" class="pl-quick-link">/blog</router-link>
         <router-link to="/docs" class="pl-quick-link">/docs</router-link>
         <router-link to="/data-coverage" class="pl-quick-link">/data-coverage</router-link>
@@ -65,6 +66,18 @@
                 </ul>
               </div>
             </div>
+          </div>
+
+          <div class="pl-callout pl-callout--program">
+            <strong>New — Financial Literacy Power-Up:</strong> Exotopia now ties settlement
+            privileges to personal finance literacy, measured against the TIAA Institute–GFLEC
+            <strong>P-Fin Index</strong>. Answer the 8 questions of the <strong>P-Fin 8</strong>
+            (one per literacy area — earning, consuming, saving, investing, borrowing &amp;
+            managing debt, insuring, comprehending risk, and go-to information sources) to unlock
+            a personal link-page settlement seed. Master all <strong>28 questions</strong> of the
+            full P-Fin Index across those same 8 areas and the settlement upgrades into a numbered
+            parallel-universe world with the full Train &amp; Certify toolset. This is education,
+            not a financial product — nothing here moves money, extends credit, or manages assets.
           </div>
 
           <div class="pl-callout pl-callout--note">
@@ -250,8 +263,8 @@ const SECTIONS = [
 ]
 
 const STATUS_SUMMARY = [
-  { label: 'live features', count: 22, color: 'green'  },
-  { label: 'in progress',   count:  7, color: 'amber'  },
+  { label: 'live features', count: 25, color: 'green'  },
+  { label: 'in progress',   count: 10, color: 'amber'  },
   { label: 'known bugs',    count:  6, color: 'red'    },
   { label: 'planned',       count: 12, color: 'cyan'   },
   { label: 'vision items',  count:  9, color: 'purple' },
@@ -329,6 +342,11 @@ const TIMELINE = [
       'Void math page: Hamaus density profile, conduit placement math',
       'Sky Lessons L3: galactic center astrophysics (grad/public science)',
       'Local Void and Boötes Void member catalogs',
+      'Financial literacy incentive program: P-Fin 8 (8Q) unlock + full P-Fin Index (28Q) mastery gate for parallel-universe settlements',
+      'Rewards ledger: volunteering + educating-others (mentorship) tracks, server-enforced double-confirm mentor sessions',
+      'PFAS/PFOA citizen science tooling: curated methods library, public project log, method proposals with endorsements',
+      'VoidDefenderNav bottom nav strip for void pages; camera-framing fix for void-scale (45–130 Mpc) member catalogs',
+      'Iris/lightning wipe navigation with directional bearing handoff, replacing hard route-cut transitions across 7 pages',
     ],
   },
 ]
@@ -363,6 +381,15 @@ const LIVE_GROUPS = [
       { url: '/eco-ops',           desc: 'Eco-ops hub — PFAS monitoring, water quality, macroinvertebrate sampling', data: 'Offline-first IndexedDB queue' },
       { url: '/eco-ledger',        desc: 'Field record ledger — submitted observations with sync status', data: 'Supabase eco_ops schema (pending)' },
       { url: '/eco-library',       desc: 'Ecology library — protocols, field guides, Acopian blind specs',            data: 'docs/eco-ops-workflow-guide.md' },
+    ],
+  },
+  {
+    heading: 'Rewards & citizen science incentives',
+    features: [
+      { url: '/rewards',             desc: 'Points ledger across finance-literacy, volunteering, and educating-others (mentorship) tracks; certificate + settlement-object unlocks', data: 'Supabase 002_rewards.sql' },
+      { url: '/rewards-guide',       desc: 'Plain-language explainer for how the points/certificate system works and what it does not do (no payments, no ZK proofs)', data: '' },
+      { url: '/pfas-citizen-science',desc: 'PFAS/PFOA methods library, browse/start decontamination projects, progress log, logging-streak tracking', data: 'Supabase 003_pfas_citizen_science.sql' },
+      { url: '/method-proposals',    desc: 'Public cleanup-method proposals with citations, community endorsement, server-rewarded endorsement trigger', data: '' },
     ],
   },
   {
@@ -448,6 +475,50 @@ const BUILDING = [
     desc: 'GitHub workflow templates, issue/PR labels, /claim bot action, GitLab mirror Action, data/submissions/ layout for bounty work. Documented in docs/git-collaboration-guide.md.',
     url: '/blog',
   },
+  {
+    title: 'Rewards & incentive ledger',
+    shipped: true,
+    desc: 'A leaner, Supabase-backed points-and-certificate system — not the full NFT/on-chain reward economy in SPEC.md §5–7, but a real foundation for three tracks: finance-literacy, volunteering, and educating-others (mentorship). Mentor-session confirmation is the one server-enforced path: a trigger locks the session record and only emits points once both mentor and mentee independently confirm, so no single client can fabricate a reward for two people.',
+    url: '/rewards',
+    details: [
+      'supabase/migrations/002_rewards.sql → append-only points ledger, certificates, mentor_sessions, admin allow-list',
+      'src/data/rewards-catalog.ts → point values, settlement-object catalog, P-Fin quiz reward mapping',
+      'src/stores/rewards.ts → RewardTrack = volunteering | finance_literacy | educating_others (no citizen_science or library_curation track exists yet — see SPEC.md §21.5)',
+      'src/pages/RewardsPage.vue → points by track, volunteer self-report, mentor panel, attach an unlocked object to a settlement',
+    ],
+  },
+  {
+    title: 'PFAS/PFOA citizen science tooling',
+    shipped: true,
+    desc: 'Built on top of the rewards ledger: a curated methods library (proven vs. emerging/unproven remediation methods, sampling-cost tiers, safe-sampling guidance), a public project-logging system, and a public method-proposal + endorsement system, all feeding the volunteering/educating-others tracks.',
+    url: '/pfas-citizen-science',
+    details: [
+      'supabase/migrations/003_pfas_citizen_science.sql → focus_areas, decon_projects, project_log_entries, method_proposals, proposal_endorsements, branch_settlements',
+      'src/data/pfas-methods-library.ts → GAC/ion-exchange/RO-NF/foam fractionation marked proven; electrochemical oxidation, SCWO, phytoremediation flagged emerging/unproven',
+      'src/lib/leech-vector.ts → simplified 24-dim (three stacked 8-vectors) Euclidean k-NN for branch-settlement comparison — explicitly not genuine Λ₂₄ lattice math',
+      'src/composables/useLoggingStreak.ts → shared consecutive-week streak calc, used by both the UI and the certificate-threshold check',
+    ],
+  },
+  {
+    title: 'VoidDefenderNav + void camera-framing fix',
+    shipped: true,
+    desc: 'ClusterInteriorPage, VoidInteriorPage, and VoidGalaxyPage now share a bottom nav strip (objects list grouped by near-wall/far-wall/deep-interior zone, plus a 360° edge ring for wall objects), matching the pattern the galaxy/surface/cosmic pages already had via DefenderNav. Along the way, a real bug was fixed: ClusterInteriorPage framed its initial camera using an offset sized for real clusters, which put the camera in empty space for void member catalogs 35–90× larger. The offset is now computed from the loaded members\' actual bounding radius (with a floor so real clusters keep their existing framing).',
+    url: '/void/bootes-void',
+    details: [
+      'src/components/VoidDefenderNav.vue → plain DOM/CSS, Vue-reactive, no canvas/tick-loop coupling',
+      'ClusterInteriorPage.vue → camera offset now derived from bounding radius of loaded members, not a fixed constant',
+    ],
+  },
+  {
+    title: 'Zoom-descent navigation: wipe + bearing handoff (partial — see below)',
+    shipped: true,
+    desc: 'Hard route-cut navigation between cosmic levels has been replaced with a sub-second directional wipe (\'iris\' 380ms / \'lightning\' 900ms) that carries a bearing angle across the route change, so the arriving scene starts facing the direction you were already looking. This is live across 7 pages. What has NOT shipped: the more ambitious Local Step Portal — a physical 3D portal object with a Gerstner-wave shader and a full-screen light-inversion crossing effect, specced in SPEC_ZOOM_DESCENT.md — is a complete, working module (src/lib/local-step-portal.ts, 607 lines) that no page currently imports or instantiates. The "Descend to surface" button still does a plain wipe. Likewise, "parking for other guests" refers to 5 named camera viewpoints onto the existing static mockup soul orbs (settlement:orb:fana-ka etc. in spatial-scopes.ts) — not live multiplayer guest presence, which remains unbuilt (SPEC.md §17 Phase 1+).',
+    details: [
+      'src/stores/scene-transition.ts → TransitionMode = lightning | iris (no inversion mode yet)',
+      'Used in CosmicPage, GalaxyPage, ClusterInteriorPage, ClusterGalaxyPage, ClusterSystemPage, VoidInteriorPage, VoidGalaxyPage',
+      'src/lib/local-step-portal.ts → LocalStepPortal class, built and unused — see SPEC.md §25 for the full audit',
+    ],
+  },
 ]
 
 // ── Known bugs ────────────────────────────────────────────────────────────
@@ -456,9 +527,9 @@ const BUGS = [
   {
     id: 'BUG-001',
     title: 'Void scale in ClusterInteriorPage',
-    fixed: false,
+    fixed: true,
     severity: 'low',
-    desc: 'ClusterInteriorPage uses SCENE_SCALE=80 (scene units per Mpc), appropriate for dense clusters with 1–2 Mpc virial radii. Local Void (45 Mpc) and Boötes Void (130 Mpc) render with offsets 35–90× larger than normal clusters, causing camera to start far from any galaxy. Members technically load correctly but the initial view is very sparse.',
+    desc: 'ClusterInteriorPage framed its initial camera with an offset sized for real clusters (1–2 Mpc virial radii). Local Void (45 Mpc) and Boötes Void (130 Mpc) member catalogs are 35–90× larger, so the camera started in essentially empty space even though members loaded correctly. Fixed by computing the camera offset from the actual bounding radius of the loaded members, with a floor so real clusters keep their prior framing.',
     affects: ['/cluster-interior/local-void', '/cluster-interior/bootes-void'],
   },
   {
@@ -546,6 +617,11 @@ const NEAR_TERM = [
     title: 'VoidInteriorPage scale for Local Void',
     effort: '2 days',
     desc: 'Fix the ClusterInteriorPage SCENE_SCALE issue for voids by detecting when the cluster slug is a void (rvir_mpc > 10) and scaling the scene units accordingly, or adding a dedicated VoidClusterPage that renders with MPC_SCALE = 1/15 matching CosmicPage.',
+  },
+  {
+    title: 'Wire the Local Step Portal into ClusterSystemPage',
+    effort: '1 week',
+    desc: 'src/lib/local-step-portal.ts already implements the full portal object (circum-polar orbit, Gerstner-wave shader driven by real planet physics, hover + approach states) — it just isn\'t instantiated anywhere. Remaining work: construct a LocalStepPortal per settled planet in ClusterSystemPage\'s tick loop, add an \'inversion\' TransitionMode to scene-transition.ts, and swap the "Descend to surface" button\'s plain wipe for the approach-then-inversion sequence SPEC_ZOOM_DESCENT.md §6.6–7.2 already specifies. See SPEC.md §25 for the full status audit.',
   },
 ]
 
@@ -639,6 +715,10 @@ const URL_API_GROUPS = [
       { pattern: '/mint',                               desc: 'NFT deed minting' },
       { pattern: '/pon-ink',                            desc: 'Settlement registry (PON.INK)' },
       { pattern: '/chains',                             desc: 'Chain / wallet status' },
+      { pattern: '/rewards',                            desc: 'Points ledger — finance-literacy / volunteering / educating-others tracks' },
+      { pattern: '/rewards-guide',                      desc: 'Plain-language guide to how rewards work' },
+      { pattern: '/pfas-citizen-science',                desc: 'PFAS/PFOA methods library + project logging' },
+      { pattern: '/method-proposals',                   desc: 'Public cleanup-method proposals + endorsements' },
     ],
   },
   {
@@ -890,8 +970,9 @@ onMounted(() => {
   line-height: 1.65;
   margin: 16px 0;
 }
-.pl-callout--note   { border-left: 3px solid #4488cc; background: rgba(68,136,204,0.07); color: #7799cc; }
-.pl-callout--vision { border-left: 3px solid #9966ee; background: rgba(153,102,238,0.07); color: #997acc; }
+.pl-callout--note    { border-left: 3px solid #4488cc; background: rgba(68,136,204,0.07); color: #7799cc; }
+.pl-callout--vision  { border-left: 3px solid #9966ee; background: rgba(153,102,238,0.07); color: #997acc; }
+.pl-callout--program { border-left: 3px solid #44cc88; background: rgba(68,204,136,0.07); color: #55bb99; }
 
 /* ── Live features ─────────────────────────────────────────────────────── */
 .pl-feat-group { margin-bottom: 8px; }

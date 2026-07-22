@@ -247,6 +247,30 @@ const routes: RouteRecordRaw[] = [
         meta: { title: 'Knowledge Quizzes' },
       },
       {
+        path: 'rewards',
+        name: 'rewards',
+        component: () => import('src/pages/RewardsPage.vue'),
+        meta: { title: 'Rewards & Settlement Incentives' },
+      },
+      {
+        path: 'rewards-guide',
+        name: 'rewards-guide',
+        component: () => import('src/pages/RewardsGuidePage.vue'),
+        meta: { title: 'How Rewards Work · Exotopia' },
+      },
+      {
+        path: 'pfas-citizen-science',
+        name: 'pfas-citizen-science',
+        component: () => import('src/pages/PfasCitizenSciencePage.vue'),
+        meta: { title: 'PFAS/PFOA Citizen Science · Exotopia' },
+      },
+      {
+        path: 'method-proposals',
+        name: 'method-proposals',
+        component: () => import('src/pages/MethodProposalsPage.vue'),
+        meta: { title: 'Method Proposals · Exotopia' },
+      },
+      {
         path: 'docs',
         name: 'docs',
         component: () => import('src/pages/DocPage0.vue'),
@@ -281,6 +305,24 @@ const routes: RouteRecordRaw[] = [
         name: 'blog-post',
         component: () => import('src/pages/BlogPostPage.vue'),
         meta: { title: 'Blog — SCD Hub' }, // actual title set dynamically in BlogPostPage.vue
+      },
+      {
+        path: 'terms',
+        name: 'terms',
+        component: () => import('src/pages/LegalDocPage.vue'),
+        meta: { docKey: 'terms', title: 'Terms of Service — Exotopia' },
+      },
+      {
+        path: 'privacy',
+        name: 'privacy',
+        component: () => import('src/pages/LegalDocPage.vue'),
+        meta: { docKey: 'privacy', title: 'Privacy Policy — Exotopia' },
+      },
+      {
+        path: 'community-guidelines',
+        name: 'community-guidelines',
+        component: () => import('src/pages/LegalDocPage.vue'),
+        meta: { docKey: 'community-guidelines', title: 'Community Guidelines — Exotopia' },
       },
       {
         path: 'pon-ink',

@@ -1,0 +1,334 @@
+Proposed planStopped
+# Settlement rewards & incentive tooling — foundation
+
+## Context
+
+The Platform page (`src/pages/PlatformPage.vue:70-80`) already makes a public promise: completing the **P-Fin 8** quiz (8 original questions, one per literacy area, aligned to the TIAA/GFLEC P-Fin framework) unlocks a settlement seed, and mastering the full **P-Fin 28** unlocks a numbered parallel-universe settlement "with the full Train & Certify toolset." Nothing backing that promise exists — `LearnPage.vue`'s `completeQuiz()` (line 152) just flips a dialog flag and discards the score.
+
+More broadly, three places in the app promise rewards for real-world effort and none of them persist anything:
+- **Onboard's "Train & Certify" path** (`OnboardPage.vue:442-482`): "Completing a module earns a certificate and an ecocity object."
+- **Eco-ops field submissions** (`src/stores/eco-offline.ts`): synced to Supabase but nothing reads the result as a reward signal.
+- **The "Help Build This Platform" / bounty path** (`OnboardPage.vue:483-523`): "Bounty earnings convertible to settlement upgrade tokens."
+
+A prior internal spec, `SPEC_ECOOPS_COMMUNITY_PLATFORM.md`, already designed a full points/certificate/mentorship system (Open Badges 3.0, iNaturalist sync, carbon accounting, PDF export, decay, tiers) but it was never built and is too large for this pass. §3.1's point table and §4's mentorship session-confirmation model are worth reusing directly since they already fit an MVP.
+
+**Goal**: ship one shared foundation — a ledger, a catalog, a store — that the three reward-earning paths (**finance-literacy education**, **volunteering**, **educating others** via mentorship) write into, so the About-page promise becomes real today and Train & Certify / bounty crediting have something to plug into as they mature.
+
+Confirmed with user: the P-Fin quiz content is original writing "aligned to the P-Fin framework," not a reproduction of TIAA/GFLEC's proprietary instrument.
+
+## Non-goals (this pass)
+
+- Open Badges 3.0 / signed JWTs, iNaturalist/GBIF sync, carbon accounting, PDF export — stays in the spec's §7 "not yet leveraged" list.
+- 3D rendering of settlement objects into the dome/interior scenes. Unlocked objects surface as an account-level inventory; attaching one to a settlement is a metadata write via the existing `updateSettlement()` (`src/lib/settlements.ts:68`), not new 3D asset work.
+- `eco_ops` schema tables (`monitoring_records`, etc.) referenced by `eco-offline.ts` genuinely don't exist in any migration yet (confirmed: only `001_blog_comments.sql` exists) — that gap is pre-existing and out of scope here. The volunteering hook fires *if* that insert ever succeeds, plus a self-report fallback that works today regardless.
+- No real admin-role system. `AdminPage.vue` currently has zero auth gating (confirmed — no `useMemberStore`/auth check anywhere in the file). This adds a minimal `admin_members` allow-list table, manually seeded the same way `001_blog_comments.sql` seeds its 7-member test group — not a roles system.
+- Bounty payouts themselves aren't built — only an admin-gated credit path (`adminGrantReward`) for when a bounty is manually judged complete.
+
+## Data flow (shape of the change)
+
+```mermaid
+flowchart LR
+  subgraph Sources
+    A[LearnPage.vue\ncompleteQuiz]
+    B[eco-offline.ts\nsyncNow — insert success]
+    C[RewardsPage.vue\nself-report volunteer hours]
+    D[mentor_sessions row\nboth parties confirm]
+    E[AdminPage.vue\nadminGrantReward — bounty credit]
+  end
+
+  A -->|awardQuizCompletion| Store[src/stores/rewards.ts]
+  B -->|logVolunteerAction| Store
+  C -->|selfReportVolunteerHours| Store
+  D -. DB trigger, not client .-> Ledger
+  E -->|adminGrantReward, is_admin gated| Store
+
+  Store --> Ledger[(reward_events\nappend-only)]
+  Ledger --> Certs[(certificates\nunique per member+type)]
+  Certs --> Objects[SETTLEMENT_OBJECTS lookup]
+  Objects --> Inventory[RewardsPage Impact Profile\nunlockedObjectKeys]
+  Inventory -->|updateSettlement key, objects| Settlements[settlements.ts\nlocalStorage SettlementRecord]
+```
+
+Everything is client-trust MVP (consistent with how `connections`/`settlements.ts` already work — RLS restricts *who* can write a row for themselves, not what point value they claim) **except** mentor-session confirmation, which is the one place a client could unilaterally fabricate a reward for someone else, so that path is server-enforced via trigger.
+
+## 1. Data model — `supabase/migrations/002_rewards.sql`
+
+Reuses `001_blog_comments.sql`'s primitives directly: `public.members` as the FK anchor, `public.connections`/`is_connected()` as the trust check for mentor pairing (no new social graph).
+
+```sql
+-- append-only points ledger
+CREATE TABLE public.reward_events (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  member_id uuid NOT NULL REFERENCES public.members(id) ON DELETE CASCADE,
+  track text NOT NULL CHECK (track IN ('volunteering','finance_literacy','educating_others')),
+  action_key text NOT NULL,     -- free text, not enum — new action types shouldn't need a migration
+  points int NOT NULL CHECK (points >= 0),
+  metadata jsonb,                -- quiz score, submission id, bounty issue url, mentor session id...
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+-- issued credentials (one per member per type)
+CREATE TABLE public.certificates (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  member_id uuid NOT NULL REFERENCES public.members(id) ON DELETE CASCADE,
+  certificate_type text NOT NULL,
+  settlement_object_key text,
+  source_event_id uuid REFERENCES public.reward_events(id),
+  issued_at timestamptz NOT NULL DEFAULT now(),
+  UNIQUE (member_id, certificate_type)
+);
+
+-- peer-to-peer "educating others" credit
+CREATE TABLE public.mentor_sessions (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  mentor_id uuid NOT NULL REFERENCES public.members(id) ON DELETE CASCADE,
+  mentee_id uuid NOT NULL REFERENCES public.members(id) ON DELETE CASCADE,
+  topic text,
+  confirmed_mentor bool NOT NULL DEFAULT false,
+  confirmed_mentee bool NOT NULL DEFAULT false,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  confirmed_at timestamptz,
+  CHECK (mentor_id <> mentee_id)
+);
+
+-- minimal admin allow-list (manual INSERT after real member signup, like the 001 seed)
+CREATE TABLE public.admin_members (member_id uuid PRIMARY KEY REFERENCES public.members(id) ON DELETE CASCADE);
+
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS boolean LANGUAGE sql SECURITY DEFINER AS $$
+  SELECT EXISTS (SELECT 1 FROM public.admin_members WHERE member_id = auth.uid())
+$$;
+
+-- convenience view for a future leaderboard
+CREATE VIEW public.member_points AS
+  SELECT member_id, COALESCE(SUM(points),0) AS total_points
+  FROM public.reward_events GROUP BY member_id;
+```
+
+**RLS**:
+- `reward_events` / `certificates` — SELECT `USING (true)` (public Impact Profile, same posture as `members_read_all`); INSERT `WITH CHECK (member_id = auth.uid() OR is_admin())`; no UPDATE/DELETE policy at all (append-only ledger enforced by omission).
+- `mentor_sessions` — SELECT `USING (mentor_id = auth.uid() OR mentee_id = auth.uid() OR is_admin())`; INSERT `WITH CHECK (mentor_id = auth.uid() AND is_connected(mentee_id))`; UPDATE `USING (mentor_id = auth.uid() OR mentee_id = auth.uid())`.
+- `admin_members` — SELECT only, no client INSERT policy (seeded manually via SQL, same as the `001` test-group pattern).
+
+**Anti-gaming for mentor sessions** — the one path where a single client could otherwise fabricate a reward for two people:
+- `BEFORE UPDATE` trigger `mentor_session_guard()`: forces `mentor_id`, `mentee_id`, `topic`, and `created_at` to stay equal to `OLD.*` regardless of what the client sends (only `confirmed_mentor`/`confirmed_mentee`/`confirmed_at` may change), and additionally forces `NEW.confirmed_mentor = OLD.confirmed_mentor` unless the caller is the mentor (`auth.uid() = OLD.mentor_id`), and `NEW.confirmed_mentee = OLD.confirmed_mentee` unless the caller is the mentee. Sets `confirmed_at = now()` the instant both flags become true.
+- `AFTER UPDATE ... WHEN (NEW.confirmed_at IS NOT NULL AND OLD.confirmed_at IS NULL)` trigger, `SECURITY DEFINER` (same escalation pattern as `is_connected()`), inserts one `reward_events` row for each of `mentor_id` and `mentee_id` at 40 pts each (matches `SPEC_ECOOPS_COMMUNITY_PLATFORM.md` §3.1's "Complete a mentorship session" line), server-side so a single client can't fabricate both sides. Also counts the mentor's confirmed sessions and issues a `mentorship` certificate at 4.
+
+## 2. Catalogs
+
+**`src/data/finance-literacy-quiz.ts`** — two `QuizArea`-shaped objects reusing the existing `QuizArea`/`QuizQuestion` interfaces from `src/data/quizzes.ts:7-24`: `pfin8` (8 original MC questions, one per P-Fin area: earning, consuming, saving, investing, borrowing & managing debt, insuring, comprehending risk, go-to information sources) and `pfin28` (28 original questions, ~3-4 per area). Import and append both into `QUIZ_AREAS` in `src/data/quizzes.ts`.
+
+**`src/data/rewards-catalog.ts`**:
+- `POINTS: Record<string, number>` — `pfin8_complete: 25`, `pfin28_complete: 60`, `eco_submission: 10`, `volunteer_self_report: 5` (per-hour, capped — see store), `mentor_session: 40` (mirrors spec §3.1 where categories overlap).
+- `SETTLEMENT_OBJECTS: { key, label, color, unlockedBy: { track, actionKey } }[]` — reuse the exact palette already in `OnboardPage.vue`'s `settlementItems` (`#44ff88`, `#ffaa33`, `#cc88ff`, `#00e5ff`, `#00e5ff`) for visual continuity with onboarding.
+- `QUIZ_REWARD_MAP: Record<string, { track, actionKey, certificateType, settlementObjectKey, minScore, prerequisite: string | null }>` — `pfin8: { minScore: 6, prerequisite: null }`, `pfin28: { minScore: 20, prerequisite: 'pfin8' }`.
+
+## 3. Rewards store — `src/stores/rewards.ts`
+
+Pinia store, same shape as `src/stores/member.ts` (module ref state + `supabase` client + computed):
+- `loadMyRewards()` — selects `reward_events` / `certificates` / `mentor_sessions` for `auth.uid()`; call from a `watch` on `useMemberStore().userId` (mirrors `member.ts`'s `_loadProfile` trigger on auth state change).
+- `totalPoints`, `pointsByTrack` — computed from loaded `reward_events`.
+- `unlockedCertificateTypes`, `unlockedObjectKeys` — computed from `certificates` → `SETTLEMENT_OBJECTS`.
+- `awardQuizCompletion(areaId, score, total)` — look up `QUIZ_REWARD_MAP[areaId]`; no-op if missing (non-P-Fin quizzes stay reward-free); bail if `score < minScore` or prerequisite certificate missing; insert `reward_events` row, then insert `certificates` row (`ON CONFLICT (member_id, certificate_type) DO NOTHING` — idempotent against double-submission).
+- `logVolunteerAction(actionKey, metadata)` — thin insert, called from `eco-offline.ts` on real sync success.
+- `selfReportVolunteerHours(description, hours)` — MVP fallback since `eco_ops` tables don't exist; `points = min(hours, 4) * POINTS.volunteer_self_report`, `metadata: { description, hours, selfReported: true }`; UI must label this as self-reported (see §4).
+- `requestMentorSession(menteeId, topic)`, `confirmMentorSession(sessionId)` — thin insert/update wrappers; reward emission happens in the DB trigger, not client code.
+- `adminGrantReward(memberId, track, actionKey, points, metadata)` — for bounty/doc-contribution credit; relies on `is_admin()` at the RLS layer to reject non-admin callers, not on client-side gating.
+
+## 4. UI
+
+- **`src/pages/RewardsPage.vue`** (new) — route `/rewards`, registered in `src/router/routes.ts` next to the `learn`/`docs` entries, same shape (`path`, `name`, lazy `component`, `meta.title`). Gate on `useMemberStore().isSignedIn`; when signed out, render the existing `<MemberSignIn />` component (`src/components/MemberSignIn.vue`, already used by `BlogComments.vue`) instead of building new auth UI. Sections: points summary tiles (3 tracks via `pointsByTrack`), finance-literacy status card linking to `/learn`, volunteering self-report form + auto-logged action list, educating-others panel (mentor request against `useMemberStore().connectedIds`, pending sessions with a confirm button), and an Impact Profile listing certificates + unlocked objects with a picker that calls `updateSettlement(key, { objects: [...] })` against one of the member's existing settlements from `useSettlements().settlements`.
+- **`src/lib/settlements.ts`** — add `objects?: string[]` to `SettlementRecord` (`settlements.ts:6-18`). No new functions — `updateSettlement` (`settlements.ts:68`) already accepts an arbitrary `Partial<SettlementRecord>` patch.
+- **`src/pages/LearnPage.vue`** — this needs small real additions, not just new data:
+  - In `completeQuiz()` (line 152), if `QUIZ_REWARD_MAP[activeArea.value.id]` exists, call `useRewardsStore().awardQuizCompletion(activeArea.value.id, score.value, activeArea.value.questions.length)`, and surface the result (points earned / certificate issued) in the existing completion dialog (`complete-card`, lines 96-107).
+  - Lock the `pfin28` card in the `lp-grid` (disable `@click`, add a visual "complete P-Fin 8 first" state) until `useRewardsStore().unlockedCertificateTypes` contains `pfin8` — there's currently no locking mechanic in this page at all, so this is new, not reused, logic.
+- **`src/stores/eco-offline.ts`** — in `syncNow()` (line 197), right after `if (error) throw error` (line 211) and before the photo-upload loop (so points aren't blocked by photo failures), call `useRewardsStore().logVolunteerAction('eco_submission', { type: item.type, siteId: item.siteId })`.
+- **`src/router/routes.ts`** — add the `/rewards` route (after `learn`, before `docs`, matching file order).
+- **`src/pages/PlatformPage.vue`** — add `<router-link to="/rewards" class="pl-quick-link">/rewards</router-link>` to the QUICK LINKS list at line 29-31, alongside `/eco-ops`, `/blog`, `/docs`.
+- **`src/pages/OnboardPage.vue`** — add a `{ id: 'rewards-link', ..., to: '/rewards' }`-shaped commitment (reusing the existing `Commitment` interface, `OnboardPage.vue:335-342`) to the `certify` path's `commitments[]` (ties Train & Certify into the new system) and, since the bounty promise lives there, the `help` path's `commitments[]` too. Copy-only change — no restructuring of the funnel.
+
+## Implementation order
+
+1. `supabase/migrations/002_rewards.sql` — tables, RLS, triggers.
+2. `src/data/finance-literacy-quiz.ts` + append into `src/data/quizzes.ts`.
+3. `src/data/rewards-catalog.ts`.
+4. `src/stores/rewards.ts`.
+5. Wire `LearnPage.vue` and `eco-offline.ts` into the store.
+6. `RewardsPage.vue` + route + `settlements.ts` `objects` field.
+7. Copy/link additions in `PlatformPage.vue` and `OnboardPage.vue`.
+
+## Verification
+
+- Push the migration (`supabase db push` or run it against the project's instance); confirm `reward_events`, `certificates`, `mentor_sessions`, `admin_members`, `member_points` exist with RLS enabled and no UPDATE/DELETE policy on the first two.
+- SQL-level trigger test: as two different `auth.uid()` contexts, confirm a party flipping the *other* party's confirmation flag on a `mentor_sessions` row has no effect, that `mentor_id`/`mentee_id`/`topic` are immutable via UPDATE, and that both-true produces exactly two `reward_events` rows (not zero, not four on a re-run).
+- `npm run dev`, sign in via `MemberSignIn`, visit `/learn`: confirm `pfin28` is locked, complete `pfin8` at ≥6/8, confirm a `finance_literacy`/`pfin8_complete` row lands in `reward_events`, a `pfin8` certificate issues, and `pfin28` unlocks. Visit `/rewards` and confirm the certificate and points show up.
+- On `/rewards`, submit a self-reported volunteer entry, confirm it appears capped and labeled self-reported.
+- Between two green-light-connected test accounts, request → confirm a mentor session from both sides; confirm points land for both and a `mentorship` certificate issues at the 4-session mark.
+- Attach an unlocked object to an existing settlement via the Impact Profile picker; confirm `localStorage`'s `e8.1` key (`settlements.ts:4`) now carries the `objects` array on that record.
+Proposed planStopped
+# Settlement rewards & incentive tooling — foundation
+
+## Context
+
+The Platform page (`src/pages/PlatformPage.vue:70-80`) already makes a public promise: completing the **P-Fin 8** quiz (8 original questions, one per literacy area, aligned to the TIAA/GFLEC P-Fin framework) unlocks a settlement seed, and mastering the full **P-Fin 28** unlocks a numbered parallel-universe settlement "with the full Train & Certify toolset." Nothing backing that promise exists — `LearnPage.vue`'s `completeQuiz()` (line 152) just flips a dialog flag and discards the score.
+
+More broadly, three places in the app promise rewards for real-world effort and none of them persist anything:
+- **Onboard's "Train & Certify" path** (`OnboardPage.vue:442-482`): "Completing a module earns a certificate and an ecocity object."
+- **Eco-ops field submissions** (`src/stores/eco-offline.ts`): synced to Supabase but nothing reads the result as a reward signal.
+- **The "Help Build This Platform" / bounty path** (`OnboardPage.vue:483-523`): "Bounty earnings convertible to settlement upgrade tokens."
+
+A prior internal spec, `SPEC_ECOOPS_COMMUNITY_PLATFORM.md`, already designed a full points/certificate/mentorship system (Open Badges 3.0, iNaturalist sync, carbon accounting, PDF export, decay, tiers) but it was never built and is too large for this pass. §3.1's point table and §4's mentorship session-confirmation model are worth reusing directly since they already fit an MVP.
+
+**Goal**: ship one shared foundation — a ledger, a catalog, a store — that the three reward-earning paths (**finance-literacy education**, **volunteering**, **educating others** via mentorship) write into, so the About-page promise becomes real today and Train & Certify / bounty crediting have something to plug into as they mature.
+
+Confirmed with user: the P-Fin quiz content is original writing "aligned to the P-Fin framework," not a reproduction of TIAA/GFLEC's proprietary instrument.
+
+## Non-goals (this pass)
+
+- Open Badges 3.0 / signed JWTs, iNaturalist/GBIF sync, carbon accounting, PDF export — stays in the spec's §7 "not yet leveraged" list.
+- 3D rendering of settlement objects into the dome/interior scenes. Unlocked objects surface as an account-level inventory; attaching one to a settlement is a metadata write via the existing `updateSettlement()` (`src/lib/settlements.ts:68`), not new 3D asset work.
+- `eco_ops` schema tables (`monitoring_records`, etc.) referenced by `eco-offline.ts` genuinely don't exist in any migration yet (confirmed: only `001_blog_comments.sql` exists) — that gap is pre-existing and out of scope here. The volunteering hook fires *if* that insert ever succeeds, plus a self-report fallback that works today regardless.
+- No real admin-role system. `AdminPage.vue` currently has zero auth gating (confirmed — no `useMemberStore`/auth check anywhere in the file). This adds a minimal `admin_members` allow-list table, manually seeded the same way `001_blog_comments.sql` seeds its 7-member test group — not a roles system.
+- Bounty payouts themselves aren't built — only an admin-gated credit path (`adminGrantReward`) for when a bounty is manually judged complete.
+
+## Data flow (shape of the change)
+
+```mermaid
+flowchart LR
+  subgraph Sources
+    A[LearnPage.vue\ncompleteQuiz]
+    B[eco-offline.ts\nsyncNow — insert success]
+    C[RewardsPage.vue\nself-report volunteer hours]
+    D[mentor_sessions row\nboth parties confirm]
+    E[AdminPage.vue\nadminGrantReward — bounty credit]
+  end
+
+  A -->|awardQuizCompletion| Store[src/stores/rewards.ts]
+  B -->|logVolunteerAction| Store
+  C -->|selfReportVolunteerHours| Store
+  D -. DB trigger, not client .-> Ledger
+  E -->|adminGrantReward, is_admin gated| Store
+
+  Store --> Ledger[(reward_events\nappend-only)]
+  Ledger --> Certs[(certificates\nunique per member+type)]
+  Certs --> Objects[SETTLEMENT_OBJECTS lookup]
+  Objects --> Inventory[RewardsPage Impact Profile\nunlockedObjectKeys]
+  Inventory -->|updateSettlement key, objects| Settlements[settlements.ts\nlocalStorage SettlementRecord]
+```
+
+Everything is client-trust MVP (consistent with how `connections`/`settlements.ts` already work — RLS restricts *who* can write a row for themselves, not what point value they claim) **except** mentor-session confirmation, which is the one place a client could unilaterally fabricate a reward for someone else, so that path is server-enforced via trigger.
+
+## 1. Data model — `supabase/migrations/002_rewards.sql`
+
+Reuses `001_blog_comments.sql`'s primitives directly: `public.members` as the FK anchor, `public.connections`/`is_connected()` as the trust check for mentor pairing (no new social graph).
+
+```sql
+-- append-only points ledger
+CREATE TABLE public.reward_events (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  member_id uuid NOT NULL REFERENCES public.members(id) ON DELETE CASCADE,
+  track text NOT NULL CHECK (track IN ('volunteering','finance_literacy','educating_others')),
+  action_key text NOT NULL,     -- free text, not enum — new action types shouldn't need a migration
+  points int NOT NULL CHECK (points >= 0),
+  metadata jsonb,                -- quiz score, submission id, bounty issue url, mentor session id...
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+-- issued credentials (one per member per type)
+CREATE TABLE public.certificates (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  member_id uuid NOT NULL REFERENCES public.members(id) ON DELETE CASCADE,
+  certificate_type text NOT NULL,
+  settlement_object_key text,
+  source_event_id uuid REFERENCES public.reward_events(id),
+  issued_at timestamptz NOT NULL DEFAULT now(),
+  UNIQUE (member_id, certificate_type)
+);
+
+-- peer-to-peer "educating others" credit
+CREATE TABLE public.mentor_sessions (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  mentor_id uuid NOT NULL REFERENCES public.members(id) ON DELETE CASCADE,
+  mentee_id uuid NOT NULL REFERENCES public.members(id) ON DELETE CASCADE,
+  topic text,
+  confirmed_mentor bool NOT NULL DEFAULT false,
+  confirmed_mentee bool NOT NULL DEFAULT false,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  confirmed_at timestamptz,
+  CHECK (mentor_id <> mentee_id)
+);
+
+-- minimal admin allow-list (manual INSERT after real member signup, like the 001 seed)
+CREATE TABLE public.admin_members (member_id uuid PRIMARY KEY REFERENCES public.members(id) ON DELETE CASCADE);
+
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS boolean LANGUAGE sql SECURITY DEFINER AS $$
+  SELECT EXISTS (SELECT 1 FROM public.admin_members WHERE member_id = auth.uid())
+$$;
+
+-- convenience view for a future leaderboard
+CREATE VIEW public.member_points AS
+  SELECT member_id, COALESCE(SUM(points),0) AS total_points
+  FROM public.reward_events GROUP BY member_id;
+```
+
+**RLS**:
+- `reward_events` / `certificates` — SELECT `USING (true)` (public Impact Profile, same posture as `members_read_all`); INSERT `WITH CHECK (member_id = auth.uid() OR is_admin())`; no UPDATE/DELETE policy at all (append-only ledger enforced by omission).
+- `mentor_sessions` — SELECT `USING (mentor_id = auth.uid() OR mentee_id = auth.uid() OR is_admin())`; INSERT `WITH CHECK (mentor_id = auth.uid() AND is_connected(mentee_id))`; UPDATE `USING (mentor_id = auth.uid() OR mentee_id = auth.uid())`.
+- `admin_members` — SELECT only, no client INSERT policy (seeded manually via SQL, same as the `001` test-group pattern).
+
+**Anti-gaming for mentor sessions** — the one path where a single client could otherwise fabricate a reward for two people:
+- `BEFORE UPDATE` trigger `mentor_session_guard()`: forces `mentor_id`, `mentee_id`, `topic`, and `created_at` to stay equal to `OLD.*` regardless of what the client sends (only `confirmed_mentor`/`confirmed_mentee`/`confirmed_at` may change), and additionally forces `NEW.confirmed_mentor = OLD.confirmed_mentor` unless the caller is the mentor (`auth.uid() = OLD.mentor_id`), and `NEW.confirmed_mentee = OLD.confirmed_mentee` unless the caller is the mentee. Sets `confirmed_at = now()` the instant both flags become true.
+- `AFTER UPDATE ... WHEN (NEW.confirmed_at IS NOT NULL AND OLD.confirmed_at IS NULL)` trigger, `SECURITY DEFINER` (same escalation pattern as `is_connected()`), inserts one `reward_events` row for each of `mentor_id` and `mentee_id` at 40 pts each (matches `SPEC_ECOOPS_COMMUNITY_PLATFORM.md` §3.1's "Complete a mentorship session" line), server-side so a single client can't fabricate both sides. Also counts the mentor's confirmed sessions and issues a `mentorship` certificate at 4.
+
+## 2. Catalogs
+
+**`src/data/finance-literacy-quiz.ts`** — two `QuizArea`-shaped objects reusing the existing `QuizArea`/`QuizQuestion` interfaces from `src/data/quizzes.ts:7-24`: `pfin8` (8 original MC questions, one per P-Fin area: earning, consuming, saving, investing, borrowing & managing debt, insuring, comprehending risk, go-to information sources) and `pfin28` (28 original questions, ~3-4 per area). Import and append both into `QUIZ_AREAS` in `src/data/quizzes.ts`.
+
+**`src/data/rewards-catalog.ts`**:
+- `POINTS: Record<string, number>` — `pfin8_complete: 25`, `pfin28_complete: 60`, `eco_submission: 10`, `volunteer_self_report: 5` (per-hour, capped — see store), `mentor_session: 40` (mirrors spec §3.1 where categories overlap).
+- `SETTLEMENT_OBJECTS: { key, label, color, unlockedBy: { track, actionKey } }[]` — reuse the exact palette already in `OnboardPage.vue`'s `settlementItems` (`#44ff88`, `#ffaa33`, `#cc88ff`, `#00e5ff`, `#00e5ff`) for visual continuity with onboarding.
+- `QUIZ_REWARD_MAP: Record<string, { track, actionKey, certificateType, settlementObjectKey, minScore, prerequisite: string | null }>` — `pfin8: { minScore: 6, prerequisite: null }`, `pfin28: { minScore: 20, prerequisite: 'pfin8' }`.
+
+## 3. Rewards store — `src/stores/rewards.ts`
+
+Pinia store, same shape as `src/stores/member.ts` (module ref state + `supabase` client + computed):
+- `loadMyRewards()` — selects `reward_events` / `certificates` / `mentor_sessions` for `auth.uid()`; call from a `watch` on `useMemberStore().userId` (mirrors `member.ts`'s `_loadProfile` trigger on auth state change).
+- `totalPoints`, `pointsByTrack` — computed from loaded `reward_events`.
+- `unlockedCertificateTypes`, `unlockedObjectKeys` — computed from `certificates` → `SETTLEMENT_OBJECTS`.
+- `awardQuizCompletion(areaId, score, total)` — look up `QUIZ_REWARD_MAP[areaId]`; no-op if missing (non-P-Fin quizzes stay reward-free); bail if `score < minScore` or prerequisite certificate missing; insert `reward_events` row, then insert `certificates` row (`ON CONFLICT (member_id, certificate_type) DO NOTHING` — idempotent against double-submission).
+- `logVolunteerAction(actionKey, metadata)` — thin insert, called from `eco-offline.ts` on real sync success.
+- `selfReportVolunteerHours(description, hours)` — MVP fallback since `eco_ops` tables don't exist; `points = min(hours, 4) * POINTS.volunteer_self_report`, `metadata: { description, hours, selfReported: true }`; UI must label this as self-reported (see §4).
+- `requestMentorSession(menteeId, topic)`, `confirmMentorSession(sessionId)` — thin insert/update wrappers; reward emission happens in the DB trigger, not client code.
+- `adminGrantReward(memberId, track, actionKey, points, metadata)` — for bounty/doc-contribution credit; relies on `is_admin()` at the RLS layer to reject non-admin callers, not on client-side gating.
+
+## 4. UI
+
+- **`src/pages/RewardsPage.vue`** (new) — route `/rewards`, registered in `src/router/routes.ts` next to the `learn`/`docs` entries, same shape (`path`, `name`, lazy `component`, `meta.title`). Gate on `useMemberStore().isSignedIn`; when signed out, render the existing `<MemberSignIn />` component (`src/components/MemberSignIn.vue`, already used by `BlogComments.vue`) instead of building new auth UI. Sections: points summary tiles (3 tracks via `pointsByTrack`), finance-literacy status card linking to `/learn`, volunteering self-report form + auto-logged action list, educating-others panel (mentor request against `useMemberStore().connectedIds`, pending sessions with a confirm button), and an Impact Profile listing certificates + unlocked objects with a picker that calls `updateSettlement(key, { objects: [...] })` against one of the member's existing settlements from `useSettlements().settlements`.
+- **`src/lib/settlements.ts`** — add `objects?: string[]` to `SettlementRecord` (`settlements.ts:6-18`). No new functions — `updateSettlement` (`settlements.ts:68`) already accepts an arbitrary `Partial<SettlementRecord>` patch.
+- **`src/pages/LearnPage.vue`** — this needs small real additions, not just new data:
+  - In `completeQuiz()` (line 152), if `QUIZ_REWARD_MAP[activeArea.value.id]` exists, call `useRewardsStore().awardQuizCompletion(activeArea.value.id, score.value, activeArea.value.questions.length)`, and surface the result (points earned / certificate issued) in the existing completion dialog (`complete-card`, lines 96-107).
+  - Lock the `pfin28` card in the `lp-grid` (disable `@click`, add a visual "complete P-Fin 8 first" state) until `useRewardsStore().unlockedCertificateTypes` contains `pfin8` — there's currently no locking mechanic in this page at all, so this is new, not reused, logic.
+- **`src/stores/eco-offline.ts`** — in `syncNow()` (line 197), right after `if (error) throw error` (line 211) and before the photo-upload loop (so points aren't blocked by photo failures), call `useRewardsStore().logVolunteerAction('eco_submission', { type: item.type, siteId: item.siteId })`.
+- **`src/router/routes.ts`** — add the `/rewards` route (after `learn`, before `docs`, matching file order).
+- **`src/pages/PlatformPage.vue`** — add `<router-link to="/rewards" class="pl-quick-link">/rewards</router-link>` to the QUICK LINKS list at line 29-31, alongside `/eco-ops`, `/blog`, `/docs`.
+- **`src/pages/OnboardPage.vue`** — add a `{ id: 'rewards-link', ..., to: '/rewards' }`-shaped commitment (reusing the existing `Commitment` interface, `OnboardPage.vue:335-342`) to the `certify` path's `commitments[]` (ties Train & Certify into the new system) and, since the bounty promise lives there, the `help` path's `commitments[]` too. Copy-only change — no restructuring of the funnel.
+
+## Implementation order
+
+1. `supabase/migrations/002_rewards.sql` — tables, RLS, triggers.
+2. `src/data/finance-literacy-quiz.ts` + append into `src/data/quizzes.ts`.
+3. `src/data/rewards-catalog.ts`.
+4. `src/stores/rewards.ts`.
+5. Wire `LearnPage.vue` and `eco-offline.ts` into the store.
+6. `RewardsPage.vue` + route + `settlements.ts` `objects` field.
+7. Copy/link additions in `PlatformPage.vue` and `OnboardPage.vue`.
+
+## Verification
+
+- Push the migration (`supabase db push` or run it against the project's instance); confirm `reward_events`, `certificates`, `mentor_sessions`, `admin_members`, `member_points` exist with RLS enabled and no UPDATE/DELETE policy on the first two.
+- SQL-level trigger test: as two different `auth.uid()` contexts, confirm a party flipping the *other* party's confirmation flag on a `mentor_sessions` row has no effect, that `mentor_id`/`mentee_id`/`topic` are immutable via UPDATE, and that both-true produces exactly two `reward_events` rows (not zero, not four on a re-run).
+- `npm run dev`, sign in via `MemberSignIn`, visit `/learn`: confirm `pfin28` is locked, complete `pfin8` at ≥6/8, confirm a `finance_literacy`/`pfin8_complete` row lands in `reward_events`, a `pfin8` certificate issues, and `pfin28` unlocks. Visit `/rewards` and confirm the certificate and points show up.
+- On `/rewards`, submit a self-reported volunteer entry, confirm it appears capped and labeled self-reported.
+- Between two green-light-connected test accounts, request → confirm a mentor session from both sides; confirm points land for both and a `mentorship` certificate issues at the 4-session mark.
+- Attach an unlocked object to an existing settlement via the Impact Profile picker; confirm `localStorage`'s `e8.1` key (`settlements.ts:4`) now carries the `objects` array on that record.

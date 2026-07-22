@@ -3,6 +3,7 @@
  * Knowledge quiz content for core SCD Hub domains.
  * Each area produces a badge on completion.
  */
+import { FINANCE_LITERACY_AREAS } from './finance-literacy-quiz'
 
 export interface QuizQuestion {
   question:    string
@@ -235,5 +236,8 @@ export const QUIZ_AREAS: QuizArea[] = [
       },
     ],
   },
+
+  // ── PERSONAL FINANCE LITERACY (P-Fin) ────────────────────────────────────
+  ...FINANCE_LITERACY_AREAS,
 
 ]

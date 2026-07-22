@@ -16,8 +16,9 @@
         v-for="area in quizAreas"
         :key="area.id"
         class="lp-card"
+        :class="{ 'lp-card--locked': isLocked(area) }"
         :style="{ '--qcolor': area.color }"
-        @click="openQuiz(area)"
+        @click="!isLocked(area) && openQuiz(area)"
       >
         <div class="lp-card__icon">{{ area.emoji }}</div>
         <div class="lp-card__body">
@@ -32,7 +33,8 @@
         <div class="lp-card__badge" v-if="area.badge">
           <span>🏅 {{ area.badge }}</span>
         </div>
-        <div class="lp-card__cta">Start →</div>
+        <div class="lp-card__cta" v-if="!isLocked(area)">Start →</div>
+        <div class="lp-card__cta" v-else>🔒 Complete {{ prerequisiteTitle(area) }} first</div>
       </div>
     </div>
 
@@ -110,10 +112,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { QUIZ_AREAS, type QuizArea } from 'src/data/quizzes'
+import { QUIZ_REWARD_MAP } from 'src/data/rewards-catalog'
+import { useRewardsStore } from 'src/stores/rewards'
+import { useMemberStore } from 'src/stores/member'
 
 const quizAreas = QUIZ_AREAS
+const rewards   = useRewardsStore()
+const member    = useMemberStore()
+
+onMounted(() => { void rewards.loadMyRewards() })
+watch(() => member.userId, (id) => { if (id) void rewards.loadMyRewards() })
 
 const quizOpen       = ref(false)
 const completionOpen = ref(false)
@@ -126,6 +136,19 @@ const score          = ref(0)
 const activeQ = computed(() =>
   activeArea.value ? activeArea.value.questions[qIndex.value] ?? null : null
 )
+
+function isLocked(area: QuizArea): boolean {
+  const cfg = QUIZ_REWARD_MAP[area.id]
+  if (!cfg?.prerequisite) return false
+  const prereqType = QUIZ_REWARD_MAP[cfg.prerequisite]?.certificateType
+  return !prereqType || !rewards.certificateTypes.has(prereqType)
+}
+
+function prerequisiteTitle(area: QuizArea): string {
+  const cfg = QUIZ_REWARD_MAP[area.id]
+  const prereq = cfg?.prerequisite ? quizAreas.find(a => a.id === cfg.prerequisite) : null
+  return prereq?.title ?? 'prerequisite'
+}
 
 function openQuiz(area: QuizArea) {
   activeArea.value = area
@@ -152,6 +175,10 @@ function nextQ() {
 function completeQuiz() {
   quizOpen.value       = false
   completionOpen.value = true
+  const area = activeArea.value
+  if (area && QUIZ_REWARD_MAP[area.id]) {
+    void rewards.awardQuizCompletion(area.id, score.value, area.questions.length)
+  }
 }
 
 function closeQuiz() {
@@ -195,6 +222,8 @@ function closeQuiz() {
   border-color: var(--qcolor, rgba(0,180,220,0.35));
   transform: translateY(-2px);
 }
+.lp-card--locked { cursor: default; opacity: 0.5; }
+.lp-card--locked:hover { border-color: rgba(255,255,255,0.06); transform: none; }
 
 .lp-card__icon { font-size: 28px; }
 .lp-card__body { flex: 1; }

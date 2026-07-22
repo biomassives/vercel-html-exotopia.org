@@ -186,6 +186,16 @@
         <span v-if="!uiVisible" class="vi-hud-tap">· tap for info</span>
       </span>
     </div>
+
+    <VoidDefenderNav
+      v-if="oracleData"
+      :void-id="String(route.params.voidId ?? 'bootes-void')"
+      :void-name="displayName"
+      :members="voidNavMembers"
+      :current-id="selGalaxy?.gid"
+      :bottom-px="110"
+      @select="selectVoidNavMember"
+    />
   </q-page>
 </template>
 
@@ -199,6 +209,7 @@ import { disposeScene } from 'src/lib/three-utils'
 import { useSceneTransitionStore } from 'src/stores/scene-transition'
 import type { VoidOracleFile, VoidGalaxy } from 'src/data/void-oracle.types'
 import { loadVoidOracle } from 'src/lib/void-oracle'
+import VoidDefenderNav, { type VoidNavMember } from 'src/components/VoidDefenderNav.vue'
 
 // ── Route ──────────────────────────────────────────────────────────────────────
 
@@ -230,6 +241,28 @@ const agnPct = computed(() => {
   if (!oracleData.value) return '0.0'
   return ((oracleData.value.agn_count / oracleData.value.total_count) * 100).toFixed(1)
 })
+
+// "Limited objects" — real NED catalog galaxies only, not the generated filler
+// population used to bulk out the ambient render.
+const voidNavMembers = computed<VoidNavMember[]>(() => {
+  if (!oracleData.value) return []
+  return oracleData.value.galaxies
+    .filter(g => g.source === 'catalog')
+    .map(g => ({
+      id:       g.gid,
+      name:     g.gid,
+      zone:     g.is_wall ? 'wall' : 'interior',
+      angleDeg: Math.atan2(g.pos_void[2], g.pos_void[0]) * 180 / Math.PI,
+    }))
+})
+
+function selectVoidNavMember(memberId: string) {
+  const gal = oracleData.value?.galaxies.find(g => g.gid === memberId)
+  if (!gal) return
+  selGalaxy.value = gal
+  uiVisible.value = true
+  if (hideTimer) clearTimeout(hideTimer)
+}
 
 // ── Layer toggles + zoom + selection ─────────────────────────────────────────
 

@@ -348,6 +348,18 @@ export const BLOG_POSTS: BlogPostMeta[] = [
       'A fact-check turned into the post: "string of pearls" is a real term, but for young star clusters around a black hole in NGC 2110 (Swinburne, 2014), not for black holes at Sagittarius A*. The real, well-documented phenomenon is the 2018 Chandra "black hole swarm" finding (Hailey et al., Nature) — about a dozen detected stellar-mass black hole X-ray binaries within roughly a parsec of Sgr A*, implying a population of 10,000-20,000 black holes accumulated via dynamical friction over the galaxy\'s history. Covers the mechanism (mass segregation/dynamical friction), the eventual fate (extreme mass ratio inspirals, LISA-detectable), and ties it to the site\'s own IRS 13E object.',
     editorialNote: 'Companion to the black-hole-observatory-expansion post.',
   },
+  {
+    slug:     'following-through',
+    title:    'Following Through',
+    subtitle: 'A press release promised a working zero-knowledge payment system for our Kenya field partners. It doesn\'t exist yet. Here\'s what we actually shipped instead, and what changes about how we talk about this platform going forward.',
+    date:     'July 2026',
+    audience: ['community', 'ecosystem', 'dev'],
+    series:   'ecosystem',
+    status:   'public-draft',
+    description:
+      'An accountability post: the June 2026 Kenya press release described a working ZK-proof field-verification + M-Pesa payout system for the Mpeketoni Eco Ops Group that does not exist in code, and the Platform page promised a finance-literacy settlement reward before any ledger existed to back it. This post names both gaps directly, reports what actually shipped instead (a Supabase rewards ledger covering finance literacy, volunteering, and mentor credit — no payments, no ZK proof, self-reported trust model except for server-enforced mentor confirmation), covers the unrelated void-navigation feature shipped the same pass including a real camera bug fix and an honestly-labeled data gap, and commits to a standing practice of describing what is running rather than what is specified. Companion to the new SPEC.md §21-23.',
+    editorialNote: 'Sensitive — names a real credibility gap involving a named external community partner (Muirithi Jariffe / Mpeketoni Eco Ops Group) and a specific prior press release. Confirm with Greg before moving off public-draft.',
+  },
 ]
 
 export function getRelatedPosts (post: BlogPostMeta, limit = 3): BlogPostMeta[] {

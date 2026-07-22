@@ -2682,14 +2682,14 @@ async function celoExecute() {
 
 .ticker-inner--cw {
   animation-duration: 22s;
-  .ticker-num {
-    color: rgba(0, 210, 180, 0.65);
-    font-size: 7px;
-    letter-spacing: 0.14em;
-  }
-  .ticker-item {
-    color: rgba(100, 200, 190, 0.60);
-  }
+}
+.ticker-inner--cw .ticker-num {
+  color: rgba(0, 210, 180, 0.65);
+  font-size: 7px;
+  letter-spacing: 0.14em;
+}
+.ticker-inner--cw .ticker-item {
+  color: rgba(100, 200, 190, 0.60);
 }
 
 /* ── Forms section ───────────────────────────────────────────── */

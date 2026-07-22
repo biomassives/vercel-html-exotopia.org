@@ -1,6 +1,7 @@
 import { defineStore }  from 'pinia'
 import { ref, computed } from 'vue'
 import { supabase }      from 'src/lib/supabase'
+import { useRewardsStore } from './rewards'
 
 // ── Types ─────────────────────────────────────────────────────────────────
 
@@ -209,6 +210,8 @@ export const useEcoOfflineStore = defineStore('ecoOffline', () => {
             .from(TABLE[item.type])
             .insert(item.payload)
           if (error) throw error
+
+          void useRewardsStore().logVolunteerAction('eco_submission', { type: item.type, siteId: item.siteId })
 
           const photoWarnings: string[] = []
           for (let i = 0; i < item.photos.length; i++) {

@@ -716,6 +716,20 @@
                 <span class="mob-nav-sub">Curriculum · Modules</span>
               </span>
             </button>
+            <button class="mob-nav-item" @click="navTo('/rewards')">
+              <span class="mob-nav-icon">🏅</span>
+              <span class="mob-nav-text">
+                <span class="mob-nav-label">Rewards</span>
+                <span class="mob-nav-sub">Points · Certificates</span>
+              </span>
+            </button>
+            <button class="mob-nav-item" @click="navTo('/pfas-citizen-science')">
+              <span class="mob-nav-icon">🧪</span>
+              <span class="mob-nav-text">
+                <span class="mob-nav-label">PFAS Cleanup</span>
+                <span class="mob-nav-sub">Citizen science · Method proposals</span>
+              </span>
+            </button>
             <button class="mob-nav-item" @click="navTo('/blog')">
               <span class="mob-nav-icon">📄</span>
               <span class="mob-nav-text">
@@ -769,6 +783,9 @@
     <InstallPrompt />
     <LocalDataPanel />
 
+    <!-- ── First-visit demo/legal consent gate ─────────────────────────────── -->
+    <DemoConsentOverlay />
+
     <!-- ── Connect wallet dialog ─────────────────────────────────────────── -->
     <q-dialog v-model="connectDialog">
       <q-card class="glass-card" style="min-width:300px">
@@ -804,6 +821,7 @@ import SceneTransition         from 'src/components/SceneTransition.vue'
 import OfflineStatusBar        from 'src/components/eco/OfflineStatusBar.vue'
 import InstallPrompt           from 'src/components/eco/InstallPrompt.vue'
 import LocalDataPanel          from 'src/components/eco/LocalDataPanel.vue'
+import DemoConsentOverlay      from 'src/components/DemoConsentOverlay.vue'
 import { useVizRenderer }      from 'src/composables/useVizRenderer'
 import { recordVisit }        from 'src/composables/useRecentLocations'
 
@@ -1014,6 +1032,36 @@ const NAV_GROUPS: NavGroup[] = [
                 <line x1="48" y1="25" x2="53" y2="25" stroke="rgba(60,180,255,0.30)" stroke-width="0.8" stroke-dasharray="2 1"/>
                 <circle cx="60" cy="25" r="7" fill="rgba(60,180,255,0.15)" stroke="rgba(60,180,255,0.35)" stroke-width="0.7"/>
                 <text x="60" y="28" text-anchor="middle" font-size="7" fill="rgba(60,200,255,0.60)" font-family="monospace">③</text>`,
+        },
+      },
+      {
+        title: 'Rewards & Certificates',
+        desc:  'Points across volunteering, educating others, and finance literacy — plus certificates that unlock settlement objects.',
+        cta:   'Open',
+        route: '/rewards',
+        color: 'rgba(255,204,68,0.90)',
+        art: {
+          vb: '0 0 80 50',
+          svg: `<circle cx="40" cy="22" r="13" fill="rgba(255,204,68,0.15)" stroke="rgba(255,204,68,0.55)" stroke-width="0.9"/>
+                <circle cx="40" cy="22" r="8" fill="none" stroke="rgba(255,204,68,0.40)" stroke-width="0.6"/>
+                <path d="M40 15 L42.2 20 L47.5 20.5 L43.6 24 L44.7 29.2 L40 26.4 L35.3 29.2 L36.4 24 L32.5 20.5 L37.8 20 Z" fill="rgba(255,224,120,0.75)"/>
+                <path d="M31 32 L27 42 L33 42 L35 38 Z" fill="rgba(255,204,68,0.30)" stroke="rgba(255,204,68,0.45)" stroke-width="0.5"/>
+                <path d="M49 32 L53 42 L47 42 L45 38 Z" fill="rgba(255,204,68,0.30)" stroke="rgba(255,204,68,0.45)" stroke-width="0.5"/>`,
+        },
+      },
+      {
+        title: 'PFAS Cleanup',
+        desc:  'Citizen-science PFAS/PFOA decontamination — log project progress, propose methods, and mark real work in your settlement.',
+        cta:   'Explore',
+        route: '/pfas-citizen-science',
+        color: 'rgba(0,229,255,0.90)',
+        art: {
+          vb: '0 0 80 50',
+          svg: `<path d="M40 6 C40 6 26 22 26 32 C26 39.7 32.3 46 40 46 C47.7 46 54 39.7 54 32 C54 22 40 6 40 6 Z" fill="rgba(0,229,255,0.12)" stroke="rgba(0,229,255,0.55)" stroke-width="0.9"/>
+                <path d="M40 14 C40 14 31 25 31 32 C31 36.9 35.1 41 40 41 C44.9 41 49 36.9 49 32 C49 25 40 14 40 14 Z" fill="rgba(0,229,255,0.20)"/>
+                <circle cx="35" cy="30" r="1.6" fill="rgba(180,245,255,0.55)"/>
+                <circle cx="44" cy="34" r="1.3" fill="rgba(180,245,255,0.45)"/>
+                <line x1="35" y1="30" x2="44" y2="34" stroke="rgba(180,245,255,0.35)" stroke-width="0.5"/>`,
         },
       },
     ],
@@ -1246,6 +1294,16 @@ const ITEM_PANELS: Record<string, ItemPanel> = {
     actions: [{ label: 'Begin →', route: '/onboard', primary: true }],
     sessionKey: 'exo_onboard_step', sessionLabel: 'Progress',
   },
+  'Rewards & Certificates': {
+    style: 'quiz', headline: 'Rewards & incentive ledger',
+    subline: 'Volunteering, educating others, finance literacy — points and certificates in one place.',
+    actions: [{ label: 'Open rewards', route: '/rewards', primary: true }, { label: 'How it works', route: '/rewards-guide' }],
+  },
+  'PFAS Cleanup': {
+    style: 'eco', headline: 'PFAS/PFOA citizen science',
+    subline: 'Real remediation methods, public method proposals, and decon-project logging.',
+    actions: [{ label: 'Browse projects', route: '/pfas-citizen-science', primary: true }, { label: 'Method proposals', route: '/method-proposals' }],
+  },
   'Getting Started': {
     style: 'docs', headline: 'Platform overview & quickstart',
     subline: 'Resonance split, Eco-ops integration, community structure.',
@@ -1320,6 +1378,14 @@ const PARTICIPATE_PANEL: Record<string, ParticipatePanelData> = {
     vb: '10 14 60 22', filter: 'saturate(1.4) brightness(1.14)',
     caption: 'BENEFIT EARTH · BEGIN HERE', cta: 'Begin →', route: '/onboard',
     sessionKey: 'exo_onboard_step',
+  },
+  'Rewards & Certificates': {
+    vb: '20 4 40 40', filter: 'saturate(1.7) brightness(1.12)',
+    caption: 'POINTS · CERTIFICATES · IMPACT', cta: 'Open rewards →', route: '/rewards',
+  },
+  'PFAS Cleanup': {
+    vb: '20 4 40 42', filter: 'saturate(1.9) hue-rotate(6deg) brightness(1.1)',
+    caption: 'CITIZEN SCIENCE · PFAS CLEANUP', cta: 'Browse projects →', route: '/pfas-citizen-science',
   },
 }
 

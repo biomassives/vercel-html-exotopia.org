@@ -193,6 +193,12 @@ No environment variables required for local development. The app runs entirely c
 | MAST / Chandra image manifest | Specced — SPEC_CELESTIAL_REVEAL.md |
 | DefenderNav strip navigator | Specced — SPEC_DEFENDERNAV.md |
 | Frontier NFT system | Specced — SPEC_NFT_FRONTIER.md |
+| Rewards & incentive ledger (finance-literacy / volunteering / educating-others points, certificates, mentor sessions) | Complete — see SPEC.md §21 |
+| PFAS/PFOA citizen science tooling (methods library, project log, method proposals + endorsements) | Complete — see SPEC.md §24 |
+| VoidDefenderNav + void-scale camera framing fix | Complete — see SPEC.md §22 |
+| Zoom-descent camera continuity (iris/lightning wipe + bearing handoff) | Complete — 7 pages; see SPEC.md §25 |
+| Local Step Portal (physical portal object + light-inversion crossing for landing at a settlement) | Built, not wired in — `src/lib/local-step-portal.ts` is a complete unused module; see SPEC.md §25 and SPEC_ZOOM_DESCENT.md |
+| Live guest presence / "parking" at settlements | Not built — still 5 static mockup orbs; see SPEC.md §17.3/§25.4 |
 
 ---
 

@@ -1,0 +1,232 @@
+ PFAS/PFOA Citizen Science Tooling — cleanup sites, public method proposals, branch settlements, and the rewards platform they sit on
+
+## Context
+
+The user's draft asks for a citizen-science foundation for PFAS/PFOA remediation (curated methods content, a project-logging system, a fully public method-proposal system with citations, 3D site markers on planet/moon settlement domes, and a first real implementation of the `exo-branch-v1` simulated-settlement system), with progress tracked through a rewards/points/certificate mechanic.
+
+Verification against the actual codebase (three parallel Explore passes) confirmed most of the draft's factual claims but found one thing that changes the plan materially: **the working tree already has an unfinished, uncommitted attempt at exactly the rewards platform the draft assumes exists.** `SPEC.md` has an uncommitted new §21 "Rewards & Incentive Ledger (Implemented — July 2026)" describing `supabase/migrations/002_rewards.sql`, `src/data/rewards-catalog.ts`, `src/data/finance-literacy-quiz.ts`, `src/stores/rewards.ts`, `src/pages/RewardsPage.vue`, `src/pages/RewardsGuidePage.vue` — and `src/pages/AdminPage.vue`, `src/pages/LearnPage.vue`, `src/stores/eco-offline.ts`, `src/data/quizzes.ts`, `src/lib/settlements.ts`, and `src/router/routes.ts` are already edited to import and call that store (`useRewardsStore`, `useRewardsStore().logVolunteerAction(...)`, `QUIZ_REWARD_MAP`, routes `/rewards` and `/rewards-guide`). **None of the six files it depends on exist on disk.** The working tree does not currently build. Asked how to handle this, the user chose to build the full rewards platform rather than drop or minimize it — which, given this discovery, means *completing the already-specified, already-wired system* rather than designing one from scratch.
+
+Separately (unrelated to rewards, not touched by this plan): `ClusterInteriorPage.vue`, `VoidGalaxyPage.vue`, and `VoidInteriorPage.vue` are also uncommitted and already import `src/components/VoidDefenderNav.vue`, which also doesn't exist (SPEC.md §22, "Void Navigation"). That is a second, independent broken area. Out of scope here — noted so it isn't mistaken for something this plan caused or should fix.
+
+## What ships
+
+1. Reconstruct the missing rewards-platform files to match the contract SPEC.md §21 and the already-edited consumer files already commit to (unblocks the build).
+2. A curated PFAS remediation-methods library (real content).
+3. `focus_areas` / `decon_projects` / `project_log_entries` / `method_proposals` / `proposal_endorsements` / `branch_settlements` tables (migration `003`, since rewards now owns `002`).
+4. A simplified, honestly-documented 24-dim Leech vector (three stacked 8-vectors, Euclidean k-NN — not lattice decoding), used by branch settlements.
+5. 3D decon-site markers reusing the existing generic item-mesh system — corrected below, since the draft's specific claim about how planet/moon domes share code was partly wrong.
+6. Two new pages (`PfasCitizenSciencePage.vue`, `MethodProposalsPage.vue`) plus a `RewardsGuidePage.vue` addendum.
+
+```mermaid
+flowchart TD
+  M2["002_rewards.sql\n(admin_members, is_admin(),\nreward_events, certificates,\nmentor_sessions + triggers)"] --> RS["src/stores/rewards.ts"]
+  RC["src/data/rewards-catalog.ts\n(QUIZ_REWARD_MAP, ACTION_POINTS,\nPFAS action/cert keys)"] --> RS
+  FLQ["src/data/finance-literacy-quiz.ts"] --> QZ["src/data/quizzes.ts (already edited)"]
+  RS --> AP["AdminPage.vue (already edited)"]
+  RS --> LP["LearnPage.vue (already edited)"]
+  RS --> RP["RewardsPage.vue"]
+  RS --> RGP["RewardsGuidePage.vue"]
+
+  M2 --> M3["003_pfas_citizen_science.sql\n(focus_areas, decon_projects,\nproject_log_entries, method_proposals,\nproposal_endorsements, branch_settlements)"]
+  ML["src/data/pfas-methods-library.ts"] --> M3
+  LV["src/lib/leech-vector.ts"] --> M3
+
+  M3 --> PCS["PfasCitizenSciencePage.vue"]
+  M3 --> MPP["MethodProposalsPage.vue"]
+  RS --> PCS
+  RS --> MPP
+  SI["settlement-items.ts: decon-site-marker preset"] --> DIP["DomeInteriorPage.vue buildItemMesh() case"]
+  DIP --> PCS
+```
+
+## 1. Reconstructing the rewards platform
+
+Build to match the contract that's already committed-to by the dangling references, not a fresh design.
+
+**`supabase/migrations/002_rewards.sql`** — follows the RLS style of `001_blog_comments.sql` (`is_connected()` SECURITY DEFINER helper, `members_read_all` public-SELECT precedent):
+
+- `admin_members (id uuid PK REFERENCES members(id))`, RLS: self-SELECT only (`id = auth.uid()`). `is_admin()` — SQL SECURITY DEFINER function, `EXISTS (SELECT 1 FROM admin_members WHERE id = auth.uid())` — mirrors `is_connected()`'s shape exactly.
+- `reward_events (id, member_id, track text CHECK (track IN ('educating_others','volunteering','finance_literacy')), action_key text, points int, note text, created_at)` — append-only. INSERT `WITH CHECK (member_id = auth.uid() OR is_admin())`. SELECT `USING (member_id = auth.uid() OR is_admin())` (personal ledger, not public — distinct from the PFAS tables in `003`, which *are* public per the user's confirmed choice there).
+- `certificates (id, member_id, certificate_type text, issued_at, UNIQUE(member_id, certificate_type))` — same INSERT/SELECT posture as `reward_events`.
+- `mentor_sessions (id, mentor_id, mentee_id, topic, created_at, mentor_confirmed bool default false, mentee_confirmed bool default false)`. A `BEFORE UPDATE` trigger rejects changes to `mentor_id/mentee_id/topic/created_at` and only lets each party flip their own `*_confirmed` column (`auth.uid() = mentor_id` to touch `mentor_confirmed`, etc.). An `AFTER UPDATE` `SECURITY DEFINER` trigger fires when both flags transition to true and inserts one `reward_events` row per party — this is the one point SPEC.md §21.3 calls "server-enforced," and it's the only place client code cannot fabricate a two-party reward.
+
+**`src/data/rewards-catalog.ts`** — `QUIZ_REWARD_MAP: Record<string, { track: RewardTrack; actionKey: string; points: number; certificateType?: string; prerequisite?: string }>` (read by `LearnPage.vue`'s already-written `isLocked()`/`prerequisiteTitle()`/`awardQuizCompletion()` call). Plus `ACTION_POINTS: Record<string, { track: RewardTrack; points: number }>` — the server-independent point lookup so a store method never trusts a client-supplied point value for anything except the explicit admin-grant path (which already takes `points` as an operator-entered number in `AdminPage.vue`'s form). Add PFAS entries here in this same catalog: `decon_progress_log`, `method_proposal_published`, `endorsement_received_credit`, plus `pfas_field_researcher`/`method_contributor` certificate types.
+
+**`src/data/finance-literacy-quiz.ts`** — exports `FINANCE_LITERACY_AREAS: QuizArea[]` matching the `QuizArea`/`QuizQuestion` shape already in `src/data/quizzes.ts` (which already does `import { FINANCE_LITERACY_AREAS } from './finance-literacy-quiz'` and spreads it into `QUIZ_AREAS`). Write original questions "aligned to but not copied from" the TIAA/GFLEC P-Fin framework's public topic areas (earning, saving, borrowing/debt, insuring, comprehending risk) — a short 8-question area plus a longer ~28-question area, matching SPEC.md §21.2's description. This is real content-writing, scoped by the interface already in place; do not fabricate a false "based on licensed P-Fin content" claim — keep it original, general personal-finance literacy.
+
+**`src/stores/rewards.ts`** — Pinia store, signatures fixed by the existing call sites (do not deviate from these — they're already committed):
+  - `checkIsAdmin()` — SELECT from `admin_members` for `auth.uid()`, sets `isAdmin`. (Called by `AdminPage.vue` `onMounted`.)
+  - `searchMembers(query: string): Promise<{id,handle,display_name}[]>` — `members` table ILIKE search, limit ~8. (`AdminPage.vue`.)
+  - `adminGrantReward(memberId, track: RewardTrack, actionKey, points, { note })` — INSERT into `reward_events` (RLS allows since `is_admin()` is true for the caller). (`AdminPage.vue`.)
+  - `loadMyRewards()` — loads `reward_events` (grouped by track) and `certificates` for the current member into store state; populates `certificateTypes: Set<string>`. (`LearnPage.vue` `onMounted` + `watch(member.userId)`.)
+  - `awardQuizCompletion(areaId, score, total)` — looks up `QUIZ_REWARD_MAP[areaId]`, inserts a `reward_events` row under `finance_literacy`, and if `certificateType` set and score clears whatever passing bar this store defines, issues the certificate via an internal `issueCertificateIfMissing(certificateType)` helper (INSERT into `certificates`, ON CONFLICT DO NOTHING or a pre-check). (`LearnPage.vue`.)
+  - `logVolunteerAction(actionKey, payload)` — looks up `ACTION_POINTS[actionKey]` (expected track `'volunteering'`), inserts `reward_events`. (Already called by `eco-offline.ts`'s sync path — keep this exact name/signature.)
+  - **New, needed for PFAS**: `logEducatingAction(actionKey, payload)` — same shape as `logVolunteerAction` but for `'educating_others'` actions (method-proposal publication, endorsement credit). Internally both can share one private `logAction(track, actionKey, payload)` implementation — don't duplicate the insert logic.
+  - `myPoints` (computed, by track) and `certificateTypes` exposed as store state/getters.
+
+**`src/pages/RewardsPage.vue`** — per SPEC.md §21.2: points by track, finance-literacy status, a volunteer self-report form (calls `logVolunteerAction`), a mentor panel (request a session → insert `mentor_sessions` row; list pending sessions where you're a party → confirm button flips your own `*_confirmed`), and an "Impact Profile" section with a picker that appends an unlocked settlement-object key into `SettlementRecord.objects[]` (field already added, uncommitted, in `settlements.ts`) via the existing `updateSettlement(key, { objects: [...] })`.
+
+**`src/pages/RewardsGuidePage.vue`** — plain-language walkthrough of the three tracks; add PFAS as the fourth section per the original draft (see §6 below).
+
+Routes for `/rewards` and `/rewards-guide` are already added to `routes.ts` — no router change needed here.
+
+## 2. PFAS Remediation Methods Library
+
+`src/data/pfas-methods-library.ts` (new, standalone content module, no dependencies on rewards):
+
+- **Proven/established**: GAC filtration, ion exchange resin, high-pressure membrane filtration (RO/NF), foam fractionation (AFFF sites), in-situ soil stabilization/solidification.
+- **Emerging/research-stage, explicitly flagged**: electrochemical oxidation, supercritical water oxidation, PFAS-selective destruction tech, phytoremediation (flagged as *not* well-proven for PFAS specifically, unlike other organics — an honest caveat, not a claim of efficacy).
+- Each entry: method name, mechanism, typical cost range, effectiveness by chain length (the long-chain/short-chain distinction is real, confirmed at `SPEC_ECO_OPS_API.md:846`), citations in the repo's existing style — `Author(s) Year — short description` plus arXiv/DOI/URL, matching the pattern already used in `scripts/fetch-bootes-void.mjs`'s `catalog_refs` and the eco-ops guide.
+- Legal/safe-sampling section extending `docs/eco-ops-workflow-guide.md`'s Part 2 (lines 79–124: PFAS site-selection, EPA Method 533/537.1, chain-of-custody) with remediation-specific guidance: permits/access before sampling an actively-contaminated site, chain-of-custody for evidence backing a public proposal. Note: `pfas_sample` in `eco-offline.ts` has no dedicated field interface today (form data is generic `Record<string, unknown>`) — this library is reference content only, it doesn't need to touch that store.
+
+This library is the citable precedent a method proposal's arguments draw from (curated reference, distinct from user submissions).
+
+## 3. Data model — `supabase/migrations/003_pfas_citizen_science.sql`
+
+Runs after `002`, so `is_admin()` is already available. Same RLS posture as the draft: public SELECT (`USING (true)`) on all six tables — this is the confirmed public-system choice — self-insert `WITH CHECK (<owner column> = auth.uid() OR is_admin())`.
+
+```sql
+CREATE TABLE public.focus_areas (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  created_by uuid NOT NULL REFERENCES public.members(id) ON DELETE CASCADE,
+  name text NOT NULL,
+  description text,
+  contamination_type text NOT NULL DEFAULT 'PFAS',
+  base_address text,
+  is_simulated boolean NOT NULL DEFAULT true,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE TABLE public.decon_projects (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  focus_area_id uuid NOT NULL REFERENCES public.focus_areas(id) ON DELETE CASCADE,
+  owner_id uuid NOT NULL REFERENCES public.members(id) ON DELETE CASCADE,
+  title text NOT NULL,
+  method_proposal_id uuid,
+  status text NOT NULL DEFAULT 'planning' CHECK (status IN ('planning','active','monitoring','complete')),
+  branch_settlement_id uuid,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE TABLE public.project_log_entries (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  project_id uuid NOT NULL REFERENCES public.decon_projects(id) ON DELETE CASCADE,
+  author_id uuid NOT NULL REFERENCES public.members(id) ON DELETE CASCADE,
+  notes text NOT NULL,
+  metrics jsonb DEFAULT '{}'::jsonb,
+  logged_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE TABLE public.method_proposals (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  author_id uuid NOT NULL REFERENCES public.members(id) ON DELETE CASCADE,
+  title text NOT NULL,
+  summary text NOT NULL,
+  method_key text,
+  precedent_citations jsonb NOT NULL DEFAULT '[]'::jsonb,
+  economic_argument text,
+  environmental_argument text,
+  status text NOT NULL DEFAULT 'proposed' CHECK (status IN ('proposed','endorsed','adopted')),
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+ALTER TABLE public.decon_projects
+  ADD CONSTRAINT fk_method_proposal FOREIGN KEY (method_proposal_id) REFERENCES public.method_proposals(id);
+
+CREATE TABLE public.proposal_endorsements (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  proposal_id uuid NOT NULL REFERENCES public.method_proposals(id) ON DELETE CASCADE,
+  member_id uuid NOT NULL REFERENCES public.members(id) ON DELETE CASCADE,
+  UNIQUE (proposal_id, member_id)
+);
+
+CREATE TABLE public.branch_settlements (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  branch_id text UNIQUE NOT NULL,        -- {owner-slug}-{purpose}-{version} per SPEC_EXOLOC_ADDRESS.md §3.7
+  branch_type text NOT NULL DEFAULT 'research' CHECK (branch_type IN ('public','private','branded','research','educational')),
+  owner_id uuid NOT NULL REFERENCES public.members(id) ON DELETE CASCADE,
+  base_address text NOT NULL,
+  divergence_note text,
+  access text NOT NULL DEFAULT 'open',
+  leech_vector float8[] NOT NULL,        -- length 24, enforced in application code (three stacked 8-vectors)
+  leech_axis text DEFAULT 'current' CHECK (leech_axis IN ('current','aspirational','relational')),
+  created_at timestamptz NOT NULL DEFAULT now(),
+  CONSTRAINT leech_vector_length CHECK (array_length(leech_vector, 1) = 24)
+);
+
+ALTER TABLE public.decon_projects
+  ADD CONSTRAINT fk_branch_settlement FOREIGN KEY (branch_settlement_id) REFERENCES public.branch_settlements(id);
+```
+
+RLS: SELECT `USING (true)` on all six. INSERT `WITH CHECK (created_by/owner_id/author_id/member_id = auth.uid() OR is_admin())` per table. Append-only posture (no UPDATE policy) on `project_log_entries`/`proposal_endorsements`, matching `reward_events`'s posture from `002`; owner-only UPDATE on `decon_projects`/`method_proposals`/`focus_areas` for status transitions.
+
+Confirmed §3.7 deed shape from `SPEC_EXOLOC_ADDRESS.md` (lines 226–283) matches the draft exactly: `branch_id, branch_type, owner, base_address, divergence_note, access, created, leech_axis`; `research` = *"A simulation fork for academic or scientific study"* (line 243); branch-id convention `{owner-slug}-{purpose}-{version}` (line 249).
+
+## 4. Leech vector — `src/lib/leech-vector.ts`
+
+One correction to the draft: `blog-settlements-as-possible-worlds.md` line 102 actually spells the field `leach_vector`, not `leech_vector` — almost certainly a typo given the doc's own framing ("Leech lattice," Λ₂₄) elsewhere. Use `leech_vector` deliberately in code/schema; it's the correct mathematical term. Line 152 of that doc is explicit that *"the proposed applications to settlement architecture are speculative design hypotheses, not implemented features"* — so this module should carry a comment saying plainly that it implements the blog's literal proposal (structured 24-dim vectors + nearest-neighbor), not real Λ₂₄ lattice decoding.
+
+- **Current (0–7)**: derived from a project's own `project_log_entries` — contamination-reduction progress, log density, time-active, etc.
+- **Aspirational (8–15)**: set once at branch creation by the project owner — target concentration, target completion date, planned method coverage.
+- **Relational (16–23)**: derived from the project's graph — method-proposal citations, endorsements received, other branches sharing `base_address`.
+- `nearestBranches(vector, allVectors, k)`: plain Euclidean distance, sorted, top-k. Explicit doc comment: not Λ₂₄ decoding.
+
+Reuses `e8-lattice.ts`'s `Root8` type (`[number×8]`) purely as a type shape for the three blocks — does not call `e8Roots()`/`coxeterProject()`, which exist only for `WormholePortal.vue`'s visual and `storage-cipher.ts`'s obfuscation cipher (confirmed: those are the only two importers of that file).
+
+## 5. 3D placement — correcting the draft's code-path claim
+
+The draft asserted DomeInteriorPage.vue shares a `?parent=`/`moonKey()` code path for moon vs. planet domes. That's not what's actually there, though the practical conclusion (planet and moon domes both "just work") still holds, for a simpler reason:
+
+- `DomeInteriorPage.vue` never reads `route.query.parent` and never calls `moonKey()`. It keys everything through `surfaceKey(route.params.planetName)` unconditionally (`settlementKey.value = surfaceKey(planetName.value)`, `DomeInteriorPage.vue:166`).
+- `SurfaceViewPage.vue`'s `enterDome()` (line 2657) pushes to `dome-interior` passing only `{ hostname, planetName: planetName.value }` — it does **not** forward the `?parent=` query param that distinguishes a moon surface view from a planet one.
+- Net effect: dome-interior treats every body (planet or moon) identically, keyed by whatever name it was given. **No moon-specific wiring is needed** for decon-site markers — the existing generic path already covers both, just not via the mechanism the draft described.
+
+Implementation:
+- `src/lib/settlement-items.ts`: add a `decon-site-marker` entry to `ITEM_MESH_PRESETS` (existing entries are 5–6 lines each, not 8–15 as the draft estimated — e.g. `crystal` at lines 76–80). Use `acquiredBy: ['eco-ops']` — matches the existing semantics ("earned through community SHG / field-work milestones," `settlement-items.ts:10`), which is exactly what a decon project marker is.
+- `DomeInteriorPage.vue`: add one `case 'decon-site-marker':` to `buildItemMesh()` (switch at line 225; existing `default:` generic-orb fallback at line 347 covers it for free if this case is skipped in a first pass). Color varies by `decon_projects.status` (amber/planning, cyan-pulsing/active, green/complete) — pass the resolved color through the existing `colorHex` param already threaded through every case.
+- Attaching a marker: from the PFAS project detail page, call `useSettlementItems(surfaceKeyRef).addItem({ type: 'eco-ops', meshPreset: 'decon-site-marker', zone: 'water-edge', community: focusArea.name })` against one of the member's own settlements (their `surfaceKey` — same function whether the underlying body is a planet or a moon, since dome-interior doesn't distinguish). This is a new, direct call, not routed through `SettlementRecord.objects[]` (that field is the separate "reward-catalog unlockable cosmetic" gate used by `RewardsPage.vue`'s Impact Profile picker — a different mechanism, don't conflate the two).
+- Stations: `StationPage.vue` is a metadata-only form (confirmed: zero `three`/Canvas/WebGL references across its 1181 lines) — a station-linked `focus_areas.base_address` renders no 3D marker, text-only reference in the hub page.
+
+## 6. UI
+
+- **`src/pages/PfasCitizenSciencePage.vue`** (new, route `/pfas-citizen-science`) — browse focus areas/projects (public read, no sign-in required), "start a project" flow (focus area → project → optional `research`-type branch settlement via `leech-vector.ts`), methods library rendered from `pfas-methods-library.ts`, project detail (log form/timeline, "attach marker to my settlement" action from §5).
+- **`src/pages/MethodProposalsPage.vue`** (new, route `/method-proposals`) — public list with citations/arguments, submission form, endorse button (`proposal_endorsements`, then `rewards.logEducatingAction('endorsement_received_credit', ...)` credit to the endorser and `rewards.logEducatingAction('method_proposal_published', ...)` to the author on submit).
+- Logging a project entry calls `rewards.logVolunteerAction('decon_progress_log', { projectId, metrics })` — exact existing signature, no changes to that store method needed beyond the `ACTION_POINTS` catalog entry from §1.
+- Streak: `project_log_entries.logged_at` is enough for a `src/composables/useLoggingStreak.ts` computing consecutive weeks with ≥1 log per project; a 4-week streak calls the store's internal `issueCertificateIfMissing('pfas_field_researcher_streak')` path (reuse the helper built for `awardQuizCompletion`, don't write a second copy).
+- Add both routes to `src/router/routes.ts` (children array, same flat pattern as the existing entries).
+- `RewardsGuidePage.vue` gets a fourth section, "Working on PFAS cleanup," cross-linking `/pfas-citizen-science` and `/method-proposals` as a concrete instance of the `volunteering`/`educating_others` tracks it already documents.
+- Add a nav entry for Rewards/PFAS surfaces to `MainLayout.vue`'s `NAV_GROUPS` and the mobile `mob-nav-list` (both already updated for other groups — follow the existing per-group card-array pattern; `/rewards` needs this regardless of PFAS, since it's currently unreachable from nav despite having a route).
+
+## Non-goals (unchanged from the draft, confirmed still correct)
+
+- Genuine Λ₂₄ sphere-packing/decoding math.
+- ZK proof / ownership-authenticity layer for branches (`zk-e8/` doesn't exist as a directory at all — only a spec doc `SPEC_ZK_E8_PLONK.md`; `package.json` has zero crypto/ZK deps).
+- New 3D rendering for stations.
+- A formal peer-reviewer role hierarchy for method proposals (`SPEC_ECOOPS_COMMUNITY_PLATFORM.md` lines 336–345 describe a `Lead Facilitator`-gated review tier for a different, unbuilt "field reporting" feature — proposals here ship with public visibility + `proposal_endorsements` only).
+- Automated lab-result ingestion.
+- Fixing the unrelated `VoidDefenderNav.vue` breakage (SPEC.md §22) — separate feature, separate uncommitted diff, not touched by this plan.
+
+## Implementation order
+
+1. `supabase/migrations/002_rewards.sql` (unblocks the build).
+2. `src/data/rewards-catalog.ts`, `src/data/finance-literacy-quiz.ts`.
+3. `src/stores/rewards.ts` — verify it satisfies every existing call site (`AdminPage.vue`, `LearnPage.vue`, `eco-offline.ts`) with no signature drift.
+4. `src/pages/RewardsPage.vue`, `src/pages/RewardsGuidePage.vue` — confirm `npm run build`/typecheck is clean at this point (this is the point where the pre-existing breakage is actually fixed).
+5. `supabase/migrations/003_pfas_citizen_science.sql`.
+6. `src/data/pfas-methods-library.ts`.
+7. `src/lib/leech-vector.ts`.
+8. `ITEM_MESH_PRESETS` addition + `DomeInteriorPage.vue` marker case.
+9. `PfasCitizenSciencePage.vue`, `MethodProposalsPage.vue`, routes, nav entries, `RewardsGuidePage.vue` PFAS section.
+10. Add a corresponding "Implemented" section to `SPEC.md` for the PFAS system once built, matching this repo's own stated practice (§23.3: public/doc claims should describe what's actually running) — keep it as honest about the simplified Leech vector and simulated-branch scope as this plan is.
+
+## Verification
+
+- `npm run build` / typecheck clean after step 4 (proves the pre-existing dangling-import breakage is actually resolved) and again after step 9.
+- Push both migrations; confirm all tables exist, `is_admin()` resolves correctly for an `admin_members` row, and public SELECT / owner-scoped INSERT behave as specified on the `003` tables from a non-admin session.
+- As a non-admin test member: complete a finance-literacy quiz area, confirm a `reward_events` row and (if applicable) a `certificates` row appear, and that `LearnPage.vue`'s locked/unlocked card state updates accordingly.
+- As admin: grant a manual reward via `AdminPage.vue`'s new form, confirm it lands in the target member's `reward_events`.
+- Create a focus area + simulated project; confirm a `branch_settlements` row is created with a 24-length `leech_vector` and `branch_type = 'research'`.
+- Log 4 weekly progress entries; confirm the streak composable reports 4 and the certificate issues.
+- Submit a method proposal as one member, endorse as a second; confirm both receive `educating_others` `reward_events` rows and that the proposal is visible via an unauthenticated fetch (true public read).
+- Attach a decon-site marker to an existing planet settlement via the project detail page; open that settlement's `DomeInteriorPage` and confirm it renders/is clickable. Repeat against a **moon** settlement's dome interior and confirm it works identically — this validates the corrected claim in §5 (both go through `surfaceKey`, not a planet/moon branch).
+- Confirm a station-linked focus area renders no 3D marker but displays correctly in the hub's list view.

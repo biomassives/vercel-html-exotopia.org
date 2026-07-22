@@ -344,6 +344,20 @@ function buildItemMesh(presetKey: string, colorHex: string): THREE.Group {
       group.add(vault, lid, g)
       break
     }
+    case 'decon-site-marker': {
+      // Warning-post marker, colored by decon_projects.status at attach time.
+      const post = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.14, 2.6, 6), new THREE.MeshPhongMaterial({ color: 0x2a2a2a }))
+      post.position.y = 1.3
+      const pennant = new THREE.Mesh(new THREE.ConeGeometry(0.55, 0.9, 4), new THREE.MeshPhongMaterial({ color: col, emissive: col.clone().multiplyScalar(0.25), flatShading: true }))
+      pennant.rotation.z = Math.PI / 2
+      pennant.position.set(0.5, 2.3, 0)
+      const ring3 = new THREE.Mesh(new THREE.TorusGeometry(0.9, 0.06, 6, 20), new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: 0.55 }))
+      ring3.rotation.x = Math.PI / 2
+      ring3.position.y = 0.05
+      const g = glow(1.0, 0.05, 0.14)
+      group.add(post, pennant, ring3, g)
+      break
+    }
     default: {
       // Generic orb
       const sphere = new THREE.Mesh(new THREE.SphereGeometry(1.0, 12, 12), new THREE.MeshPhongMaterial({ color: col, emissive: col.clone().multiplyScalar(0.2) }))

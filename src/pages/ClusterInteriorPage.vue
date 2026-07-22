@@ -165,10 +165,19 @@
       </div>
     </Transition>
 
-    <!-- Bottom HUD -->
-    <div class="ci-hud">
+    <!-- Bottom HUD (void catalogs get VoidDefenderNav instead — it already shows the count) -->
+    <div v-if="!isVoid" class="ci-hud">
       <span class="text-caption text-blue-grey-6">{{ memberCount }} galaxies · scroll to zoom · drag to orbit</span>
     </div>
+
+    <VoidDefenderNav
+      v-if="isVoid"
+      :void-id="slug"
+      :void-name="clusterData?.cluster ?? slug"
+      :members="voidNavMembers"
+      :current-id="selected?.id"
+      @select="selectVoidNavMember"
+    />
   </q-page>
 </template>
 
@@ -184,6 +193,7 @@ import { prefetchClusterGalaxies, fetchGalaxyDoc, buildBackgroundField, mulberry
 import type { ClusterGalaxyDoc } from 'src/composables/useClusterGalaxyData'
 import { useSettlements, clusterKey } from 'src/lib/settlements'
 import { useSceneTransitionStore }  from 'src/stores/scene-transition'
+import VoidDefenderNav, { type VoidNavMember } from 'src/components/VoidDefenderNav.vue'
 
 // ── Scene constants ───────────────────────────────────────────────────────────
 const SCENE_SCALE = 80   // scene units per Mpc — gives ~10 su for a 0.13 Mpc spread
@@ -196,6 +206,7 @@ interface SystemArch {
   estimated_planets:  number
   metallicity_fe_h:   number
   icm_stress:         number
+  cluster_zone?:      'void_wall' | 'void_interior' | 'void_far_wall'
 }
 
 interface ClusterMember {
@@ -258,6 +269,33 @@ const hoverName   = ref<string>('')
 const hoverPos    = ref({ x: 0, y: 0 })
 const memberCount = ref(0)
 const systemDataMap = ref(new Map<string, SystemDataEntry>())
+
+// ── Void nav (only when this slug's members carry a cluster_zone — i.e. it's a
+// void member catalog, not a real galaxy cluster) ──────────────────────────────
+const isVoid = computed(() => !!clusterData.value?.members[0]?.system_architecture?.cluster_zone)
+
+const voidNavMembers = computed<VoidNavMember[]>(() => {
+  if (!isVoid.value || !clusterData.value) return []
+  // "Limited objects" — the real named galaxies (NGC 6503, IC 342, …), not the
+  // synthetic filler population used to bulk out the render.
+  return clusterData.value.members.filter(m => m.is_named).map(m => ({
+    id:       m.id,
+    name:     m.name || m.id,
+    zone:     m.system_architecture?.cluster_zone === 'void_wall'     ? 'wall'
+            : m.system_architecture?.cluster_zone === 'void_far_wall' ? 'far_wall'
+            : 'interior',
+    angleDeg: Math.atan2(m.offset[2], m.offset[0]) * 180 / Math.PI,
+  }))
+})
+
+function selectVoidNavMember(memberId: string) {
+  const member = clusterData.value?.members.find(m => m.id === memberId)
+  const proxy  = hitProxies.find(p => (p.userData.member as ClusterMember).id === memberId)
+  if (!member || !proxy) return
+  selected.value = member
+  void router.replace({ query: { member: member.id } })
+  flyToMember(proxy.position)
+}
 
 // ── LOD / zoom reveal state ───────────────────────────────────────────────────
 type ZoomLevel = 'overview' | 'galaxy' | 'systems'
@@ -483,14 +521,22 @@ async function loadAndBuild() {
     // centered on the origin — Virgo's members, for example, are skewed -Y)
     if (!camera || !controls) return
     const c = clusterCenter
+
+    // Camera offset scales with the actual member spread rather than a fixed
+    // constant — real clusters (~0.1-2 Mpc virial radius) keep ~today's framing
+    // via the floor, but voids (45-130 Mpc radius, 35-90x larger at SCENE_SCALE)
+    // no longer start with the camera lost in empty space.
+    const boundRadius = memberSprites.reduce((max, s) => Math.max(max, s.position.distanceTo(c)), 0)
+    const camOffset    = Math.max(28, boundRadius * 1.6)
+
     controls.target.copy(c)
-    camera.position.set(c.x, c.y + 10, c.z + 28)
+    camera.position.set(c.x, c.y + camOffset * 0.35, c.z + camOffset)
     camera.lookAt(c)
     controls.update()
 
     // Gentle intro zoom from farther back
     gsap.from(camera.position, {
-      duration: 2.4, z: c.z + 55, ease: 'power3.out',
+      duration: 2.4, z: c.z + camOffset * 1.9, ease: 'power3.out',
       onUpdate: () => controls?.update(),
     })
     // Restore selected member from URL if present

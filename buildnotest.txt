@@ -1,0 +1,21 @@
+warnings when minifying css:
+▲ [WARNING] CSS nesting syntax is not supported in the configured target environment ("chrome87", "edge88", "es2019", "firefox78", "safari13.1") [invalid-@nest]
+
+    <stdin>:1513:0:
+      1513 │ &[data-v-0419c18e] {
+           ╵ ^
+
+
+▲ [WARNING] Expected identifier but found "." [css-syntax-error]
+
+    <stdin>:1516:0:
+      1516 │ .ticker-num[data-v-0419c18e] {
+           ╵ ^
+
+
+
+(!) Some chunks are larger than 500 KiB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/guide/en/#outputmanualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+

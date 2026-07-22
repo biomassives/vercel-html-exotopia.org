@@ -12,12 +12,18 @@
       <div class="ldp-head">
         <div class="ldp-head-left">
           <q-icon name="mdi-database-outline" size="17px" color="teal-4" class="q-mr-xs" />
-          <span class="ldp-title">Local data</span>
+          <span class="ldp-title">My Local Data &amp; Reports</span>
           <q-badge v-if="store.pendingCount" color="orange-8" :label="store.pendingCount" class="q-ml-sm" />
           <q-badge v-if="store.failedCount"  color="red-8"    :label="store.failedCount"  class="q-ml-xs" />
         </div>
         <q-btn flat dense round icon="mdi-close" size="sm" @click="store.panelOpen = false" />
       </div>
+
+      <p class="ldp-privacy-note">
+        Everything below lives in this browser, on this device. Nothing is uploaded
+        unless it's marked <strong>synced</strong> or <strong>submitted</strong> — you
+        decide what, if anything, to send anywhere.
+      </p>
 
       <!-- Status row -->
       <div class="ldp-status-row">
@@ -33,6 +39,13 @@
         <q-space />
         <q-btn
           flat dense size="xs"
+          icon="mdi-file-document-outline"
+          label="Generate report"
+          color="teal-4" class="q-mr-xs"
+          @click="generateReport"
+        />
+        <q-btn
+          flat dense size="xs"
           icon="mdi-download-outline"
           label="Export JSON"
           color="blue-grey-4"
@@ -43,14 +56,45 @@
       <!-- Tabs -->
       <q-tabs v-model="tab" dense align="left" class="ldp-tabs"
               active-color="teal-4" indicator-color="teal-5">
-        <q-tab name="pending" :label="`Pending (${store.pendingCount})`" />
-        <q-tab name="failed"  :label="`Failed (${store.failedCount})`" />
-        <q-tab name="drafts"  :label="`Drafts (${store.draftCount})`" />
-        <q-tab name="synced"  :label="`Synced (${store.syncedItems.length})`" />
+        <q-tab name="staged"     :label="`Staged (${stagedStore.unsubmittedCount})`" />
+        <q-tab name="pending"    :label="`Pending (${store.pendingCount})`" />
+        <q-tab name="failed"     :label="`Failed (${store.failedCount})`" />
+        <q-tab name="drafts"     :label="`Drafts (${store.draftCount})`" />
+        <q-tab name="recordings" :label="`Recordings (${recordings.length})`" />
+        <q-tab name="synced"     :label="`Synced (${store.syncedItems.length})`" />
       </q-tabs>
 
       <!-- Tab panels -->
       <q-tab-panels v-model="tab" animated class="ldp-panels">
+
+        <!-- ── STAGED ── -->
+        <q-tab-panel name="staged" class="ldp-panel">
+          <div v-if="!stagedStore.entries.length" class="ldp-empty">
+            <q-icon name="mdi-microphone-outline" size="28px" color="blue-grey-5" />
+            <span>No staged entries — record one from the top-right widget</span>
+          </div>
+          <div v-for="e in stagedStore.entries" :key="e.id" class="ldp-item">
+            <div class="ldp-item-left">
+              <span class="ldp-item-site">{{ CATEGORY_ICON[e.category] }} {{ e.title }}</span>
+              <span class="ldp-item-meta">{{ CATEGORY_LABEL[e.category] }} · {{ formatTime(e.createdAt) }}</span>
+              <span v-if="e.notes" class="ldp-item-meta">{{ e.notes }}</span>
+              <span v-if="e.audioRecordingId" class="ldp-item-meta ldp-item-photos">
+                <q-icon name="mdi-microphone" size="11px" /> voice note attached
+              </span>
+            </div>
+            <div class="ldp-item-right ldp-item-right--col">
+              <q-chip v-if="e.submittedAt" dense color="teal-9" text-color="white" size="xs"
+                      icon="mdi-check" label="Submitted" />
+              <template v-else>
+                <q-btn flat dense size="xs" icon="mdi-send-outline"
+                       :label="e.category === 'learning_milestone' ? 'Archive' : 'Submit'"
+                       color="teal-4" @click="stagedStore.submitEntry(e.id)" />
+              </template>
+              <q-btn flat round dense icon="mdi-delete-outline" size="xs" color="red-4"
+                     @click="stagedStore.removeEntry(e.id)" class="q-mt-xs" />
+            </div>
+          </div>
+        </q-tab-panel>
 
         <!-- ── PENDING ── -->
         <q-tab-panel name="pending" class="ldp-panel">
@@ -159,6 +203,26 @@
           </div>
         </q-tab-panel>
 
+        <!-- ── RECORDINGS ── -->
+        <q-tab-panel name="recordings" class="ldp-panel">
+          <div v-if="!recordings.length" class="ldp-empty">
+            <q-icon name="mdi-microphone-outline" size="28px" color="blue-grey-5" />
+            <span>No voice recordings yet</span>
+          </div>
+          <div v-for="r in recordings" :key="r.id" class="ldp-item">
+            <div class="ldp-item-left">
+              <span class="ldp-item-site">{{ r.name }}</span>
+              <span class="ldp-item-meta">{{ formatDuration(r.duration) }} · {{ formatBytes(r.size) }} · {{ formatTime(new Date(r.timestamp).toISOString()) }}</span>
+            </div>
+            <div class="ldp-item-right ldp-item-right--col">
+              <q-btn flat dense size="xs" icon="mdi-download-outline" label="Download"
+                     color="teal-4" @click="downloadRecording(r.id)" />
+              <q-btn flat round dense icon="mdi-delete-outline" size="xs" color="red-4"
+                     @click="removeRecording(r.id)" class="q-mt-xs" />
+            </div>
+          </div>
+        </q-tab-panel>
+
       </q-tab-panels>
 
     </q-card>
@@ -166,14 +230,28 @@
 </template>
 
 <script setup lang="ts">
-import { ref }                  from 'vue'
-import { useRouter }            from 'vue-router'
-import { useEcoOfflineStore }   from 'src/stores/eco-offline'
-import type { MonitoringDraft } from 'src/stores/eco-offline'
+import { ref, watch }            from 'vue'
+import { useRouter }             from 'vue-router'
+import { useEcoOfflineStore }    from 'src/stores/eco-offline'
+import type { MonitoringDraft }  from 'src/stores/eco-offline'
+import { useStagedEntriesStore, type StagedCategory } from 'src/stores/staged-entries'
+import {
+  listRecordings, deleteRecording, downloadRecording, formatDuration,
+  type AudioRecording,
+} from 'src/lib/audio-recorder'
+import { buildLocalReportHtml } from 'src/lib/local-report'
 
-const store  = useEcoOfflineStore()
-const router = useRouter()
-const tab    = ref<'pending' | 'failed' | 'drafts' | 'synced'>('pending')
+const store       = useEcoOfflineStore()
+const stagedStore = useStagedEntriesStore()
+const router      = useRouter()
+const tab         = ref<'staged' | 'pending' | 'failed' | 'drafts' | 'recordings' | 'synced'>('staged')
+
+const CATEGORY_LABEL: Record<StagedCategory, string> = {
+  eco_ops: 'Eco Ops', mentoring: 'Mentoring', learning_milestone: 'Learning Milestone',
+}
+const CATEGORY_ICON: Record<StagedCategory, string> = {
+  eco_ops: '🌱', mentoring: '🤝', learning_milestone: '📘',
+}
 
 // Auto-open on failed tab if there are failures
 function openOnFailed() {
@@ -181,6 +259,45 @@ function openOnFailed() {
   store.panelOpen = true
 }
 defineExpose({ openOnFailed })
+
+// ── Recordings (IndexedDB — loaded whenever the panel opens) ───────────────
+
+const recordings = ref<Omit<AudioRecording, 'blob'>[]>([])
+
+async function refreshRecordings() {
+  recordings.value = (await listRecordings()).sort((a, b) => b.timestamp - a.timestamp)
+}
+
+watch(() => store.panelOpen, (open) => { if (open) void refreshRecordings() }, { immediate: true })
+
+async function removeRecording(id: string) {
+  await deleteRecording(id)
+  await refreshRecordings()
+}
+
+function formatBytes(n: number): string {
+  if (n < 1024) return `${n} B`
+  if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`
+  return `${(n / (1024 * 1024)).toFixed(1)} MB`
+}
+
+// ── Report generation — entirely local, no network call ────────────────────
+
+function generateReport() {
+  const html = buildLocalReportHtml({
+    queue:         store.queue,
+    drafts:        store.drafts,
+    stagedEntries: stagedStore.entries,
+    recordings:    recordings.value,
+  })
+  const blob = new Blob([html], { type: 'text/html' })
+  const url  = URL.createObjectURL(blob)
+  const a    = document.createElement('a')
+  a.href     = url
+  a.download = `my-local-data-report-${new Date().toISOString().slice(0, 10)}.html`
+  a.click()
+  URL.revokeObjectURL(url)
+}
 
 // ── Actions ───────────────────────────────────────────────────────────────
 
@@ -249,6 +366,14 @@ function formatTime(iso: string): string {
 }
 .ldp-head-left { display: flex; align-items: center; }
 .ldp-title     { font-size: 14px; font-weight: 600; color: #d0e8f8; }
+
+.ldp-privacy-note {
+  font-size: 10.5px;
+  line-height: 1.5;
+  color: #6a95b3;
+  padding: 0 16px 8px;
+}
+.ldp-privacy-note strong { color: #8fc4dd; }
 
 .ldp-status-row {
   display: flex;

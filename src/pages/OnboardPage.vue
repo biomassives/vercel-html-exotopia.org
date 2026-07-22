@@ -432,6 +432,14 @@ const PATHS: Path[] = [
         to:      '/docs',
         ctaDesc: 'Open the docs and find something to improve or propose.',
       },
+      {
+        id:      'project-rewards',
+        icon:    '🏅',
+        title:   'Log volunteering and see your points',
+        desc:    'Field submissions and self-reported volunteering (like a plastics-collection tally) feed one shared points ledger and Impact Profile.',
+        to:      '/rewards',
+        ctaDesc: 'Open your Rewards page and log an action.',
+      },
     ],
     settlementItems: [
       { text: 'A project beacon object for each active field project you hold', color: '#00e5ff' },
@@ -472,6 +480,14 @@ const PATHS: Path[] = [
         desc:    'Solar sizing, battery systems, micro-hydro, community energy planning — applicable to off-grid settlements here and in the cosmos.',
         to:      '/learn',
         ctaDesc: 'Start the Energy module.',
+      },
+      {
+        id:      'certify-finance',
+        icon:    '💰',
+        title:   'Personal Finance Literacy (P-Fin 8)',
+        desc:    'Eight questions across earning, saving, investing, borrowing, insuring, and more. Completing it unlocks a settlement seed; the full P-Fin Index unlocks a parallel-universe settlement.',
+        to:      '/learn',
+        ctaDesc: 'Start the P-Fin 8 quiz — about 10 minutes.',
       },
     ],
     settlementItems: [

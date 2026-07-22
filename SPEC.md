@@ -1,7 +1,9 @@
 # SPEC.md — Exotopia
 ### Metaverse Visualization, Cosmic Navigation & Virtual Real Estate
 *SCD Hub · pon.ink · ecocity.com · exotopia.org*
-*Living document — updated through collaborative Q&A, April 2026*
+*Living document — updated through collaborative Q&A, April 2026 · statuses and §21–22 added July 2026 · §23–25 added July 2026*
+
+> **A note on how to read this document.** Sections 1–10 and 14–20 describe the full intended system, including large pieces (avatar/presence, gallery customisation, robot companions, pon.ink identity bridge) that remain design specification, not shipped code — their status tables say so plainly. Section 11's MVP Scope table was audited against the live codebase in July 2026 and corrected where it had drifted from reality in both directions (some things marked "to build" already existed; nothing was found to be over-stated in that table). Sections 21, 22, and 24 document three systems that did not exist when this document was first written and were built independently of the original MVP plan. Section 25 audits a fourth area — camera/navigation continuity — where the honest answer is split: part of it shipped, part of it is a fully-written module that nothing calls yet.
 
 ---
 
@@ -435,11 +437,11 @@ The minimum viable product that can be demonstrated to Uni-Kibaoni-Peace-Youth-S
 | Quasar app shell — nav, dark theme, page routing | ✅ Implemented |
 | Exolocation NFT metadata builder (Algorand ARC-3/ARC-69) | ✅ Implemented (src/lib/algorand/) |
 | Station/Module/EcocitySolution NFT metadata builder (Solana) | ✅ Implemented (src/lib/solana/) |
-| Eco-ops check-in page with activity type selection | 🔲 To build (EcoOpsPage.vue stub ready) |
-| Wallet creation flow (pon.ink — new-user-safe) | 🔲 To build |
-| First eco-ops check-in → Exotopia address assignment | 🔲 To build |
-| Settlement stub view (empty dome, soul orbs, water) | 🔲 To build |
-| Settlement nickname assignment | 🔲 To build |
+| Eco-ops check-in page with activity type selection | 🟡 Partial — built, but with a different activity taxonomy than §6.1's list. `src/stores/eco-offline.ts` ships an offline-first (IndexedDB queue, syncs on reconnect) check-in flow for water quality, macroinvertebrate sampling, tick drag, phenology, PFAS sampling, and CSO events — real field-science categories, not `garbageMap`/`wqMap`/etc. The backing Supabase `eco_ops` schema tables the client writes to are not yet migrated anywhere in the repo, so sync currently fails safely rather than actually persisting server-side. |
+| Wallet creation flow (pon.ink — new-user-safe) | ✅ Implemented — as a self-contained browser wallet, not a pon.ink dependency: `BrowserWalletCreate.vue`, `BrowserWalletUnlock.vue`, `WalletOnboardingGuide.vue` |
+| First eco-ops check-in → Exotopia address assignment | 🔲 Still to build — settlement creation (via `MintPage.vue`) and eco-ops check-ins are separate, unlinked flows today |
+| Settlement stub view (empty dome, soul orbs, water) | ✅ Implemented — soul orbs render in `SurfaceViewPage.vue`; settlement records persist via `src/lib/settlements.ts` (localStorage-backed, not yet Supabase-synced) |
+| Settlement nickname assignment | 🟡 Partial — every settlement has a `displayName`, but it's auto-generated from the planet/system name, not yet a user-editable field |
 
 ### Ship after v1 (v1.1 — target June 15, 2026)
 
@@ -2056,6 +2058,153 @@ The gallery and robot enter development in the **May/June sprint** after the May
 **Target for gallery + robot v1.1:** June 15, 2026 (six weeks after MVP demo).
 
 The Q&A in this section exists so that when the sprint begins, the design decisions are already made and the team is not relitigating the same questions during implementation.
+
+---
+
+---
+
+---
+
+## 21. Rewards & Incentive Ledger (Implemented — July 2026)
+
+### 21.1 Relationship to the original vision
+
+Sections 5–7 describe a fully NFT-backed reward economy (Exolocation deeds, Station/Module/EcocitySolution cNFTs, an 80/15/5 Resonance Split) reached through pon.ink's wallet identity. What actually shipped in July 2026 is a leaner, Supabase-backed points-and-certificate ledger — not NFTs, not on pon.ink, no payment automation — that fills the same functional role (real-world/real-effort activity → visible settlement reward) for three tracks the app had already been *promising* without any backing store: finance-literacy education, volunteering, and educating others. It is explicitly a foundation, not the full vision in Sections 5–7 or in `SPEC_ECOOPS_COMMUNITY_PLATFORM.md` (which specs the fuller Open Badges 3.0 / mentorship-tier design this pulls its point values from).
+
+### 21.2 What exists
+
+| Component | File(s) |
+|---|---|
+| Append-only points ledger, certificates, mentor sessions, minimal admin allow-list | `supabase/migrations/002_rewards.sql` |
+| Points/settlement-object catalog, P-Fin quiz → reward mapping | `src/data/rewards-catalog.ts` |
+| Original 8+28 question personal-finance-literacy quiz (P-Fin 8 / full P-Fin Index), aligned to but not copied from the TIAA Institute–GFLEC framework | `src/data/finance-literacy-quiz.ts`, appended into `src/data/quizzes.ts` |
+| Rewards store — quiz completion, volunteer action logging, mentor session request/confirm, admin grant | `src/stores/rewards.ts` |
+| `/rewards` page — points by track, finance-literacy status, volunteer self-report, mentor panel, Impact Profile with a picker to attach an unlocked object to an existing settlement (`SettlementRecord.objects[]`, added to `src/lib/settlements.ts`) | `src/pages/RewardsPage.vue` |
+
+### 21.3 Trust model and the one place it's server-enforced
+
+Everything here is client-trust MVP, matching how `connections`/`settlements.ts` already work — Row Level Security restricts *who* can write a row for themselves, not what value they claim. The one exception is mentor-session confirmation, the one path where a single client could otherwise fabricate a reward for two people: a `BEFORE UPDATE` trigger locks `mentor_id`/`mentee_id`/`topic`/`created_at` as immutable and lets each party only flip their own confirmation flag, and an `AFTER UPDATE` `SECURITY DEFINER` trigger — not client code — emits the point rows for both parties once both are true.
+
+### 21.4 Explicitly not part of this
+
+No M-Pesa or other payment integration, no zero-knowledge proof system, no Open Badges 3.0 credentials, no iNaturalist/GBIF sync. See §23.2 for why this matters — a July 2026 press release publicly described a working ZK-proof + M-Pesa payout system for exactly the kind of field-verified reward this section covers, and no such system exists in code.
+
+### 21.5 What "mentoring, citizen science, library curation, model-building" actually map to
+
+The reward ledger's `RewardTrack` type (`src/stores/rewards.ts`) has exactly three values: `finance_literacy`, `volunteering`, `educating_others`. When describing the incentive system in plain language it is easy to reach for a fourth or fifth category that sounds like it should exist — it doesn't yet, and this section exists so that doesn't get repeated as fact:
+
+| Plain-language activity | What it actually is in code today |
+|---|---|
+| **Mentoring** | Real. The `educating_others` track, backed by `mentor_sessions` (server-enforced double-confirm, see §21.3) → Mentorship Beacon at 4 confirmed sessions (`MENTOR_CYCLE_THRESHOLD`). |
+| **Citizen science** | Real, but it is §24's PFAS/PFOA tooling specifically — not a generic "citizen science" track. Progress there (`decon_progress_log`, `method_proposal_published/endorsed`) posts points into the existing `volunteering` and `educating_others` tracks; there is no separate `citizen_science` track value. |
+| **Library curation and example finding** | Not implemented as its own track or flow. The only mechanism in `rewards-catalog.ts` that resembles it is `contribution_verified` (20 pts) — an **admin-granted**, generic catch-all ("e.g. docs/curriculum contribution") with no UI to submit a curation entry, no link to `/eco-library`, and no automatic trigger. Anyone referring to "library curation rewards" as a working feature is describing an aspiration, not a shipped path. |
+| **Creation of models useful in eco-ops** | Not implemented at all — no schema, no store method, no catalog entry corresponds to submitting or rewarding a model/design contribution. This is vision-stage, same status as the fuller Open Badges 3.0 design in `SPEC_ECOOPS_COMMUNITY_PLATFORM.md` that §21.1 already notes this section is a leaner foundation for. |
+
+If "library curation" or "model contribution" becomes a real priority, the shortest path is a fourth `RewardTrack` value plus a `library_contribution_verified` (or similar) action key and a lightweight submission form — not a new architecture; the ledger, certificate, and settlement-object-unlock plumbing in §21.2–21.3 already generalizes to a new track name.
+
+---
+
+## 22. Void Navigation (Implemented — July 2026)
+
+### 22.1 What exists
+
+Three void-related pages — `ClusterInteriorPage.vue` (`/cluster-interior/:slug`, shared with real galaxy-cluster interiors), `VoidInteriorPage.vue` (`/void/:voidId`), and `VoidGalaxyPage.vue` (`/void-galaxy/:voidId/:gid`) — previously had no bottom navigation strip, unlike the galaxy/surface/galactic-center/cosmic scenes, which use `DefenderNav.vue` (or, for black holes, the simpler bespoke `BlackHoleDefenderNav.vue`). A new bespoke `src/components/VoidDefenderNav.vue`, following the `BlackHoleDefenderNav.vue` precedent (plain DOM/CSS, Vue-reactive, no canvas or tick-loop coupling), now ships on all three:
+
+- **Objects list** — the real, named catalog objects in the void (not the synthetic filler population used to bulk out the ambient render), grouped by near-wall / far-wall / deep-interior zone.
+- **Edge ring** — a literal 360° view of wall-zone objects positioned by their real angular position around the void centre (`atan2` of their XZ offset), distinct from the sparse interior list.
+
+The wall/interior distinction was not new data modeling — it already existed: `system_architecture.cluster_zone` on cluster-member JSON, `is_wall` on void-galaxy oracle JSON.
+
+### 22.2 A real bug fixed along the way
+
+`ClusterInteriorPage.vue`'s initial camera framing used a fixed offset sized for real clusters (~0.1–2 Mpc member spread). Applied to a void member catalog (45–130 Mpc radius — 35–90× larger), the camera started essentially in empty space. The fix computes the camera offset from the actual bounding radius of the loaded members instead of a constant, so real clusters keep today's framing (a floor keeps the old behavior) and voids now frame correctly.
+
+### 22.3 Known gap
+
+`scripts/fetch-local-void.mjs` (adapted from the existing `fetch-bootes-void.mjs`, with a real adaptation — not a parameter swap — the Milky Way sits *inside* the Local Void's 45 Mpc radius at 23 Mpc distance, so the NED query drops Boötes' directional cone search in favor of an all-sky redshift-slice query) generates `public/void-galaxies/local-void-{viz,detail}.json`. As of this writing it has only been run without NED network access available, so the Local Void's real catalog galaxies (NGC 6503, IC 342, the Fireworks Galaxy) are not yet in the output — only the 300-galaxy procedural fallback population. Re-running `node scripts/fetch-local-void.mjs` with internet access will backfill the real entries; the Objects list and Edge Ring will show them as soon as the file is regenerated.
+
+---
+
+---
+
+## 23. A Note on Following Through (July 2026)
+
+### 23.1 Why this section exists
+
+Several sections of this document, and at least one public release, described capability ahead of what was actually built. That gap is worth naming directly rather than letting it sit quietly in status tables.
+
+### 23.2 The specific gap
+
+A press release (`press/kenya-june-2026.md`) publicly described a working zero-knowledge-proof system that verifies field work offline and triggers M-Pesa payouts, anchored to Algorand, for the Mpeketoni Eco Ops Group in Lamu County. **No such system exists in code** — there is no ZK proof implementation and no M-Pesa integration anywhere outside documentation and specs. Separately, the Platform page's public copy promised that completing a personal-finance quiz would unlock settlement rewards before any such quiz, ledger, or unlock mechanism existed. Section 21 makes the second promise real, on a considerably smaller and more honest footing (points ledger, not payments; self-serve trust model, not a cryptographic proof). The first promise — automated field-verified M-Pesa payout — remains unbuilt, and anyone communicating about the Mpeketoni pilot externally should not imply it is live.
+
+### 23.3 The standing practice going forward
+
+Public-facing claims about this platform — press releases, blog posts, in-app copy — should describe what is running in production, not what a spec describes as the target. Where a claim is aspirational, say so in the same sentence. This document's status markers (✅ Implemented / 🟡 Partial / 🔲 To build) exist to make that distinction checkable, not decorative — and are only useful if kept honest under audit, the way §11 and §21–22 were this pass.
+
+---
+
+## 24. PFAS/PFOA Citizen Science Tooling (Implemented — July 2026)
+
+### 24.1 What exists
+
+Built directly on top of §21's rewards ledger — a curated methods library, a public project-logging system, and a public method-proposal system with citations, all feeding the `volunteering`/`educating_others` tracks:
+
+| Component | File(s) |
+|---|---|
+| `focus_areas`, `decon_projects`, `project_log_entries`, `method_proposals`, `proposal_endorsements`, `branch_settlements` tables — public SELECT, owner-scoped INSERT, server-side endorsement-reward trigger | `supabase/migrations/003_pfas_citizen_science.sql` |
+| Curated remediation-methods reference (GAC/ion-exchange/RO-NF/foam fractionation as proven; electrochemical oxidation, supercritical water oxidation, phytoremediation flagged honestly as emerging/unproven-for-PFAS), sampling-cost tiers, legal/safe-sampling guidance | `src/data/pfas-methods-library.ts` |
+| Store — focus areas/projects/log entries/method proposals/endorsements, plus the `exo-branch-v1` research-branch creation on a simulated project | `src/stores/pfas-citizen-science.ts` |
+| `/pfas-citizen-science` — browse focus areas/projects (no sign-in to read), methods library, start-a-project flow, project detail with progress log, logging-streak progress bar, and a "attach a site marker to my settlement" action | `src/pages/PfasCitizenSciencePage.vue` |
+| `/method-proposals` — public list with citations/arguments, submission form, endorse button | `src/pages/MethodProposalsPage.vue` |
+| `decon-site-marker` settlement-item preset (color set at attach time from project status: amber planning/active, cyan monitoring, green complete) and its `buildItemMesh()` case | `src/lib/settlement-items.ts`, `src/pages/DomeInteriorPage.vue` |
+| Simplified 24-dim Leech vector (three stacked 8-vectors — current/aspirational/relational — Euclidean k-NN) used for branch-settlement comparison | `src/lib/leech-vector.ts` |
+| Shared consecutive-week streak calculation, used by both the UI progress bar and the store's certificate-threshold check | `src/composables/useLoggingStreak.ts` |
+
+### 24.2 One correction from the original design note
+
+`blog-settlements-as-possible-worlds.md` spells the field `leach_vector` (line 102) — a typo against its own Λ₂₄ framing elsewhere. The schema and code use `leech_vector` deliberately, the correct term. `leech-vector.ts` implements the blog's literal, explicitly-labeled-speculative proposal (structured 24-dim vectors + nearest-neighbor search) — **not** genuine Leech-lattice (Λ₂₄) sphere-packing or lattice-point decoding, which remains unbuilt and out of scope.
+
+### 24.3 Explicitly not part of this
+
+Genuine Λ₂₄ decoding math; a ZK proof/ownership-authenticity layer for branches (no `zk-e8/` directory exists, only a spec doc, and no crypto deps in `package.json` — see §23.2 for why claims here matter); new 3D rendering for stations (`StationPage.vue` is metadata-only, zero WebGL); a formal peer-reviewer role hierarchy for method proposals (ships with public visibility + `proposal_endorsements` only); automated lab-result ingestion.
+
+---
+
+## 25. Zoom-Descent Navigation & the Local Step Portal — Status Check (July 2026)
+
+### 25.1 Why this section exists
+
+`SPEC_ZOOM_DESCENT.md` (dated 2026-06-29, status still marked "Proposed") describes moving away from hard route-cut navigation — every level change a full page load — toward continuous camera motion: in-page zooms, lightweight wipes with directional bearing handoff, and, for settled worlds, a physical **Local Step Portal** object the user flies through with a full-screen light-inversion effect at the moment of crossing. This section checks that vision against what actually runs today, the same way §21–22 and §24 did for the reward ledger and void navigation. The honest answer here is split down the middle: the cheap, high-value half shipped; the spectacular half is a complete, unused module.
+
+### 25.2 What shipped
+
+The **bearing-handoff wipe** is real and in production. `src/stores/scene-transition.ts` implements exactly two transition modes — `'lightning'` and `'iris'` — each a short (380 ms iris / 900 ms lightning) full-screen cover with a `bearing` value carried across the route change so the arriving scene's camera can start facing the direction the user was already looking. This is called from `depart(ox, oy, mode, bearing)` in seven pages: `CosmicPage.vue`, `GalaxyPage.vue`, `ClusterInteriorPage.vue`, `ClusterGalaxyPage.vue`, `ClusterSystemPage.vue`, `VoidInteriorPage.vue`, and `VoidGalaxyPage.vue`. This is the "phase out hard bifurcations" half of the vision, and it works — it replaced what used to be a jarring page-swap with a sub-second directional wipe at every one of those level crossings.
+
+What this is **not**: it is not a continuous in-page camera zoom (§4 of the zoom-descent spec — "TWEEN toward the cluster center, then cut"). No `TWEEN`-based fly-to exists in any of the pages above; the camera is static right up to the wipe. So the transitions are smoother than a raw route change, but they are still a cut, just a fast directional one instead of a blunt one.
+
+### 25.3 What is built but not connected to anything
+
+`src/lib/local-step-portal.ts` (607 lines) is a complete, working `LocalStepPortal` class: circum-polar orbit geometry, a Gerstner-wave `ShaderMaterial` for the portal's inner surface driven by the planet's real equilibrium temperature / surface gravity / atmospheric pressure, hover state, and an `uEntering` approach ramp — essentially the whole rendering side of §6 of `SPEC_ZOOM_DESCENT.md`. It is not imported by `ClusterSystemPage.vue`, `SurfaceViewPage.vue`, or anywhere else in `src/`. No page constructs a `LocalStepPortal` instance. It is dead code: fully written, never wired in.
+
+Consistent with that, the third transition mode the spec calls for — `'inversion'`, the light-inversion membrane-crossing effect in §7 of `SPEC_ZOOM_DESCENT.md` — does not exist in `scene-transition.ts`'s `TransitionMode` union (`'lightning' | 'iris'` only). `ClusterSystemPage.vue`'s "Descend to surface" button still fires an ordinary `'lightning'` wipe, the same mechanic used for every other cross-level jump. There is currently no code path anywhere that produces a portal object a user flies toward, hovers over, or crosses through — "orbit down and land adjacent to your settlement via a portal" describes `local-step-portal.ts`'s intent, not anything reachable by clicking through the app today.
+
+**Practical read:** if this becomes a priority, the remaining work is wiring, not invention — instantiate `LocalStepPortal` in `ClusterSystemPage.vue`'s tick loop for settled planets, add `'inversion'` to `TransitionMode` and the departure-duration table in `scene-transition.ts`, and swap the "Descend to surface" button's `depart(..., 'lightning', ...)` call for the approach-then-inversion sequence already described in §6.6–7.2 of the zoom-descent spec. The hard 3D/shader work is done; only the last-mile call sites are missing.
+
+### 25.4 "Parking for other guests"
+
+There is no live guest-parking or multiplayer presence system — this remains exactly Phase 0 as described in §17.3: five static, decorative soul orbs with no connection to real user or session data. What does exist and is easy to mistake for it: `src/lib/spatial-scopes.ts` defines five named camera viewpoints (`settlement:orb:fana-ka`, `:ot-kulcha`, `:uni-kibaoni-shg`, `:glipish-dj`, `:am-lunchmeat`) — one per active community group from `src/data/events.ts` — that frame the camera on a specific soul orb's fixed position. These are camera bookmarks for the same five mockup orbs, not parking spots that a real visiting guest occupies. Building actual guest parking requires the presence system specified in §17.4 (Phase 1 or later) — nothing in that phase has shipped.
+
+### 25.5 Net status
+
+| Piece | Status |
+|---|---|
+| Iris/lightning wipe + bearing handoff | ✅ Implemented — 7 pages |
+| Continuous in-page camera zoom (TWEEN fly-to) | 🔲 Not built |
+| Local Step Portal 3D object + shader | 🟡 Built, not wired into any page — dead code |
+| `'inversion'` transition mode | 🔲 Not built |
+| "Land adjacent to settlement via portal" user flow | 🔲 Not built — button still does a flat wipe |
+| Named community-orb camera viewpoints | ✅ Implemented — 5 static bookmarks |
+| Live guest parking / multiplayer presence | 🔲 Not built — see §17.3/17.8 Phase 1+ |
 
 ---
 

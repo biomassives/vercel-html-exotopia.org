@@ -98,6 +98,16 @@
       <div class="text-caption text-blue-grey-4 q-mt-sm">{{ error }}</div>
       <q-btn flat dense color="cyan-7" label="Back" class="q-mt-sm" @click="goBackToVoid" />
     </div>
+
+    <VoidDefenderNav
+      v-if="oracleData"
+      :void-id="voidId"
+      :void-name="voidDisplayName"
+      :members="voidNavMembers"
+      :current-id="gid"
+      :bottom-px="50"
+      @select="selectVoidNavMember"
+    />
   </q-page>
 </template>
 
@@ -109,9 +119,10 @@ import type { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js
 import { useVizRenderer, VIZ_BAR_H } from 'src/composables/useVizRenderer'
 import { disposeScene } from 'src/lib/three-utils'
 import { useSceneTransitionStore } from 'src/stores/scene-transition'
-import type { VoidGalaxy } from 'src/data/void-oracle.types'
+import type { VoidGalaxy, VoidOracleFile } from 'src/data/void-oracle.types'
 import { loadVoidOracle } from 'src/lib/void-oracle'
 import { useSettlements, clusterKey } from 'src/lib/settlements'
+import VoidDefenderNav, { type VoidNavMember } from 'src/components/VoidDefenderNav.vue'
 
 // ── Route ──────────────────────────────────────────────────────────────────────
 
@@ -171,10 +182,38 @@ function onPageMouseMove() { scheduleHide() }
 
 // ── Star system data ──────────────────────────────────────────────────────────
 
-const loading  = ref(true)
-const error    = ref('')
-const systems  = shallowRef<VoidStarSystem[]>([])
-const selected = ref<VoidStarSystem | null>(null)
+const loading    = ref(true)
+const error      = ref('')
+const systems    = shallowRef<VoidStarSystem[]>([])
+const selected   = ref<VoidStarSystem | null>(null)
+const oracleData = ref<VoidOracleFile | null>(null)
+
+// Nav shows sibling galaxies within the same void (not the systems inside this
+// one) — "limited objects" + "edge ring" apply at the void-galaxy scale, not
+// the procedurally-generated star-system scale.
+const voidNavMembers = computed<VoidNavMember[]>(() => {
+  if (!oracleData.value) return []
+  return oracleData.value.galaxies
+    .filter(g => g.source === 'catalog')
+    .map(g => ({
+      id:       g.gid,
+      name:     g.gid,
+      zone:     g.is_wall ? 'wall' : 'interior',
+      angleDeg: Math.atan2(g.pos_void[2], g.pos_void[0]) * 180 / Math.PI,
+    }))
+})
+
+async function selectVoidNavMember(memberId: string) {
+  if (memberId === gid.value) return
+  const gal = oracleData.value?.galaxies.find(g => g.gid === memberId)
+  if (!gal) return
+  await transition.depart(50, 50, 'iris', 0)
+  void router.push({
+    name:   'void-galaxy',
+    params: { voidId: voidId.value, gid: memberId },
+    query:  { morph: gal.morph, color: gal.col_hex.replace('#', ''), z: String(gal.z), agn: gal.has_agn ? '1' : '0', wall: gal.is_wall ? '1' : '0' },
+  })
+}
 
 interface VoidStarSystem {
   idx:         number
@@ -559,6 +598,7 @@ onMounted(async () => {
 
   // Load oracle to get actual morph + colour if available
   const oracle  = await loadVoidOracle(voidId.value)
+  oracleData.value = oracle
   const galaxy: VoidGalaxy | undefined = oracle?.galaxies.find(g => g.gid === gid.value)
 
   const morph  = galaxy?.morph ?? queryMorph.value

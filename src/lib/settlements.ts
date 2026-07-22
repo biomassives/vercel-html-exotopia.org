@@ -15,6 +15,7 @@ export interface SettlementRecord {
   lon?: number
   clusterSlug?: string
   memberId?: string
+  objects?: string[]    // unlocked reward-catalog object keys attached to this settlement
 }
 
 // ── Helpers ─────────────────────────────────────────────────────────────────

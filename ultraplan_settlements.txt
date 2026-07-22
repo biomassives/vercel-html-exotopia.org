@@ -123,11 +123,6 @@ export const ITEM_MESH_PRESETS: Record<string, ItemMeshPreset> = {
     acquiredBy: ['eco-ops', 'traded'],
     description: 'Stores genetic diversity — a symbol of long-term commitment.',
   },
-  'decon-site-marker': {
-    label: 'Decontamination Site Marker', defaultColor: 0xffaa33, zoneDefault: 'water-edge',
-    acquiredBy: ['eco-ops'],
-    description: 'Marks a PFAS/PFOA decontamination project logged in your citizen-science work. Color reflects project status at the time it was attached (amber = planning/active, cyan = monitoring, green = complete) — set via the color override when the item is added, not live-updating.',
-  },
 }
 
 // ── Zone world positions (relative to dome centre at ground level) ────────────
@@ -238,3 +233,4 @@ export function useSettlementItems(settlementKey: Ref<string>) {
 
   return { items, byType, addItem, removeItem, placeItem }
 }
+
