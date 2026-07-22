@@ -199,6 +199,7 @@ No environment variables required for local development. The app runs entirely c
 | Zoom-descent camera continuity (iris/lightning wipe + bearing handoff) | Complete — 7 pages; see SPEC.md §25 |
 | Local Step Portal (physical portal object + light-inversion crossing for landing at a settlement) | Built, not wired in — `src/lib/local-step-portal.ts` is a complete unused module; see SPEC.md §25 and SPEC_ZOOM_DESCENT.md |
 | Live guest presence / "parking" at settlements | Not built — still 5 static mockup orbs; see SPEC.md §17.3/§25.4 |
+| NFT value/rarity framing risk mitigation | Partial — MintPage.vue hero + pre-mint disclaimer shipped; collector-cards.ts/CollectorCard.vue/GalleryPage.vue schema still proposed — see SPEC_NFT_VALUE_FRAMING.md |
 
 ---
 
@@ -237,6 +238,7 @@ No environment variables required for local development. The app runs entirely c
 | [SPEC_CELESTIAL_REVEAL.md](SPEC_CELESTIAL_REVEAL.md) | LOD image reveal + telescope archive integration |
 | [SPEC_DEFENDERNAV.md](SPEC_DEFENDERNAV.md) | Defender arcade-style navigator |
 | [SPEC_NFT_FRONTIER.md](SPEC_NFT_FRONTIER.md) | Frontier / predicted exoplanet NFT tier |
+| [SPEC_NFT_VALUE_FRAMING.md](SPEC_NFT_VALUE_FRAMING.md) | Integrated fix for NFT/investment-framing legal risk — rarity tiers, scores, and on-chain "Rarity" traits across the collector-card/editions subsystem |
 | [SPEC_STARSYSTEM_ALGORITHM.md](SPEC_STARSYSTEM_ALGORITHM.md) | 3-stage deterministic planet pipeline |
 | [blog-every-object-a-door.md](blog-every-object-a-door.md) | Navigation chain architecture — wiring done |
 | [blog-surfing-the-realms.md](blog-surfing-the-realms.md) | Data pipeline gaps — sky accuracy, L2→L3 |
