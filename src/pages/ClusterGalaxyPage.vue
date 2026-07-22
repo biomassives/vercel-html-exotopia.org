@@ -1,7 +1,7 @@
 <template>
   <!-- Transparent overlay — shared Three.js canvas in MainLayout renders behind -->
   <q-page class="cg-page viz-overlay-page" :style="hoveringSystem ? { cursor: 'pointer' } : {}"
-    @click="onClick" @mousemove="onMouseMove" @mouseleave="onMouseLeaveCanvas">
+    @click="onClick" @mousedown="onDragStart" @mousemove="onMouseMove($event); onDragTrack($event)" @mouseleave="onMouseLeaveCanvas">
 
     <!-- Breadcrumb -->
     <div class="cg-breadcrumb row items-center q-gutter-xs no-wrap">
@@ -555,6 +555,7 @@ function resetToGalaxyCenter() {
 }
 
 function onClick(event: MouseEvent) {
+  if (dragMoved > 6) return
   const sys = raycastSystems(event)
   if (sys) {
     selectedSystem.value = sys
@@ -612,6 +613,11 @@ function onMouseMove(event: MouseEvent) {
   const sys = raycastSystems(event)
   applyHover(sys?.idx ?? -1)
 }
+
+// ── Drag-vs-click detection — see the matching comment in ClusterInteriorPage.vue ──
+let dragStartX = 0, dragStartY = 0, dragMoved = 0
+function onDragStart(e: MouseEvent) { dragStartX = e.clientX; dragStartY = e.clientY; dragMoved = 0 }
+function onDragTrack(e: MouseEvent) { dragMoved = Math.abs(e.clientX - dragStartX) + Math.abs(e.clientY - dragStartY) }
 
 function onMouseLeaveCanvas() {
   applyHover(-1)

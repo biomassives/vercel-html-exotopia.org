@@ -1,7 +1,7 @@
 <template>
   <!-- Transparent overlay — shared Three.js canvas in MainLayout renders behind -->
   <q-page class="ci-page viz-overlay-page" :style="{ cursor: hoverName ? 'pointer' : 'default' }"
-    @click="onClick" @mousemove="onMouseMove" @mouseleave="onMouseLeave">
+    @click="onClick" @mousedown="onDragStart" @mousemove="onMouseMove($event); onDragTrack($event)" @mouseleave="onMouseLeave">
 
     <!-- Breadcrumb -->
     <div class="ci-breadcrumb row items-center q-gutter-xs no-wrap">
@@ -332,6 +332,11 @@ const mouseNDC       = new THREE.Vector2()
 const hitProxies:    THREE.Mesh[]    = []
 const memberSprites: THREE.Sprite[]  = []
 const clusterCenter  = new THREE.Vector3()
+// Set alongside clusterCenter once members load — see loadAndBuild(). deselect()
+// reuses this instead of a hardcoded offset so voids (35-90x a real cluster's
+// spread) don't land the camera back in empty space on every deselect, only
+// on first load (the bug this was originally meant to fix — see SPEC.md §22.2).
+let   overviewCamOffset = 28
 // Galaxy interior objects
 let   galaxyGroup:    THREE.Group | null = null
 const sysProxies:     THREE.Mesh[]       = []
@@ -528,6 +533,7 @@ async function loadAndBuild() {
     // no longer start with the camera lost in empty space.
     const boundRadius = memberSprites.reduce((max, s) => Math.max(max, s.position.distanceTo(c)), 0)
     const camOffset    = Math.max(28, boundRadius * 1.6)
+    overviewCamOffset  = camOffset
 
     controls.target.copy(c)
     camera.position.set(c.x, c.y + camOffset * 0.35, c.z + camOffset)
@@ -642,6 +648,17 @@ function applyGalHover(newIdx: number) {
   hoveredSysIdx = newIdx
 }
 
+// ── Drag-vs-click detection ────────────────────────────────────────────────
+// OrbitControls handles the actual drag-to-orbit itself (its own listeners
+// on the canvas), but the click handler below needs to know whether THIS
+// click was the tail end of a drag gesture or a genuine tap — without this,
+// every orbit/pan while zoomed in also fires as a "click," misses the tiny
+// raycast target, and deselects/resets the camera. Mirrors the pattern
+// already used correctly in VoidInteriorPage.vue / VoidGalaxyPage.vue.
+let dragStartX = 0, dragStartY = 0, dragMoved = 0
+function onDragStart(e: MouseEvent) { dragStartX = e.clientX; dragStartY = e.clientY; dragMoved = 0 }
+function onDragTrack(e: MouseEvent) { dragMoved = Math.abs(e.clientX - dragStartX) + Math.abs(e.clientY - dragStartY) }
+
 function onMouseMove(e: MouseEvent) {
   if (!camera) return
   const w = window.innerWidth, h = window.innerHeight - VIZ_BAR_H
@@ -680,7 +697,7 @@ function onMouseLeave() {
 }
 
 function onClick(e: MouseEvent) {
-  if (!camera) return
+  if (dragMoved > 6 || !camera) return
   const w = window.innerWidth, h = window.innerHeight - VIZ_BAR_H
   mouseNDC.x =  (e.clientX / w) * 2 - 1
   mouseNDC.y = -((e.clientY - VIZ_BAR_H) / h) * 2 + 1
@@ -1146,8 +1163,9 @@ function deselect() {
   gsap.killTweensOf(camera.position)
   gsap.killTweensOf(controls.target)
   const c = clusterCenter
+  const off = overviewCamOffset
   gsap.to(controls.target, { x: c.x, y: c.y, z: c.z, duration: 1.0, ease: 'power2.out', onUpdate: () => controls?.update() })
-  gsap.to(camera.position, { x: c.x, y: c.y + 10, z: c.z + 28, duration: 1.8, ease: 'power3.inOut', onUpdate: () => controls?.update() })
+  gsap.to(camera.position, { x: c.x, y: c.y + off * 0.35, z: c.z + off, duration: 1.8, ease: 'power3.inOut', onUpdate: () => controls?.update() })
 }
 
 // ── Lifecycle ─────────────────────────────────────────────────────────────────
