@@ -1,0 +1,1632 @@
+diff --git a/src/data/finance-literacy-quiz.ts b/src/data/finance-literacy-quiz.ts
+new file mode 100644
+index 0000000..0b9ae6f
+--- /dev/null
++++ b/src/data/finance-literacy-quiz.ts
+@@ -0,0 +1,456 @@
++/**
++ * src/data/finance-literacy-quiz.ts
++ * Original finance-literacy quiz content, aligned to the P-Fin framework's
++ * eight functional areas (earning, consuming, saving, investing, borrowing
++ * & managing debt, insuring, comprehending risk, go-to information sources).
++ *
++ * This is ORIGINAL content we wrote — it is aligned to the P-Fin framework,
++ * not a reproduction of the TIAA Institute–GFLEC proprietary instrument.
++ *
++ * Shape reuses QuizArea / QuizQuestion from ./quizzes so LearnPage.vue's
++ * existing quiz-card UI, progress tracking, and scoring need no new UI.
++ * pfin8  gates the settlement-seed reward; pfin28 (prereq: pfin8) gates the
++ * parallel-universe upgrade. Reward mapping lives in ./rewards-catalog.
++ */
++import type { QuizArea } from './quizzes'
++
++// ── P-Fin 8 — one question per literacy area ────────────────────────────────
++
++export const pfin8: QuizArea = {
++  id: 'pfin8', title: 'P-Fin 8 · Financial Literacy', emoji: '🪙',
++  description: 'Eight questions, one per personal-finance literacy area. Score 6+ to unlock your settlement seed. Aligned to the P-Fin framework — original content, not a financial product.',
++  difficulty: 'beginner', color: 'rgba(68,204,136,0.80)',
++  badge: 'P-Fin Literate', questionCount: 8,
++  questions: [
++    {
++      // Earning
++      question: 'EARNING — Your gross pay is the amount before deductions. Which of these most directly reduces gross pay to arrive at your net (take-home) pay?',
++      options: [
++        'The interest earned on your savings account',
++        'Income tax and payroll deductions withheld by your employer',
++        'The current rate of inflation',
++        'The balance on your credit card',
++      ],
++      correct: 1,
++      explanation: 'Net (take-home) pay is gross pay minus deductions — income tax withholding, payroll taxes, and any pre-tax contributions like retirement or health premiums. Understanding the gap between gross and net is the foundation of budgeting from what you actually earn.',
++    },
++    {
++      // Consuming
++      question: 'CONSUMING — A budget is a plan for matching spending to income. If your income is fixed and one spending category rises, keeping the budget balanced requires that you…',
++      options: [
++        'Borrow the difference every month indefinitely',
++        'Reduce another category, increase income, or both',
++        'Ignore it, because budgets balance automatically',
++        'Only track the categories that went up',
++      ],
++      correct: 1,
++      explanation: 'A budget is a constraint: with fixed income, a rise in one category must be offset by a cut elsewhere or by earning more. Relying on borrowing to close a recurring monthly gap turns a spending problem into a debt problem.',
++    },
++    {
++      // Saving
++      question: 'SAVING — An emergency fund is money set aside for unexpected expenses. Where should an emergency fund normally be held?',
++      options: [
++        'In a volatile stock so it grows as fast as possible',
++        'In a liquid, low-risk account you can access quickly without loss',
++        'Locked in a multi-year product with a withdrawal penalty',
++        'As cash lent to friends at interest',
++      ],
++      correct: 1,
++      explanation: 'An emergency fund\'s job is availability, not growth. It belongs somewhere liquid and low-risk — a savings or money-market account — so it holds its value and can be reached immediately when the emergency actually happens.',
++    },
++    {
++      // Investing
++      question: 'INVESTING — Diversification means spreading money across many different investments. Its main purpose is to…',
++      options: [
++        'Guarantee a fixed return every year',
++        'Reduce the impact of any single investment performing badly',
++        'Eliminate all risk entirely',
++        'Avoid ever paying any tax',
++      ],
++      correct: 1,
++      explanation: 'Diversification lowers exposure to the failure of any one holding — when investments do not all move together, a loss in one is cushioned by others. It reduces risk but cannot guarantee returns or remove risk completely.',
++    },
++    {
++      // Borrowing & managing debt
++      question: 'BORROWING & DEBT — Two loans offer the same amount. Loan A charges 12% APR, Loan B charges 24% APR. Repaying the same balance over the same period, Loan B will…',
++      options: [
++        'Cost less in total interest',
++        'Cost the same, because APR does not affect cost',
++        'Cost more in total interest',
++        'Be interest-free after the first payment',
++      ],
++      correct: 2,
++      explanation: 'APR (annual percentage rate) is the yearly cost of borrowing. A higher APR means more interest paid over the life of the loan for the same balance and term. Comparing APRs is the quickest way to see which debt is more expensive.',
++    },
++    {
++      // Insuring
++      question: 'INSURING — A deductible is the amount you pay out of pocket before insurance covers the rest. All else equal, choosing a higher deductible usually…',
++      options: [
++        'Raises your regular premium',
++        'Lowers your regular premium but increases what you pay when you claim',
++        'Means the insurer pays for everything immediately',
++        'Has no effect on cost either way',
++      ],
++      correct: 1,
++      explanation: 'A higher deductible shifts more of the first-dollar risk onto you, so the insurer charges a lower premium. The trade-off: you pay more out of pocket at claim time. The right choice depends on your ability to absorb that up-front cost.',
++    },
++    {
++      // Comprehending risk
++      question: 'COMPREHENDING RISK — In personal finance, the relationship between risk and expected return is generally that…',
++      options: [
++        'Higher potential return tends to come with higher risk',
++        'Lower risk always produces higher returns',
++        'Risk and return are unrelated',
++        'The safest option always pays the most',
++      ],
++      correct: 0,
++      explanation: 'The risk–return trade-off is central: investments offering higher expected returns generally carry greater uncertainty and greater chance of loss. Anything promising high returns with no risk should be treated as a warning sign.',
++    },
++    {
++      // Go-to information sources
++      question: 'INFORMATION SOURCES — You get financial advice from someone who earns a commission on the specific product they recommend. This is an example of…',
++      options: [
++        'A neutral, disinterested source',
++        'A potential conflict of interest to weigh before acting',
++        'A reason the advice must be correct',
++        'Information that requires no further checking',
++      ],
++      correct: 1,
++      explanation: 'When an information source is paid based on what you buy, their incentive may not fully align with your interest — a conflict of interest. Good practice is to identify how a source is compensated and cross-check advice against independent information.',
++    },
++  ],
++}
++
++// ── P-Fin 28 — deeper coverage, ~3–4 per area ───────────────────────────────
++
++export const pfin28: QuizArea = {
++  id: 'pfin28', title: 'P-Fin 28 · Full Index', emoji: '🌐',
++  description: 'Twenty-eight questions across all eight literacy areas. Complete P-Fin 8 first. Score 20+ to upgrade your settlement into a parallel-universe world. Original content aligned to the P-Fin framework.',
++  difficulty: 'intermediate', color: 'rgba(0,229,255,0.80)',
++  badge: 'P-Fin Master', questionCount: 28,
++  questions: [
++    // ── Earning (4) ──────────────────────────────────────────────────────
++    {
++      question: 'EARNING — "Pre-tax" retirement contributions reduce your taxable income now. The main effect is that…',
++      options: [
++        'You pay more tax this year',
++        'Less of your income is taxed this year; tax is generally deferred until withdrawal',
++        'The contribution is never taxed at any point',
++        'Your gross pay increases',
++      ],
++      correct: 1,
++      explanation: 'Pre-tax contributions come out before income tax is calculated, lowering this year\'s taxable income. Tax is typically deferred until you withdraw the money later, often in retirement.',
++    },
++    {
++      question: 'EARNING — Which typically increases lifetime earning potential the most?',
++      options: [
++        'Never changing jobs',
++        'Building marketable skills and relevant education or credentials',
++        'Keeping all savings in cash',
++        'Avoiding all workplace benefits',
++      ],
++      correct: 1,
++      explanation: 'Human capital — skills, education, and experience — is the largest driver of earning potential over a working life. Investing in marketable, relevant capability generally raises income more than any single financial tactic.',
++    },
++    {
++      question: 'EARNING — An employer matches retirement contributions up to 4% of pay. Contributing at least 4% is often described as…',
++      options: [
++        'A poor idea because it locks up money',
++        'Effectively leaving free money on the table if you do not',
++        'The same as contributing nothing',
++        'Only worthwhile for high earners',
++      ],
++      correct: 1,
++      explanation: 'An employer match is additional compensation contingent on your contribution. Contributing at least enough to capture the full match is usually one of the highest-return moves available, because the match is an immediate 100% return on that portion.',
++    },
++    {
++      question: 'EARNING — A "1099" or self-employed worker differs from a "W-2" employee mainly because they…',
++      options: [
++        'Never pay any tax',
++        'Are generally responsible for setting aside their own taxes, including self-employment tax',
++        'Cannot deduct any business expenses',
++        'Always earn less',
++      ],
++      correct: 1,
++      explanation: 'Independent/self-employed workers usually have no tax withheld for them, so they must set aside and remit their own income and self-employment taxes — often via quarterly estimated payments. Failing to plan for this is a common cash-flow trap.',
++    },
++
++    // ── Consuming (3) ────────────────────────────────────────────────────
++    {
++      question: 'CONSUMING — The difference between a "need" and a "want" matters most when…',
++      options: [
++        'Income is unlimited',
++        'Money is tight and you must prioritise spending',
++        'You never use a budget',
++        'Prices never change',
++      ],
++      correct: 1,
++      explanation: 'Distinguishing needs (housing, food, essential transport) from wants lets you protect essentials first when resources are constrained. It is the core discipline behind any workable budget.',
++    },
++    {
++      question: 'CONSUMING — Lifestyle inflation refers to…',
++      options: [
++        'Prices rising across the whole economy',
++        'Spending rising to match income as you earn more, leaving little extra saved',
++        'A discount on luxury goods',
++        'A type of insurance',
++      ],
++      correct: 1,
++      explanation: 'Lifestyle inflation (or lifestyle creep) is when spending expands to absorb every raise, so higher income does not translate into higher saving. Recognising it lets you direct raises toward goals instead.',
++    },
++    {
++      question: 'CONSUMING — Comparing the unit price (price per ounce, litre, or item) between two package sizes helps you…',
++      options: [
++        'Avoid ever spending money',
++        'Judge which option is genuinely cheaper regardless of package size',
++        'Increase the total you spend',
++        'Calculate your income tax',
++      ],
++      correct: 1,
++      explanation: 'Unit pricing normalises cost across different package sizes, exposing which product is truly cheaper. A bigger package is not automatically better value — the unit price tells you.',
++    },
++
++    // ── Saving (4) ───────────────────────────────────────────────────────
++    {
++      question: 'SAVING — Compound interest means you earn returns on…',
++      options: [
++        'Only your original deposit',
++        'Both your original deposit and previously earned interest',
++        'Only money you withdraw',
++        'Nothing until the account closes',
++      ],
++      correct: 1,
++      explanation: 'Compounding means interest is added to the balance and then itself earns interest. Over long periods this snowball effect is powerful, which is why starting to save early matters so much.',
++    },
++    {
++      question: 'SAVING — A common guideline for an emergency fund is to hold roughly…',
++      options: [
++        'One day of expenses',
++        'Three to six months of essential expenses',
++        'Ten years of income',
++        'Exactly one month of income, never more',
++      ],
++      correct: 1,
++      explanation: 'A widely used rule of thumb is three to six months of essential living expenses, adjusted for job stability and dependents. The goal is to cover income disruption or large surprises without resorting to high-cost debt.',
++    },
++    {
++      question: 'SAVING — "Paying yourself first" means…',
++      options: [
++        'Spending on wants before anything else',
++        'Automatically directing a set amount to savings before discretionary spending',
++        'Repaying friends before bills',
++        'Only saving whatever is left at month end',
++      ],
++      correct: 1,
++      explanation: 'Paying yourself first automates saving up front, so it is not left to willpower or to whatever happens to remain. Treating savings like a fixed bill is one of the most reliable ways to build wealth steadily.',
++    },
++    {
++      question: 'SAVING — If a savings account pays 2% while inflation is 5%, the real (inflation-adjusted) value of that money is…',
++      options: [
++        'Growing quickly',
++        'Falling, because prices rise faster than the interest earned',
++        'Perfectly preserved',
++        'Unaffected by inflation',
++      ],
++      correct: 1,
++      explanation: 'Real return is roughly the nominal rate minus inflation. Earning 2% while inflation runs 5% means purchasing power shrinks about 3% a year — the money grows in dollars but buys less over time.',
++    },
++
++    // ── Investing (4) ────────────────────────────────────────────────────
++    {
++      question: 'INVESTING — Over long horizons, stocks have historically offered higher average returns than cash or bonds, but with…',
++      options: [
++        'No downside ever',
++        'Greater short-term volatility and risk of loss',
++        'A government guarantee',
++        'Lower returns than a checking account',
++      ],
++      correct: 1,
++      explanation: 'The historical pattern is higher long-run average returns for stocks accompanied by larger short-term swings. Time horizon matters: volatility that is painful over months has historically mattered less over decades.',
++    },
++    {
++      question: 'INVESTING — A low-cost index fund is popular largely because it…',
++      options: [
++        'Guarantees you beat the market',
++        'Offers broad diversification at low fees, tracking a market segment',
++        'Holds a single company',
++        'Avoids all market risk',
++      ],
++      correct: 1,
++      explanation: 'An index fund holds a broad basket mirroring an index, delivering instant diversification at low cost. It will not beat the market, but low fees and broad exposure make it a common core holding.',
++    },
++    {
++      question: 'INVESTING — Fees matter because, compounded over decades, a 1% higher annual fee…',
++      options: [
++        'Has no measurable effect',
++        'Can consume a large share of your total returns',
++        'Increases your returns',
++        'Is refunded at retirement',
++      ],
++      correct: 1,
++      explanation: 'Fees compound against you just as returns compound for you. Over a multi-decade horizon, seemingly small annual fee differences can erode a substantial portion of the final balance.',
++    },
++    {
++      question: 'INVESTING — "Time in the market beats timing the market" points to the finding that…',
++      options: [
++        'You should trade as often as possible',
++        'Staying invested consistently tends to beat trying to predict short-term moves',
++        'Markets are easy to time precisely',
++        'Investing is pointless',
++      ],
++      correct: 1,
++      explanation: 'Consistently missing even a handful of the best days can sharply cut long-run returns, and those days are hard to predict. Staying invested through cycles has historically outperformed attempts to jump in and out.',
++    },
++
++    // ── Borrowing & managing debt (4) ────────────────────────────────────
++    {
++      question: 'BORROWING & DEBT — Making only the minimum payment on a credit card generally means…',
++      options: [
++        'The balance is cleared fastest',
++        'You pay far more in interest and take much longer to clear the balance',
++        'No interest is ever charged',
++        'The card is closed automatically',
++      ],
++      correct: 1,
++      explanation: 'Minimum payments mostly cover interest, so the principal falls slowly and interest keeps accruing. A modest balance can take years and cost multiples of the original amount if only minimums are paid.',
++    },
++    {
++      question: 'BORROWING & DEBT — A credit score primarily helps lenders assess…',
++      options: [
++        'Your annual income exactly',
++        'How likely you are to repay borrowed money on time',
++        'Your net worth',
++        'How much tax you owe',
++      ],
++      correct: 1,
++      explanation: 'A credit score summarises repayment history and credit use into a measure of credit risk. A stronger score generally means access to credit on better terms (lower rates), which can save significant money over time.',
++    },
++    {
++      question: 'BORROWING & DEBT — Which action most reliably helps a credit score over time?',
++      options: [
++        'Missing payments occasionally',
++        'Paying bills on time and keeping credit-card balances low relative to limits',
++        'Maxing out every card',
++        'Closing your oldest account',
++      ],
++      correct: 1,
++      explanation: 'Payment history and credit utilisation are major scoring factors. Paying on time and keeping balances low relative to limits are the most dependable ways to build and protect a score.',
++    },
++    {
++      question: 'BORROWING & DEBT — A "secured" loan differs from an "unsecured" loan because the secured loan…',
++      options: [
++        'Has no interest',
++        'Is backed by collateral the lender can claim if you default',
++        'Can never be repaid early',
++        'Is only for businesses',
++      ],
++      correct: 1,
++      explanation: 'A secured loan (like a mortgage or auto loan) is backed by an asset the lender can seize on default, which usually lowers the rate. An unsecured loan (like most credit cards) has no collateral and typically carries a higher rate.',
++    },
++
++    // ── Insuring (3) ─────────────────────────────────────────────────────
++    {
++      question: 'INSURING — The core purpose of insurance is to…',
++      options: [
++        'Guarantee a profit',
++        'Transfer the financial risk of a large, unlikely loss to an insurer for a premium',
++        'Replace the need for savings',
++        'Increase your taxable income',
++      ],
++      correct: 1,
++      explanation: 'Insurance pools risk: you pay a predictable premium so that a rare but potentially devastating loss is borne by the insurer instead of wiping you out. It is protection against catastrophe, not an investment.',
++    },
++    {
++      question: 'INSURING — A premium is…',
++      options: [
++        'The amount the insurer pays you each month',
++        'The amount you pay for the insurance coverage',
++        'The same thing as a deductible',
++        'A tax on insurance',
++      ],
++      correct: 1,
++      explanation: 'The premium is the recurring price you pay to keep coverage in force. It is distinct from the deductible, which is what you pay out of pocket before coverage begins on a claim.',
++    },
++    {
++      question: 'INSURING — Which risk is generally most appropriate to insure against, rather than self-insure?',
++      options: [
++        'A small, predictable, affordable expense',
++        'A rare event that would be financially catastrophic, like a house fire',
++        'Your weekly groceries',
++        'A one-dollar loss',
++      ],
++      correct: 1,
++      explanation: 'Insurance is most valuable for low-probability, high-severity losses you could not comfortably absorb. Small, frequent, affordable costs are usually cheaper to pay directly than to insure.',
++    },
++
++    // ── Comprehending risk (3) ───────────────────────────────────────────
++    {
++      question: 'COMPREHENDING RISK — An investment "guaranteed" to double your money quickly with no risk is best treated as…',
++      options: [
++        'A rare opportunity to seize immediately',
++        'A likely warning sign of fraud or misrepresentation',
++        'Standard for all investments',
++        'Safer than a savings account',
++      ],
++      correct: 1,
++      explanation: 'Guaranteed high returns with no risk contradict the risk–return trade-off and are a hallmark of scams. Skepticism and independent verification are the right response.',
++    },
++    {
++      question: 'COMPREHENDING RISK — Putting your entire savings into a single company\'s stock exposes you to…',
++      options: [
++        'No particular risk',
++        'Concentration risk — a big loss if that one company falls',
++        'Guaranteed diversification',
++        'Automatic insurance',
++      ],
++      correct: 1,
++      explanation: 'Concentrating in one holding means its fortunes are your fortunes. If it falls, there is nothing to cushion the loss. Diversifying spreads that risk across many holdings.',
++    },
++    {
++      question: 'COMPREHENDING RISK — "Probability" in a financial decision refers to…',
++      options: [
++        'How much you like an outcome',
++        'How likely an outcome is to occur',
++        'The exact date something will happen',
++        'The tax rate on an outcome',
++      ],
++      correct: 1,
++      explanation: 'Probability is the likelihood of an outcome. Weighing both the probability and the size of a potential loss or gain — not just one — is central to sound risk decisions.',
++    },
++
++    // ── Go-to information sources (3) ─────────────────────────────────────
++    {
++      question: 'INFORMATION SOURCES — A "fiduciary" financial adviser is one who is…',
++      options: [
++        'Paid the highest commissions',
++        'Legally obligated to act in your best interest',
++        'Never allowed to charge fees',
++        'Employed by the government',
++      ],
++      correct: 1,
++      explanation: 'A fiduciary is bound to put your interests first. Knowing whether an adviser is a fiduciary — versus one held only to a looser "suitability" standard — helps you judge how far to trust their recommendations.',
++    },
++    {
++      question: 'INFORMATION SOURCES — Before acting on a financial tip from social media, a sound step is to…',
++      options: [
++        'Act instantly before the chance disappears',
++        'Verify it against independent, reputable sources and consider the poster\'s incentives',
++        'Assume it is true because it is popular',
++        'Share it widely first',
++      ],
++      correct: 1,
++      explanation: 'Social-media tips may be uninformed, promotional, or paid. Cross-checking against independent reputable sources and asking what the poster gains protects you from hype and manipulation.',
++    },
++    {
++      question: 'INFORMATION SOURCES — Which is generally the most reliable for understanding the terms of a financial product?',
++      options: [
++        'An advertisement for the product',
++        'The official disclosure documents and independent consumer-protection resources',
++        'A single anonymous online comment',
++        'The most enthusiastic salesperson',
++      ],
++      correct: 1,
++      explanation: 'Official disclosures spell out the actual terms, fees, and risks, and independent consumer-protection resources interpret them without a sales incentive. Advertising and sales pitches are designed to persuade, not to inform fully.',
++    },
++  ],
++}
+diff --git a/src/data/quizzes.ts b/src/data/quizzes.ts
+index 4473b57..99f2418 100644
+--- a/src/data/quizzes.ts
++++ b/src/data/quizzes.ts
+@@ -2,7 +2,12 @@
+  * src/data/quizzes.ts
+  * Knowledge quiz content for core SCD Hub domains.
+  * Each area produces a badge on completion.
++ *
++ * The P-Fin finance-literacy areas live in ./finance-literacy-quiz and are
++ * appended below; their completions carry rewards (see ./rewards-catalog and
++ * QUIZ_REWARD_MAP). All other areas here are reward-free knowledge quizzes.
+  */
++import { pfin8, pfin28 } from './finance-literacy-quiz'
+ 
+ export interface QuizQuestion {
+   question:    string
+@@ -236,4 +241,8 @@ export const QUIZ_AREAS: QuizArea[] = [
+     ],
+   },
+ 
++  // ── FINANCE LITERACY (P-Fin) — reward-carrying, see rewards-catalog ─────────
++  pfin8,
++  pfin28,
++
+ ]
+diff --git a/src/data/rewards-catalog.ts b/src/data/rewards-catalog.ts
+new file mode 100644
+index 0000000..5bc54c9
+--- /dev/null
++++ b/src/data/rewards-catalog.ts
+@@ -0,0 +1,92 @@
++/**
++ * src/data/rewards-catalog.ts
++ * Static catalog for the settlement-rewards foundation: point values,
++ * unlockable settlement objects, and the quiz→reward mapping.
++ *
++ * Point values mirror SPEC_ECOOPS_COMMUNITY_PLATFORM.md §3.1 where the
++ * categories overlap. Object colors reuse the palette already used in
++ * OnboardPage.vue's settlementItems for visual continuity with onboarding.
++ */
++
++export type RewardTrack = 'volunteering' | 'finance_literacy' | 'educating_others'
++
++// ── Point values, keyed by action_key ───────────────────────────────────────
++// action_key is free text in the DB (no enum) so new actions need no migration;
++// this map is just the client-side source of truth for how many points to award.
++export const POINTS: Record<string, number> = {
++  pfin8_complete:        25,
++  pfin28_complete:       60,
++  eco_submission:        10,
++  volunteer_self_report:  5,  // per hour, capped in the store (see MAX_SELF_REPORT_HOURS)
++  mentor_session:        40,  // emitted server-side by the DB trigger; here for reference
++}
++
++// Self-reported volunteer hours are capped so the MVP fallback can't be farmed.
++export const MAX_SELF_REPORT_HOURS = 4
++
++// ── Unlockable settlement objects ────────────────────────────────────────────
++// Surfaced as an account-level inventory on RewardsPage; attaching one to a
++// specific settlement is a metadata write via settlements.ts updateSettlement.
++export interface SettlementObject {
++  key:   string
++  label: string
++  color: string
++  unlockedBy: { track: RewardTrack; actionKey: string }
++}
++
++export const SETTLEMENT_OBJECTS: SettlementObject[] = [
++  {
++    key: 'pfin_seed', label: 'Financial Literacy Settlement Seed', color: '#44ff88',
++    unlockedBy: { track: 'finance_literacy', actionKey: 'pfin8_complete' },
++  },
++  {
++    key: 'pfin_parallel_world', label: 'Parallel-Universe Settlement', color: '#00e5ff',
++    unlockedBy: { track: 'finance_literacy', actionKey: 'pfin28_complete' },
++  },
++  {
++    key: 'field_station', label: 'Eco Field Station', color: '#ffaa33',
++    unlockedBy: { track: 'volunteering', actionKey: 'eco_submission' },
++  },
++  {
++    key: 'mentor_beacon', label: 'Mentor Beacon', color: '#cc88ff',
++    unlockedBy: { track: 'educating_others', actionKey: 'mentor_session' },
++  },
++]
++
++// ── Quiz → reward mapping ────────────────────────────────────────────────────
++// Only quizzes listed here carry rewards. minScore is the number of correct
++// answers required; prerequisite is a certificate_type that must already be
++// held before this reward can be earned (gates pfin28 behind pfin8).
++export interface QuizRewardRule {
++  track:               RewardTrack
++  actionKey:           string
++  certificateType:     string
++  settlementObjectKey: string
++  minScore:            number
++  prerequisite:        string | null
++}
++
++export const QUIZ_REWARD_MAP: Record<string, QuizRewardRule> = {
++  pfin8: {
++    track: 'finance_literacy', actionKey: 'pfin8_complete',
++    certificateType: 'pfin8', settlementObjectKey: 'pfin_seed',
++    minScore: 6, prerequisite: null,
++  },
++  pfin28: {
++    track: 'finance_literacy', actionKey: 'pfin28_complete',
++    certificateType: 'pfin28', settlementObjectKey: 'pfin_parallel_world',
++    minScore: 20, prerequisite: 'pfin8',
++  },
++}
++
++/** Object keys unlocked by a set of held certificate types. */
++export function objectsForCertificates(certTypes: Set<string>): SettlementObject[] {
++  // A certificate_type maps to a settlement object either directly (its own
++  // key, for quizzes) or via the object's unlockedBy.actionKey (mentorship).
++  const unlockedActionKeys = new Set<string>()
++  for (const rule of Object.values(QUIZ_REWARD_MAP)) {
++    if (certTypes.has(rule.certificateType)) unlockedActionKeys.add(rule.actionKey)
++  }
++  if (certTypes.has('mentorship')) unlockedActionKeys.add('mentor_session')
++  return SETTLEMENT_OBJECTS.filter(o => unlockedActionKeys.has(o.unlockedBy.actionKey))
++}
+diff --git a/src/lib/settlements.ts b/src/lib/settlements.ts
+index 073f5e2..983fa00 100644
+--- a/src/lib/settlements.ts
++++ b/src/lib/settlements.ts
+@@ -15,6 +15,7 @@ export interface SettlementRecord {
+   lon?: number
+   clusterSlug?: string
+   memberId?: string
++  objects?: string[]    // unlocked settlement-object keys attached here (see rewards-catalog)
+ }
+ 
+ // ── Helpers ─────────────────────────────────────────────────────────────────
+diff --git a/src/pages/LearnPage.vue b/src/pages/LearnPage.vue
+index bb89553..86bd226 100644
+--- a/src/pages/LearnPage.vue
++++ b/src/pages/LearnPage.vue
+@@ -16,6 +16,7 @@
+         v-for="area in quizAreas"
+         :key="area.id"
+         class="lp-card"
++        :class="{ 'lp-card--locked': lockReason(area) }"
+         :style="{ '--qcolor': area.color }"
+         @click="openQuiz(area)"
+       >
+@@ -32,7 +33,8 @@
+         <div class="lp-card__badge" v-if="area.badge">
+           <span>🏅 {{ area.badge }}</span>
+         </div>
+-        <div class="lp-card__cta">Start →</div>
++        <div class="lp-card__cta" v-if="lockReason(area)">🔒 {{ lockReason(area) }}</div>
++        <div class="lp-card__cta" v-else>Start →</div>
+       </div>
+     </div>
+ 
+@@ -99,6 +101,11 @@
+           <div class="complete-title">{{ activeArea?.title }}</div>
+           <div class="complete-badge">{{ activeArea?.badge }} earned</div>
+           <div class="complete-score">{{ score }} / {{ activeArea?.questions.length }} correct</div>
++          <div
++            v-if="rewardResult"
++            class="complete-reward"
++            :class="{ 'complete-reward--pos': rewardResult.positive }"
++          >{{ rewardResult.text }}</div>
+         </q-card-section>
+         <q-card-actions align="center">
+           <q-btn flat label="Back to quizzes" color="cyan-6" @click="completionOpen = false; quizOpen = false"/>
+@@ -110,10 +117,19 @@
+ </template>
+ 
+ <script setup lang="ts">
+-import { ref, computed } from 'vue'
++import { ref, computed, onMounted } from 'vue'
+ import { QUIZ_AREAS, type QuizArea } from 'src/data/quizzes'
++import { QUIZ_REWARD_MAP } from 'src/data/rewards-catalog'
++import { useRewardsStore } from 'src/stores/rewards'
++import { useMemberStore } from 'src/stores/member'
+ 
+ const quizAreas = QUIZ_AREAS
++const rewards   = useRewardsStore()
++const member    = useMemberStore()
++
++// Load reward state so the pfin28 lock reflects held certificates even when a
++// user lands on /learn directly (guarded — /learn is a public route).
++onMounted(() => { if (member.isSignedIn) void rewards.loadMyRewards() })
+ 
+ const quizOpen       = ref(false)
+ const completionOpen = ref(false)
+@@ -122,17 +138,31 @@ const qIndex         = ref(0)
+ const selectedOpt    = ref<number | null>(null)
+ const answered       = ref(false)
+ const score          = ref(0)
++const rewardResult   = ref<{ text: string; positive: boolean } | null>(null)
+ 
+ const activeQ = computed(() =>
+   activeArea.value ? activeArea.value.questions[qIndex.value] ?? null : null
+ )
+ 
++// A quiz is locked when its reward rule names a prerequisite certificate the
++// member does not yet hold. Only P-Fin quizzes have rules; everything else is
++// always unlocked.
++function lockReason(area: QuizArea): string | null {
++  const rule = QUIZ_REWARD_MAP[area.id]
++  if (!rule?.prerequisite) return null
++  if (rewards.unlockedCertificateTypes.has(rule.prerequisite)) return null
++  const prereqTitle = QUIZ_AREAS.find(a => a.id === rule.prerequisite)?.title ?? rule.prerequisite
++  return `Complete ${prereqTitle} first`
++}
++
+ function openQuiz(area: QuizArea) {
++  if (lockReason(area)) return
+   activeArea.value = area
+   qIndex.value     = 0
+   selectedOpt.value = null
+   answered.value   = false
+   score.value      = 0
++  rewardResult.value = null
+   quizOpen.value   = true
+ }
+ 
+@@ -149,9 +179,29 @@ function nextQ() {
+   answered.value    = false
+ }
+ 
+-function completeQuiz() {
++async function completeQuiz() {
+   quizOpen.value       = false
+   completionOpen.value = true
++
++  // Reward-carrying quizzes (P-Fin) write to the ledger; others are no-ops.
++  const area = activeArea.value
++  if (!area || !QUIZ_REWARD_MAP[area.id]) return
++
++  if (!member.isSignedIn) {
++    rewardResult.value = { text: 'Sign in to claim points and unlock your settlement object.', positive: false }
++    return
++  }
++
++  const res = await rewards.awardQuizCompletion(area.id, score.value, area.questions.length)
++  if (res.awarded) {
++    rewardResult.value = { text: `+${res.points} points · ${res.certificateType} certificate issued`, positive: true }
++  } else if (res.reason === 'below-min') {
++    rewardResult.value = { text: `Score ${res.minScore}+ to earn this reward — try again.`, positive: false }
++  } else if (res.reason === 'already-earned') {
++    rewardResult.value = { text: 'Already earned — points were not awarded twice.', positive: false }
++  } else if (res.reason === 'prerequisite') {
++    rewardResult.value = { text: `Complete ${res.prerequisite} first to unlock this reward.`, positive: false }
++  }
+ }
+ 
+ function closeQuiz() {
+@@ -208,6 +258,10 @@ function closeQuiz() {
+ .lp-card__badge { font-size: 8px; color: rgba(200,170,80,0.70); letter-spacing: 0.08em; }
+ .lp-card__cta   { align-self: flex-end; font-size: 9px; color: var(--qcolor, rgba(0,190,230,0.65)); }
+ 
++.lp-card--locked { cursor: not-allowed; opacity: 0.55; }
++.lp-card--locked:hover { border-color: rgba(255,255,255,0.06); transform: none; }
++.lp-card--locked .lp-card__cta { color: rgba(180,140,90,0.75); }
++
+ /* Quiz modal */
+ .quiz-card { background: #020c1e; border: 1px solid rgba(0,150,210,0.22); min-width: 480px; max-width: 92vw; }
+ .quiz-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0,80,140,0.20); }
+@@ -261,4 +315,14 @@ function closeQuiz() {
+ .complete-title { font-family: 'Courier New', monospace; font-size: 14px; color: rgba(200,235,255,0.88); letter-spacing: 0.06em; margin: 8px 0 4px; }
+ .complete-badge { font-size: 10px; color: rgba(200,170,60,0.80); letter-spacing: 0.12em; margin-bottom: 4px; }
+ .complete-score { font-family: 'Courier New', monospace; font-size: 20px; color: rgba(80,230,130,0.88); }
++.complete-reward {
++  margin-top: 12px;
++  font-family: 'Courier New', monospace;
++  font-size: 10px;
++  line-height: 1.5;
++  color: rgba(160,190,150,0.80);
++  border-top: 1px solid rgba(60,200,110,0.18);
++  padding-top: 10px;
++}
++.complete-reward--pos { color: rgba(80,230,130,0.90); }
+ </style>
+diff --git a/src/pages/OnboardPage.vue b/src/pages/OnboardPage.vue
+index 3e0c46e..17c08dd 100644
+--- a/src/pages/OnboardPage.vue
++++ b/src/pages/OnboardPage.vue
+@@ -473,6 +473,14 @@ const PATHS: Path[] = [
+         to:      '/learn',
+         ctaDesc: 'Start the Energy module.',
+       },
++      {
++        id:      'certify-rewards',
++        icon:    '🎖️',
++        title:   'Track your certificates & points',
++        desc:    'Every completed quiz and confirmed session earns points and certificates toward settlement objects. See your Impact Profile and attach unlocked objects to a settlement.',
++        to:      '/rewards',
++        ctaDesc: 'Open your Rewards & Impact Profile.',
++      },
+     ],
+     settlementItems: [
+       { text: 'Certificate badges displayed inside your settlement dome',               color: '#ffaa33' },
+@@ -514,6 +522,14 @@ const PATHS: Path[] = [
+         to:      '/eco-library',
+         ctaDesc: 'Open the Eco Library and contribute a resource or edit.',
+       },
++      {
++        id:      'help-rewards',
++        icon:    '🎖️',
++        title:   'See your contribution credit',
++        desc:    'Accepted issues, features, and documentation contributions are credited to your Impact Profile as points and settlement objects.',
++        to:      '/rewards',
++        ctaDesc: 'Open your Rewards & Impact Profile.',
++      },
+     ],
+     settlementItems: [
+       { text: 'Contribution credit object added for each accepted issue or feature', color: '#00e5ff' },
+diff --git a/src/pages/PlatformPage.vue b/src/pages/PlatformPage.vue
+index c9ff8d6..aaea36c 100644
+--- a/src/pages/PlatformPage.vue
++++ b/src/pages/PlatformPage.vue
+@@ -27,6 +27,7 @@
+         <router-link to="/galactic-center" class="pl-quick-link">/galactic-center</router-link>
+         <router-link to="/clusters" class="pl-quick-link">/clusters</router-link>
+         <router-link to="/eco-ops" class="pl-quick-link">/eco-ops</router-link>
++        <router-link to="/rewards" class="pl-quick-link">/rewards</router-link>
+         <router-link to="/blog" class="pl-quick-link">/blog</router-link>
+         <router-link to="/docs" class="pl-quick-link">/docs</router-link>
+         <router-link to="/data-coverage" class="pl-quick-link">/data-coverage</router-link>
+@@ -67,6 +68,18 @@
+             </div>
+           </div>
+ 
++          <div class="pl-callout pl-callout--program">
++            <strong>New — Financial Literacy Power-Up:</strong> Exotopia now ties settlement
++            privileges to personal finance literacy, measured against the TIAA Institute–GFLEC
++            <strong>P-Fin Index</strong>. Answer the 8 questions of the <strong>P-Fin 8</strong>
++            (one per literacy area — earning, consuming, saving, investing, borrowing &amp;
++            managing debt, insuring, comprehending risk, and go-to information sources) to unlock
++            a personal link-page settlement seed. Master all <strong>28 questions</strong> of the
++            full P-Fin Index across those same 8 areas and the settlement upgrades into a numbered
++            parallel-universe world with the full Train &amp; Certify toolset. This is education,
++            not a financial product — nothing here moves money, extends credit, or manages assets.
++          </div>
++
+           <div class="pl-callout pl-callout--note">
+             The platform is open-development. This page is the living record of what works, what is
+             being built right now, and where we are heading. Every URL listed below is a real path
+@@ -329,6 +342,7 @@ const TIMELINE = [
+       'Void math page: Hamaus density profile, conduit placement math',
+       'Sky Lessons L3: galactic center astrophysics (grad/public science)',
+       'Local Void and Boötes Void member catalogs',
++      'Financial literacy incentive program: P-Fin 8 (8Q) unlock + full P-Fin Index (28Q) mastery gate for parallel-universe settlements',
+     ],
+   },
+ ]
+@@ -890,8 +904,9 @@ onMounted(() => {
+   line-height: 1.65;
+   margin: 16px 0;
+ }
+-.pl-callout--note   { border-left: 3px solid #4488cc; background: rgba(68,136,204,0.07); color: #7799cc; }
+-.pl-callout--vision { border-left: 3px solid #9966ee; background: rgba(153,102,238,0.07); color: #997acc; }
++.pl-callout--note    { border-left: 3px solid #4488cc; background: rgba(68,136,204,0.07); color: #7799cc; }
++.pl-callout--vision  { border-left: 3px solid #9966ee; background: rgba(153,102,238,0.07); color: #997acc; }
++.pl-callout--program { border-left: 3px solid #44cc88; background: rgba(68,204,136,0.07); color: #55bb99; }
+ 
+ /* ── Live features ─────────────────────────────────────────────────────── */
+ .pl-feat-group { margin-bottom: 8px; }
+diff --git a/src/pages/RewardsPage.vue b/src/pages/RewardsPage.vue
+new file mode 100644
+index 0000000..0a4c452
+--- /dev/null
++++ b/src/pages/RewardsPage.vue
+@@ -0,0 +1,335 @@
++<template>
++  <q-page class="rewards-page">
++
++    <div class="rw-header">
++      <div class="rw-badge">IMPACT PROFILE</div>
++      <h1 class="rw-title">Rewards &amp; Impact Profile</h1>
++      <p class="rw-sub">
++        One ledger behind three paths — finance-literacy education, volunteering, and educating
++        others. Points and certificates here unlock settlement objects you can attach to a settlement.
++      </p>
++    </div>
++
++    <!-- Signed out: reuse the existing magic-link component, no new auth UI -->
++    <div v-if="!member.isSignedIn" class="rw-signin">
++      <p class="rw-signin-note">Sign in to view and earn rewards.</p>
++      <MemberSignIn />
++    </div>
++
++    <template v-else>
++      <!-- Points summary tiles -->
++      <div class="rw-tiles">
++        <div class="rw-tile rw-tile--total">
++          <div class="rw-tile__val">{{ rewards.totalPoints }}</div>
++          <div class="rw-tile__lbl">total points</div>
++        </div>
++        <div class="rw-tile" v-for="t in TRACKS" :key="t.key" :style="{ '--tcolor': t.color }">
++          <div class="rw-tile__val">{{ rewards.pointsByTrack[t.key] }}</div>
++          <div class="rw-tile__lbl">{{ t.label }}</div>
++        </div>
++      </div>
++
++      <!-- Finance literacy -->
++      <section class="rw-section">
++        <h2 class="rw-h2">🪙 Finance Literacy</h2>
++        <div class="rw-row">
++          <span class="rw-chip" :class="{ 'rw-chip--on': hasCert('pfin8') }">
++            {{ hasCert('pfin8') ? '✓' : '○' }} P-Fin 8 · settlement seed
++          </span>
++          <span class="rw-chip" :class="{ 'rw-chip--on': hasCert('pfin28') }">
++            {{ hasCert('pfin28') ? '✓' : '○' }} P-Fin 28 · parallel-universe upgrade
++          </span>
++        </div>
++        <router-link to="/learn" class="rw-link">Go to the quizzes →</router-link>
++      </section>
++
++      <!-- Volunteering -->
++      <section class="rw-section">
++        <h2 class="rw-h2">🌱 Volunteering</h2>
++        <p class="rw-note">
++          Eco-ops field submissions are logged automatically on sync. Below is a manual
++          self-report fallback — capped at {{ MAX_SELF_REPORT_HOURS }} hours and clearly marked
++          as self-reported.
++        </p>
++        <div class="rw-form">
++          <input v-model="vDesc" class="rw-input" placeholder="What did you do? (e.g. river cleanup)" maxlength="120" />
++          <input v-model.number="vHours" class="rw-input rw-input--num" type="number" min="0" :max="MAX_SELF_REPORT_HOURS" step="0.5" placeholder="hrs" />
++          <button class="rw-btn" :disabled="!vDesc || !vHours || submitting" @click="submitSelfReport">Log</button>
++        </div>
++        <p v-if="vMsg" class="rw-msg">{{ vMsg }}</p>
++
++        <div class="rw-log" v-if="volunteerEvents.length">
++          <div class="rw-log-item" v-for="e in volunteerEvents" :key="e.id">
++            <span class="rw-log-key">{{ e.action_key }}</span>
++            <span class="rw-log-pts">+{{ e.points }}</span>
++            <span class="rw-log-date">{{ shortDate(e.created_at) }}</span>
++            <span v-if="e.metadata?.selfReported" class="rw-log-tag">self-reported</span>
++          </div>
++        </div>
++      </section>
++
++      <!-- Educating others -->
++      <section class="rw-section">
++        <h2 class="rw-h2">🎓 Educating Others</h2>
++        <p class="rw-note">
++          Request a mentor session with a green-light connection. Both parties confirm; points
++          (40 each) are awarded server-side. A mentorship certificate issues at 4 confirmed sessions.
++        </p>
++
++        <div class="rw-form" v-if="member.connectedIds.length">
++          <select v-model="menteeId" class="rw-input">
++            <option value="">Select a connection…</option>
++            <option v-for="id in member.connectedIds" :key="id" :value="id">{{ nameFor(id) }}</option>
++          </select>
++          <input v-model="mTopic" class="rw-input" placeholder="Topic (e.g. budgeting basics)" maxlength="80" />
++          <button class="rw-btn" :disabled="!menteeId || !mTopic || submitting" @click="submitRequest">Request</button>
++        </div>
++        <p v-else class="rw-note">No green-light connections yet — connect with members via the blog to enable mentorship.</p>
++        <p v-if="mMsg" class="rw-msg">{{ mMsg }}</p>
++
++        <div class="rw-log" v-if="rewards.sessions.length">
++          <div class="rw-log-item" v-for="s in rewards.sessions" :key="s.id">
++            <span class="rw-log-key">{{ s.topic || 'session' }}</span>
++            <span class="rw-log-role">{{ s.mentor_id === member.userId ? 'as mentor' : 'as mentee' }} · {{ otherPartyName(s) }}</span>
++            <span v-if="s.confirmed_at" class="rw-log-tag rw-log-tag--done">✓ confirmed</span>
++            <button
++              v-else-if="!myConfirmation(s)"
++              class="rw-btn rw-btn--sm"
++              :disabled="submitting"
++              @click="confirm(s.id)"
++            >Confirm</button>
++            <span v-else class="rw-log-tag">awaiting other party</span>
++          </div>
++        </div>
++      </section>
++
++      <!-- Impact Profile: certificates + unlocked objects + attach -->
++      <section class="rw-section">
++        <h2 class="rw-h2">🏅 Certificates &amp; Settlement Objects</h2>
++
++        <div class="rw-certs" v-if="rewards.certs.length">
++          <span class="rw-cert" v-for="c in rewards.certs" :key="c.id">🎖️ {{ c.certificate_type }}</span>
++        </div>
++        <p v-else class="rw-note">No certificates yet. Complete a P-Fin quiz to earn your first.</p>
++
++        <div class="rw-objects" v-if="rewards.unlockedObjects.length">
++          <div class="rw-object" v-for="o in rewards.unlockedObjects" :key="o.key" :style="{ '--ocolor': o.color }">
++            <span class="rw-object__dot"></span>
++            <span class="rw-object__lbl">{{ o.label }}</span>
++          </div>
++        </div>
++
++        <!-- Attach picker -->
++        <div class="rw-attach" v-if="rewards.unlockedObjectKeys.length && settlements.length">
++          <div class="rw-attach-head">Attach an unlocked object to a settlement</div>
++          <div class="rw-form">
++            <select v-model="attachObjectKey" class="rw-input">
++              <option value="">Object…</option>
++              <option v-for="o in rewards.unlockedObjects" :key="o.key" :value="o.key">{{ o.label }}</option>
++            </select>
++            <select v-model="attachSettlementKey" class="rw-input">
++              <option value="">Settlement…</option>
++              <option v-for="s in settlements" :key="s.key" :value="s.key">{{ s.displayName }}</option>
++            </select>
++            <button class="rw-btn" :disabled="!attachObjectKey || !attachSettlementKey" @click="attach">Attach</button>
++          </div>
++          <p v-if="attachMsg" class="rw-msg">{{ attachMsg }}</p>
++        </div>
++        <p v-else-if="rewards.unlockedObjectKeys.length && !settlements.length" class="rw-note">
++          Unlock a settlement first (create one from a surface page) to attach objects.
++        </p>
++      </section>
++    </template>
++
++  </q-page>
++</template>
++
++<script setup lang="ts">
++import { ref, computed, onMounted, watch } from 'vue'
++import MemberSignIn from 'src/components/MemberSignIn.vue'
++import { useMemberStore } from 'src/stores/member'
++import { useRewardsStore, type MentorSession } from 'src/stores/rewards'
++import { useSettlements } from 'src/lib/settlements'
++import { MAX_SELF_REPORT_HOURS } from 'src/data/rewards-catalog'
++import { supabase } from 'src/lib/supabase'
++
++const member  = useMemberStore()
++const rewards = useRewardsStore()
++const { settlements, getSettlement, updateSettlement } = useSettlements()
++
++const TRACKS = [
++  { key: 'finance_literacy', label: 'finance literacy', color: '#44ff88' },
++  { key: 'volunteering',     label: 'volunteering',     color: '#ffaa33' },
++  { key: 'educating_others', label: 'educating others', color: '#cc88ff' },
++] as const
++
++const submitting = ref(false)
++
++// Self-report
++const vDesc  = ref('')
++const vHours = ref<number | null>(null)
++const vMsg   = ref('')
++
++// Mentorship
++const menteeId = ref('')
++const mTopic   = ref('')
++const mMsg     = ref('')
++
++// Attach
++const attachObjectKey     = ref('')
++const attachSettlementKey = ref('')
++const attachMsg           = ref('')
++
++// Display names for connections / session parties.
++const names = ref<Record<string, string>>({})
++
++onMounted(load)
++watch(() => member.userId, load)
++
++async function load () {
++  if (!member.isSignedIn) return
++  await rewards.loadMyRewards()
++  await loadNames()
++}
++
++async function loadNames () {
++  if (!supabase) return
++  const ids = new Set<string>(member.connectedIds)
++  for (const s of rewards.sessions) { ids.add(s.mentor_id); ids.add(s.mentee_id) }
++  if (member.userId) ids.delete(member.userId)
++  if (!ids.size) return
++  const { data } = await supabase.from('members').select('id,display_name').in('id', [...ids])
++  if (data) for (const m of data as { id: string; display_name: string }[]) names.value[m.id] = m.display_name
++}
++
++const volunteerEvents = computed(() => rewards.events.filter(e => e.track === 'volunteering'))
++
++function hasCert (type: string) { return rewards.unlockedCertificateTypes.has(type) }
++function nameFor (id: string) { return names.value[id] ?? id.slice(0, 8) }
++function otherPartyName (s: MentorSession) {
++  return nameFor(s.mentor_id === member.userId ? s.mentee_id : s.mentor_id)
++}
++function myConfirmation (s: MentorSession) {
++  return s.mentor_id === member.userId ? s.confirmed_mentor : s.confirmed_mentee
++}
++function shortDate (iso: string) { return new Date(iso).toLocaleDateString() }
++
++async function submitSelfReport () {
++  if (!vDesc.value || !vHours.value) return
++  submitting.value = true
++  const res = await rewards.selfReportVolunteerHours(vDesc.value, vHours.value)
++  submitting.value = false
++  vMsg.value = res.ok ? `Logged — +${res.points} points (self-reported).` : 'Could not log — check you are signed in.'
++  if (res.ok) { vDesc.value = ''; vHours.value = null }
++}
++
++async function submitRequest () {
++  if (!menteeId.value || !mTopic.value) return
++  submitting.value = true
++  const res = await rewards.requestMentorSession(menteeId.value, mTopic.value)
++  submitting.value = false
++  mMsg.value = res.ok ? 'Session requested — confirm it once, then ask your mentee to confirm too.' : 'Could not request — a green-light connection is required.'
++  if (res.ok) { menteeId.value = ''; mTopic.value = ''; await loadNames() }
++}
++
++async function confirm (sessionId: string) {
++  submitting.value = true
++  await rewards.confirmMentorSession(sessionId)
++  submitting.value = false
++}
++
++function attach () {
++  const key = attachSettlementKey.value
++  const existing = getSettlement(key)?.objects ?? []
++  if (!existing.includes(attachObjectKey.value)) {
++    updateSettlement(key, { objects: [...existing, attachObjectKey.value] })
++  }
++  attachMsg.value = 'Attached to settlement (saved locally).'
++  attachObjectKey.value = ''
++  attachSettlementKey.value = ''
++}
++</script>
++
++<style scoped>
++.rewards-page {
++  background: #020408;
++  min-height: 100vh;
++  padding: 36px 28px;
++  font-family: 'Courier New', monospace;
++  color: rgba(200,230,255,0.85);
++}
++
++.rw-header { margin-bottom: 24px; }
++.rw-badge  { font-size: 8.5px; letter-spacing: 0.22em; color: rgba(68,204,136,0.65); margin-bottom: 8px; }
++.rw-title  { font-size: 24px; font-weight: 300; color: rgba(210,235,255,0.90); letter-spacing: 0.05em; margin: 0 0 8px; }
++.rw-sub    { font-size: 11px; color: rgba(110,165,200,0.65); line-height: 1.65; max-width: 620px; }
++
++.rw-signin { max-width: 520px; margin-top: 24px; }
++.rw-signin-note { font-size: 11px; color: rgba(110,165,200,0.70); margin-bottom: 10px; }
++
++.rw-tiles { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 26px; }
++.rw-tile  {
++  min-width: 120px; flex: 1;
++  background: rgba(0,10,26,0.80);
++  border: 1px solid rgba(255,255,255,0.06);
++  border-left: 3px solid var(--tcolor, rgba(0,180,220,0.5));
++  border-radius: 8px; padding: 14px 16px;
++}
++.rw-tile--total { border-left-color: rgba(0,229,255,0.75); }
++.rw-tile__val { font-size: 26px; color: rgba(210,240,255,0.92); }
++.rw-tile__lbl { font-size: 8.5px; letter-spacing: 0.10em; color: rgba(120,170,205,0.65); text-transform: uppercase; margin-top: 4px; }
++
++.rw-section { margin-bottom: 26px; padding-bottom: 22px; border-bottom: 1px solid rgba(255,255,255,0.05); }
++.rw-h2   { font-size: 13px; font-weight: 600; color: rgba(200,235,255,0.88); letter-spacing: 0.05em; margin: 0 0 10px; }
++.rw-note { font-size: 10px; color: rgba(120,170,205,0.62); line-height: 1.6; max-width: 620px; margin: 0 0 10px; }
++.rw-row  { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
++
++.rw-chip {
++  font-size: 9.5px; padding: 5px 10px; border-radius: 20px;
++  border: 1px solid rgba(255,255,255,0.10); color: rgba(140,180,210,0.70);
++}
++.rw-chip--on { border-color: rgba(68,204,136,0.55); color: rgba(90,230,150,0.90); background: rgba(68,204,136,0.08); }
++
++.rw-link { font-size: 10px; color: rgba(0,200,240,0.75); text-decoration: none; }
++.rw-link:hover { text-decoration: underline; }
++
++.rw-form { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; }
++.rw-input {
++  background: rgba(0,12,28,0.80); border: 1px solid rgba(0,100,160,0.25);
++  border-radius: 5px; padding: 7px 10px; color: rgba(190,225,255,0.90);
++  font-family: 'Courier New', monospace; font-size: 10.5px; min-width: 180px;
++}
++.rw-input--num { min-width: 70px; max-width: 90px; }
++.rw-btn {
++  background: rgba(0,60,90,0.55); border: 1px solid rgba(0,160,220,0.40);
++  border-radius: 5px; padding: 7px 14px; color: rgba(150,220,255,0.92);
++  font-family: 'Courier New', monospace; font-size: 10.5px; cursor: pointer;
++}
++.rw-btn:hover:not(:disabled) { background: rgba(0,80,120,0.65); }
++.rw-btn:disabled { opacity: 0.45; cursor: not-allowed; }
++.rw-btn--sm { padding: 4px 10px; font-size: 9.5px; }
++.rw-msg { font-size: 9.5px; color: rgba(90,220,150,0.80); margin: 4px 0 0; }
++
++.rw-log { margin-top: 12px; display: flex; flex-direction: column; gap: 6px; }
++.rw-log-item {
++  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
++  font-size: 10px; padding: 7px 10px;
++  background: rgba(0,10,24,0.60); border: 1px solid rgba(255,255,255,0.05); border-radius: 5px;
++}
++.rw-log-key  { color: rgba(190,225,255,0.85); }
++.rw-log-pts  { color: rgba(90,230,150,0.90); }
++.rw-log-role { color: rgba(120,170,205,0.65); font-size: 9px; }
++.rw-log-date { color: rgba(90,140,175,0.55); font-size: 9px; margin-left: auto; }
++.rw-log-tag  { font-size: 8.5px; color: rgba(200,170,80,0.80); letter-spacing: 0.06em; }
++.rw-log-tag--done { color: rgba(90,220,150,0.85); }
++
++.rw-certs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
++.rw-cert  { font-size: 9.5px; padding: 5px 10px; border-radius: 5px; background: rgba(200,170,60,0.10); border: 1px solid rgba(200,170,60,0.30); color: rgba(220,190,90,0.90); }
++
++.rw-objects { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
++.rw-object  { display: flex; align-items: center; gap: 8px; font-size: 10px; color: rgba(200,230,255,0.82); }
++.rw-object__dot { width: 10px; height: 10px; border-radius: 50%; background: var(--ocolor, #00e5ff); box-shadow: 0 0 8px var(--ocolor, #00e5ff); }
++
++.rw-attach { margin-top: 8px; }
++.rw-attach-head { font-size: 10px; color: rgba(140,185,215,0.72); margin-bottom: 8px; }
++</style>
+diff --git a/src/router/routes.ts b/src/router/routes.ts
+index e398671..c27bb94 100644
+--- a/src/router/routes.ts
++++ b/src/router/routes.ts
+@@ -246,6 +246,12 @@ const routes: RouteRecordRaw[] = [
+         component: () => import('src/pages/LearnPage.vue'),
+         meta: { title: 'Knowledge Quizzes' },
+       },
++      {
++        path: 'rewards',
++        name: 'rewards',
++        component: () => import('src/pages/RewardsPage.vue'),
++        meta: { title: 'Rewards & Impact Profile · Exotopia' },
++      },
+       {
+         path: 'docs',
+         name: 'docs',
+diff --git a/src/stores/eco-offline.ts b/src/stores/eco-offline.ts
+index 643f27b..1a1ee47 100644
+--- a/src/stores/eco-offline.ts
++++ b/src/stores/eco-offline.ts
+@@ -1,6 +1,7 @@
+ import { defineStore }  from 'pinia'
+ import { ref, computed } from 'vue'
+ import { supabase }      from 'src/lib/supabase'
++import { useRewardsStore } from 'src/stores/rewards'
+ 
+ // ── Types ─────────────────────────────────────────────────────────────────
+ 
+@@ -210,6 +211,11 @@ export const useEcoOfflineStore = defineStore('ecoOffline', () => {
+             .insert(item.payload)
+           if (error) throw error
+ 
++          // Volunteering reward — fire on record insert success, before/independent
++          // of the photo loop so points aren't blocked by photo-upload failures.
++          // No-ops when signed out (guarded inside the store).
++          void useRewardsStore().logVolunteerAction('eco_submission', { type: item.type, siteId: item.siteId })
++
+           const photoWarnings: string[] = []
+           for (let i = 0; i < item.photos.length; i++) {
+             const dataUri = item.photos[i]
+diff --git a/src/stores/rewards.ts b/src/stores/rewards.ts
+new file mode 100644
+index 0000000..5494e44
+--- /dev/null
++++ b/src/stores/rewards.ts
+@@ -0,0 +1,213 @@
++import { defineStore } from 'pinia'
++import { ref, computed } from 'vue'
++import { supabase } from 'src/lib/supabase'
++import { useMemberStore } from 'src/stores/member'
++import {
++  POINTS, MAX_SELF_REPORT_HOURS, QUIZ_REWARD_MAP,
++  objectsForCertificates, type RewardTrack, type SettlementObject,
++} from 'src/data/rewards-catalog'
++
++// ── Row types (public.reward_events / certificates / mentor_sessions) ────────
++
++export interface RewardEvent {
++  id:         string
++  member_id:  string
++  track:      RewardTrack
++  action_key: string
++  points:     number
++  metadata:   Record<string, unknown> | null
++  created_at: string
++}
++
++export interface Certificate {
++  id:                    string
++  member_id:             string
++  certificate_type:      string
++  settlement_object_key: string | null
++  source_event_id:       string | null
++  issued_at:             string
++}
++
++export interface MentorSession {
++  id:               string
++  mentor_id:        string
++  mentee_id:        string
++  topic:            string | null
++  confirmed_mentor: boolean
++  confirmed_mentee: boolean
++  created_at:       string
++  confirmed_at:     string | null
++}
++
++const EMPTY_BY_TRACK: Record<RewardTrack, number> = {
++  volunteering: 0, finance_literacy: 0, educating_others: 0,
++}
++
++export const useRewardsStore = defineStore('rewards', () => {
++  const events   = ref<RewardEvent[]>([])
++  const certs    = ref<Certificate[]>([])
++  const sessions = ref<MentorSession[]>([])
++  const loading  = ref(false)
++  const error    = ref<string | null>(null)
++
++  const member = useMemberStore()
++
++  // ── Computed ─────────────────────────────────────────────────────────────
++  const totalPoints = computed(() => events.value.reduce((s, e) => s + e.points, 0))
++
++  const pointsByTrack = computed<Record<RewardTrack, number>>(() => {
++    const out = { ...EMPTY_BY_TRACK }
++    for (const e of events.value) out[e.track] += e.points
++    return out
++  })
++
++  const unlockedCertificateTypes = computed<Set<string>>(
++    () => new Set(certs.value.map(c => c.certificate_type)),
++  )
++
++  const unlockedObjects = computed<SettlementObject[]>(
++    () => objectsForCertificates(unlockedCertificateTypes.value),
++  )
++  const unlockedObjectKeys = computed<string[]>(() => unlockedObjects.value.map(o => o.key))
++
++  // Sessions this member is part of that are not yet fully confirmed.
++  const pendingSessions = computed(() =>
++    sessions.value.filter(s => !s.confirmed_at),
++  )
++
++  // ── Load ─────────────────────────────────────────────────────────────────
++  async function loadMyRewards () {
++    const uid = member.userId
++    if (!supabase || !uid) { events.value = []; certs.value = []; sessions.value = []; return }
++    loading.value = true
++    error.value   = null
++    try {
++      const [ev, ce, se] = await Promise.all([
++        supabase.from('reward_events').select('*').eq('member_id', uid).order('created_at', { ascending: false }),
++        supabase.from('certificates').select('*').eq('member_id', uid),
++        supabase.from('mentor_sessions').select('*').or(`mentor_id.eq.${uid},mentee_id.eq.${uid}`),
++      ])
++      if (ev.data) events.value   = ev.data as RewardEvent[]
++      if (ce.data) certs.value    = ce.data as Certificate[]
++      if (se.data) sessions.value = se.data as MentorSession[]
++    } catch (e) {
++      error.value = String(e)
++    } finally {
++      loading.value = false
++    }
++  }
++
++  // ── Finance-literacy: quiz completion ────────────────────────────────────
++  // Returns a small result the caller (LearnPage) can surface in its UI.
++  async function awardQuizCompletion (areaId: string, score: number, _total: number) {
++    const uid = member.userId
++    if (!supabase || !uid) return { awarded: false, reason: 'signed-out' as const }
++
++    const rule = QUIZ_REWARD_MAP[areaId]
++    if (!rule) return { awarded: false, reason: 'no-reward' as const }
++    if (score < rule.minScore) return { awarded: false, reason: 'below-min' as const, minScore: rule.minScore }
++    if (rule.prerequisite && !unlockedCertificateTypes.value.has(rule.prerequisite)) {
++      return { awarded: false, reason: 'prerequisite' as const, prerequisite: rule.prerequisite }
++    }
++    // Already certified — idempotent no-op (no duplicate points).
++    if (unlockedCertificateTypes.value.has(rule.certificateType)) {
++      return { awarded: false, reason: 'already-earned' as const }
++    }
++
++    const points = POINTS[rule.actionKey] ?? 0
++    const { data: evRow, error: evErr } = await supabase
++      .from('reward_events')
++      .insert({ member_id: uid, track: rule.track, action_key: rule.actionKey, points, metadata: { areaId, score } })
++      .select()
++      .single()
++    if (evErr) { error.value = evErr.message; return { awarded: false, reason: 'error' as const } }
++
++    await supabase
++      .from('certificates')
++      .upsert({
++        member_id:             uid,
++        certificate_type:      rule.certificateType,
++        settlement_object_key: rule.settlementObjectKey,
++        source_event_id:       (evRow as RewardEvent | null)?.id ?? null,
++      }, { onConflict: 'member_id,certificate_type', ignoreDuplicates: true })
++
++    await loadMyRewards()
++    return { awarded: true as const, points, certificateType: rule.certificateType, objectKey: rule.settlementObjectKey }
++  }
++
++  // ── Volunteering ─────────────────────────────────────────────────────────
++  // Auto-logged from eco-offline.ts on real sync success.
++  async function logVolunteerAction (actionKey: string, metadata: Record<string, unknown>) {
++    const uid = member.userId
++    if (!supabase || !uid) return
++    const points = POINTS[actionKey] ?? 0
++    await supabase.from('reward_events').insert({
++      member_id: uid, track: 'volunteering', action_key: actionKey, points, metadata,
++    })
++  }
++
++  // MVP fallback while the eco_ops schema tables don't exist. Capped points,
++  // clearly labeled self-reported so the UI can distinguish it.
++  async function selfReportVolunteerHours (description: string, hours: number) {
++    const uid = member.userId
++    if (!supabase || !uid) return { ok: false }
++    const cappedHours = Math.max(0, Math.min(hours, MAX_SELF_REPORT_HOURS))
++    const points = Math.round(cappedHours * POINTS.volunteer_self_report)
++    const { error: e } = await supabase.from('reward_events').insert({
++      member_id: uid, track: 'volunteering', action_key: 'volunteer_self_report', points,
++      metadata: { description, hours, cappedHours, selfReported: true },
++    })
++    if (e) { error.value = e.message; return { ok: false } }
++    await loadMyRewards()
++    return { ok: true, points }
++  }
++
++  // ── Educating others: mentorship ─────────────────────────────────────────
++  // Thin wrappers — reward emission happens in the DB trigger, not here.
++  async function requestMentorSession (menteeId: string, topic: string) {
++    const uid = member.userId
++    if (!supabase || !uid) return { ok: false }
++    const { error: e } = await supabase.from('mentor_sessions').insert({
++      mentor_id: uid, mentee_id: menteeId, topic,
++    })
++    if (e) { error.value = e.message; return { ok: false } }
++    await loadMyRewards()
++    return { ok: true }
++  }
++
++  // Flip the current user's confirmation flag on a session. The BEFORE UPDATE
++  // trigger enforces that only the caller's own flag can change; sending both
++  // flags true is harmless (the trigger reverts the flag you don't own).
++  async function confirmMentorSession (sessionId: string) {
++    const uid = member.userId
++    if (!supabase || !uid) return { ok: false }
++    const s = sessions.value.find(x => x.id === sessionId)
++    if (!s) return { ok: false }
++    const patch = s.mentor_id === uid ? { confirmed_mentor: true } : { confirmed_mentee: true }
++    const { error: e } = await supabase.from('mentor_sessions').update(patch).eq('id', sessionId)
++    if (e) { error.value = e.message; return { ok: false } }
++    await loadMyRewards()
++    return { ok: true }
++  }
++
++  // ── Admin-granted credit (bounty / docs contribution) ────────────────────
++  // Gated by is_admin() at the RLS layer, not client-side.
++  async function adminGrantReward (
++    memberId: string, track: RewardTrack, actionKey: string, points: number,
++    metadata: Record<string, unknown> = {},
++  ) {
++    if (!supabase) return { ok: false }
++    const { error: e } = await supabase.from('reward_events').insert({
++      member_id: memberId, track, action_key: actionKey, points, metadata,
++    })
++    if (e) { error.value = e.message; return { ok: false } }
++    return { ok: true }
++  }
++
++  return {
++    events, certs, sessions, loading, error,
++    totalPoints, pointsByTrack, unlockedCertificateTypes, unlockedObjects, unlockedObjectKeys, pendingSessions,
++    loadMyRewards, awardQuizCompletion, logVolunteerAction, selfReportVolunteerHours,
++    requestMentorSession, confirmMentorSession, adminGrantReward,
++  }
++})
+diff --git a/supabase/migrations/002_rewards.sql b/supabase/migrations/002_rewards.sql
+new file mode 100644
+index 0000000..9c5cf71
+--- /dev/null
++++ b/supabase/migrations/002_rewards.sql
+@@ -0,0 +1,198 @@
++-- ============================================================
++-- Settlement Rewards & Incentive Foundation
++-- Migration 002 — points ledger, certificates, mentorship
++-- ============================================================
++--
++-- One shared foundation behind the three reward-earning paths:
++--   finance_literacy  — P-Fin quizzes (client-award MVP)
++--   volunteering      — eco-ops sync + self-report (client-award MVP)
++--   educating_others  — peer mentorship (server-enforced via trigger)
++--
++-- Reuses the primitives from 001_blog_comments.sql:
++--   public.members            — FK anchor (auth.users.id)
++--   public.connections        — green-light mutual opt-in
++--   public.is_connected(uuid) — trust check used for mentor pairing
++--
++-- Everything is client-trust MVP (RLS restricts WHO writes a row for
++-- themselves, not the point value claimed) EXCEPT mentor-session
++-- confirmation, where a single client could otherwise fabricate a
++-- reward for two people — that path is server-enforced by trigger.
++-- ============================================================
++
++-- ── Append-only points ledger ───────────────────────────────
++CREATE TABLE public.reward_events (
++  id         uuid        PRIMARY KEY DEFAULT gen_random_uuid(),
++  member_id  uuid        NOT NULL REFERENCES public.members(id) ON DELETE CASCADE,
++  track      text        NOT NULL CHECK (track IN ('volunteering','finance_literacy','educating_others')),
++  action_key text        NOT NULL,   -- free text, not enum — new action types need no migration
++  points     int         NOT NULL CHECK (points >= 0),
++  metadata   jsonb,                  -- quiz score, submission id, bounty url, mentor session id...
++  created_at timestamptz NOT NULL DEFAULT now()
++);
++
++CREATE INDEX ON public.reward_events (member_id, created_at);
++CREATE INDEX ON public.reward_events (track);
++
++-- ── Issued credentials (one per member per type) ─────────────
++CREATE TABLE public.certificates (
++  id                    uuid        PRIMARY KEY DEFAULT gen_random_uuid(),
++  member_id             uuid        NOT NULL REFERENCES public.members(id) ON DELETE CASCADE,
++  certificate_type      text        NOT NULL,
++  settlement_object_key text,
++  source_event_id       uuid        REFERENCES public.reward_events(id) ON DELETE SET NULL,
++  issued_at             timestamptz NOT NULL DEFAULT now(),
++  UNIQUE (member_id, certificate_type)
++);
++
++-- ── Peer-to-peer "educating others" credit ───────────────────
++CREATE TABLE public.mentor_sessions (
++  id               uuid        PRIMARY KEY DEFAULT gen_random_uuid(),
++  mentor_id        uuid        NOT NULL REFERENCES public.members(id) ON DELETE CASCADE,
++  mentee_id        uuid        NOT NULL REFERENCES public.members(id) ON DELETE CASCADE,
++  topic            text,
++  confirmed_mentor bool        NOT NULL DEFAULT false,
++  confirmed_mentee bool        NOT NULL DEFAULT false,
++  created_at       timestamptz NOT NULL DEFAULT now(),
++  confirmed_at     timestamptz,
++  CHECK (mentor_id <> mentee_id)
++);
++
++CREATE INDEX ON public.mentor_sessions (mentor_id);
++CREATE INDEX ON public.mentor_sessions (mentee_id);
++
++-- ── Minimal admin allow-list ─────────────────────────────────
++-- Manual INSERT after a real member signs up (see seed note at foot),
++-- exactly like the 7-member test-group pattern in 001_blog_comments.sql.
++-- This is NOT a roles system — just an allow-list for admin-granted credit.
++CREATE TABLE public.admin_members (
++  member_id uuid PRIMARY KEY REFERENCES public.members(id) ON DELETE CASCADE
++);
++
++CREATE OR REPLACE FUNCTION public.is_admin()
++RETURNS boolean LANGUAGE sql SECURITY DEFINER AS $$
++  SELECT EXISTS (SELECT 1 FROM public.admin_members WHERE member_id = auth.uid())
++$$;
++
++-- ── Convenience view for a future leaderboard ────────────────
++CREATE VIEW public.member_points AS
++  SELECT member_id, COALESCE(SUM(points), 0) AS total_points
++  FROM public.reward_events
++  GROUP BY member_id;
++
++-- ============================================================
++-- Row Level Security
++-- ============================================================
++
++ALTER TABLE public.reward_events   ENABLE ROW LEVEL SECURITY;
++ALTER TABLE public.certificates    ENABLE ROW LEVEL SECURITY;
++ALTER TABLE public.mentor_sessions ENABLE ROW LEVEL SECURITY;
++ALTER TABLE public.admin_members   ENABLE ROW LEVEL SECURITY;
++
++-- reward_events / certificates: public Impact Profile (same posture as
++-- members_read_all). Insert only for self or admin. No UPDATE/DELETE
++-- policy at all — the ledger is append-only, enforced by omission.
++CREATE POLICY "reward_events_read_all" ON public.reward_events FOR SELECT USING (true);
++CREATE POLICY "reward_events_insert"   ON public.reward_events FOR INSERT
++  WITH CHECK (member_id = auth.uid() OR public.is_admin());
++
++CREATE POLICY "certificates_read_all"  ON public.certificates FOR SELECT USING (true);
++CREATE POLICY "certificates_insert"    ON public.certificates FOR INSERT
++  WITH CHECK (member_id = auth.uid() OR public.is_admin());
++
++-- mentor_sessions: visible to and updatable by the two parties (or admin).
++-- Insert only by the mentor, and only against an already green-lit mentee.
++CREATE POLICY "mentor_sessions_read" ON public.mentor_sessions FOR SELECT
++  USING (mentor_id = auth.uid() OR mentee_id = auth.uid() OR public.is_admin());
++CREATE POLICY "mentor_sessions_insert" ON public.mentor_sessions FOR INSERT
++  WITH CHECK (mentor_id = auth.uid() AND public.is_connected(mentee_id));
++CREATE POLICY "mentor_sessions_update" ON public.mentor_sessions FOR UPDATE
++  USING (mentor_id = auth.uid() OR mentee_id = auth.uid());
++
++-- admin_members: readable (so is_admin-style checks can run client-side if
++-- ever needed) but never client-writable — seeded manually via SQL.
++CREATE POLICY "admin_members_read" ON public.admin_members FOR SELECT USING (true);
++
++-- ============================================================
++-- Mentor-session anti-gaming triggers
++-- ============================================================
++
++-- BEFORE UPDATE: a party can only ever flip THEIR OWN confirmation flag,
++-- regardless of what the client sends. Identity/topic columns are immutable
++-- through UPDATE. confirmed_at is stamped the instant both flags are true.
++CREATE OR REPLACE FUNCTION public.mentor_session_guard()
++RETURNS trigger LANGUAGE plpgsql AS $$
++BEGIN
++  -- Immutable columns — always preserved from the existing row.
++  NEW.mentor_id  := OLD.mentor_id;
++  NEW.mentee_id  := OLD.mentee_id;
++  NEW.topic      := OLD.topic;
++  NEW.created_at := OLD.created_at;
++
++  -- Each party may flip only their own flag. A non-party update (should be
++  -- blocked by RLS already) can flip neither.
++  IF auth.uid() IS DISTINCT FROM OLD.mentor_id THEN
++    NEW.confirmed_mentor := OLD.confirmed_mentor;
++  END IF;
++  IF auth.uid() IS DISTINCT FROM OLD.mentee_id THEN
++    NEW.confirmed_mentee := OLD.confirmed_mentee;
++  END IF;
++
++  -- confirmed_at is derived, never client-set. Stamp once, never clear.
++  IF NEW.confirmed_mentor AND NEW.confirmed_mentee AND OLD.confirmed_at IS NULL THEN
++    NEW.confirmed_at := now();
++  ELSE
++    NEW.confirmed_at := OLD.confirmed_at;
++  END IF;
++
++  RETURN NEW;
++END;
++$$;
++
++CREATE TRIGGER mentor_session_guard_trg
++  BEFORE UPDATE ON public.mentor_sessions
++  FOR EACH ROW EXECUTE FUNCTION public.mentor_session_guard();
++
++-- AFTER UPDATE: the moment a session becomes fully confirmed, emit one
++-- reward for EACH party server-side (a single client cannot fabricate both
++-- sides). SECURITY DEFINER — same escalation pattern as is_connected() — so
++-- the inserts run as the table owner and bypass the self-only RLS check.
++-- At the mentor's 4th confirmed session, issue a mentorship certificate.
++CREATE OR REPLACE FUNCTION public.emit_mentor_rewards()
++RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER AS $$
++DECLARE
++  confirmed_count int;
++BEGIN
++  INSERT INTO public.reward_events (member_id, track, action_key, points, metadata)
++  VALUES
++    (NEW.mentor_id, 'educating_others', 'mentor_session', 40,
++       jsonb_build_object('session_id', NEW.id, 'role', 'mentor', 'topic', NEW.topic)),
++    (NEW.mentee_id, 'educating_others', 'mentor_session', 40,
++       jsonb_build_object('session_id', NEW.id, 'role', 'mentee', 'topic', NEW.topic));
++
++  SELECT count(*) INTO confirmed_count
++  FROM public.mentor_sessions
++  WHERE mentor_id = NEW.mentor_id AND confirmed_at IS NOT NULL;
++
++  IF confirmed_count >= 4 THEN
++    INSERT INTO public.certificates (member_id, certificate_type, settlement_object_key)
++    VALUES (NEW.mentor_id, 'mentorship', 'mentor_beacon')
++    ON CONFLICT (member_id, certificate_type) DO NOTHING;
++  END IF;
++
++  RETURN NEW;
++END;
++$$;
++
++CREATE TRIGGER emit_mentor_rewards_trg
++  AFTER UPDATE ON public.mentor_sessions
++  FOR EACH ROW
++  WHEN (NEW.confirmed_at IS NOT NULL AND OLD.confirmed_at IS NULL)
++  EXECUTE FUNCTION public.emit_mentor_rewards();
++
++-- ============================================================
++-- Seed: admin allow-list
++-- ============================================================
++-- Like the 001 seed, run manually after the intended admin signs up:
++--
++-- INSERT INTO public.admin_members (member_id)
++-- SELECT id FROM public.members WHERE handle = 'greg';
