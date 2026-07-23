@@ -383,7 +383,7 @@ const TERMS: GlossTerm[] = [
   {
     id: 39, category: 'nft', term: 'Exolocation NFT',
     short: 'The virtual land deed — ARC-3 / ARC-69 on Algorand, free to mint.',
-    body: 'Encodes the full exolocation address, coordinate system, reference body, boundary descriptor, and owner attribution. Free to mint (network gas only). Secondary sales apply the Resonance Split.',
+    body: 'Encodes the full exolocation address, coordinate system, reference body, boundary descriptor, and owner attribution. Free to mint (network gas only). Not resellable through any Exotopia-hosted market.',
     related: [4, 24, 31],
   },
 

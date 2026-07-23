@@ -23,6 +23,13 @@ export function getBlogContent (slug: string): string {
   return rawModules[`../../blog-${slug}.md`]?.default ?? ''
 }
 
+// 'internal' and 'draft' posts are pre-publication — not for public listing or
+// direct linking. Editorial holds (e.g. a compliance/legal review still
+// pending) rely on this actually gating the route, not just showing a badge.
+export function isPubliclyVisible (status: BlogStatus): boolean {
+  return status === 'public-draft' || status === 'published'
+}
+
 export function readingTime (content: string): number {
   return Math.max(1, Math.ceil(content.trim().split(/\s+/).length / 200))
 }
@@ -384,11 +391,47 @@ export const BLOG_POSTS: BlogPostMeta[] = [
       'RISK_REDUCTION_RECOMMENDATIONS.md flagged the collector-card system\'s four-tier ranked rarity (Legendary/Rare/Uncommon/Common, with a numeric score/10) as Howey-test/securities-framing exposure. This post covers the full removal per SPEC_NFT_VALUE_FRAMING.md: CardRarity/rarityScore and the on-chain Rarity trait removed from all 27 cards across three editions (not just the marketing copy), a required and logged pre-mint disclaimer added to the one live mint path, redundant rarity filter tabs removed in favor of the edition switcher already on the page, and a real unrelated bug found and fixed along the way (every card\'s back face hardcoded "ANTI-AI SLOP DROP" regardless of its actual series). Includes a before/after screenshot carousel and is explicit that this is a product change, not a substitute for the legal review the same document also calls for.',
     editorialNote: 'Companion to SPEC_NFT_VALUE_FRAMING.md and RISK_REDUCTION_RECOMMENDATIONS.md — this post describes a real code change, not legal advice; keep that distinction explicit if this moves off public-draft.',
   },
+  {
+    slug:     'risk-reduction-pass',
+    title:    'Being Cautious On Purpose',
+    subtitle: 'What changed after we actually read our own risk-reduction memo — including removing a working marketplace feature.',
+    date:     'July 2026',
+    audience: ['community', 'dev', 'ecosystem'],
+    series:   'economy',
+    status:   'public-draft',
+    description:
+      'A full pass through RISK_REDUCTION_RECOMMENDATIONS.md\'s remaining items. The headline change: pon.ink\'s "Exchange Depot" — a working mock secondary marketplace with token pricing, offers, and a public listing form, reachable from the main nav — is removed entirely, along with the KES exchange-rate displays on the mint/station fee panels and the marketing copy advertising an 80% resale-royalty aftermarket. Also covers: fixing a real enforcement gap where draft/internal blog posts (including a COPPA-flagged financial-literacy piece) were only badge-labeled, not actually gated from public URLs; wiring a self-attested age bracket into onboarding that the private-comment system\'s youth-mode gate already expected but never received; writing the previously-missing Community Guidelines document a live route and the Terms of Service already referenced; a standing disclaimer and correction-request path added to the PFAS citizen-science page; a 90-day prune for unsubmitted local drafts; a new site-wide footer with a real contact/report link; and a timestamped consent-acceptance log. Explicit about what a small team fixes in code versus what still needs an actual lawyer (M-Pesa licensing structure, jurisdiction-specific review).',
+    editorialNote: 'Companion to RISK_REDUCTION_RECOMMENDATIONS.md — describes real code/doc changes, not legal advice. The removed marketplace feature is gone from the app but its aspirational design still lives in SPEC_PON_INK.md/SPEC.md as an explicitly-labeled future vision, not corrected in this pass.',
+  },
+  {
+    slug:     'networks-of-trust',
+    title:    'Networks of Trust',
+    subtitle: 'Four features, one design decision — a graded, four-rung system for when a relationship claim should substitute for verification, and the hard line where it never should.',
+    date:     'July 2026',
+    audience: ['community', 'dev', 'ecosystem'],
+    series:   'economy',
+    status:   'public-draft',
+    description:
+      'Names a pattern that had been independently reinvented across private comments (green-light mutual connections), the onboarding age self-attestation, and the new Knowledge Keeper feature: trust in a self-reported relationship is graded across four rungs (act immediately / soft nudge / hold pending a written artifact / no shortcut, route to a formal process) rather than treated as binary verified-or-not. Explains the new Knowledge Keeper submission feature (/knowledge-keepers) built on this pattern per docs/eco-ops-workflow-guide.md Part 7, with the graded submitter-relationship tiers (self/family publish immediately, friend gets a soft confirmation nudge, student/researcher is held for review) enforced server-side via a Postgres trigger, not just client-side trust. The core argument is the boundary between rung 3 and rung 4: closeness of relationship is legitimate trust information right up until the person whose consent actually matters isn\'t the one using the product — a family member, a minor, an elder speaker of a threatened language — at which point Free Prior and Informed Consent (ILO C169, UNDRIP Art. 31, Nagoya Protocol) and COPPA-grade parental consent both apply, and no self-attestation at any relationship distance substitutes for them. Companion to the new SPEC_NETWORKS_OF_TRUST.md.',
+    editorialNote: 'Companion to SPEC_NETWORKS_OF_TRUST.md — the pattern description, not legal advice. The Knowledge Keeper feature\'s Supabase migration (005) hasn\'t been applied to any live project yet, so the live site shows the empty/sign-in states shown in the screenshots, not populated records.',
+  },
+  {
+    slug:     'platform-services-tour',
+    title:    "A Tour of What's Here",
+    subtitle: 'Settlement identity, elder knowledge, citizen science, and your own data — a walk through the newest corners of Exotopia.',
+    date:     'July 2026',
+    audience: ['community', 'field', 'ecosystem'],
+    series:   'ecosystem',
+    status:   'public-draft',
+    description:
+      'A product-facing tour (not a legal/compliance writeup) of the platform after the recent risk-reduction and Networks of Trust passes: the Settlement Registry at /pon-ink (identity records, no pricing, the former mock marketplace fully removed), the new Wisdom from Elders / Knowledge Keeper records feature at /knowledge-keepers with its graded consent tiers, the PFAS/PFOA citizen science page\'s standing disclaimer and field-safety waiver, the new self-service Account & Privacy page at /account (data export, deletion requests), the six-step onboarding flow with its self-attested age bracket, and the unbundled two-checkbox consent modal every visitor sees first. Includes a five-slide screenshot carousel across desktop and mobile.',
+    editorialNote: 'Screenshots show the signed-out/empty states for features that require authentication (Knowledge Keeper submission, Account export/deletion) — this environment has no way to complete the magic-link sign-in flow for a live screenshot of the authenticated views.',
+  },
 ]
 
 export function getRelatedPosts (post: BlogPostMeta, limit = 3): BlogPostMeta[] {
   return BLOG_POSTS
-    .filter(p => p.slug !== post.slug)
+    .filter(p => p.slug !== post.slug && isPubliclyVisible(p.status))
     .map(p => {
       const seriesMatch    = p.series === post.series ? 2 : 0
       const audienceMatch  = p.audience.some(a => post.audience.includes(a)) ? 1 : 0

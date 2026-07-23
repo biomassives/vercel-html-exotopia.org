@@ -13,6 +13,15 @@
         </p>
       </div>
 
+      <div class="pcs-disclaimer">
+        <strong>Community-submitted, not certified laboratory results.</strong>
+        Data on this page is self-reported by participants, not a certified lab
+        analysis — it is not a substitute for professional environmental testing
+        or medical advice. If a submitted value concerns you, consult a
+        qualified environmental testing service or your local health authority
+        rather than acting on it directly.
+      </div>
+
       <div class="pcs-tabs">
         <button class="pcs-tab" :class="{ 'pcs-tab--active': tab === 'browse' }" @click="tab = 'browse'">Browse Projects</button>
         <button class="pcs-tab" :class="{ 'pcs-tab--active': tab === 'library' }" @click="tab = 'library'">Methods Library</button>
@@ -36,6 +45,9 @@
                 {{ p.title }} <span class="pcs-project-status" :class="`pcs-project-status--${p.status}`">{{ p.status }}</span>
               </button>
             </div>
+            <button class="pcs-dispute" @click="disputeListing(area)">
+              Dispute this listing
+            </button>
           </div>
           <p v-if="!store.focusAreas.length" class="pcs-p pcs-p--dim">No focus areas yet — start one from the "Start a Project" tab.</p>
         </div>
@@ -165,7 +177,21 @@
             <input v-model="faDescription" class="pcs-input pcs-input--wide" placeholder="Short description" />
             <input v-model="faBaseAddress" class="pcs-input" placeholder="Exolocation address (optional)" />
             <label class="pcs-checkbox"><input v-model="faSimulated" type="checkbox" /> Simulated / practice site</label>
-            <button type="submit" class="pcs-btn" :disabled="!faName.trim()">Create focus area</button>
+
+            <!-- Real-site field-safety waiver — only shown once "simulated" is
+                 unchecked, i.e. this is about to become a real physical site. -->
+            <div v-if="!faSimulated" class="pcs-waiver">
+              I understand this is a real site, that field data collection carries
+              inherent physical risk, and that Exotopia does not supervise or
+              guarantee the safety of any site — I'm responsible for my own safety
+              and compliance with local law while collecting data here.
+              <label class="pcs-checkbox" style="margin-top:6px">
+                <input v-model="fieldWaiverAccepted" type="checkbox" /> I accept this
+              </label>
+            </div>
+
+            <button type="submit" class="pcs-btn"
+              :disabled="!faName.trim() || (!faSimulated && !fieldWaiverAccepted)">Create focus area</button>
           </form>
 
           <h2 class="pcs-h2" style="margin-top:24px">2. Project</h2>
@@ -188,7 +214,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useMemberStore } from 'src/stores/member'
-import { usePfasCitizenScienceStore, type DeconProject } from 'src/stores/pfas-citizen-science'
+import { usePfasCitizenScienceStore, type DeconProject, type FocusArea } from 'src/stores/pfas-citizen-science'
 import { REMEDIATION_METHODS, LEGAL_SAMPLING_GUIDANCE, SAMPLING_COST_TIERS, POOLED_SAMPLING_NOTE, REGULATORY_CONTEXT } from 'src/data/pfas-methods-library'
 import { LOGGING_STREAK_THRESHOLD_WEEKS } from 'src/data/rewards-catalog'
 import { useLoggingStreak } from 'src/composables/useLoggingStreak'
@@ -205,6 +231,23 @@ onMounted(() => {
   void store.loadFocusAreas()
   void store.loadProjects()
 })
+
+// Correction-request path for named sites — see RISK_REDUCTION_RECOMMENDATIONS.md
+// §5. Data here is self-reported (see the standing disclaimer above), so a
+// named site/brand needs a real due-process step to dispute a report. This
+// opens a pre-filled issue on the project's public tracker rather than
+// silently accepting or rejecting the dispute client-side.
+function disputeListing(area: FocusArea) {
+  const title = encodeURIComponent(`Dispute PFAS listing: ${area.name}`)
+  const body  = encodeURIComponent(
+    `Focus area ID: ${area.id}\nSite name: ${area.name}\n\n` +
+    `Describe what's inaccurate about this listing and any supporting evidence:\n\n`
+  )
+  window.open(
+    `https://github.com/biomassives/vercel-html-exotopia.org/issues/new?title=${title}&body=${body}`,
+    '_blank', 'noopener'
+  )
+}
 
 function projectsFor(focusAreaId: string): DeconProject[] {
   return store.projects.filter(p => p.focus_area_id === focusAreaId)
@@ -279,14 +322,32 @@ const faName = ref('')
 const faDescription = ref('')
 const faBaseAddress = ref('')
 const faSimulated = ref(true)
+const fieldWaiverAccepted = ref(false)
+
+// Logged the same way as MintPage.vue's mint-disclaimer acceptance — see
+// RISK_REDUCTION_RECOMMENDATIONS.md §3/§7. Only fires for real (non-simulated)
+// sites, since that's the only case with actual field-safety exposure.
+function logFieldWaiverAcceptance(siteName: string) {
+  try {
+    const key = 'exo.field-waiver-log'
+    const log = JSON.parse(localStorage.getItem(key) ?? '[]') as unknown[]
+    log.push({ siteName, acceptedAt: new Date().toISOString() })
+    localStorage.setItem(key, JSON.stringify(log))
+  } catch { /* private mode / quota */ }
+}
 
 async function submitFocusArea() {
   if (!faName.value.trim()) return
+  if (!faSimulated.value) {
+    if (!fieldWaiverAccepted.value) return
+    logFieldWaiverAcceptance(faName.value)
+  }
   await store.createFocusArea({
     name: faName.value, description: faDescription.value || undefined,
     baseAddress: faBaseAddress.value || undefined, isSimulated: faSimulated.value,
   })
   faName.value = ''; faDescription.value = ''; faBaseAddress.value = ''
+  fieldWaiverAccepted.value = false
 }
 
 const projFocusAreaId = ref('')
@@ -309,10 +370,23 @@ async function submitProject() {
 .pcs-page { background: #020408; min-height: 100vh; padding: 36px 24px 60px; font-family: 'Courier New', monospace; color: rgba(200,225,245,0.90); }
 .pcs-wrap { max-width: 760px; margin: 0 auto; }
 
+/* Clears RecordWidget.vue's mobile FAB (fixed at bottom:88px + 44px tall) so
+   it doesn't sit on top of the last form field/button on a tall page. */
+@media (max-width: 640px) {
+  .pcs-page { padding-bottom: 160px; }
+}
+
 .pcs-badge { font-size: 8.5px; letter-spacing: 0.22em; color: rgba(160,120,255,0.60); margin-bottom: 8px; }
 .pcs-title { font-size: 22px; font-weight: 300; color: rgba(215,238,255,0.94); margin: 0 0 12px; }
 .pcs-sub   { font-size: 11.5px; line-height: 1.7; color: rgba(160,195,220,0.82); margin-bottom: 24px; }
 .pcs-inline-link { color: rgba(0,210,255,0.85); text-decoration: underline; }
+
+.pcs-disclaimer {
+  font-size: 10px; line-height: 1.6; color: rgba(255,195,120,0.80);
+  background: rgba(255,150,40,0.08); border: 1px solid rgba(255,150,40,0.22);
+  border-radius: 6px; padding: 10px 14px; margin-bottom: 20px;
+}
+.pcs-disclaimer strong { color: rgba(255,205,140,0.95); }
 
 .pcs-tabs { display: flex; gap: 6px; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.08); }
 .pcs-tab {
@@ -349,6 +423,13 @@ async function submitProject() {
 .pcs-project-status--active { color: #00e5ff; }
 .pcs-project-status--complete { color: #55e88a; }
 .pcs-project-status--monitoring { color: #ffcc66; }
+
+.pcs-dispute {
+  background: none; border: none; color: rgba(150,180,205,0.50);
+  font-family: inherit; font-size: 9px; text-decoration: underline;
+  cursor: pointer; padding: 8px 0 0; display: block;
+}
+.pcs-dispute:hover { color: rgba(255,195,120,0.80); }
 
 /* Project detail */
 .pcs-back { background: none; border: none; color: rgba(0,190,230,0.65); font-family: inherit; font-size: 10px; cursor: pointer; padding: 0; margin-bottom: 12px; }
@@ -404,6 +485,11 @@ async function submitProject() {
 .pcs-textarea { width: 100%; resize: vertical; }
 .pcs-input--wide { flex: 1; min-width: 200px; }
 .pcs-checkbox { font-size: 10.5px; color: rgba(175,205,228,0.85); display: flex; align-items: center; gap: 6px; }
+.pcs-waiver {
+  width: 100%; font-size: 10px; line-height: 1.6; color: rgba(255,195,120,0.80);
+  background: rgba(255,150,40,0.08); border: 1px solid rgba(255,150,40,0.22);
+  border-radius: 6px; padding: 10px 14px;
+}
 .pcs-btn {
   background: rgba(0,40,80,0.55); border: 1px solid rgba(0,160,220,0.35); border-radius: 5px;
   color: rgba(200,235,255,0.90); font-family: inherit; font-size: 10.5px; padding: 8px 16px; cursor: pointer;

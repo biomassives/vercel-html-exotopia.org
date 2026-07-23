@@ -168,6 +168,12 @@ const routes: RouteRecordRaw[] = [
         meta: { title: 'Orbital Gallery' },
       },
       {
+        path: 'account',
+        name: 'account',
+        component: () => import('src/pages/AccountPage.vue'),
+        meta: { title: 'Account & Privacy' },
+      },
+      {
         path: 'station/:stationId?',
         name: 'station',
         component: () => import('src/pages/StationPage.vue'),
@@ -280,6 +286,12 @@ const routes: RouteRecordRaw[] = [
         name: 'method-proposals',
         component: () => import('src/pages/MethodProposalsPage.vue'),
         meta: { title: 'Method Proposals · Exotopia' },
+      },
+      {
+        path: 'knowledge-keepers',
+        name: 'knowledge-keepers',
+        component: () => import('src/pages/KnowledgeKeepersPage.vue'),
+        meta: { title: 'Wisdom from Elders · Exotopia' },
       },
       {
         path: 'docs',

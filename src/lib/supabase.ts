@@ -69,5 +69,14 @@ export interface BlockedMember {
   created_at: string
 }
 
+export interface DeletionRequest {
+  id:           string
+  member_id:    string
+  requested_at: string
+  status:       'pending' | 'completed' | 'cancelled'
+  resolved_at:  string | null
+  note:         string | null
+}
+
 export const COMMENT_MAX_LENGTH  = 2000
 export const COMMENT_RATE_LIMIT  = { max: 5, windowMs: 10 * 60 * 1000 } // 5 per 10 min

@@ -88,13 +88,15 @@ import { useRoute } from 'vue-router'
 import {
   BLOG_POSTS, SERIES_LABEL, AUDIENCE_COLOR, AUDIENCE_LABEL,
   STATUS_COLOR, STATUS_LABEL, getBlogContent, readingTime,
-  renderMarkdown, getRelatedPosts,
+  renderMarkdown, getRelatedPosts, isPubliclyVisible,
 } from 'src/data/blog-posts'
 import BlogComments from 'src/components/BlogComments.vue'
 
 const route  = useRoute()
 const slug   = computed(() => route.params.slug as string)
-const post   = computed(() => BLOG_POSTS.find(p => p.slug === slug.value) ?? null)
+// 'internal'/'draft' posts render the 404 state below for direct links too —
+// editorial holds must actually block the route, not just show a badge.
+const post   = computed(() => BLOG_POSTS.find(p => p.slug === slug.value && isPubliclyVisible(p.status)) ?? null)
 const raw    = computed(() => post.value ? getBlogContent(post.value.slug) : '')
 const html   = computed(() => raw.value ? renderMarkdown(raw.value) : '')
 const mins   = computed(() => readingTime(raw.value))

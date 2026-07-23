@@ -84,8 +84,58 @@
           label="Choose my path" class="full-width ob-next-btn" @click="step = 1"/>
       </div>
 
-      <!-- ══ STEP 1 — PATH ═════════════════════════════════════════════════════ -->
-      <div v-else-if="step === 1" key="1" class="ob-card">
+      <!-- ══ STEP 1 — ABOUT YOU (age self-attestation) ═══════════════════════════ -->
+      <div v-else-if="step === 1" key="age" class="ob-card">
+        <div class="ob-card-hero">
+          <div class="ob-hero-icon">🙋</div>
+          <h2 class="ob-card-title">Which best describes you?</h2>
+          <p class="ob-card-sub">
+            This just adjusts what's visible to you — for example, private
+            messaging between members is only available to adults. We don't
+            collect a birthdate, just this one answer.
+          </p>
+        </div>
+
+        <div class="ob-path-list">
+          <button
+            v-for="a in AGE_BRACKETS" :key="a.id"
+            class="ob-path-card"
+            :class="{ 'ob-path-card--selected': ageBracket === a.id }"
+            @click="ageBracket = a.id"
+          >
+            <span class="ob-path-icon">{{ a.icon }}</span>
+            <div class="ob-path-body">
+              <div class="ob-path-title">{{ a.title }}</div>
+              <div class="ob-path-desc">{{ a.desc }}</div>
+            </div>
+            <div v-if="ageBracket === a.id" class="ob-path-check">✓</div>
+          </button>
+        </div>
+
+        <!-- Under-13 — no self-serve signup; direct to guardian contact -->
+        <Transition name="ob-fade">
+          <div v-if="ageBracket === 'under_13'" class="ob-eco-context">
+            <div class="ob-eco-ctx-head">A parent or guardian needs to help with this one</div>
+            <p class="ob-eco-ctx-body">
+              We don't have a self-serve signup for children under 13 — US (COPPA) and
+              EU rules require a parent or guardian's verifiable consent first, and a
+              checkbox here isn't enough to satisfy that. If you're a parent, guardian,
+              or teacher setting this up for a young person, please
+              <a href="https://github.com/biomassives/vercel-html-exotopia.org/issues/new" target="_blank" rel="noopener">reach out to the team directly</a>
+              and we'll walk through it together.
+            </p>
+          </div>
+        </Transition>
+
+        <div class="ob-nav-row">
+          <q-btn flat rounded size="sm" color="blue-grey-5" icon="chevron_left" label="Back" @click="step--"/>
+          <q-btn unelevated rounded color="teal-8" icon-right="arrow_forward"
+            label="Continue" :disable="!ageBracket || ageBracket === 'under_13'" @click="step = 2"/>
+        </div>
+      </div>
+
+      <!-- ══ STEP 2 — PATH ═════════════════════════════════════════════════════ -->
+      <div v-else-if="step === 2" key="1" class="ob-card">
         <div class="ob-card-hero">
           <div class="ob-hero-icon">🧭</div>
           <h2 class="ob-card-title">What brings you here?</h2>
@@ -116,12 +166,12 @@
         <div class="ob-nav-row">
           <q-btn flat rounded size="sm" color="blue-grey-5" icon="chevron_left" label="Back" @click="step--"/>
           <q-btn unelevated rounded color="teal-8" icon-right="arrow_forward"
-            label="Continue" :disable="!selectedPath" @click="step = 2"/>
+            label="Continue" :disable="!selectedPath" @click="step = 3"/>
         </div>
       </div>
 
-      <!-- ══ STEP 2 — COMMIT ═══════════════════════════════════════════════════ -->
-      <div v-else-if="step === 2" key="2" class="ob-card">
+      <!-- ══ STEP 3 — COMMIT ═══════════════════════════════════════════════════ -->
+      <div v-else-if="step === 3" key="2" class="ob-card">
         <div class="ob-card-hero">
           <div class="ob-hero-icon">{{ activePath?.icon }}</div>
           <h2 class="ob-card-title">{{ activePath?.commitTitle }}</h2>
@@ -150,12 +200,12 @@
         <div class="ob-nav-row">
           <q-btn flat rounded size="sm" color="blue-grey-5" icon="chevron_left" label="Back" @click="step--"/>
           <q-btn unelevated rounded color="teal-8" icon-right="arrow_forward"
-            label="This is my first step" :disable="!selectedCommitment" @click="step = 3"/>
+            label="This is my first step" :disable="!selectedCommitment" @click="step = 4"/>
         </div>
       </div>
 
-      <!-- ══ STEP 3 — YOUR PLACE ═══════════════════════════════════════════════ -->
-      <div v-else-if="step === 3" key="3" class="ob-card">
+      <!-- ══ STEP 4 — YOUR PLACE ═══════════════════════════════════════════════ -->
+      <div v-else-if="step === 4" key="3" class="ob-card">
         <div class="ob-card-hero">
           <div class="ob-hero-icon">🪐</div>
           <h2 class="ob-card-title">Your place in the cosmos</h2>
@@ -205,12 +255,12 @@
           <q-btn flat rounded size="sm" color="blue-grey-5" icon="chevron_left" label="Back" @click="step--"/>
           <q-btn unelevated rounded color="teal-8" icon-right="arrow_forward"
             label="Reserve my settlement" :disable="displayName.trim().length < 2"
-            @click="step = 4"/>
+            @click="step = 5"/>
         </div>
       </div>
 
-      <!-- ══ STEP 4 — BEGIN ════════════════════════════════════════════════════ -->
-      <div v-else-if="step === 4" key="4" class="ob-card ob-card--ready">
+      <!-- ══ STEP 5 — BEGIN ════════════════════════════════════════════════════ -->
+      <div v-else-if="step === 5" key="4" class="ob-card ob-card--ready">
         <div class="ob-card-hero">
           <div class="ob-hero-icon ob-hero-icon--pulse">🌌</div>
           <h2 class="ob-card-title">{{ displayName.trim() }}, you're in.</h2>
@@ -309,25 +359,48 @@ const selectedPath       = ref<string | null>(profile.value.selectedRole)
 const selectedCommitment = ref<string | null>(profile.value.selectedCommunity)
 const displayName        = ref(profile.value.displayName)
 
-watch([step, selectedPath, selectedCommitment, displayName], () =>
+// Age self-attestation — maps directly onto participationMode. We deliberately
+// don't collect a birthdate (see SPEC_ECO_OPS_API.md's "no DOB collection"
+// design note) — just this one bracket choice.
+type AgeBracket = 'under_13' | '13_17' | 'adult'
+const AGE_TO_MODE: Record<Exclude<AgeBracket, 'under_13'>, 'adult_individual' | 'youth_participant'> = {
+  '13_17': 'youth_participant',
+  adult:   'adult_individual',
+}
+const ageBracket = ref<AgeBracket | null>(
+  profile.value.participationMode === 'youth_participant' ? '13_17'
+  : profile.value.participationMode === 'adult_individual' ? 'adult'
+  : null
+)
+
+watch([step, selectedPath, selectedCommitment, displayName, ageBracket], () =>
   update({
     onboardingStep:    step.value,
     selectedRole:      selectedPath.value,
     selectedCommunity: selectedCommitment.value,
     displayName:       displayName.value,
+    participationMode: ageBracket.value && ageBracket.value !== 'under_13'
+      ? AGE_TO_MODE[ageBracket.value] : null,
   })
 )
 
-watch(step, (s) => { if (s === 4) complete() })
+watch(step, (s) => { if (s === 5) complete() })
 
 // ── Steps ─────────────────────────────────────────────────────────────────────
 
 const STEPS = [
   { label: 'Mission'    },
+  { label: 'About You'  },
   { label: 'Path'       },
   { label: 'Commit'     },
   { label: 'Your Place' },
   { label: 'Begin'      },
+]
+
+const AGE_BRACKETS: Array<{ id: AgeBracket, icon: string, title: string, desc: string }> = [
+  { id: 'adult',    icon: '🧑', title: "I'm 18 or older",   desc: 'Full access, including private member messaging' },
+  { id: '13_17',    icon: '🧒', title: "I'm 13–17",         desc: 'Everything except private member-to-member messaging' },
+  { id: 'under_13', icon: '👶', title: "I'm under 13",      desc: 'Needs a parent or guardian to set this up' },
 ]
 
 // ── Data types ────────────────────────────────────────────────────────────────
@@ -1016,10 +1089,19 @@ details[open] .ob-chain-summary::before { content: '− '; }
 /* ── Mobile responsive ────────────────────────────────────────────────────── */
 
 @media (max-width: 600px) {
-  .ob-wrap { padding: 16px 14px 80px; gap: 18px; }
+  /* 150px clears RecordWidget.vue's mobile FAB, which sits fixed at
+     bottom:88px + its own 44px height — 80px wasn't enough and the FAB
+     was overlapping the bottom-most step button/card. */
+  .ob-wrap { padding: 16px 14px 150px; gap: 18px; }
   .ob-card { padding: 16px; gap: 14px; }
   .ob-card-title { font-size: 18px; }
   .ob-hero-icon { font-size: 36px; }
+  /* 6 rail steps (5 + the "About You" age step) don't fit with labels below
+     ~600px, not just on very narrow phones — a common 390px viewport was
+     overflowing before this moved up from a 380px-only breakpoint. */
+  .ob-rail-label { display: none; }
+  .ob-rail { padding: 8px; gap: 0; }
+  .ob-rail-line { min-width: 6px; }
   .ob-card-sub { font-size: 10.5px; }
   .ob-input { font-size: 16px; }
   .ob-nav-row { gap: 10px; }
@@ -1032,9 +1114,6 @@ details[open] .ob-chain-summary::before { content: '− '; }
 }
 
 @media (max-width: 380px) {
-  .ob-rail-label { display: none; }
-  .ob-rail { padding: 8px; gap: 0; }
-  .ob-rail-line { min-width: 6px; }
   .ob-card { padding: 12px; }
   .ob-card-title { font-size: 15px; }
   .ob-path-card, .ob-commit-card { padding: 10px 12px; }

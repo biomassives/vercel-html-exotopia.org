@@ -70,9 +70,11 @@
 import { ref, computed } from 'vue'
 import {
   BLOG_POSTS, SERIES_LABEL, AUDIENCE_COLOR, AUDIENCE_LABEL,
-  STATUS_COLOR, STATUS_LABEL, getBlogContent, readingTime,
+  STATUS_COLOR, STATUS_LABEL, getBlogContent, readingTime, isPubliclyVisible,
   type BlogAudience, type BlogSeries,
 } from 'src/data/blog-posts'
+
+const VISIBLE_POSTS = BLOG_POSTS.filter(p => isPubliclyVisible(p.status))
 
 const FILTERS = [
   { key: 'all',       label: 'All',        color: '' },
@@ -86,8 +88,8 @@ const activeFilter = ref<'all' | BlogAudience>('all')
 
 const filteredPosts = computed(() =>
   activeFilter.value === 'all'
-    ? BLOG_POSTS
-    : BLOG_POSTS.filter(p => p.audience.includes(activeFilter.value as BlogAudience))
+    ? VISIBLE_POSTS
+    : VISIBLE_POSTS.filter(p => p.audience.includes(activeFilter.value as BlogAudience))
 )
 
 const visibleSeries = computed<BlogSeries[]>(() => {
@@ -95,7 +97,7 @@ const visibleSeries = computed<BlogSeries[]>(() => {
   return order.filter(s => filteredPosts.value.some(p => p.series === s))
 })
 
-const seriesCount = computed(() => new Set(BLOG_POSTS.map(p => p.series)).size)
+const seriesCount = computed(() => new Set(VISIBLE_POSTS.map(p => p.series)).size)
 
 function postsBySeries (series: BlogSeries) {
   return filteredPosts.value.filter(p => p.series === series)

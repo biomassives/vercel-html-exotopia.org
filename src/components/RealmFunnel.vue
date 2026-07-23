@@ -3,8 +3,8 @@
     RealmFunnel.vue — four graphical action cards for funnelling users to:
     1. Explore (find a planet)
     2. Get a property (claim or buy)
-    3. Collect & sell (gallery, aftermarket)
-    4. Sponsor eco-ops (earn resellable reward tokens)
+    3. Collect (gallery)
+    4. Sponsor eco-ops (earn non-tradable reward tokens)
 
     Props:
       compact  — 2-column grid, smaller cards (for sidebar / widget use)
@@ -55,7 +55,7 @@
         <div class="rf-desc">
           Claim 40 virtual acres on any confirmed exoplanet. Choose your
           settlement pathway, select your plot, and mint your Exolocation
-          deed on-chain. No purchase required — 0% aftermarket draw only.
+          deed on-chain. No purchase required, no resale market attached.
         </div>
         <div class="rf-links">
           <span class="rf-link" @click.stop="go('/galaxy')">Find a planet</span>
@@ -67,7 +67,7 @@
         <button class="rf-cta rf-cta--green" @click.stop="go('/mint')">Claim 40 acres →</button>
       </div>
 
-      <!-- ── COLLECT & SELL ──────────────────────────────────────────── -->
+      <!-- ── COLLECT ──────────────────────────────────────────── -->
       <div v-if="!hideIds.includes('collect')"
            class="rf-card rf-card--collect"
            @click="go('/gallery')">
@@ -75,19 +75,16 @@
         <div class="rf-card__top">
           <span class="rf-icon">🎨</span>
           <div class="rf-titles">
-            <div class="rf-title">COLLECT &amp; SELL</div>
-            <div class="rf-tag">Orbital gallery · aftermarket</div>
+            <div class="rf-title">COLLECT</div>
+            <div class="rf-tag">Orbital gallery</div>
           </div>
         </div>
         <div class="rf-desc">
-          Browse collector-card NFTs from current and past editions.
-          List your Exolocation deeds on the aftermarket — 80% of every
-          secondary sale goes directly to the original creator.
+          Browse collector-card NFTs from current and past editions —
+          hand-crafted designs, no resale market or trading floor attached.
         </div>
         <div class="rf-links">
           <span class="rf-link" @click.stop="go('/gallery')">View gallery</span>
-          <span class="rf-sep">·</span>
-          <span class="rf-link" @click.stop="go('/gallery')">List property</span>
           <span class="rf-sep">·</span>
           <span class="rf-link" @click.stop="go('/mint')">Mint new</span>
         </div>
@@ -103,21 +100,19 @@
           <span class="rf-icon">💧</span>
           <div class="rf-titles">
             <div class="rf-title">SPONSOR ECO-OPS</div>
-            <div class="rf-tag rf-tag--amber">Earn resellable tokens</div>
+            <div class="rf-tag rf-tag--amber">Earn recognition tokens</div>
           </div>
         </div>
         <div class="rf-desc">
           Fund real-world field activities — water quality readings, farm
           maps, waste collection. Sponsors receive <strong>Activity Reward Tokens</strong>
-          (ARTs) proportional to the verified impact of sponsored check-ins.
-          ARTs are transferable and can be listed on the secondary market.
+          (ARTs) proportional to the verified impact of sponsored check-ins —
+          a non-tradable record of contribution, not a financial instrument.
         </div>
         <div class="rf-links">
           <span class="rf-link" @click.stop="go('/eco-ops')">Browse activities</span>
           <span class="rf-sep">·</span>
           <span class="rf-link" @click.stop="go('/glossary?q=art')">ART tokens</span>
-          <span class="rf-sep">·</span>
-          <span class="rf-link" @click.stop="go('/gallery')">Resell rewards</span>
         </div>
         <!-- Sponsor reward breakdown -->
         <div class="rf-reward-strip">

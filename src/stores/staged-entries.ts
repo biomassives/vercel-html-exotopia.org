@@ -41,6 +41,13 @@ export interface StagedEntry {
 
 const STORAGE_KEY = 'e8.3'   // opaque — follows settlements.ts (e8.1) / settlement-items.ts (e8.2)
 
+// Unsubmitted entries sitting indefinitely on-device are exactly the kind of
+// thing that turns into a forgotten liability if a device is lost, shared,
+// or subpoenaed — see RISK_REDUCTION_RECOMMENDATIONS.md §6. Submitted
+// entries are left alone; they're a completed-action record, not a lingering
+// draft, and the same 90-day window would just delete someone's own history.
+const STALE_UNSUBMITTED_DAYS = 90
+
 function load(): StagedEntry[] {
   return safeRead<StagedEntry[]>(STORAGE_KEY, [])
 }
@@ -49,8 +56,16 @@ function persist(entries: StagedEntry[]) {
   safeWrite(STORAGE_KEY, entries)
 }
 
+function pruneStale(list: StagedEntry[]): StagedEntry[] {
+  const cutoff = Date.now() - STALE_UNSUBMITTED_DAYS * 24 * 60 * 60 * 1000
+  return list.filter(e => e.submittedAt || new Date(e.createdAt).getTime() >= cutoff)
+}
+
 export const useStagedEntriesStore = defineStore('staged-entries', () => {
-  const entries = ref<StagedEntry[]>(load())
+  const raw    = load()
+  const loaded = pruneStale(raw)
+  const entries = ref<StagedEntry[]>(loaded)
+  if (loaded.length !== raw.length) persist(loaded)
 
   const unsubmitted      = computed(() => entries.value.filter(e => !e.submittedAt))
   const unsubmittedCount = computed(() => unsubmitted.value.length)

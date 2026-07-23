@@ -185,7 +185,7 @@ export const QUIZ_AREAS: QuizArea[] = [
         question: 'In the Exotopia ecosystem, what is the Resonance Split?',
         options: ['A sound design feature', '100% to creator — platform is free', 'Equal shares to all participants', 'A 50/50 creator/platform fee'],
         correct: 1,
-        explanation: 'The Resonance Split governs secondary market royalties: 80% to the original creator, 10% to the Community Fund (WATSAN/mapping infrastructure), and 0% to platform maintenance — computed independently, never combined.',
+        explanation: 'The Resonance Split governs how mint-time contributions are allocated: the large majority to the original creator, a slice to the Community Fund (WATSAN/mapping infrastructure), and a small platform-maintenance share — computed independently, never combined. There is no Exotopia-hosted resale market for these tokens.',
       },
       {
         question: 'What is a "compressed NFT" (cNFT) and why does it matter?',

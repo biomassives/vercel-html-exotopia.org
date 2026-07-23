@@ -31,7 +31,7 @@ eco-ops participants, and blog/community contributors.
 | Cookies | Session/functional cookies, analytics cookies (see § 6) | Automatically |
 | Citizen-science / eco-ops data | Field observations, geolocation of submitted sites, photos, project status notes | You, directly, when you choose to submit |
 | Recorded/staged entries | Audio or written entries you stage locally before submitting (e.g. via the Record widget) | You, directly — stored locally on your device until you choose to submit |
-| Community content | Blog comments, community posts, profile info you choose to add | You, directly |
+| Community content | Blog comments, community posts, profile info you choose to add. Comments are visible only to mutual, green-lit connections (max. seven per thread) — not to the general public or, outside a valid legal request or a recipient-initiated report (see § 4), to us | You, directly |
 | Communications | Support requests, emails to us | You, directly |
 
 **We do not collect wallet private keys or seed phrases, and never ask for
@@ -85,6 +85,30 @@ legal basis:
   before disclosing (relevant in GDPR-covered jurisdictions in particular).
 - **We do not sell personal data.**
 
+### Private comments — what "private" actually means here
+The Service's member-to-member comment feature is built around small,
+mutual-consent groups rather than public or broadly-monitored comments — we
+do not run automated content scanning or keyword monitoring on it. That
+design choice means we need to be precise about what it does and doesn't
+give you:
+
+- Only accounts you've mutually connected with can see a comment you post
+  (capped at seven connections per thread); it is not visible to the general
+  public, to other members outside that connection, or to us as a matter of
+  routine.
+- **Report path**: if you receive a comment that concerns you, you can report
+  it — this is recipient-initiated only; we do not passively scan messages
+  looking for problems. A report gives our moderators access to the reported
+  content for review.
+- **Lawful requests**: we do not build or operate proactive surveillance
+  tooling for this feature, but we do respond to valid legal process (e.g. a
+  court order) to the extent required by law. Our internal policy for
+  evaluating such requests — including what we push back on — is documented
+  in `LEGAL_REQUEST_POLICY.md` (available on request from **[PRIVACY CONTACT
+  EMAIL]** ahead of a public-facing summary being published here).
+- Composing a comment (as opposed to reading ones shared with you) is limited
+  to accounts that self-attest as 18 or older during onboarding — see § 9.
+
 ## 5. International data transfers
 
 Our infrastructure may store or process data in **[COUNTRY/COUNTRIES, e.g.
@@ -124,9 +148,16 @@ Subject to the law that applies to you, you may have the right to:
 - Data portability (receive your data in a structured format)
 - Lodge a complaint with your local data protection authority
 
-To exercise these rights, contact **[PRIVACY CONTACT EMAIL]**. We will
-respond within the time limit required by the law that applies to you (see
-§ 10 for jurisdiction-specific timelines).
+You can exercise the access (export) and cancellation (account deletion)
+rights yourself at `/account`, no email required — export downloads a JSON
+file of everything tied to your account immediately; a deletion request is
+logged with a timestamp and processed by a team member, since actually
+deleting an account needs elevated access we don't expose to your browser.
+For correction, objection, or anything `/account` doesn't yet cover, contact
+**[PRIVACY CONTACT EMAIL]**. We will respond within the time limit required
+by the law that applies to you (see § 10 for jurisdiction-specific
+timelines) — for a self-service deletion request, that's the same day it's
+processed, not the statutory maximum.
 
 ## 9. Children's privacy
 
@@ -215,3 +246,12 @@ take effect.
 
 **[PRIVACY CONTACT EMAIL — same recommendation as Terms of Service § 14]**
 — for all data protection questions and rights requests.
+
+## 13. Changelog
+
+Material changes to this policy are logged here — see § 11.
+
+| Date | Change |
+|---|---|
+| [DATE] | Initial draft template. |
+| 2026-07-22 | Added the private-comments privacy-model explanation in § 4 (visibility, report path, lawful-request policy pointer) and this changelog. |

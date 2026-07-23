@@ -137,7 +137,9 @@ You retain ownership of content you post (blog comments, community
 submissions), but grant us a worldwide, royalty-free license to host, display,
 and distribute it as part of operating the Service. You agree not to post
 content that is unlawful, infringing, harassing, or that violates a third
-party's privacy or data protection rights.
+party's privacy or data protection rights. Our full conduct expectations are
+set out in the **Community Guidelines** (`/community-guidelines`), which this
+section incorporates by reference.
 
 We may moderate, remove, or restrict content or accounts at our discretion,
 particularly where required to comply with local law (e.g. content-takedown
@@ -260,3 +262,13 @@ Questions about these Terms: **[LEGAL/PRIVACY CONTACT EMAIL — recommend a
 dedicated address like legal@exotopia.org rather than a personal inbox, both
 for professionalism and because several of the regimes in § 13 expect a
 stable, monitored contact channel]**
+
+## 15. Changelog
+
+Material changes to these Terms are logged here with a date, so you can
+answer "what did I agree to on date X" — see § 12.
+
+| Date | Change |
+|---|---|
+| [DATE] | Initial draft template. |
+| 2026-07-22 | Published the Community Guidelines document referenced in § 6, and this changelog. The product itself was also changed the same day to remove a secondary-marketplace/resale feature that existed in the app but was never described in these Terms — see `RISK_REDUCTION_RECOMMENDATIONS.md` §1 and `blog-risk-reduction-pass.md`. |

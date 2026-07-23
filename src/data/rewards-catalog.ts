@@ -20,6 +20,7 @@ export const POINTS: Record<string, number> = {
   decon_progress_log:       6,   // per progress-log entry on a decontamination project
   method_proposal_published: 25, // publishing a public PFAS cleanup method proposal
   method_proposal_endorsed:  4,  // credit to an endorser for engaging with a proposal
+  knowledge_keeper_record:   15, // documenting a Wisdom-from-Elders / Knowledge Keeper contribution
 }
 
 // Consecutive weeks with ≥1 log entry on a decontamination project at which

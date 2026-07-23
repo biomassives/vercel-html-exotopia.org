@@ -9,10 +9,10 @@
 const env = (import.meta as any).env ?? {}
 
 export const FREE_MINT          = env.VITE_FREE_MINT          !== 'false'
-/** Platform fee rate on secondary sales: 0.25% (as decimal fraction). Community hardware fund: 0.75%. Creator receives 99%. */
-export const AFTERMARKET_BENCH  = 0.0025
 export const DEFAULT_CHAIN      = (env.VITE_DEFAULT_CHAIN      ?? 'polygon') as string
-export const KES_RATE           = parseFloat(env.VITE_KES_RATE ?? '130')
+// No AFTERMARKET_BENCH / KES_RATE here on purpose — Exotopia does not operate
+// a secondary market or display a fiat exchange rate for in-app value. See
+// RISK_REDUCTION_RECOMMENDATIONS.md §1–2 before reintroducing either.
 
 /** Comma-separated pathway slugs. Controls which cards appear in the wizard. */
 const PATHWAYS_RAW: string = env.VITE_ENABLED_PATHWAYS ?? 'eco,gallery,watsan,learning,food,command'

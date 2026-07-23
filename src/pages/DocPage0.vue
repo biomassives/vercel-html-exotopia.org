@@ -246,7 +246,7 @@
               <li>🌱 Farm map submission → +8 ART</li>
               <li>◈ Eco-ops verified on-chain → +5 ART</li>
             </ul>
-            <p class="dp-p">ARTs are transferable and listable on the secondary market. They have no fixed price — value is determined by community activity levels and network participation.</p>
+            <p class="dp-p">ARTs are a non-tradable record of contribution — Exotopia does not operate a secondary market or exchange for them, and they carry no cash value or expectation of return.</p>
           </div>
 
           <div :id="'robot-mule'" class="dp-sub">
@@ -509,7 +509,7 @@ Scene units: 1 Mpc = 1/15 scene units (MPC_SCALE)</div>
             </ul>
             <p class="dp-p">This chain is a live test of the ART disbursement mechanism — structurally identical to the eco-ops verification flow. Every disbursement is a batch transaction on Polygon, verifiable on-chain with all contributor addresses.</p>
             <div class="dp-callout dp-callout--info">
-              Critical or High NFT-Impact bulletins may be minted as $SUNLIGHT NFTs by the Curator — recording them as permanent community knowledge artefacts. Curator receives 100% of any secondary resale.
+              Critical or High NFT-Impact bulletins may be minted as $SUNLIGHT NFTs by the Curator — recording them as permanent community knowledge artefacts. These are attribution records, not tradable assets; Exotopia does not operate a resale market for them.
             </div>
             <p class="dp-p"><strong>CVE sources we monitor:</strong> NVD, OpenZeppelin advisories, ethers.js releases, Ethereum Foundation blog, Trail of Bits, Immunefi (post-patch), Rekt News. Full source list and contribution process: <code class="dp-code">SPEC_SECURITY_BULLETIN.md</code></p>
           </div>
@@ -686,7 +686,7 @@ interface DocHint { id: string; section: string; title: string; text: string }
 const DOC_INDEX: DocHint[] = [
   { id: 'what-is',         section: 'Getting Started', title: 'What is Exotopia?',     text: 'exoplanet virtual land nft community eco-ops field work nasa catalog' },
   { id: 'new-user',        section: 'Getting Started', title: 'Quickstart',             text: 'new user wallet onboard first mint testnet polygon celo' },
-  { id: 'free-platform',   section: 'Getting Started', title: '99/0.75/0.25 Model',          text: 'fee model resonance split creator platform free zero percent aftermarket' },
+  { id: 'free-platform',   section: 'Getting Started', title: '99/0.75/0.25 Model',          text: 'fee model resonance split creator platform free zero percent' },
   { id: 'cosmic-view',     section: 'Visualization',   title: 'Cosmic Web & Voids',     text: 'laniakea void bootes local sculptor supercluster filament dark energy blob timular' },
   { id: 'galaxy-clusters', section: 'Visualization',   title: 'Galaxy Clusters & LOD', text: 'lod level detail cluster virgo coma norma xray morphology elliptical spiral' },
   { id: 'system-view',     section: 'Visualization',   title: 'Star Systems',           text: 'planet orbit multiplanet multimoon lagrange l4 l5 camera co-orbit' },
@@ -699,7 +699,7 @@ const DOC_INDEX: DocHint[] = [
   { id: 'edu-lessons',     section: 'Events',          title: 'Educational Lessons — Sky Generation', text: 'parallax sky lessons kepler k2-90 pleiades constellation math exomoon black hole isco hill sphere roche raDecToVec3 grade school classroom' },
   { id: 'exolocation',     section: 'Protocol',        title: 'Exolocation Addresses', text: 'coordinate system trophic level sublunary syzygy liminal exo-surface-v1 lagrange' },
   { id: 'sunlight-nft',    section: 'Protocol',        title: '$SUNLIGHT NFT',         text: 'sound music creative recording polygon license royalty bars' },
-  { id: 'art-tokens',      section: 'Protocol',        title: 'ART Tokens',            text: 'activity reward eco-ops sponsor water farm field work token resellable' },
+  { id: 'art-tokens',      section: 'Protocol',        title: 'ART Tokens',            text: 'activity reward eco-ops sponsor water farm field work token contribution record' },
   { id: 'robot-mule',      section: 'Protocol',        title: 'mule-bot',         text: 'mule ai local corpus sovereign knowledge assistant settlement specialist domain' },
   { id: 'glossary-section',section: 'Glossary',        title: 'Key Terms',             text: 'glossary definitions terms protocol trophic astronomy settlement nft' },
   { id: 'polygon',         section: 'Networks',        title: 'Polygon Amoy',          text: 'polygon matic amoy testnet chainid 80002 metamask rpc faucet evm' },

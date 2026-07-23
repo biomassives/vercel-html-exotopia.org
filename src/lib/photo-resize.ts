@@ -1,6 +1,15 @@
 const MAX_PX   = 1280
 const QUALITY  = 0.78
 
+// The canvas round-trip below (drawImage → toDataURL) strips ALL EXIF
+// metadata as a side effect — a canvas pixel buffer has no metadata
+// channel, so re-encoding through it discards camera serial numbers,
+// embedded GPS tags, and capture timestamps before the image ever reaches
+// storage. This is relied upon, not incidental — see
+// RISK_REDUCTION_RECOMMENDATIONS.md / legal-safe1.txt's EXIF-stripping
+// recommendation for field-evidence photos. Every field-evidence upload
+// path (useMonitoringWizard.ts) must go through this function, not a raw
+// File/Blob upload, or metadata leaks through.
 export async function resizePhoto(source: File | Blob | string): Promise<string> {
   const img = await loadImage(source)
   const { w, h } = scaledDims(img.naturalWidth, img.naturalHeight, MAX_PX)

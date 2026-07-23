@@ -17,10 +17,18 @@
       </div>
     </div>
 
-    <!-- ── Two-column content ─────────────────────────────────────────────── -->
+    <!-- Non-transactional notice — this page displays settlement identity
+         records only. No pricing, trading, or resale of any kind happens
+         here or anywhere else in Exotopia; see /terms. -->
+    <div class="pon-notice">
+      A settlement hashmark is a visual identity record for your claim — not a tradable
+      asset. Exotopia does not host or facilitate a resale market for settlements.
+    </div>
+
+    <!-- ── Content ───────────────────────────────────────────────────────── -->
     <div class="pon-body">
 
-      <!-- LEFT: Settlement Registry ────────────────────────────────────────── -->
+      <!-- Settlement Registry ────────────────────────────────────────── -->
       <div class="pon-col pon-col--left">
 
         <!-- Section header -->
@@ -74,10 +82,6 @@
                 <span class="psc-tag psc-tag--dome">{{ s.domeType }}</span>
               </div>
               <div class="psc-hash">{{ s.hash.slice(0, 16) }}…</div>
-            </div>
-            <!-- Status badge -->
-            <div class="psc-status" :class="`psc-status--${s.marketStatus}`">
-              {{ s.marketStatus }}
             </div>
           </div>
         </div>
@@ -148,10 +152,6 @@
 
           <!-- Action buttons -->
           <div class="pon-action-row">
-            <button class="pon-btn pon-btn--primary" @click="listSettlement(activeDemo)">
-              <q-icon name="mdi-tag-outline" size="11px" class="q-mr-xs"/>
-              List in Depot
-            </button>
             <button class="pon-btn pon-btn--ghost" @click="copySettlementHash(activeDemo)">
               <q-icon name="mdi-content-copy" size="11px" class="q-mr-xs"/>
               {{ copiedId === activeDemo.id ? '✓ copied' : 'Copy hash' }}
@@ -164,211 +164,18 @@
         </div>
 
       </div>
-
-      <!-- RIGHT: Exchange Depot ────────────────────────────────────────────── -->
-      <div class="pon-col pon-col--right">
-
-        <div class="pon-section-head">
-          <span class="pon-section-icon" style="color:#ffcc44">⇄</span>
-          <div>
-            <div class="pon-section-title">Exchange Depot</div>
-            <div class="pon-section-hint">Trade settlements · items · bundles</div>
-          </div>
-        </div>
-
-        <!-- Filter bar -->
-        <div class="pon-depot-filters">
-          <button
-            v-for="f in depotFilters"
-            :key="f.id"
-            class="pon-filter-btn"
-            :class="{ 'pon-filter-btn--active': activeFilter === f.id }"
-            @click="activeFilter = f.id"
-          >{{ f.label }}</button>
-
-          <div class="pon-filter-sep"/>
-
-          <button
-            v-for="z in zoneFilters"
-            :key="z"
-            class="pon-zone-btn"
-            :class="{ 'pon-zone-btn--active': activeZone === z }"
-            @click="activeZone = activeZone === z ? null : z"
-          >{{ z }}</button>
-        </div>
-
-        <!-- Depot listing grid -->
-        <div class="pon-depot-grid">
-          <div
-            v-for="listing in filteredListings"
-            :key="listing.id"
-            class="pon-listing"
-            :class="{ 'pon-listing--reserved': listing.status === 'reserved' }"
-          >
-            <!-- Quilt signature -->
-            <div class="pon-listing__quilt">
-              <div
-                v-for="(row, ri) in listing.quiltRows"
-                :key="ri"
-                class="pon-listing__qrow"
-              >
-                <span
-                  v-for="(cell, ci) in row"
-                  :key="ci"
-                  class="pon-listing__qcell"
-                  :style="{ color: cell.fg, backgroundColor: cell.bg }"
-                >{{ cell.glyph }}</span>
-              </div>
-            </div>
-
-            <!-- Details -->
-            <div class="pon-listing__body">
-              <div class="pon-listing__name">{{ listing.planetName }}</div>
-              <div class="pon-listing__host">{{ listing.hostname }}</div>
-              <div class="pon-listing__tags">
-                <span class="psc-tag psc-tag--zone">{{ listing.zone }}</span>
-                <span class="psc-tag" :class="`psc-tag--${listing.type}`">{{ listing.type }}</span>
-              </div>
-              <div class="pon-listing__asks">
-                <span class="pon-listing__ask-label">ASKING</span>
-                <span class="pon-listing__ask-val">{{ listing.asking }}</span>
-              </div>
-              <div class="pon-listing__wants">
-                <span class="pon-listing__want-label">WANTS</span>
-                <div class="pon-listing__want-tags">
-                  <span v-for="w in listing.wants" :key="w" class="pon-want-tag">{{ w }}</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Action -->
-            <div class="pon-listing__footer">
-              <span class="pon-listing__status" :class="`pon-listing__status--${listing.status}`">
-                {{ listing.status }}
-              </span>
-              <button
-                class="pon-offer-btn"
-                :disabled="listing.status === 'reserved'"
-                @click="openOfferDialog(listing)"
-              >
-                {{ listing.status === 'reserved' ? 'Reserved' : 'Make Offer' }}
-              </button>
-            </div>
-          </div>
-
-          <!-- Empty state -->
-          <div v-if="!filteredListings.length" class="pon-depot-empty">
-            <q-icon name="mdi-tag-off-outline" size="28px" color="blue-grey-7" />
-            <div class="pon-empty__text">No listings match this filter</div>
-          </div>
-        </div>
-
-        <!-- Post a listing ────────────────────────────────────────────── -->
-        <div class="pon-post-section">
-          <button class="pon-post-toggle" @click="showPostForm = !showPostForm">
-            <q-icon name="mdi-plus-circle-outline" size="12px" class="q-mr-xs"/>
-            POST YOUR OWN LISTING
-            <q-icon :name="showPostForm ? 'expand_less' : 'expand_more'" size="12px" class="q-ml-xs"/>
-          </button>
-
-          <Transition name="pon-drop">
-            <div v-if="showPostForm" class="pon-post-form">
-              <div class="pon-form-row">
-                <div class="pon-form-group">
-                  <label class="pon-form-label">SETTLEMENT / ITEM</label>
-                  <input class="pon-form-input" v-model="postForm.item" placeholder="e.g. Kepler-442b surface claim, Tier-2 dome kit…" />
-                </div>
-                <div class="pon-form-group">
-                  <label class="pon-form-label">TYPE</label>
-                  <select class="pon-form-select" v-model="postForm.type">
-                    <option value="settlement">Settlement</option>
-                    <option value="item">Item / Equipment</option>
-                    <option value="bundle">Bundle</option>
-                    <option value="data">Data Package</option>
-                  </select>
-                </div>
-              </div>
-              <div class="pon-form-row">
-                <div class="pon-form-group">
-                  <label class="pon-form-label">ASKING</label>
-                  <input class="pon-form-input" v-model="postForm.asking" placeholder="e.g. 500 PON · Settlement Swap · Data Bundle…" />
-                </div>
-                <div class="pon-form-group">
-                  <label class="pon-form-label">ZONE</label>
-                  <select class="pon-form-select" v-model="postForm.zone">
-                    <option v-for="z in ['temperate','polar','equatorial','dayside','nightside']" :key="z" :value="z">{{ z }}</option>
-                  </select>
-                </div>
-              </div>
-              <div class="pon-form-group">
-                <label class="pon-form-label">WANTS (comma-separated)</label>
-                <input class="pon-form-input" v-model="postForm.wants" placeholder="e.g. Watsan tech, Tier-3 dome, Settlement Swap…" />
-              </div>
-              <div class="pon-form-group">
-                <label class="pon-form-label">NOTES</label>
-                <textarea class="pon-form-input pon-form-textarea" v-model="postForm.notes" placeholder="Any additional context, conditions, or description…" rows="2" />
-              </div>
-              <div class="pon-form-actions">
-                <button class="pon-btn pon-btn--primary" @click="submitPost">
-                  <q-icon name="mdi-send-outline" size="11px" class="q-mr-xs"/>
-                  Submit Listing
-                </button>
-                <button class="pon-btn pon-btn--ghost" @click="showPostForm = false">Cancel</button>
-              </div>
-              <div v-if="postConfirm" class="pon-post-confirm">
-                <q-icon name="mdi-check-circle-outline" size="13px" color="green-5" class="q-mr-xs"/>
-                Listing submitted to depot queue — review within 24h
-              </div>
-            </div>
-          </Transition>
-        </div>
-
-      </div><!-- /right col -->
     </div><!-- /body -->
-
-    <!-- ── Offer dialog ───────────────────────────────────────────────────── -->
-    <q-dialog v-model="offerDialogOpen" persistent>
-      <q-card class="pon-dialog" dark>
-        <q-card-section class="pon-dialog__header">
-          <div class="pon-dialog__title">Make an Offer</div>
-          <div class="pon-dialog__sub" v-if="offerTarget">{{ offerTarget.planetName }} · {{ offerTarget.asking }}</div>
-        </q-card-section>
-        <q-card-section class="pon-dialog__body">
-          <div class="pon-form-group">
-            <label class="pon-form-label">YOUR OFFER</label>
-            <input class="pon-form-input" v-model="offerForm.offer" placeholder="e.g. 400 PON · Tier-2 dome kit + 50 PON…" />
-          </div>
-          <div class="pon-form-group">
-            <label class="pon-form-label">YOUR SETTLEMENT (optional — for swap)</label>
-            <input class="pon-form-input" v-model="offerForm.settlement" placeholder="Settlement address or planet name…" />
-          </div>
-          <div class="pon-form-group">
-            <label class="pon-form-label">MESSAGE</label>
-            <textarea class="pon-form-input pon-form-textarea" v-model="offerForm.message" placeholder="Why this is a good deal for both parties…" rows="2"/>
-          </div>
-        </q-card-section>
-        <q-card-actions class="pon-dialog__actions">
-          <button class="pon-btn pon-btn--ghost" @click="offerDialogOpen = false">Cancel</button>
-          <button class="pon-btn pon-btn--primary" @click="submitOffer">
-            <q-icon name="mdi-handshake-outline" size="11px" class="q-mr-xs"/>
-            Send Offer
-          </button>
-        </q-card-actions>
-        <div v-if="offerSent" class="pon-offer-sent">
-          <q-icon name="mdi-check-circle-outline" size="13px" color="green-5" class="q-mr-xs"/>
-          Offer sent! The seller will contact you via pon.ink DM.
-        </div>
-      </q-card>
-    </q-dialog>
 
   </q-page>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
 
-const router = useRouter()
+// This page displays settlement identity/hashmark records only — see the
+// non-transactional notice in the template. Exotopia does not build or host
+// a secondary market, resale pricing, or peer-to-peer offer system for
+// settlements (see RISK_REDUCTION_RECOMMENDATIONS.md §1 for why).
 
 // ── Quilt helpers (same palette as SettlementHashmark) ────────────────────────
 
@@ -459,10 +266,9 @@ interface Settlement {
   quiltRows:   QuiltCell[][]
   allQuiltRows:QuiltCell[][]
   hashChunks:  string[]
-  marketStatus:'private' | 'listed' | 'pending' | 'sold'
 }
 
-function makeSettlement(planet: string, host: string, zone: string, domeType: string, eqt: number, biome: string, status: Settlement['marketStatus']): Settlement {
+function makeSettlement(planet: string, host: string, zone: string, domeType: string, eqt: number, biome: string): Settlement {
   const hash  = seededHash(planet + host + zone)
   const coord = `exo-surface-v1:${planet}:${eqt}K-${zone}`
   return {
@@ -475,14 +281,13 @@ function makeSettlement(planet: string, host: string, zone: string, domeType: st
     quiltRows:    makeQuiltRows(hash),
     allQuiltRows: makeAllQuiltRows(hash),
     hashChunks:   hash.match(/.{1,8}/g) ?? [],
-    marketStatus: status,
   }
 }
 
 const demoSettlements = ref<Settlement[]>([
-  makeSettlement('Proxima Cen b', 'Proxima Centauri', 'dayside', 'geodesic_aerogel_vacuum', 234, 'cryophyte_tundra', 'listed'),
-  makeSettlement('TRAPPIST-1 e',  'TRAPPIST-1',       'temperate','geodesic_polycarbonate', 271, 'temperate_grassland', 'private'),
-  makeSettlement('Kepler-442 b',  'Kepler-442',       'polar',    'geodesic_aerogel_vacuum', 233, 'cryophyte_tundra', 'listed'),
+  makeSettlement('Proxima Cen b', 'Proxima Centauri', 'dayside', 'geodesic_aerogel_vacuum', 234, 'cryophyte_tundra'),
+  makeSettlement('TRAPPIST-1 e',  'TRAPPIST-1',       'temperate','geodesic_polycarbonate', 271, 'temperate_grassland'),
+  makeSettlement('Kepler-442 b',  'Kepler-442',       'polar',    'geodesic_aerogel_vacuum', 233, 'cryophyte_tundra'),
 ])
 
 const activeSettlement = ref<string>(demoSettlements.value[0]?.id ?? '')
@@ -498,152 +303,6 @@ async function copySettlementHash(s: Settlement) {
   await navigator.clipboard.writeText(s.hash)
   copiedId.value = s.id
   setTimeout(() => { copiedId.value = null }, 2000)
-}
-
-function listSettlement(s: Settlement) {
-  s.marketStatus = 'listed'
-  const existing = depotListings.value.find(l => l.id === `depot-${s.id}`)
-  if (!existing) {
-    depotListings.value.unshift({
-      id:         `depot-${s.id}`,
-      planetName: s.planetName,
-      hostname:   s.hostname,
-      zone:       s.zone,
-      type:       'settlement',
-      asking:     'Open offer',
-      wants:      ['PON', 'Settlement Swap', 'Equipment'],
-      status:     'listed',
-      quiltRows:  s.quiltRows,
-    })
-  }
-}
-
-// ── Exchange Depot ─────────────────────────────────────────────────────────────
-
-interface DepotListing {
-  id:         string
-  planetName: string
-  hostname:   string
-  zone:       string
-  type:       'settlement' | 'item' | 'bundle' | 'data'
-  asking:     string
-  wants:      string[]
-  status:     'listed' | 'reserved' | 'pending'
-  quiltRows:  QuiltCell[][]
-}
-
-const depotListings = ref<DepotListing[]>([
-  {
-    id: 'dl-1', planetName: 'Kepler-452 b',    hostname: 'Kepler-452',
-    zone: 'equatorial', type: 'settlement',
-    asking: '500 PON', wants: ['Dome upgrade kit', 'Watsan tech bundle'],
-    status: 'listed',
-    quiltRows: makeQuiltRows(seededHash('Kepler-452 b depot')),
-  },
-  {
-    id: 'dl-2', planetName: '55 Cnc f',         hostname: '55 Cancri',
-    zone: 'temperate',  type: 'settlement',
-    asking: 'Settlement Swap', wants: ['Polar zone settlement', 'Any T < 250K'],
-    status: 'listed',
-    quiltRows: makeQuiltRows(seededHash('55 Cnc f depot')),
-  },
-  {
-    id: 'dl-3', planetName: 'Gliese 667C c',    hostname: 'Gliese 667C',
-    zone: 'dayside',    type: 'item',
-    asking: '120 PON', wants: ['PON only'],
-    status: 'reserved',
-    quiltRows: makeQuiltRows(seededHash('Gliese 667C c item')),
-  },
-  {
-    id: 'dl-4', planetName: 'HD 40307 g',        hostname: 'HD 40307',
-    zone: 'polar',      type: 'bundle',
-    asking: '2× Tier-3 dome + 80 PON', wants: ['High-EQT settlement (>400K)', 'Lava zone plot'],
-    status: 'listed',
-    quiltRows: makeQuiltRows(seededHash('HD 40307 g bundle')),
-  },
-  {
-    id: 'dl-5', planetName: 'Wolf 1061 c',        hostname: 'Wolf 1061',
-    zone: 'temperate',  type: 'data',
-    asking: '60 PON', wants: ['PON', 'Eco-ops sponsorship'],
-    status: 'listed',
-    quiltRows: makeQuiltRows(seededHash('Wolf 1061 c data')),
-  },
-  {
-    id: 'dl-6', planetName: 'K2-18 b',            hostname: 'K2-18',
-    zone: 'polar',      type: 'settlement',
-    asking: '350 PON or swap', wants: ['Temperate zone settlement', 'O₂ atmosphere preferred'],
-    status: 'pending',
-    quiltRows: makeQuiltRows(seededHash('K2-18 b settlement')),
-  },
-])
-
-const depotFilters = [
-  { id: 'all',        label: 'All' },
-  { id: 'settlement', label: 'Settlements' },
-  { id: 'item',       label: 'Items' },
-  { id: 'bundle',     label: 'Bundles' },
-  { id: 'data',       label: 'Data' },
-]
-const zoneFilters  = ['temperate','polar','equatorial','dayside','nightside']
-
-const activeFilter = ref<string>('all')
-const activeZone   = ref<string | null>(null)
-
-const filteredListings = computed(() =>
-  depotListings.value.filter(l => {
-    const typeOk = activeFilter.value === 'all' || l.type === activeFilter.value
-    const zoneOk = !activeZone.value || l.zone === activeZone.value
-    return typeOk && zoneOk
-  })
-)
-
-// ── Post form ──────────────────────────────────────────────────────────────────
-
-const showPostForm = ref(false)
-const postConfirm  = ref(false)
-const postForm = ref({
-  item: '', type: 'settlement', asking: '', zone: 'temperate', wants: '', notes: '',
-})
-
-function submitPost() {
-  if (!postForm.value.item.trim()) return
-  const hash = seededHash(postForm.value.item + Date.now())
-  depotListings.value.unshift({
-    id:         `user-${Date.now()}`,
-    planetName: postForm.value.item,
-    hostname:   'your-system',
-    zone:       postForm.value.zone,
-    type:       postForm.value.type as DepotListing['type'],
-    asking:     postForm.value.asking || 'Open offer',
-    wants:      postForm.value.wants.split(',').map(s => s.trim()).filter(Boolean),
-    status:     'listed',
-    quiltRows:  makeQuiltRows(hash),
-  })
-  showPostForm.value = false
-  postConfirm.value  = true
-  postForm.value = { item: '', type: 'settlement', asking: '', zone: 'temperate', wants: '', notes: '' }
-  setTimeout(() => { postConfirm.value = false }, 4000)
-}
-
-// ── Offer dialog ───────────────────────────────────────────────────────────────
-
-const offerDialogOpen = ref(false)
-const offerTarget     = ref<DepotListing | null>(null)
-const offerSent       = ref(false)
-const offerForm       = ref({ offer: '', settlement: '', message: '' })
-
-function openOfferDialog(listing: DepotListing) {
-  offerTarget.value = listing
-  offerForm.value   = { offer: '', settlement: '', message: '' }
-  offerSent.value   = false
-  offerDialogOpen.value = true
-}
-
-function submitOffer() {
-  if (!offerForm.value.offer.trim()) return
-  offerSent.value = true
-  if (offerTarget.value) offerTarget.value.status = 'pending'
-  setTimeout(() => { offerDialogOpen.value = false; offerSent.value = false }, 2500)
 }
 </script>
 
@@ -702,26 +361,16 @@ function submitOffer() {
 /* ── Body layout ────────────────────────────────────────────────────────────── */
 
 .pon-body {
-  display: grid;
-  grid-template-columns: 360px 1fr;
-  gap: 0;
+  display: flex;
+  justify-content: center;
   max-width: 1100px;
   margin: 0 auto;
   min-height: calc(100vh - 80px);
 }
 
-@media (max-width: 860px) {
-  .pon-body { grid-template-columns: 1fr; }
-}
-
 .pon-col--left {
-  border-right: 1px solid rgba(0, 140, 90, 0.15);
-  padding: 16px 16px 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-.pon-col--right {
+  width: 100%;
+  max-width: 480px;
   padding: 16px 16px 20px;
   display: flex;
   flex-direction: column;
@@ -982,16 +631,6 @@ function submitOffer() {
   transition: all 0.12s;
   border: 1px solid;
 }
-.pon-btn--primary {
-  background: rgba(0, 50, 35, 0.70);
-  border-color: rgba(0, 200, 130, 0.40);
-  color: rgba(0, 240, 160, 0.90);
-}
-.pon-btn--primary:hover {
-  background: rgba(0, 70, 48, 0.85);
-  border-color: rgba(0, 240, 160, 0.60);
-  box-shadow: 0 0 8px rgba(0, 200, 130, 0.20);
-}
 .pon-btn--ghost {
   background: rgba(0, 15, 28, 0.50);
   border-color: rgba(0, 140, 90, 0.25);
@@ -1002,266 +641,17 @@ function submitOffer() {
   color: rgba(0, 230, 160, 0.85);
 }
 
-/* ── Depot filter bar ───────────────────────────────────────────────────────── */
+/* ── Non-transactional notice ──────────────────────────────────────────────── */
 
-.pon-depot-filters {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  flex-wrap: wrap;
-}
-.pon-filter-sep { width: 1px; height: 14px; background: rgba(0, 120, 80, 0.22); margin: 0 2px; }
-.pon-filter-btn, .pon-zone-btn {
-  font-family: 'Courier New', monospace;
-  font-size: 7.5px;
-  letter-spacing: 0.10em;
-  padding: 3px 9px;
-  border-radius: 3px;
-  cursor: pointer;
-  transition: all 0.12s;
-  border: 1px solid rgba(0, 120, 80, 0.22);
-  background: rgba(0, 10, 18, 0.60);
-  color: rgba(0, 180, 120, 0.60);
-}
-.pon-filter-btn:hover, .pon-zone-btn:hover { border-color: rgba(0, 200, 130, 0.40); color: rgba(0, 220, 150, 0.80); }
-.pon-filter-btn--active, .pon-zone-btn--active {
-  background: rgba(0, 40, 28, 0.70);
-  border-color: rgba(0, 200, 130, 0.50);
-  color: rgba(0, 240, 160, 0.90);
-}
-
-/* ── Depot listing grid ──────────────────────────────────────────────────────── */
-
-.pon-depot-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 8px;
-}
-
-.pon-listing {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  background: rgba(0, 8, 16, 0.75);
-  border: 1px solid rgba(0, 140, 90, 0.20);
-  border-radius: 6px;
-  overflow: hidden;
-  transition: border-color 0.12s, box-shadow 0.12s;
-}
-.pon-listing:hover {
-  border-color: rgba(0, 200, 130, 0.38);
-  box-shadow: 0 0 12px rgba(0, 160, 110, 0.10);
-}
-.pon-listing--reserved {
-  opacity: 0.65;
-}
-
-.pon-listing__quilt {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  padding: 6px 8px;
-  background: rgba(0, 4, 10, 0.90);
-}
-.pon-listing__qrow { display: flex; gap: 1px; }
-.pon-listing__qcell {
-  font-family: 'Courier New', monospace;
-  font-size: 9px;
-  width: 12px;
-  height: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 1px;
-}
-
-.pon-listing__body { padding: 8px 10px; flex: 1; display: flex; flex-direction: column; gap: 3px; }
-.pon-listing__name {
-  font-size: 10px;
-  letter-spacing: 0.05em;
-  color: rgba(200, 230, 255, 0.88);
-  font-weight: 600;
-}
-.pon-listing__host { font-size: 7.5px; color: rgba(100, 160, 200, 0.50); }
-.pon-listing__tags { display: flex; gap: 3px; flex-wrap: wrap; margin-top: 1px; }
-.pon-listing__asks, .pon-listing__wants { display: flex; flex-direction: column; gap: 1px; margin-top: 5px; }
-.pon-listing__ask-label, .pon-listing__want-label {
-  font-size: 6px;
-  letter-spacing: 0.16em;
-  color: rgba(0, 160, 110, 0.45);
-}
-.pon-listing__ask-val {
-  font-size: 9px;
-  letter-spacing: 0.05em;
-  color: rgba(0, 230, 160, 0.85);
-}
-.pon-listing__want-tags { display: flex; gap: 3px; flex-wrap: wrap; }
-.pon-want-tag {
-  font-size: 6.5px;
-  letter-spacing: 0.06em;
-  padding: 1px 5px;
-  border-radius: 2px;
-  background: rgba(0, 20, 35, 0.60);
-  border: 1px solid rgba(0, 100, 160, 0.25);
-  color: rgba(80, 180, 240, 0.70);
-}
-
-.pon-listing__footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 6px 10px;
-  border-top: 1px solid rgba(0, 100, 70, 0.15);
-  background: rgba(0, 5, 12, 0.55);
-}
-.pon-listing__status { font-size: 6.5px; letter-spacing: 0.12em; }
-.pon-listing__status--listed  { color: rgba(0, 220, 150, 0.75); }
-.pon-listing__status--reserved{ color: rgba(200, 150, 60, 0.65); }
-.pon-listing__status--pending { color: rgba(255, 190, 60, 0.75); }
-
-.pon-offer-btn {
-  font-family: 'Courier New', monospace;
-  font-size: 7px;
-  letter-spacing: 0.10em;
-  padding: 3px 9px;
-  border-radius: 3px;
-  cursor: pointer;
-  background: rgba(0, 40, 28, 0.70);
-  border: 1px solid rgba(0, 180, 120, 0.35);
-  color: rgba(0, 220, 150, 0.85);
-  transition: all 0.12s;
-}
-.pon-offer-btn:hover:not(:disabled) {
-  background: rgba(0, 60, 42, 0.85);
-  border-color: rgba(0, 230, 150, 0.55);
-}
-.pon-offer-btn:disabled {
-  opacity: 0.40;
-  cursor: not-allowed;
-}
-
-.pon-depot-empty {
-  grid-column: 1 / -1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 30px 16px;
-  border: 1px dashed rgba(0, 100, 70, 0.20);
-  border-radius: 6px;
-}
-
-/* ── Post listing form ──────────────────────────────────────────────────────── */
-
-.pon-post-section {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: auto;
-}
-
-.pon-post-toggle {
-  display: flex;
-  align-items: center;
-  font-family: 'Courier New', monospace;
-  font-size: 8px;
-  letter-spacing: 0.14em;
-  color: rgba(0, 200, 140, 0.60);
-  background: rgba(0, 12, 20, 0.70);
-  border: 1px solid rgba(0, 130, 88, 0.25);
-  border-radius: 4px;
-  padding: 6px 12px;
-  cursor: pointer;
-  width: 100%;
-  transition: all 0.12s;
-}
-.pon-post-toggle:hover { border-color: rgba(0, 200, 130, 0.40); color: rgba(0, 240, 160, 0.80); }
-
-.pon-drop-enter-active, .pon-drop-leave-active { transition: max-height 0.28s ease, opacity 0.20s ease; max-height: 400px; }
-.pon-drop-enter-from, .pon-drop-leave-to { max-height: 0; opacity: 0; overflow: hidden; }
-
-.pon-post-form {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 12px;
-  background: rgba(0, 8, 16, 0.80);
-  border: 1px solid rgba(0, 140, 90, 0.22);
-  border-radius: 5px;
-}
-.pon-form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-.pon-form-group { display: flex; flex-direction: column; gap: 4px; }
-.pon-form-label {
-  font-size: 6.5px;
-  letter-spacing: 0.16em;
-  color: rgba(0, 170, 115, 0.60);
-}
-.pon-form-input, .pon-form-select, .pon-form-textarea {
-  font-family: 'Courier New', monospace;
+.pon-notice {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 8px 20px;
   font-size: 8.5px;
-  padding: 5px 8px;
-  background: rgba(0, 5, 12, 0.80);
-  border: 1px solid rgba(0, 120, 80, 0.28);
-  border-radius: 3px;
-  color: rgba(160, 220, 200, 0.85);
-  outline: none;
-  transition: border-color 0.12s;
-}
-.pon-form-input:focus, .pon-form-select:focus, .pon-form-textarea:focus {
-  border-color: rgba(0, 200, 130, 0.50);
-}
-.pon-form-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='rgba(0,160,100,0.5)'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 8px center; padding-right: 22px; }
-.pon-form-textarea { resize: vertical; }
-.pon-form-actions { display: flex; gap: 8px; }
-
-.pon-post-confirm {
-  display: flex;
-  align-items: center;
-  font-size: 8px;
-  letter-spacing: 0.10em;
-  color: rgba(0, 230, 150, 0.80);
+  letter-spacing: 0.05em;
+  line-height: 1.5;
+  color: rgba(150, 190, 220, 0.60);
+  border-bottom: 1px solid rgba(0, 140, 90, 0.12);
 }
 
-/* ── Offer dialog ───────────────────────────────────────────────────────────── */
-
-.pon-dialog {
-  background: rgba(0, 8, 18, 0.97) !important;
-  border: 1px solid rgba(0, 160, 100, 0.30) !important;
-  border-radius: 8px !important;
-  min-width: 340px;
-  max-width: 480px;
-  font-family: 'Courier New', monospace;
-}
-.pon-dialog__header { border-bottom: 1px solid rgba(0, 120, 80, 0.20); }
-.pon-dialog__title {
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  color: rgba(0, 230, 160, 0.88);
-}
-.pon-dialog__sub {
-  font-size: 8px;
-  letter-spacing: 0.08em;
-  color: rgba(100, 170, 200, 0.50);
-  margin-top: 3px;
-}
-.pon-dialog__body { display: flex; flex-direction: column; gap: 10px; }
-.pon-dialog__actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  border-top: 1px solid rgba(0, 100, 68, 0.18);
-  padding-top: 10px;
-}
-.pon-offer-sent {
-  display: flex;
-  align-items: center;
-  padding: 8px 16px 12px;
-  font-size: 8px;
-  letter-spacing: 0.10em;
-  color: rgba(0, 220, 150, 0.80);
-}
 </style>

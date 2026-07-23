@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { supabase, type Member, type Connection } from 'src/lib/supabase'
+import { supabase, type Member, type Connection, type DeletionRequest } from 'src/lib/supabase'
 import type { Session } from '@supabase/supabase-js'
 
 const BLOCK_STORAGE_KEY = 'scd_blocked_members'
@@ -149,11 +149,76 @@ export const useMemberStore = defineStore('member', () => {
     }
   }
 
+  // ── Data rights (ARCO: Access / Cancellation) ────────────────────────────
+  // See RISK_REDUCTION_RECOMMENDATIONS.md §6/§7 and legal-privacy.md §8 —
+  // these were promised in the Privacy Policy without an in-product way to
+  // exercise them. Deletion can't be performed client-side (needs the
+  // Supabase Admin API / service-role key, which must never ship to the
+  // browser) — see supabase/migrations/004_deletion_requests.sql for why a
+  // queued request is the correct shape here, not a direct DELETE.
+
+  /** Fetches every row this member owns/authored across the schema, for a
+   * self-service "export my data" download. Best-effort per table — one
+   * table failing (e.g. RLS misconfigured) doesn't block the others. */
+  async function exportMyData(): Promise<Record<string, unknown>> {
+    if (!supabase || !userId.value) return {}
+    const uid = userId.value
+    const tables: Array<[string, () => Promise<{ data: unknown }>]> = [
+      ['profile',              () => supabase!.from('members').select('*').eq('id', uid).single()],
+      ['connections',          () => supabase!.from('connections').select('*').or(`from_id.eq.${uid},to_id.eq.${uid}`)],
+      ['comments',             () => supabase!.from('comments').select('*').eq('author_id', uid)],
+      ['reactions',            () => supabase!.from('reactions').select('*').eq('member_id', uid)],
+      ['reward_events',        () => supabase!.from('reward_events').select('*').eq('member_id', uid)],
+      ['certificates',         () => supabase!.from('certificates').select('*').eq('member_id', uid)],
+      ['mentor_sessions',      () => supabase!.from('mentor_sessions').select('*').or(`mentor_id.eq.${uid},mentee_id.eq.${uid}`)],
+      ['focus_areas_created',  () => supabase!.from('focus_areas').select('*').eq('created_by', uid)],
+      ['decon_projects_owned', () => supabase!.from('decon_projects').select('*').eq('owner_id', uid)],
+      ['project_log_entries',  () => supabase!.from('project_log_entries').select('*').eq('author_id', uid)],
+      ['method_proposals',     () => supabase!.from('method_proposals').select('*').eq('author_id', uid)],
+      ['proposal_endorsements',() => supabase!.from('proposal_endorsements').select('*').eq('member_id', uid)],
+      ['branch_settlements',   () => supabase!.from('branch_settlements').select('*').eq('owner_id', uid)],
+    ]
+    const out: Record<string, unknown> = { exportedAt: new Date().toISOString(), memberId: uid }
+    for (const [key, run] of tables) {
+      try { out[key] = (await run()).data } catch { out[key] = null }
+    }
+    return out
+  }
+
+  async function requestDeletion(note?: string) {
+    if (!supabase || !userId.value) return false
+    const { error: e } = await supabase.from('deletion_requests').insert({
+      member_id: userId.value, note: note || null,
+    })
+    return !e
+  }
+
+  async function getMyDeletionRequests(): Promise<DeletionRequest[]> {
+    if (!supabase || !userId.value) return []
+    const { data } = await supabase
+      .from('deletion_requests')
+      .select('*')
+      .eq('member_id', userId.value)
+      .order('requested_at', { ascending: false })
+    return (data as DeletionRequest[]) ?? []
+  }
+
+  async function cancelDeletionRequest(id: string) {
+    if (!supabase || !userId.value) return false
+    const { error: e } = await supabase
+      .from('deletion_requests')
+      .update({ status: 'cancelled' })
+      .eq('id', id)
+      .eq('member_id', userId.value)
+    return !e
+  }
+
   return {
     session, profile, connections, loading, error, blockedIds,
     isSignedIn, userId, connectedIds,
     init, sendMagicLink, signOut, createProfile,
     sendGreenLight, acceptGreenLight, blockMember, unblockMember,
+    exportMyData, requestDeletion, getMyDeletionRequests, cancelDeletionRequest,
   }
 })
 

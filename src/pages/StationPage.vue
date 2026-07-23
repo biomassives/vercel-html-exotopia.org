@@ -347,19 +347,16 @@
         <div class="fee-box q-mt-md">
           <div class="fee-free">
             <span class="fee-free-label">MINT COST</span>
-            <span class="fee-free-value">FREE · KES 0</span>
+            <span class="fee-free-value">FREE</span>
           </div>
           <q-separator dark class="q-my-xs" style="opacity:0.12" />
-          <div class="fee-detail">
-            <span>Platform draw (aftermarket)</span>
-            <span class="fee-aft">5% on secondary sales</span>
-          </div>
           <div class="fee-detail">
             <span>Solana Bubblegum cNFT gas</span>
             <span class="fee-gas">~0.000005 SOL (network only)</span>
           </div>
           <div class="fee-note">
-            Gas is the only cost at mint time. It is never deducted from community allocations.
+            Gas is the only cost at mint time. Exotopia does not operate a resale market —
+            there is no aftermarket fee to disclose.
           </div>
         </div>
 
@@ -487,7 +484,7 @@ const MODULE_META: Record<ModuleType, {
   gallery: {
     icon: 'mdi-rotate-3d', color: 'purple-4',
     role: 'Virtual exhibition space',
-    desc: 'Display NFT artworks, host gallery openings, and enable collector visits. Connects to pon.ink aftermarket.',
+    desc: 'Display NFT artworks, host gallery openings, and enable collector visits. Connects to the pon.ink settlement registry.',
     placeholder: 'Aurora Gallery · Community Showcase',
   },
   watsan: {
@@ -1092,7 +1089,6 @@ function resetWizard() {
   margin-bottom: 2px;
 }
 
-.fee-aft  { color: rgba(200, 150, 50, 0.70); }
 .fee-gas  { color: rgba(80, 120, 160, 0.55); }
 
 .fee-note {

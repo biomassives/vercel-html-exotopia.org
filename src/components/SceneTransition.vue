@@ -1,6 +1,7 @@
 <template>
   <Teleport to="body">
-    <canvas v-show="st.phase !== 'idle'" ref="cv" class="st-canvas" />
+    <canvas v-show="st.phase !== 'idle'" ref="cv" class="st-canvas"
+      :class="{ 'st-inversion': st.mode === 'inversion' && st.phase === 'departing' }" />
   </Teleport>
 </template>
 
@@ -177,9 +178,29 @@ function drawIrisFrame(
   ctx.fill('evenodd')
 }
 
+// ── Light-inversion crossing (portal-step effect) ───────────────────────────
+// A white flash-and-fade painted onto a canvas with mix-blend-mode:difference
+// (see .st-inversion below) — the browser compositor computes |dst-src| per
+// pixel, which for a white src produces an exact photographic-negative
+// inversion of everything underneath (WebGL canvas, UI, all of it) without
+// ever touching the WebGL context. Timing per SPEC_ZOOM_DESCENT.md §7.1:
+// ramp to white 0-180ms, hold 180-380ms, fade to black 380-550ms (the fade
+// covers the route change, same role the iris/lightning "hold black" plays).
+
+function drawInversionFrame(ctx: CanvasRenderingContext2D, W: number, H: number, elapsed: number) {
+  ctx.clearRect(0, 0, W, H)
+  let alpha: number
+  if      (elapsed < 180) alpha = elapsed / 180
+  else if (elapsed < 380) alpha = 1.0
+  else                     alpha = Math.max(0, 1 - (elapsed - 380) / 170)
+
+  ctx.fillStyle = `rgba(255,255,255,${alpha.toFixed(3)})`
+  ctx.fillRect(0, 0, W, H)
+}
+
 // ── Main animation runner ────────────────────────────────────────────────────
 
-function runLoop(animType: 'depart-lightning' | 'depart-iris' | 'arrive') {
+function runLoop(animType: 'depart-lightning' | 'depart-iris' | 'depart-inversion' | 'arrive') {
   cancelAnimationFrame(rafId)
   const start = performance.now()
 
@@ -194,11 +215,12 @@ function runLoop(animType: 'depart-lightning' | 'depart-iris' | 'arrive') {
 
     if      (animType === 'depart-lightning')  drawLightningFrame(ctx, W, H, origX, origY, elapsed)
     else if (animType === 'depart-iris')       drawIrisFrame(ctx, W, H, origX, origY, elapsed, true)
+    else if (animType === 'depart-inversion')  drawInversionFrame(ctx, W, H, elapsed)
     else                                        drawArrivalFrame(ctx, W, H, elapsed)
 
-    const running = animType === 'arrive' ? elapsed < 560 : (
-      animType === 'depart-lightning'  ? elapsed < 910  : elapsed < 390
-    )
+    const running = animType === 'arrive'            ? elapsed < 560 :
+                     animType === 'depart-lightning'  ? elapsed < 910 :
+                     animType === 'depart-inversion'  ? elapsed < 560 : elapsed < 390
     if (running) rafId = requestAnimationFrame(tick)
   }
   rafId = requestAnimationFrame(tick)
@@ -210,7 +232,8 @@ watch(() => st.phase, (phase) => {
   if (phase === 'departing') {
     resize()
     const animType = st.mode === 'lightning'  ? 'depart-lightning'
-                   : 'depart-iris'
+                    : st.mode === 'inversion' ? 'depart-inversion'
+                    : 'depart-iris'
     runLoop(animType)
   } else if (phase === 'arriving') {
     resize()
@@ -242,5 +265,11 @@ onUnmounted(() => cancelAnimationFrame(rafId))
   pointer-events: none;
   z-index: 9998;
   display: block;
+}
+
+/* Portal-crossing inversion — see drawInversionFrame(). The compositor does
+   the actual per-pixel inversion; this canvas just paints a white rect. */
+.st-inversion {
+  mix-blend-mode: difference;
 }
 </style>

@@ -562,8 +562,8 @@
                   <circle cx="378" cy="132" r="3"  fill="rgba(255,210,60,0.65)"/>
                 </g>
 
-                <!-- "Aftermarket": warm amber glow on secondary dome -->
-                <g :style="{ opacity: hoveredItem === 'Aftermarket' ? 0.72 : 0, transition: 'opacity 0.45s ease' }">
+                <!-- "Registry": warm amber glow on secondary dome -->
+                <g :style="{ opacity: hoveredItem === 'Registry' ? 0.72 : 0, transition: 'opacity 0.45s ease' }">
                   <ellipse cx="378" cy="152" rx="16" ry="6"  fill="rgba(255,145,30,0.12)" stroke="rgba(255,145,30,0.45)" stroke-width="0.8"/>
                   <circle  cx="378" cy="152" r="3"           fill="rgba(255,145,30,0.75)"/>
                   <ellipse cx="378" cy="156" rx="8"  ry="2"  fill="rgba(255,145,30,0.12)"/>
@@ -730,6 +730,13 @@
                 <span class="mob-nav-sub">Citizen science · Method proposals</span>
               </span>
             </button>
+            <button class="mob-nav-item" @click="navTo('/knowledge-keepers')">
+              <span class="mob-nav-icon">🌾</span>
+              <span class="mob-nav-text">
+                <span class="mob-nav-label">Wisdom from Elders</span>
+                <span class="mob-nav-sub">Knowledge Keeper records</span>
+              </span>
+            </button>
             <button class="mob-nav-item" @click="navTo('/blog')">
               <span class="mob-nav-icon">📄</span>
               <span class="mob-nav-text">
@@ -786,6 +793,9 @@
     <!-- ── First-visit demo/legal consent gate ─────────────────────────────── -->
     <DemoConsentOverlay />
 
+    <!-- ── Persistent contact/report + legal links — see RISK_REDUCTION_RECOMMENDATIONS.md §7 -->
+    <SiteFooter />
+
     <!-- ── Connect wallet dialog ─────────────────────────────────────────── -->
     <q-dialog v-model="connectDialog">
       <q-card class="glass-card" style="min-width:300px">
@@ -822,6 +832,7 @@ import OfflineStatusBar        from 'src/components/eco/OfflineStatusBar.vue'
 import InstallPrompt           from 'src/components/eco/InstallPrompt.vue'
 import LocalDataPanel          from 'src/components/eco/LocalDataPanel.vue'
 import DemoConsentOverlay      from 'src/components/DemoConsentOverlay.vue'
+import SiteFooter              from 'src/components/SiteFooter.vue'
 import { useVizRenderer }      from 'src/composables/useVizRenderer'
 import { recordVisit }        from 'src/composables/useRecentLocations'
 
@@ -1004,8 +1015,8 @@ const NAV_GROUPS: NavGroup[] = [
         },
       },
       {
-        title: 'Aftermarket',
-        desc:  'Secondary exchange — sphere properties, airdrop bundles, and Mule tier listings.',
+        title: 'Registry',
+        desc:  'Settlement identity records — hashmarks, sphere properties, Mule tiers.',
         cta:   'Enter',
         route: '/pon-ink',
         color: 'rgba(0,220,150,0.90)',
@@ -1062,6 +1073,19 @@ const NAV_GROUPS: NavGroup[] = [
                 <circle cx="35" cy="30" r="1.6" fill="rgba(180,245,255,0.55)"/>
                 <circle cx="44" cy="34" r="1.3" fill="rgba(180,245,255,0.45)"/>
                 <line x1="35" y1="30" x2="44" y2="34" stroke="rgba(180,245,255,0.35)" stroke-width="0.5"/>`,
+        },
+      },
+      {
+        title: 'Wisdom from Elders',
+        desc:  'Knowledge Keeper records — elder observation as primary data, joining the technical monitoring record at every eco-ops site.',
+        cta:   'Explore',
+        route: '/knowledge-keepers',
+        color: 'rgba(220,175,90,0.90)',
+        art: {
+          vb: '0 0 80 50',
+          svg: `<path d="M40 8 C30 14 24 24 24 32 C24 40 31 46 40 46 C49 46 56 40 56 32 C56 24 50 14 40 8 Z" fill="rgba(220,175,90,0.10)" stroke="rgba(220,175,90,0.50)" stroke-width="0.9"/>
+                <circle cx="40" cy="30" r="9" fill="none" stroke="rgba(220,175,90,0.40)" stroke-width="0.7"/>
+                <circle cx="40" cy="30" r="3" fill="rgba(240,210,150,0.70)"/>`,
         },
       },
     ],
@@ -1283,10 +1307,10 @@ const ITEM_PANELS: Record<string, ItemPanel> = {
     actions: [{ label: 'Start quiz', route: '/learn', primary: true }, { label: 'Continue', route: '/learn' }],
     sessionKey: 'exo_quiz_score', sessionLabel: 'Your score',
   },
-  'Aftermarket': {
-    style: 'chain', headline: 'Aftermarket exchange',
-    subline: 'Sphere properties, airdrop bundles, Mule tiers — secondary market.',
-    actions: [{ label: 'Open aftermarket', route: '/pon-ink', primary: true }],
+  'Registry': {
+    style: 'chain', headline: 'Settlement registry',
+    subline: 'Sphere properties, airdrop bundles, Mule tiers — identity records, not a trading floor.',
+    actions: [{ label: 'Open registry', route: '/pon-ink', primary: true }],
   },
   'Benefit Earth': {
     style: 'onboard', headline: 'Benefit Earth — begin here',
@@ -1303,6 +1327,11 @@ const ITEM_PANELS: Record<string, ItemPanel> = {
     style: 'eco', headline: 'PFAS/PFOA citizen science',
     subline: 'Real remediation methods, public method proposals, and decon-project logging.',
     actions: [{ label: 'Browse projects', route: '/pfas-citizen-science', primary: true }, { label: 'Method proposals', route: '/method-proposals' }],
+  },
+  'Wisdom from Elders': {
+    style: 'eco', headline: 'Knowledge Keeper records',
+    subline: 'Elder observation joins the technical record — place, plant, animal, season, practice, memory, story.',
+    actions: [{ label: 'Browse records', route: '/knowledge-keepers', primary: true }],
   },
   'Getting Started': {
     style: 'docs', headline: 'Platform overview & quickstart',
@@ -1370,9 +1399,9 @@ const PARTICIPATE_PANEL: Record<string, ParticipatePanelData> = {
     caption: 'SCIENCE · PROTOCOL · ECOLOGY', cta: 'Start a quiz →', route: '/learn',
     sessionKey: 'exo_quiz_score',
   },
-  'Aftermarket': {
+  'Registry': {
     vb: '24 4 32 40', filter: 'saturate(1.8) hue-rotate(148deg) brightness(1.1)',
-    caption: 'AFTERMARKET · SPHERE EXCHANGE', cta: 'Open aftermarket →', route: '/pon-ink',
+    caption: 'SETTLEMENT REGISTRY', cta: 'Open registry →', route: '/pon-ink',
   },
   'Benefit Earth': {
     vb: '10 14 60 22', filter: 'saturate(1.4) brightness(1.14)',
@@ -1386,6 +1415,10 @@ const PARTICIPATE_PANEL: Record<string, ParticipatePanelData> = {
   'PFAS Cleanup': {
     vb: '20 4 40 42', filter: 'saturate(1.9) hue-rotate(6deg) brightness(1.1)',
     caption: 'CITIZEN SCIENCE · PFAS CLEANUP', cta: 'Browse projects →', route: '/pfas-citizen-science',
+  },
+  'Wisdom from Elders': {
+    vb: '16 8 48 34', filter: 'sepia(0.35) saturate(1.5) hue-rotate(-8deg) brightness(1.1)',
+    caption: 'KNOWLEDGE KEEPER RECORDS', cta: 'Browse records →', route: '/knowledge-keepers',
   },
 }
 

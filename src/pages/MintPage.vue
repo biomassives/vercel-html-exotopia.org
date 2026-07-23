@@ -694,7 +694,7 @@
 
       <div v-if="mintMode === 'general'" class="text-caption text-blue-grey-5 q-mb-md" style="font-family:monospace; letter-spacing:0.05em">
         <span class="text-green-5">FREE TO MINT</span> · utility-first model ·
-        platform is free — <strong class="text-amber-5">0%</strong> on aftermarket sales only.
+        no resale or aftermarket fee — Exotopia doesn't operate a secondary market.
         Network gas is the only cost at mint time.
       </div>
 
@@ -828,7 +828,7 @@
             <div class="fee-block fee-block--free">
               <div class="fee-block-label">MINT COST</div>
               <div class="fee-block-value text-green-4">
-                FREE · KES {{ mintCostKES }} · USD {{ mintCostUSD }}
+                FREE · USD {{ mintCostUSD }}
               </div>
               <div class="fee-block-note">
                 Utility-first model — no purchase required to mint your initial exolocation deed.
@@ -838,12 +838,8 @@
 
             <q-separator dark class="q-my-sm" style="opacity:0.15" />
 
-            <!-- AFTERMARKET REFERENCE (informational only) ──────────────── -->
+            <!-- NETWORK COSTS (informational only) ──────────────── -->
             <div class="fee-block fee-block--network">
-              <div class="fee-row">
-                <span>Platform maintenance draw</span>
-                <span class="text-amber-5">0% on aftermarket sales · KES {{ platformDrawKES }} ref.</span>
-              </div>
               <div class="fee-row">
                 <span>Algorand ASA creation fee</span>
                 <span class="text-blue-grey-5">0.001 ALGO (network only)</span>
@@ -852,13 +848,9 @@
                 <span>IPFS metadata pin</span>
                 <span class="text-blue-grey-5">~0.00 ALGO (Pinata free tier)</span>
               </div>
-              <div class="fee-row">
-                <span>Secondary sales</span>
-                <span class="text-blue-grey-5">100 / 0 / 0 — Platform Free applies</span>
-              </div>
-              <div class="fee-block-note fee-note--warn">
-                The KES {{ platformDrawKES }} reference is 0% of a benchmark 5 USDC aftermarket transaction.
-                It is never charged at mint time.
+              <div class="fee-block-note">
+                This mints a collectible record. Exotopia does not operate a resale market —
+                there is no platform fee to disclose because there is no secondary sale to apply it to.
               </div>
             </div>
           </div>
@@ -1002,17 +994,14 @@
           <div class="fee-isolation-card q-mb-sm">
             <div class="fee-block fee-block--free">
               <div class="fee-block-label">MINT COST</div>
-              <div class="fee-block-value text-green-4">FREE · KES 0</div>
+              <div class="fee-block-value text-green-4">FREE</div>
               <div class="fee-block-note">
-                Utility-first model. On aftermarket sales, platform is free (0%) (≈ KES {{ platformDrawKES }}) and 10% Hardware Fund apply automatically.
+                Utility-first model. No resale or aftermarket fee — Exotopia doesn't operate
+                a secondary market. The 10% Hardware Fund allocation applies at mint time only.
               </div>
             </div>
             <q-separator dark class="q-my-sm" style="opacity:0.15" />
             <div class="fee-block fee-block--network">
-              <div class="fee-row">
-                <span>Platform draw</span>
-                <span class="text-amber-5">KES 0 — {{ platformDrawKES }}</span>
-              </div>
               <div class="fee-row">
                 <span>Solana Bubblegum cNFT gas</span>
                 <span class="text-blue-grey-5">~0.000005 SOL (network only)</span>
@@ -1190,12 +1179,11 @@
           <div class="fee-isolation-card q-mb-sm">
             <div class="fee-block fee-block--free">
               <div class="fee-block-label">MINT COST</div>
-              <div class="fee-block-value text-green-4">FREE · KES 0</div>
-              <div class="fee-block-note">Utility-first. Platform maintenance draw (KES 0 — {{ platformDrawKES }}) applies on aftermarket sales only.</div>
+              <div class="fee-block-value text-green-4">FREE</div>
+              <div class="fee-block-note">Utility-first. No resale or aftermarket fee — Exotopia doesn't operate a secondary market.</div>
             </div>
             <q-separator dark class="q-my-sm" style="opacity:0.15" />
             <div class="fee-block fee-block--network">
-              <div class="fee-row"><span>Platform draw</span><span class="text-amber-5">KES 0 — {{ platformDrawKES }}</span></div>
               <div class="fee-row"><span>Polygon Amoy gas</span><span class="text-blue-grey-5">{{ polyGasEstimate }} (network only)</span></div>
               <div class="fee-row"><span>IPFS metadata pin</span><span class="text-blue-grey-5">0.00 MATIC (Pinata free tier)</span></div>
               <div class="fee-block-note fee-note--warn">Testnet only — use faucet at faucet.polygon.technology</div>
@@ -1295,12 +1283,11 @@
           <div class="fee-isolation-card q-mb-sm">
             <div class="fee-block fee-block--free">
               <div class="fee-block-label">MINT COST</div>
-              <div class="fee-block-value text-green-4">FREE · KES 0</div>
-              <div class="fee-block-note">Earned via eco-ops or event attendance. Dispatched automatically via pon.ink. No purchase required. Platform draw (KES 0 — {{ platformDrawKES }}) applies on secondary sales only.</div>
+              <div class="fee-block-value text-green-4">FREE</div>
+              <div class="fee-block-note">Earned via eco-ops or event attendance. Dispatched automatically via pon.ink. No purchase required. No resale or aftermarket fee — Exotopia doesn't operate a secondary market.</div>
             </div>
             <q-separator dark class="q-my-sm" style="opacity:0.15" />
             <div class="fee-block fee-block--network">
-              <div class="fee-row"><span>Platform draw</span><span class="text-amber-5">KES 0 — {{ platformDrawKES }}</span></div>
               <div class="fee-row"><span>Celo Alfajores gas</span><span class="text-blue-grey-5">{{ celoGasEstimate }} (network only)</span></div>
               <div class="fee-block-note fee-note--warn">Testnet only — use faucet at faucet.celo.org/alfajores</div>
             </div>
@@ -1751,20 +1738,14 @@ const solution = ref({
 // NEVER combine community yield and network fee in a single expression.
 //
 // CURRENT MODEL: initial mint is FREE (utility-first, network growth phase).
-// Platform maintenance draw of 0% applies to AFTERMARKET / SECONDARY SALES only.
-// The KES 33 reference figure is 0% of a 5 USDC benchmark aftermarket transaction.
-// This value is displayed as a reference; it is never deducted from any mint cost.
-
-const AFTERMARKET_BENCH_USDC = 5.00    // benchmark aftermarket transaction value
-const USD_TO_KES             = 130     // display only; real rate fetched from API
+// Exotopia does not operate a secondary market or resale mechanism, so there
+// is no aftermarket fee to compute or display — see
+// RISK_REDUCTION_RECOMMENDATIONS.md §1 for why this was removed rather than
+// just set to a 0% placeholder. Never reintroduce a fiat (e.g. KES) exchange
+// rate display tied to in-app points/tokens — see §2.
 
 // Initial mint cost — FREE
 const mintCostUSD = '0.00'
-const mintCostKES = '0'
-
-// Aftermarket platform draw (0%) — reference only, computed from its own path
-const platformDrawUSD = computed(() => (AFTERMARKET_BENCH_USDC * 0.05).toFixed(2))
-const platformDrawKES = computed(() => Math.round(AFTERMARKET_BENCH_USDC * 0.00 * USD_TO_KES).toString())
 
 // ── Validation ────────────────────────────────────────────────────────────────
 

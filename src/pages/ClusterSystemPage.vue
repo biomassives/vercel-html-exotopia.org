@@ -94,7 +94,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount, shallowRef } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount, shallowRef } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import * as THREE from 'three'
 import type { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
@@ -105,6 +105,8 @@ import type { ClusterPlanet, ClusterStarSystem } from 'src/composables/useCluste
 import { useSceneTransitionStore }               from 'src/stores/scene-transition'
 import { disposeScene }                          from 'src/lib/three-utils'
 import { clusterPlanetHasNoSolidGround }          from 'src/lib/surface-classify'
+import { LocalStepPortal, type PortalPlanetData } from 'src/lib/local-step-portal'
+import { isLowBandwidth, isMediumBandwidth }      from 'src/lib/security'
 
 // ── Route ──────────────────────────────────────────────────────────────────────
 const route      = useRoute()
@@ -180,6 +182,29 @@ function planetColor(type: string): string {
   return PLANET_COLORS[type] ?? '#607d8b'
 }
 
+// ── Local Step Portal — physics-driven "landing" waypoint ─────────────────────
+// Fast connections only (see canUsePortal below): on slow/medium, descendToPlanet()
+// keeps the plain wipe untouched — no portal geometry/shader is ever constructed,
+// not a lower-fidelity version of one. See SPEC.md §25 / SPEC_NFT_VALUE_FRAMING.md
+// sibling doc SPEC_ZOOM_DESCENT.md for the design this implements.
+const canUsePortal = !isLowBandwidth() && !isMediumBandwidth()
+
+// ClusterPlanet carries no direct gravity/pressure fields — derive reasonable
+// values the same way other pages already infer physical properties from what
+// IS on the record (mass/radius/atmosphere string), rather than adding new
+// required data.
+function toPortalPlanetData(p: ClusterPlanet, starHex: string): PortalPlanetData {
+  const gravityMs2 = p.mass_earth > 0 && p.radius_earth > 0
+    ? 9.8 * (p.mass_earth / (p.radius_earth * p.radius_earth))
+    : null
+  const atmPressure =
+    p.atmosphere === 'thick'  ? 3.0 :
+    p.atmosphere === 'dense'  ? 2.2 :
+    p.atmosphere === 'thin'   ? 0.3 :
+    p.atmosphere === 'none'   ? 0.0 : 1.0
+  return { eqTempK: p.eq_temp_k ?? null, gravityMs2, atmPressure, starHex }
+}
+
 function planetTypeLabel(type: string): string {
   return type.replace(/_/g, ' ')
 }
@@ -215,21 +240,37 @@ async function descendToPlanet(p: ClusterPlanet) {
   }
 
   const mesh = planetMeshes.value.find(m => m.userData.planetId === p.id)
+  const usePortal = !!(portal && portalPlanet?.id === p.id)
 
-  // Final in-page approach toward the planet before the route change —
-  // ClusterSystemPage and ClusterSurfacePage now share the same renderer/camera.
+  // Final in-page approach before the route change — ClusterSystemPage and
+  // ClusterSurfacePage now share the same renderer/camera. With a portal
+  // available, approach it instead of the planet, ramping setEntering() as
+  // the camera closes in so the crossing reads as passing through something,
+  // not just arriving near it.
   if (mesh && camera && controls) {
-    const target  = mesh.position.clone()
-    const fromCam = camera.position.clone().sub(target).normalize()
-    const dest    = target.clone().addScaledVector(fromCam, 0.15)
+    const target    = usePortal ? portal!.getWorldPosition() : mesh.position.clone()
+    const fromCam   = camera.position.clone().sub(target).normalize()
+    const dest      = target.clone().addScaledVector(fromCam, usePortal ? 0.05 : 0.15)
+    const startDist = camera.position.distanceTo(dest)
     gsap.killTweensOf(camera.position); gsap.killTweensOf(controls.target)
     await new Promise<void>(resolve => {
       gsap.to(controls!.target, { x: target.x, y: target.y, z: target.z, duration: 0.4, ease: 'power2.out', onUpdate: () => controls?.update() })
-      gsap.to(camera!.position, { x: dest.x, y: dest.y, z: dest.z, duration: 0.7, ease: 'power2.out', onUpdate: () => controls?.update(), onComplete: resolve })
+      gsap.to(camera!.position, {
+        x: dest.x, y: dest.y, z: dest.z, duration: 0.7, ease: 'power2.out',
+        onUpdate: () => {
+          controls?.update()
+          if (usePortal) {
+            const remaining = camera!.position.distanceTo(dest)
+            portal!.setEntering(1 - Math.min(1, remaining / Math.max(0.0001, startDist)))
+          }
+        },
+        onComplete: resolve,
+      })
     })
+    if (usePortal) portal!.setEntering(1)
   }
 
-  // Project selected planet mesh to screen for lightning origin
+  // Project selected planet mesh to screen for the wipe origin
   let ox = 50, oy = 50
   if (mesh && camera) {
     const sc = mesh.position.clone().project(camera)
@@ -237,7 +278,7 @@ async function descendToPlanet(p: ClusterPlanet) {
     oy = (1 - sc.y) / 2 * 100
   }
   const bearing = Math.atan2(oy/100 - 0.5, ox/100 - 0.5)
-  await transition.depart(ox, oy, 'lightning', bearing)
+  await transition.depart(ox, oy, usePortal ? 'inversion' : 'lightning', usePortal ? Math.PI : bearing)
   void router.push({
     name: 'cluster-surface',
     params: { clusterSlug: clusterSlug.value, memberId: memberId.value, systemIdx: systemIdx.value },
@@ -270,6 +311,45 @@ let hoveredPlanetId: string | null = null
 
 // Root group for all page-level scene objects — added/removed on mount/unmount
 const pageGroup = new THREE.Group()
+
+// Local Step Portal — one at a time, tied to the currently-selected planet
+let portal:        LocalStepPortal | null = null
+let portalPlanet:  ClusterPlanet   | null = null   // which planet `portal` belongs to
+const portalClock  = new THREE.Clock(false)
+let portalElapsed  = 0   // manual accumulator — Clock.getElapsedTime() itself calls
+                          // getDelta() internally, so calling both per frame would
+                          // double-consume the delta; track elapsed ourselves instead
+
+function destroyPortal() {
+  portal?.dispose()
+  portal = null
+  portalPlanet = null
+}
+
+function buildPortalFor(p: ClusterPlanet) {
+  destroyPortal()
+  if (!canUsePortal || !scene || !camera) return
+  if (clusterPlanetHasNoSolidGround(p.type)) return   // no-ground planets route to station-interior, not a landing portal
+  const mesh = planetMeshes.value.find(m => m.userData.planetId === p.id)
+  if (!mesh) return
+
+  const planetRadius = mesh.geometry instanceof THREE.SphereGeometry
+    ? (mesh.geometry.parameters.radius as number) : 0.03
+  const data = toPortalPlanetData(p, starColor.value)
+  // Constructor sizes the portal at a fixed ~14-unit frame regardless of scene
+  // scale — this system view compresses planets to ~0.02-0.065 units, so the
+  // portal group is scaled down after construction to read as a waypoint a
+  // few times the planet's own size, not a scene-dominating object.
+  portal = new LocalStepPortal(scene, camera, data, Math.max(0.10, planetRadius * 4.5), 68, mesh.userData.planetId?.length ?? 0)
+  portal.group.scale.setScalar(Math.max(0.012, planetRadius * 0.55))
+  if (!portalClock.running) portalClock.start()
+  portalPlanet = p
+}
+
+watch(selectedPlanet, (p) => {
+  if (p) buildPortalFor(p)
+  else   destroyPortal()
+})
 
 const ORBIT_SCALE = 4.5   // AU → scene units; compressed for visibility
 
@@ -440,6 +520,9 @@ function onCanvasMove(e: MouseEvent) {
   mouseVec.x =  (e.clientX / w) * 2 - 1
   mouseVec.y = -((e.clientY - VIZ_BAR_H) / h) * 2 + 1
   raycasterSys.setFromCamera(mouseVec, camera)
+
+  if (portal) portal.checkHover(raycasterSys)
+
   const hits = raycasterSys.intersectObjects(planetMeshes.value, false)
   const newId = hits.length ? (hits[0]!.object.userData.planetId as string) : null
 
@@ -495,10 +578,19 @@ function tick() {
     const gsp = mesh.userData.glowSprite as THREE.Sprite | undefined
     if (gsp) gsp.position.copy(mesh.position)
   }
+
+  // Portal orbits the planet it's tied to — needs that planet's live position
+  if (portal && portalPlanet) {
+    const dt = portalClock.getDelta()
+    portalElapsed += dt
+    const mesh = planetMeshes.value.find(m => m.userData.planetId === portalPlanet!.id)
+    if (mesh) portal.update(portalElapsed, dt, mesh.position)
+  }
 }
 
 function teardown() {
   _stopTick?.(); _stopTick = null
+  destroyPortal()
 
   disposeScene(pageGroup)
   scene?.remove(pageGroup)

@@ -14,6 +14,12 @@
           Your data stays on your own device by default (localStorage / IndexedDB) —
           you choose what, if anything, to submit anywhere.
         </p>
+        <p class="dco-lead">
+          Exotopia mints digital collectibles and does not operate a resale
+          marketplace for them. Some countries restrict or prohibit resident
+          participation in crypto-asset features — it's your responsibility to
+          know whether that applies to you; we don't screen by location.
+        </p>
 
         <div class="dco-links">
           <router-link to="/terms" target="_blank">Terms of Service</router-link>
@@ -27,12 +33,26 @@
           <a :href="`${REPO_URL}/pulls`" target="_blank" rel="noopener">Open pull requests</a>
         </div>
 
+        <!-- Two separate consents, not one bundled checkbox — distinguishing
+             "I agree to the contract terms" from "I consent to my data being
+             processed off-device" is expected practice under several regimes
+             (e.g. South Korea's PIPA requires unbundled consent for exactly
+             this split) and is better practice generally, not just there.
+             Both are required to pass this gate today — a future pass could
+             make the second one truly optional for users who never sign in,
+             gated instead at the sign-in step itself, but that needs each
+             sign-in path updated to check for it, not just this modal. -->
         <label class="dco-checkbox">
-          <input v-model="agreed" type="checkbox" />
+          <input v-model="agreedTerms" type="checkbox" />
           <span>I understand this is a live demo that may change, and I've read the linked Terms, Privacy Policy, and Community Guidelines.</span>
         </label>
 
-        <button class="dco-continue" :disabled="!agreed" @click="acknowledge">
+        <label class="dco-checkbox">
+          <input v-model="agreedProcessing" type="checkbox" />
+          <span>I consent to my data being processed and stored off-device — potentially across borders — when I sign in or submit data (comments, citizen-science reports, reward activity), as described in the Privacy Policy.</span>
+        </label>
+
+        <button class="dco-continue" :disabled="!agreedTerms || !agreedProcessing" @click="acknowledge">
           Continue
         </button>
 
@@ -45,13 +65,14 @@
 import { ref, onMounted } from 'vue'
 
 // Bump this if Terms/Privacy/Guidelines change materially — re-prompts everyone.
-const CONSENT_VERSION = '2026-07-21-v1'
+const CONSENT_VERSION = '2026-07-22-v3'
 const CONSENT_KEY = 'exo_demo_consent'
 
 const REPO_URL = 'https://github.com/biomassives/vercel-html-exotopia.org'
 
 const visible = ref(false)
-const agreed  = ref(false)
+const agreedTerms      = ref(false)
+const agreedProcessing = ref(false)
 
 onMounted(() => {
   try {
@@ -60,9 +81,26 @@ onMounted(() => {
   visible.value = true
 })
 
+// Logged the same way as MintPage.vue's mint-disclaimer acceptance — a
+// per-action, timestamped record beats "by using this site you agree" in a
+// footer for evidentiary purposes (RISK_REDUCTION_RECOMMENDATIONS.md §7).
+// Both consents are logged as distinct entries, not one combined flag, so
+// the record itself reflects that they're separate.
+function logConsentAcceptance() {
+  try {
+    const key = 'exo.consent-log'
+    const log = JSON.parse(localStorage.getItem(key) ?? '[]') as unknown[]
+    const acceptedAt = new Date().toISOString()
+    log.push({ version: CONSENT_VERSION, consent: 'terms', acceptedAt })
+    log.push({ version: CONSENT_VERSION, consent: 'data-processing', acceptedAt })
+    localStorage.setItem(key, JSON.stringify(log))
+  } catch { /* private mode / quota */ }
+}
+
 function acknowledge() {
-  if (!agreed.value) return
+  if (!agreedTerms.value || !agreedProcessing.value) return
   visible.value = false
+  logConsentAcceptance()
   try { localStorage.setItem(CONSENT_KEY, CONSENT_VERSION) } catch { /* private mode */ }
 }
 </script>

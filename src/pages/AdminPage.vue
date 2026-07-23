@@ -115,12 +115,11 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { FREE_MINT, AFTERMARKET_BENCH, DEFAULT_CHAIN, ENABLED_PATHWAY_IDS } from 'src/lib/mint-config'
+import { FREE_MINT, DEFAULT_CHAIN, ENABLED_PATHWAY_IDS } from 'src/lib/mint-config'
 import { useRewardsStore, type RewardTrack } from 'src/stores/rewards'
 
 const envRows = [
   { key: 'VITE_FREE_MINT',            val: String(FREE_MINT),                   note: 'No cost to mint primary deed' },
-  { key: 'VITE_AFTERMARKET_BENCH_USDC', val: `$${AFTERMARKET_BENCH.toFixed(2)}`, note: 'platform is free (0%) on secondary sales' },
   { key: 'VITE_DEFAULT_CHAIN',        val: DEFAULT_CHAIN,                        note: 'Pre-selected chain in mint form' },
   { key: 'VITE_ENABLED_PATHWAYS',     val: ENABLED_PATHWAY_IDS.join(', '),       note: 'Visible pathway cards' },
 ]
