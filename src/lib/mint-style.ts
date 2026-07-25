@@ -17,6 +17,8 @@
  *   settlement_status — Exotopia settlement state and eco-ops history
  */
 
+import { STANDARD_SPLIT, toSunlightShape } from './resonance-split'
+
 import type { Erc721Metadata, Erc721Attribute } from './evm/erc721-metadata'
 
 // ── Source catalogue — Ecocity sustainable models ─────────────────────────────
@@ -381,7 +383,7 @@ export function composeMetadata(style: MintingStyle): ComposeResult {
       serial,
       target_chain:  style.targetChain,
       composed_at:   new Date().toISOString(),
-      resonance_split: { creator: 0.99, hardware_fund: 0.0075, platform: 0.0025 },
+      resonance_split: toSunlightShape(STANDARD_SPLIT),
     },
   }
 

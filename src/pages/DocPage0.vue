@@ -67,7 +67,7 @@
 
         <section :id="'getting-started'" class="dp-section">
           <h1 class="dp-h1">Getting Started</h1>
-          <p class="dp-p">Exotopia is an open, browser-based platform for virtual settlement on confirmed exoplanets, community-owned NFT minting, and real-world eco-ops field work. The standard Resonance Split is <strong>99 / 0.75 / 0.25</strong> — 99% to creator, 0.75% to the Community Hardware Fund, 0.25% platform maintenance.</p>
+          <p class="dp-p">Exotopia is an open, browser-based platform for virtual settlement on confirmed exoplanets, community-owned NFT minting, and real-world eco-ops field work. The standard Resonance Split for fee-carrying mints is <strong>99 / 0.75 / 0.25</strong> — 99% to creator, 0.75% to the Community Hardware Fund, 0.25% platform maintenance. Settlement deeds are <strong>100 / 0 / 0</strong> and primary minting is free (gas only).</p>
 
           <div :id="'what-is'" class="dp-sub">
             <h2 class="dp-h2">What is Exotopia?</h2>
@@ -92,7 +92,7 @@
 
           <div :id="'free-platform'" class="dp-sub">
             <h2 class="dp-h2">Platform model — 99 / 0.75 / 0.25</h2>
-            <p class="dp-p">The standard Resonance Split applies to all transactions: <strong>99%</strong> to the creator/artist/worker wallet, <strong>0.75%</strong> to the Community Hardware Fund (WATSAN, mapping, field infrastructure), <strong>0.25%</strong> to platform maintenance. Primary minting is free (network gas only). Special mintings and airdrop events may use different parameters via additional contracts — any custom split requires co-sign approval and is logged on-chain.</p>
+            <p class="dp-p">The standard Resonance Split applies to <em>fee-carrying</em> transactions — $SUNLIGHT recordings and generative compositions: <strong>99%</strong> to the creator/artist/worker wallet, <strong>0.75%</strong> to the Community Hardware Fund (WATSAN, mapping, field infrastructure), <strong>0.25%</strong> to platform maintenance. Exoloc settlement deeds use a different allocation — <strong>100 / 0 / 0</strong>, no platform cut. Primary settlement minting is free (network gas only), so on that path there is no fee to divide at all. None of these figures is a yield, a revenue share, or a claim on future platform revenue. Special mintings and airdrop events may use different parameters via additional contracts — any custom split requires co-sign approval and is logged on-chain.</p>
             <div class="dp-callout">
               <strong>Fee isolation rule:</strong> Gas costs are always displayed separately and never combined with creator payouts. The resonance split (99 / 0.75 / 0.25) is computed independently of gas.
             </div>
@@ -272,7 +272,7 @@
 
         <section :id="'chains-section'" class="dp-section">
           <h1 class="dp-h1">Networks</h1>
-          <p class="dp-p">Two EVM testnet chains are active. Mainnet addresses are TBD. Standard Resonance Split: <strong>99 / 0.75 / 0.25</strong> on all chains.</p>
+          <p class="dp-p">Two EVM testnet chains are active. Mainnet addresses are TBD. Standard Resonance Split for fee-carrying mints: <strong>99 / 0.75 / 0.25</strong> on all chains; settlement deeds 100 / 0 / 0.</p>
 
           <div :id="'polygon'" class="dp-sub">
             <h2 class="dp-h2">Polygon Amoy Testnet</h2>
@@ -761,7 +761,7 @@ const KEY_TERMS = [
   { id: 11,  term: 'L5 SYZYGY',     short: 'Trophic level 5 — at a moon–planet Lagrange equilibrium point.' },
   { id: 24,  term: 'Exolocation',   short: 'Permanent on-chain address anchoring a settlement to a specific location on an exoplanet.' },
   { id: 29,  term: 'Stone Circle',  short: 'Cultural landmark at the centre of each settlement. Marks cardinal directions and carries the intention statement.' },
-  { id: 31,  term: 'Resonance Split', short: '99 / 0.75 / 0.25 — 100% to creator. Platform is free and self-optimising.' },
+  { id: 31,  term: 'Resonance Split', short: '99 / 0.75 / 0.25 on fee-carrying mints; 100 / 0 / 0 on settlement deeds. Primary minting is free — gas only.' },
   { id: 40,  term: 'PON INK',       short: 'Primary operations portal for the SCD Hub — records every action on-chain.' },
   { id: 41,  term: 'SCD Hub',       short: 'Sustainable Community Development Hub — US non-profit building digital infrastructure for community resilience.' },
   { id: 42,  term: 'E8 Coxeter Lattice', short: 'Mathematical basis for the wormhole conduit network transit routing geometry.' },

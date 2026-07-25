@@ -18,6 +18,8 @@
  *   Celo            — Community Badges, Eco-ops Participation Tokens
  */
 
+import { STANDARD_SPLIT, toSunlightShape } from '../resonance-split'
+
 // ── Shared types ──────────────────────────────────────────────────────────────
 
 export interface Erc721Attribute {
@@ -86,7 +88,7 @@ export function buildSunlightMeta(p: SunlightParams): Erc721Metadata {
       audio_cid:      p.ipfs_audio_cid,
       sample_credits: p.sample_credits ?? [],
       license_terms:  p.license,
-      resonance_split: { creator: 0.99, hardware_fund: 0.0075, platform: 0.0025 },
+      resonance_split: toSunlightShape(STANDARD_SPLIT),
     },
   }
 }

@@ -332,8 +332,8 @@ const TERMS: GlossTerm[] = [
   },
   {
     id: 31, category: 'settlement', term: 'Resonance Split',
-    short: '80 / 15 / 5 — the fee allocation applied to all PON INK transactions.',
-    body: 'Always displayed before confirmation; never combined in a single expression with community payout amounts (fee isolation rule). Three independent paths: 80% → artist/participant wallet; 10% → Community Fund (WATSAN / mapping infrastructure); 0% → platform maintenance.',
+    short: 'The allocation applied when a transaction carries a fee. It is not a yield or a revenue share.',
+    body: 'Two allocations, depending on what is being minted. $SUNLIGHT recordings and generative compositions use 99 / 0.75 / 0.25 — 99% to the creator/artist/worker wallet, 0.75% to the Community Hardware Fund (WATSAN / mapping infrastructure), 0.25% to platform maintenance. Exoloc settlement deeds use 100 / 0 / 0 — the platform takes no cut. Primary settlement minting is free: you pay network gas and nothing else, so on that path there is no fee to divide. Paths are computed independently and always displayed before confirmation, never combined into a single figure with gas costs or community payout amounts (fee isolation rule). A settlement record carries no claim on future platform revenue and no resale royalty — seller_fee_basis_points is 0 and Exotopia does not operate a secondary market.',
     related: [40],
   },
 

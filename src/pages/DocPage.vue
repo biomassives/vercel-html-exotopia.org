@@ -476,7 +476,7 @@ const KEY_TERMS = [
   { id: 11,  term: 'L5 SYZYGY',     short: 'Trophic level 5 — at a moon–planet Lagrange equilibrium point.' },
   { id: 24,  term: 'Exolocation',   short: 'Permanent on-chain address anchoring a settlement to a specific location on an exoplanet.' },
   { id: 29,  term: 'Stone Circle',  short: 'Cultural landmark at the centre of each settlement. Marks cardinal directions and carries the intention statement.' },
-  { id: 31,  term: 'Resonance Split', short: '99 / 0.75 / 0.25 — 100% to creator. Platform is free and self-optimising.' },
+  { id: 31,  term: 'Resonance Split', short: '99 / 0.75 / 0.25 on fee-carrying mints; 100 / 0 / 0 on settlement deeds. Primary minting is free — gas only.' },
   { id: 40,  term: 'PON INK',       short: 'Primary operations portal for the SCD Hub — records every action on-chain.' },
   { id: 41,  term: 'SCD Hub',       short: 'Sustainable Community Development Hub — US non-profit building digital infrastructure for community resilience.' },
   { id: 42,  term: 'E8 Coxeter Lattice', short: 'Mathematical basis for the wormhole conduit network transit routing geometry.' },

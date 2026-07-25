@@ -1368,6 +1368,7 @@ import {
 } from 'src/lib/evm/mint-evm'
 import WalletOnboardingGuide from 'src/components/WalletOnboardingGuide.vue'
 import { useSettlements, surfaceKey, clusterKey } from 'src/lib/settlements'
+import { SETTLEMENT_SPLIT } from 'src/lib/resonance-split'
 
 const { hasSettlement, addSettlement } = useSettlements()
 
@@ -1830,7 +1831,7 @@ function buildExolocParams(): ExolocParams {
     moon_index:       exo.value.moonIndex > 1 ? exo.value.moonIndex : undefined,
     lagrange_point:   exo.value.lagrangePoint || undefined,
     interface_zone:   exo.value.interfaceZone || undefined,
-    resonance_split:  { creator: 1.00, community_fund: 0, platform: 0 },
+    resonance_split:  { ...SETTLEMENT_SPLIT },
   }
 }
 

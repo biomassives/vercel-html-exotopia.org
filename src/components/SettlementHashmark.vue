@@ -135,6 +135,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, nextTick } from 'vue'
 import type { Planet, StarSystem } from 'src/stores/galaxy'
+import { SETTLEMENT_SPLIT } from 'src/lib/resonance-split'
 
 // ── Props ─────────────────────────────────────────────────────────────────────
 
@@ -282,7 +283,11 @@ const design = computed(() => {
   }
 
   return {
-    schema:       'exotopia-settlement-v1',
+    // v2: the `resonance` block previously hardcoded 80/15/5, which matched no
+    // shipped metadata writer and was being SHA-256'd into `design_hash` and
+    // embedded in ERC-721 deed metadata. Corrected to the real settlement split.
+    // Schema version bumped so v1 deed hashes remain reproducible under v1.
+    schema:       'exotopia-settlement-v2',
     planet:       pl.pl_name,
     hostname:     pl.hostname,
     coordinate:   `exo-surface-v1:${pl.pl_name}:${Math.abs(baseLat)}${baseLat>=0?'N':'S'},${Math.abs(baseLon)}${baseLon>=0?'E':'W'}`,
@@ -296,7 +301,11 @@ const design = computed(() => {
     ecosystem:    { biome, water_state: waterState, n2_pct: n2Pct, o2_pct: o2Pct, co2_pct: co2Pct, flora: floraTypes },
     items,
     mule:         muleCorpus,
-    resonance:    { creator_pct: 80, community_fund_pct: 15, platform_pct: 5 },
+    resonance:    {
+      creator_pct:        SETTLEMENT_SPLIT.creator        * 100,
+      community_fund_pct: SETTLEMENT_SPLIT.community_fund * 100,
+      platform_pct:       SETTLEMENT_SPLIT.platform       * 100,
+    },
   }
 })
 
