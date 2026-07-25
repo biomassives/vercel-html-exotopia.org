@@ -263,11 +263,11 @@
           {{ selectedPlanet.st_spectype ? ' · ' + selectedPlanet.st_spectype : '' }}
         </div>
 
-        <!-- Rarity badge -->
-        <div v-if="selectedRarity" class="rarity-badge q-mb-sm"
-             :style="{ borderColor: selectedRarity.color, color: selectedRarity.color }">
-          <span class="rarity-tier">{{ selectedRarity.tier }}</span>
-          <span class="rarity-desc">{{ selectedRarity.desc }}</span>
+        <!-- Physical classification badge (descriptive, not a rarity/value tier) -->
+        <div v-if="selectedClass" class="pclass-badge q-mb-sm"
+             :style="{ borderColor: selectedClass.color, color: selectedClass.color }">
+          <span class="pclass-label">{{ selectedClass.label }}</span>
+          <span class="pclass-desc">{{ selectedClass.desc }}</span>
         </div>
 
         <!-- Data sheet accordion toggle -->
@@ -724,8 +724,8 @@ const planetCardStats = computed<Record<string, string>>(() => {
   }
 })
 
-const selectedRarity = computed(() =>
-  selectedPlanet.value ? planetRarity(selectedPlanet.value) : null
+const selectedClass = computed(() =>
+  selectedPlanet.value ? planetClass(selectedPlanet.value) : null
 )
 
 const statusText = computed(() => {
@@ -1742,9 +1742,18 @@ function buildPlanetMaterial(pl: Planet, pCol: THREE.Color): THREE.MeshStandardM
   return new THREE.MeshStandardMaterial({ color: pCol, emissive: pCol, emissiveIntensity: 0.18, roughness: 0.70, metalness: 0.02 })
 }
 
-// ── Planet rarity + atmosphere description (for card panel) ──────────────────
+// ── Planet physical classification + atmosphere description (for card panel) ──
+//
+// NOTE: this deliberately returns a *descriptive physical class*, not a ranked
+// rarity tier. It previously returned LEGENDARY / RARE / UNCOMMON / COMMON with
+// scarcity language ("extreme rarity") on a panel that links directly to /mint.
+// Ranked scarcity tiering on a pre-mint surface is the exact signal called out
+// in RISK_REDUCTION_RECOMMENDATIONS.md §1 as the clearest Howey-test hook
+// available to a regulator. Do not reintroduce ordered tiers, counts, or
+// scarcity wording here. Colours below are keyed to temperature/composition,
+// not to a value ladder.
 
-function planetRarity(p: Planet): { tier: string; color: string; desc: string } {
+function planetClass(p: Planet): { label: string; color: string; desc: string } {
   const rade = p.pl_rade
   const eqt  = p.pl_eqt
   const au   = p.pl_orbsmax
@@ -1758,15 +1767,15 @@ function planetRarity(p: Planet): { tier: string; color: string; desc: string } 
   const ultraHot = (eqt != null && eqt > 2000) || (au != null && au < 0.04)
   const frozen   = (eqt != null && eqt < 80)
 
-  if (earthSize && inHZ)          return { tier: 'LEGENDARY', color: '#00ffcc', desc: 'Earth analog — extreme rarity' }
-  if (earthSize)                  return { tier: 'RARE',      color: '#cc88ff', desc: 'Earth-sized world' }
-  if (superEarth && inHZ)         return { tier: 'RARE',      color: '#cc88ff', desc: 'Super-Earth in habitable zone' }
-  if (inHZ)                       return { tier: 'UNCOMMON',  color: '#5599ff', desc: 'Habitable zone candidate' }
-  if (ultraHot && !isGas)         return { tier: 'COMMON',    color: '#778899', desc: 'Extreme hot-zone world' }
-  if (frozen)                     return { tier: 'COMMON',    color: '#778899', desc: 'Deep-frozen outer world' }
-  if (superEarth)                 return { tier: 'UNCOMMON',  color: '#5599ff', desc: 'Super-Earth class' }
-  if (isGas)                      return { tier: 'COMMON',    color: '#778899', desc: 'Gas / ice giant' }
-  return                                 { tier: 'COMMON',    color: '#778899', desc: 'Cataloged rocky world' }
+  if (earthSize && inHZ)  return { label: 'TEMPERATE TERRESTRIAL', color: '#44cc99', desc: 'Earth-sized, temperate orbit' }
+  if (earthSize)          return { label: 'TERRESTRIAL',           color: '#44cc99', desc: 'Earth-sized world' }
+  if (superEarth && inHZ) return { label: 'TEMPERATE SUPER-EARTH',  color: '#44cc99', desc: 'Super-Earth in habitable zone' }
+  if (inHZ)               return { label: 'TEMPERATE ZONE',         color: '#5599ff', desc: 'Habitable zone candidate' }
+  if (ultraHot && !isGas) return { label: 'HOT ROCKY',              color: '#ff8855', desc: 'Extreme hot-zone world' }
+  if (frozen)             return { label: 'FROZEN',                 color: '#88bbdd', desc: 'Deep-frozen outer world' }
+  if (superEarth)         return { label: 'SUPER-EARTH',            color: '#5599ff', desc: 'Super-Earth class' }
+  if (isGas)              return { label: 'GAS / ICE GIANT',        color: '#c0a0d8', desc: 'Gas / ice giant' }
+  return                         { label: 'ROCKY',                  color: '#9fb0c0', desc: 'Cataloged rocky world' }
 }
 
 function atmosphereDesc(p: Planet): string {
@@ -1978,8 +1987,8 @@ function focusPlanet(pMesh: THREE.Mesh) {
     },
   })
 
-  // Equatorial ring — colour-coded by rarity tier
-  const rar = planetRarity(pMesh.userData.planet as Planet)
+  // Equatorial ring — colour-coded by physical class (not a rarity tier)
+  const rar = planetClass(pMesh.userData.planet as Planet)
   const eqTorus = new THREE.Mesh(
     new THREE.TorusGeometry(pR * 1.40, pR * 0.038, 8, 80),
     new THREE.MeshBasicMaterial({
@@ -3113,7 +3122,7 @@ onUnmounted(() => {
   flex-shrink: 0;
 }
 
-.rarity-badge {
+.pclass-badge {
   display: flex;
   align-items: baseline;
   gap: 6px;
@@ -3122,13 +3131,13 @@ onUnmounted(() => {
   border-radius: 4px;
   background: rgba(0,0,0,0.35);
 }
-.rarity-tier {
+.pclass-label {
   font-family: monospace;
   font-size: 9px;
   letter-spacing: 0.12em;
   font-weight: 700;
 }
-.rarity-desc {
+.pclass-desc {
   font-family: monospace;
   font-size: 9px;
   opacity: 0.75;

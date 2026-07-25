@@ -147,7 +147,13 @@ One coordinate frame from the cosmic web to a settlement surface:
 - Real data always takes precedence over generated data. Generated data is clearly labelled.
 - Accessibility first: every feature reachable on mid-range Android at 3G.
 - Culture is the vehicle: music, visual art, and spatial storytelling are not decoration.
-- 80% of settlement revenue to settlement owner. 15% to SCD Hub treasury. 5% to platform.
+- Mint-time contribution allocation only (the "resonance split"): the large majority to the
+  creator, a slice to the Community Fund, a small platform-maintenance share. Paths are
+  computed independently and never combined in one figure (fee isolation).
+- No secondary market, no resale royalty, no yield to passive holders. Exotopia does not host
+  or facilitate resale; `seller_fee_basis_points` is 0. A settlement record confers no claim on
+  future platform revenue. The earlier "80/15/5 settlement revenue" line described a secondary-
+  sale aftermarket that was removed in the risk-reduction pass — see blog-risk-reduction-pass.md.
 - E8 lattice wormhole transit as the narrative mechanic for long-distance navigation.
 
 ---
