@@ -69,8 +69,24 @@ typings/
 .yarn-integrity
 
 # dotenv environment variables file
+# NOTE: `.env` and `.env.test` alone do NOT cover Vite's actual conventions.
+# Vite loads .env.local, .env.production, .env.<mode>.local — all of which were
+# previously untracked-by-luck rather than untracked-by-rule.
 .env
 .env.test
+.env.local
+.env.production
+.env.development
+.env*.local
+
+# Quasar build output (was previously committed)
+.quasar/
+/dist/
+
+# Editor swap files and throwaway scratch scripts
+*.swp
+*.swo
+.scratch-*
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
