@@ -138,44 +138,33 @@ export const useRewardsStore = defineStore('rewards', () => {
     return data ?? []
   }
 
-  /** Public wrapper — lets other domain stores (e.g. PFAS citizen science) issue a certificate for the current member once they've determined a threshold is crossed, without duplicating the idempotency check. */
-  async function issueCertificate(certificateType: string, settlementObjectKey: string) {
-    await issueCertificateIfMissing(certificateType, settlementObjectKey)
-  }
-
-  /** Issue a certificate for the current member if not already held (idempotent). */
-  async function issueCertificateIfMissing(certificateType: string, settlementObjectKey: string, sourceEventId?: string) {
-    const member = useMemberStore()
-    if (!supabase || !member.userId) return
-    if (certificateTypes.value.has(certificateType)) return
-    const { data, error: e } = await supabase.from('certificates').insert({
-      member_id:              member.userId,
-      certificate_type:       certificateType,
-      settlement_object_key:  settlementObjectKey,
-      source_event_id:        sourceEventId ?? null,
-    }).select().single()
-    if (!e && data) certificates.value = [...certificates.value, data as Certificate]
+  /**
+   * Certificates are no longer issued by the client. Migration 007 revoked
+   * INSERT on `certificates` — a self-issuable credential is not a credential,
+   * and 'mentorship' in particular is framed in compliance/digital-credentials-law
+   * as carrying real-world standing.
+   *
+   * Issuance is derived server-side from ledger state by refresh_certificates(),
+   * which every award RPC calls. Callers that previously asked for a certificate
+   * now just re-read: if the threshold was crossed, the row is already there.
+   */
+  async function issueCertificate(_certificateType: string, _settlementObjectKey: string) {
+    await loadMyRewards()
   }
 
   /** Called after a quiz completes in LearnPage.vue — awards points + certificate if the area maps to a reward and the score clears the threshold. */
   async function awardQuizCompletion(areaId: string, score: number, _total: number) {
     const member = useMemberStore()
-    const cfg = QUIZ_REWARD_MAP[areaId]
-    if (!supabase || !member.userId || !cfg) return
-    if (score < cfg.minScore) return
-    if (cfg.prerequisite && !certificateTypes.value.has(QUIZ_REWARD_MAP[cfg.prerequisite]?.certificateType ?? '')) return
-    if (certificateTypes.value.has(cfg.certificateType)) return   // already awarded
-
-    const { data, error: e } = await supabase.from('reward_events').insert({
-      member_id:  member.userId,
-      track:      cfg.track,
-      action_key: cfg.actionKey,
-      points:     POINTS[cfg.actionKey] ?? 0,
-      metadata:   { score, area_id: areaId },
-    }).select().single()
-    if (e || !data) return
-    rewardEvents.value = [data as RewardEvent, ...rewardEvents.value]
-    await issueCertificateIfMissing(cfg.certificateType, cfg.settlementObjectKey, (data as RewardEvent).id)
+    if (!supabase || !member.userId) return
+    // Threshold, prerequisite chain, point value and the one-shot rule are all
+    // enforced in award_quiz_completion(). The client no longer decides any of
+    // them; QUIZ_REWARD_MAP is now display metadata only.
+    const { error: e } = await supabase.rpc('award_quiz_completion', {
+      p_area_id: areaId,
+      p_score:   score,
+    })
+    if (e) { error.value = e.message; return }
+    await loadMyRewards()
   }
 
   /**
@@ -188,42 +177,27 @@ export const useRewardsStore = defineStore('rewards', () => {
   async function logVolunteerAction(actionKey: string, metadata: Record<string, unknown> = {}) {
     const member = useMemberStore()
     if (!supabase || !member.userId) return
-    const points = POINTS[actionKey] ?? POINTS.volunteer_self_report ?? 0
-    const { data, error: e } = await supabase.from('reward_events').insert({
-      member_id:  member.userId,
-      track:      'volunteering',
-      action_key: actionKey,
-      points,
-      metadata,
-    }).select().single()
-    if (e || !data) return
-    rewardEvents.value = [data as RewardEvent, ...rewardEvents.value]
-
-    if (pointsByTrack.value.volunteering >= VOLUNTEER_CERTIFICATE_THRESHOLD) {
-      await issueCertificateIfMissing('field_volunteer', 'volunteer_dome_object', (data as RewardEvent).id)
-    }
-    if (actionKey === 'decon_progress_log') {
-      const logCount = rewardEvents.value.filter(e => e.action_key === 'decon_progress_log').length
-      if (logCount >= PFAS_RESEARCHER_LOG_THRESHOLD) {
-        await issueCertificateIfMissing('pfas_field_researcher', 'pfas_researcher_marker', (data as RewardEvent).id)
-      }
-    }
+    // Points come from points_catalog server-side; the daily cap and the
+    // self_reported flag are enforced there too. Passing a point value from
+    // here is no longer possible.
+    const { error: e } = await supabase.rpc('award_self_reported', {
+      p_action_key: actionKey,
+      p_metadata:   metadata,
+    })
+    if (e) { error.value = e.message; return }
+    await loadMyRewards()
   }
 
   /** Self-serve credit for the educating_others track outside mentor sessions — e.g. publishing a public method proposal. Same client-trust model as logVolunteerAction. */
   async function logEducatingAction(actionKey: string, metadata: Record<string, unknown> = {}) {
     const member = useMemberStore()
     if (!supabase || !member.userId) return
-    const points = POINTS[actionKey] ?? 0
-    const { data, error: e } = await supabase.from('reward_events').insert({
-      member_id:  member.userId,
-      track:      'educating_others',
-      action_key: actionKey,
-      points,
-      metadata,
-    }).select().single()
-    if (e || !data) return
-    rewardEvents.value = [data as RewardEvent, ...rewardEvents.value]
+    const { error: e } = await supabase.rpc('award_self_reported', {
+      p_action_key: actionKey,
+      p_metadata:   metadata,
+    })
+    if (e) { error.value = e.message; return }
+    await loadMyRewards()
   }
 
   async function requestMentorSession(menteeId: string, topic: string) {
@@ -253,7 +227,9 @@ export const useRewardsStore = defineStore('rewards', () => {
     }
   }
 
-  /** Admin-only (enforced by RLS is_admin()) — for bounty/doc-contribution credit that isn't self-serve. */
+  /** Admin-only (enforced by RLS is_admin()). Migration 007 additionally caps
+   *  `points` at the points_catalog value for the action_key, so a compromised
+   *  admin session can't mint an unbounded balance. */
   async function adminGrantReward(memberId: string, track: RewardTrack, actionKey: string, points: number, metadata: Record<string, unknown> = {}) {
     if (!supabase) return
     await supabase.from('reward_events').insert({ member_id: memberId, track, action_key: actionKey, points, metadata })
