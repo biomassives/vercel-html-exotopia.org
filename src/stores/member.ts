@@ -177,6 +177,7 @@ export const useMemberStore = defineStore('member', () => {
       ['method_proposals',     () => supabase!.from('method_proposals').select('*').eq('author_id', uid)],
       ['proposal_endorsements',() => supabase!.from('proposal_endorsements').select('*').eq('member_id', uid)],
       ['branch_settlements',   () => supabase!.from('branch_settlements').select('*').eq('owner_id', uid)],
+      ['community_nodes',      () => supabase!.from('community_nodes').select('*').eq('owner_id', uid)],
     ]
     const out: Record<string, unknown> = { exportedAt: new Date().toISOString(), memberId: uid }
     for (const [key, run] of tables) {

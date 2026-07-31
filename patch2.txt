@@ -1,0 +1,341 @@
+From ededd9bca0210ab3ac76a31aefa789c1e351c732 Mon Sep 17 00:00:00 2001
+From: exotopia <dev@exotopia.org>
+Date: Sat, 25 Jul 2026 00:47:48 +0000
+Subject: [PATCH 2/2] fix: single source of truth for resonance split; correct
+ wrong figures in deed hash and glossary
+
+The same concept was stated with four different sets of numbers:
+99/0.75/0.25 (DocsPage, DocPage, DocPage0, erc721-metadata, mint-style),
+80/15/5 (GlossaryPage summary, SettlementHashmark), 80/10/0 (GlossaryPage
+body, contradicting its own summary line), and 100/0/0 (exoloc settlement
+deed written by MintPage).
+
+Two of those were reaching immutable records. SettlementHashmark's 80/15/5
+sits inside the object SHA-256'd into design_hash, which is embedded in
+ERC-721 deed metadata - a permanent misstatement about where money goes,
+attached to an artefact a user paid gas to create.
+
+- New src/lib/resonance-split.ts holds STANDARD_SPLIT (99/0.75/0.25) and
+  SETTLEMENT_SPLIT (100/0/0). No on-chain value changes: every metadata
+  writer keeps the figure it already wrote.
+- SettlementHashmark corrected 80/15/5 -> SETTLEMENT_SPLIT. Hashmark schema
+  bumped v1 -> v2 so previously minted deed hashes stay reproducible under
+  the schema they were minted with.
+- GlossaryPage entry 31 rewritten: it stated 80/15/5 in the summary and
+  80/10/0 in the body, and matched no shipped writer.
+- DocsPage/DocPage0/DocPage no longer claim the standard split applies to
+  'all transactions' - settlement deeds differ and primary minting is free,
+  so on that path there is no fee to divide.
+- Added PRIMARY_MINT_IS_FREE with a note: quoting a split next to a free
+  mint implies a revenue stream that does not exist.
+---
+ src/components/SettlementHashmark.vue | 13 +++-
+ src/lib/evm/erc721-metadata.ts        |  4 +-
+ src/lib/mint-style.ts                 |  4 +-
+ src/lib/resonance-split.ts            | 87 +++++++++++++++++++++++++++
+ src/pages/DocPage.vue                 |  2 +-
+ src/pages/DocPage0.vue                |  8 +--
+ src/pages/DocsPage.vue                |  6 +-
+ src/pages/GlossaryPage.vue            |  4 +-
+ src/pages/MintPage.vue                |  3 +-
+ 9 files changed, 116 insertions(+), 15 deletions(-)
+ create mode 100644 src/lib/resonance-split.ts
+
+diff --git a/src/components/SettlementHashmark.vue b/src/components/SettlementHashmark.vue
+index 8f7701d..d6cc45f 100644
+--- a/src/components/SettlementHashmark.vue
++++ b/src/components/SettlementHashmark.vue
+@@ -135,6 +135,7 @@
+ <script setup lang="ts">
+ import { ref, computed, watch, nextTick } from 'vue'
+ import type { Planet, StarSystem } from 'src/stores/galaxy'
++import { SETTLEMENT_SPLIT } from 'src/lib/resonance-split'
+ 
+ // ── Props ─────────────────────────────────────────────────────────────────────
+ 
+@@ -282,7 +283,11 @@ const design = computed(() => {
+   }
+ 
+   return {
+-    schema:       'exotopia-settlement-v1',
++    // v2: the `resonance` block previously hardcoded 80/15/5, which matched no
++    // shipped metadata writer and was being SHA-256'd into `design_hash` and
++    // embedded in ERC-721 deed metadata. Corrected to the real settlement split.
++    // Schema version bumped so v1 deed hashes remain reproducible under v1.
++    schema:       'exotopia-settlement-v2',
+     planet:       pl.pl_name,
+     hostname:     pl.hostname,
+     coordinate:   `exo-surface-v1:${pl.pl_name}:${Math.abs(baseLat)}${baseLat>=0?'N':'S'},${Math.abs(baseLon)}${baseLon>=0?'E':'W'}`,
+@@ -296,7 +301,11 @@ const design = computed(() => {
+     ecosystem:    { biome, water_state: waterState, n2_pct: n2Pct, o2_pct: o2Pct, co2_pct: co2Pct, flora: floraTypes },
+     items,
+     mule:         muleCorpus,
+-    resonance:    { creator_pct: 80, community_fund_pct: 15, platform_pct: 5 },
++    resonance:    {
++      creator_pct:        SETTLEMENT_SPLIT.creator        * 100,
++      community_fund_pct: SETTLEMENT_SPLIT.community_fund * 100,
++      platform_pct:       SETTLEMENT_SPLIT.platform       * 100,
++    },
+   }
+ })
+ 
+diff --git a/src/lib/evm/erc721-metadata.ts b/src/lib/evm/erc721-metadata.ts
+index 8975a21..9e6b7eb 100644
+--- a/src/lib/evm/erc721-metadata.ts
++++ b/src/lib/evm/erc721-metadata.ts
+@@ -18,6 +18,8 @@
+  *   Celo            — Community Badges, Eco-ops Participation Tokens
+  */
+ 
++import { STANDARD_SPLIT, toSunlightShape } from '../resonance-split'
++
+ // ── Shared types ──────────────────────────────────────────────────────────────
+ 
+ export interface Erc721Attribute {
+@@ -86,7 +88,7 @@ export function buildSunlightMeta(p: SunlightParams): Erc721Metadata {
+       audio_cid:      p.ipfs_audio_cid,
+       sample_credits: p.sample_credits ?? [],
+       license_terms:  p.license,
+-      resonance_split: { creator: 0.99, hardware_fund: 0.0075, platform: 0.0025 },
++      resonance_split: toSunlightShape(STANDARD_SPLIT),
+     },
+   }
+ }
+diff --git a/src/lib/mint-style.ts b/src/lib/mint-style.ts
+index 2c5bd27..4934bd2 100644
+--- a/src/lib/mint-style.ts
++++ b/src/lib/mint-style.ts
+@@ -17,6 +17,8 @@
+  *   settlement_status — Exotopia settlement state and eco-ops history
+  */
+ 
++import { STANDARD_SPLIT, toSunlightShape } from './resonance-split'
++
+ import type { Erc721Metadata, Erc721Attribute } from './evm/erc721-metadata'
+ 
+ // ── Source catalogue — Ecocity sustainable models ─────────────────────────────
+@@ -381,7 +383,7 @@ export function composeMetadata(style: MintingStyle): ComposeResult {
+       serial,
+       target_chain:  style.targetChain,
+       composed_at:   new Date().toISOString(),
+-      resonance_split: { creator: 0.99, hardware_fund: 0.0075, platform: 0.0025 },
++      resonance_split: toSunlightShape(STANDARD_SPLIT),
+     },
+   }
+ 
+diff --git a/src/lib/resonance-split.ts b/src/lib/resonance-split.ts
+new file mode 100644
+index 0000000..6c4216d
+--- /dev/null
++++ b/src/lib/resonance-split.ts
+@@ -0,0 +1,87 @@
++/**
++ * resonance-split.ts — single source of truth for allocation percentages.
++ *
++ * WHY THIS FILE EXISTS
++ * --------------------
++ * Before this, the same concept was stated with five different sets of numbers
++ * across the app: 99/0.75/0.25 (DocsPage, DocPage, DocPage0, erc721-metadata,
++ * mint-style), 80/15/5 (GlossaryPage summary line, SettlementHashmark),
++ * 80/10/0 (GlossaryPage body — which also contradicted its own summary line),
++ * and 100/0/0 (the exoloc settlement deed written by MintPage).
++ *
++ * Two of those were being committed to immutable records: the SettlementHashmark
++ * figure is inside the object that gets SHA-256'd into `design_hash`, which is
++ * then embedded in ERC-721 deed metadata. A wrong number in that position is not
++ * a typo, it is a permanent misstatement about where money goes, attached to an
++ * artefact a user paid gas to create.
++ *
++ * RULES
++ * -----
++ * 1. Import from here. Do not inline percentages anywhere, including in copy.
++ * 2. `PRIMARY_MINT_IS_FREE` is not decoration — see the note below it. Any UI
++ *    that displays a split must also make clear whether there is a fee to split.
++ * 3. Fee isolation: never render a split figure combined into one expression
++ *    with a gas figure or a community payout amount. Compute and display them
++ *    independently.
++ * 4. Changing SETTLEMENT_SPLIT changes the SettlementHashmark digest. Bump the
++ *    hashmark schema version in the same commit so existing deed hashes stay
++ *    reproducible against the schema they were minted under.
++ */
++
++export interface ResonanceSplit {
++  /** Fraction to the creator / artist / participant wallet. */
++  creator: number
++  /** Fraction to the Community Hardware Fund (WATSAN, mapping, field kit). */
++  community_fund: number
++  /** Fraction to platform maintenance. */
++  platform: number
++}
++
++/**
++ * Standard split — $SUNLIGHT recordings and generative compositions.
++ * Applies where a transaction actually carries a fee.
++ */
++export const STANDARD_SPLIT: ResonanceSplit = Object.freeze({
++  creator:        0.99,
++  community_fund: 0.0075,
++  platform:       0.0025,
++})
++
++/**
++ * Exoloc settlement deeds. Currently 100% creator: the primary deed mint takes
++ * no platform cut at all.
++ *
++ * This is deliberately a separate constant rather than an alias of
++ * STANDARD_SPLIT — the two have always differed in the shipped metadata writers
++ * and collapsing them would silently change what gets written on-chain.
++ */
++export const SETTLEMENT_SPLIT: ResonanceSplit = Object.freeze({
++  creator:        1.00,
++  community_fund: 0,
++  platform:       0,
++})
++
++/**
++ * Primary settlement minting is free — the user pays network gas and nothing
++ * else. There is therefore no platform fee to divide on the primary path today.
++ *
++ * This matters for how splits are described: stating "99% goes to the creator"
++ * next to a free mint implies a revenue stream that does not currently exist.
++ * Describe the split as the allocation that applies *if and when* a transaction
++ * carries a fee, not as an ongoing distribution.
++ */
++export const PRIMARY_MINT_IS_FREE = true
++
++/** Legacy alias kept for $SUNLIGHT metadata, which names the field differently. */
++export function toSunlightShape(s: ResonanceSplit) {
++  return { creator: s.creator, hardware_fund: s.community_fund, platform: s.platform }
++}
++
++/** "99 / 0.75 / 0.25" — for display. Trailing zeros trimmed. */
++export function formatSplit(s: ResonanceSplit): string {
++  const pct = (n: number) => {
++    const v = n * 100
++    return Number.isInteger(v) ? String(v) : String(parseFloat(v.toFixed(4)))
++  }
++  return `${pct(s.creator)} / ${pct(s.community_fund)} / ${pct(s.platform)}`
++}
+diff --git a/src/pages/DocPage.vue b/src/pages/DocPage.vue
+index 7895fdd..5521d35 100644
+--- a/src/pages/DocPage.vue
++++ b/src/pages/DocPage.vue
+@@ -476,7 +476,7 @@ const KEY_TERMS = [
+   { id: 11,  term: 'L5 SYZYGY',     short: 'Trophic level 5 — at a moon–planet Lagrange equilibrium point.' },
+   { id: 24,  term: 'Exolocation',   short: 'Permanent on-chain address anchoring a settlement to a specific location on an exoplanet.' },
+   { id: 29,  term: 'Stone Circle',  short: 'Cultural landmark at the centre of each settlement. Marks cardinal directions and carries the intention statement.' },
+-  { id: 31,  term: 'Resonance Split', short: '99 / 0.75 / 0.25 — 100% to creator. Platform is free and self-optimising.' },
++  { id: 31,  term: 'Resonance Split', short: '99 / 0.75 / 0.25 on fee-carrying mints; 100 / 0 / 0 on settlement deeds. Primary minting is free — gas only.' },
+   { id: 40,  term: 'PON INK',       short: 'Primary operations portal for the SCD Hub — records every action on-chain.' },
+   { id: 41,  term: 'SCD Hub',       short: 'Sustainable Community Development Hub — US non-profit building digital infrastructure for community resilience.' },
+   { id: 42,  term: 'E8 Coxeter Lattice', short: 'Mathematical basis for the wormhole conduit network transit routing geometry.' },
+diff --git a/src/pages/DocPage0.vue b/src/pages/DocPage0.vue
+index cb8bde9..64a7b65 100644
+--- a/src/pages/DocPage0.vue
++++ b/src/pages/DocPage0.vue
+@@ -67,7 +67,7 @@
+ 
+         <section :id="'getting-started'" class="dp-section">
+           <h1 class="dp-h1">Getting Started</h1>
+-          <p class="dp-p">Exotopia is an open, browser-based platform for virtual settlement on confirmed exoplanets, community-owned NFT minting, and real-world eco-ops field work. The standard Resonance Split is <strong>99 / 0.75 / 0.25</strong> — 99% to creator, 0.75% to the Community Hardware Fund, 0.25% platform maintenance.</p>
++          <p class="dp-p">Exotopia is an open, browser-based platform for virtual settlement on confirmed exoplanets, community-owned NFT minting, and real-world eco-ops field work. The standard Resonance Split for fee-carrying mints is <strong>99 / 0.75 / 0.25</strong> — 99% to creator, 0.75% to the Community Hardware Fund, 0.25% platform maintenance. Settlement deeds are <strong>100 / 0 / 0</strong> and primary minting is free (gas only).</p>
+ 
+           <div :id="'what-is'" class="dp-sub">
+             <h2 class="dp-h2">What is Exotopia?</h2>
+@@ -92,7 +92,7 @@
+ 
+           <div :id="'free-platform'" class="dp-sub">
+             <h2 class="dp-h2">Platform model — 99 / 0.75 / 0.25</h2>
+-            <p class="dp-p">The standard Resonance Split applies to all transactions: <strong>99%</strong> to the creator/artist/worker wallet, <strong>0.75%</strong> to the Community Hardware Fund (WATSAN, mapping, field infrastructure), <strong>0.25%</strong> to platform maintenance. Primary minting is free (network gas only). Special mintings and airdrop events may use different parameters via additional contracts — any custom split requires co-sign approval and is logged on-chain.</p>
++            <p class="dp-p">The standard Resonance Split applies to <em>fee-carrying</em> transactions — $SUNLIGHT recordings and generative compositions: <strong>99%</strong> to the creator/artist/worker wallet, <strong>0.75%</strong> to the Community Hardware Fund (WATSAN, mapping, field infrastructure), <strong>0.25%</strong> to platform maintenance. Exoloc settlement deeds use a different allocation — <strong>100 / 0 / 0</strong>, no platform cut. Primary settlement minting is free (network gas only), so on that path there is no fee to divide at all. None of these figures is a yield, a revenue share, or a claim on future platform revenue. Special mintings and airdrop events may use different parameters via additional contracts — any custom split requires co-sign approval and is logged on-chain.</p>
+             <div class="dp-callout">
+               <strong>Fee isolation rule:</strong> Gas costs are always displayed separately and never combined with creator payouts. The resonance split (99 / 0.75 / 0.25) is computed independently of gas.
+             </div>
+@@ -272,7 +272,7 @@
+ 
+         <section :id="'chains-section'" class="dp-section">
+           <h1 class="dp-h1">Networks</h1>
+-          <p class="dp-p">Two EVM testnet chains are active. Mainnet addresses are TBD. Standard Resonance Split: <strong>99 / 0.75 / 0.25</strong> on all chains.</p>
++          <p class="dp-p">Two EVM testnet chains are active. Mainnet addresses are TBD. Standard Resonance Split for fee-carrying mints: <strong>99 / 0.75 / 0.25</strong> on all chains; settlement deeds 100 / 0 / 0.</p>
+ 
+           <div :id="'polygon'" class="dp-sub">
+             <h2 class="dp-h2">Polygon Amoy Testnet</h2>
+@@ -761,7 +761,7 @@ const KEY_TERMS = [
+   { id: 11,  term: 'L5 SYZYGY',     short: 'Trophic level 5 — at a moon–planet Lagrange equilibrium point.' },
+   { id: 24,  term: 'Exolocation',   short: 'Permanent on-chain address anchoring a settlement to a specific location on an exoplanet.' },
+   { id: 29,  term: 'Stone Circle',  short: 'Cultural landmark at the centre of each settlement. Marks cardinal directions and carries the intention statement.' },
+-  { id: 31,  term: 'Resonance Split', short: '99 / 0.75 / 0.25 — 100% to creator. Platform is free and self-optimising.' },
++  { id: 31,  term: 'Resonance Split', short: '99 / 0.75 / 0.25 on fee-carrying mints; 100 / 0 / 0 on settlement deeds. Primary minting is free — gas only.' },
+   { id: 40,  term: 'PON INK',       short: 'Primary operations portal for the SCD Hub — records every action on-chain.' },
+   { id: 41,  term: 'SCD Hub',       short: 'Sustainable Community Development Hub — US non-profit building digital infrastructure for community resilience.' },
+   { id: 42,  term: 'E8 Coxeter Lattice', short: 'Mathematical basis for the wormhole conduit network transit routing geometry.' },
+diff --git a/src/pages/DocsPage.vue b/src/pages/DocsPage.vue
+index b36cd76..b14e281 100644
+--- a/src/pages/DocsPage.vue
++++ b/src/pages/DocsPage.vue
+@@ -67,7 +67,7 @@
+ 
+         <section :id="'getting-started'" class="dp-section">
+           <h1 class="dp-h1">Getting Started</h1>
+-          <p class="dp-p">Exotopia is an open, browser-based platform for virtual settlement on confirmed exoplanets, community-owned NFT minting, and real-world eco-ops field work. The standard Resonance Split is <strong>99 / 0.75 / 0.25</strong> — 99% to creator, 0.75% to the Community Hardware Fund, 0.25% platform maintenance.</p>
++          <p class="dp-p">Exotopia is an open, browser-based platform for virtual settlement on confirmed exoplanets, community-owned NFT minting, and real-world eco-ops field work. The standard Resonance Split for fee-carrying mints is <strong>99 / 0.75 / 0.25</strong> — 99% to creator, 0.75% to the Community Hardware Fund, 0.25% platform maintenance. Settlement deeds are <strong>100 / 0 / 0</strong> and primary minting is free (gas only).</p>
+ 
+           <div :id="'what-is'" class="dp-sub">
+             <h2 class="dp-h2">What is Exotopia?</h2>
+@@ -92,7 +92,7 @@
+ 
+           <div :id="'free-platform'" class="dp-sub">
+             <h2 class="dp-h2">Platform model — 99 / 0.75 / 0.25</h2>
+-            <p class="dp-p">The standard Resonance Split applies to all transactions: <strong>99%</strong> to the creator/artist/worker wallet, <strong>0.75%</strong> to the Community Hardware Fund (WATSAN, mapping, field infrastructure), <strong>0.25%</strong> to platform maintenance. Primary minting is free (network gas only). Special mintings and airdrop events may use different parameters via additional contracts — any custom split requires co-sign approval and is logged on-chain.</p>
++            <p class="dp-p">The standard Resonance Split applies to <em>fee-carrying</em> transactions — $SUNLIGHT recordings and generative compositions: <strong>99%</strong> to the creator/artist/worker wallet, <strong>0.75%</strong> to the Community Hardware Fund (WATSAN, mapping, field infrastructure), <strong>0.25%</strong> to platform maintenance. Exoloc settlement deeds use a different allocation — <strong>100 / 0 / 0</strong>, no platform cut. Primary settlement minting is free (network gas only), so on that path there is no fee to divide at all. None of these figures is a yield, a revenue share, or a claim on future platform revenue. Special mintings and airdrop events may use different parameters via additional contracts — any custom split requires co-sign approval and is logged on-chain.</p>
+             <div class="dp-callout">
+               <strong>Fee isolation rule:</strong> Gas costs are always displayed separately and never combined with creator payouts. The resonance split (99 / 0.75 / 0.25) is computed independently of gas.
+             </div>
+@@ -193,7 +193,7 @@
+ 
+         <section :id="'chains-section'" class="dp-section">
+           <h1 class="dp-h1">Networks</h1>
+-          <p class="dp-p">Two EVM testnet chains are active. Mainnet addresses are TBD. Standard Resonance Split: <strong>99 / 0.75 / 0.25</strong> on all chains.</p>
++          <p class="dp-p">Two EVM testnet chains are active. Mainnet addresses are TBD. Standard Resonance Split for fee-carrying mints: <strong>99 / 0.75 / 0.25</strong> on all chains; settlement deeds 100 / 0 / 0.</p>
+ 
+           <div :id="'polygon'" class="dp-sub">
+             <h2 class="dp-h2">Polygon Amoy Testnet</h2>
+diff --git a/src/pages/GlossaryPage.vue b/src/pages/GlossaryPage.vue
+index 54cb964..070ba82 100644
+--- a/src/pages/GlossaryPage.vue
++++ b/src/pages/GlossaryPage.vue
+@@ -332,8 +332,8 @@ const TERMS: GlossTerm[] = [
+   },
+   {
+     id: 31, category: 'settlement', term: 'Resonance Split',
+-    short: '80 / 15 / 5 — the fee allocation applied to all PON INK transactions.',
+-    body: 'Always displayed before confirmation; never combined in a single expression with community payout amounts (fee isolation rule). Three independent paths: 80% → artist/participant wallet; 10% → Community Fund (WATSAN / mapping infrastructure); 0% → platform maintenance.',
++    short: 'The allocation applied when a transaction carries a fee. It is not a yield or a revenue share.',
++    body: 'Two allocations, depending on what is being minted. $SUNLIGHT recordings and generative compositions use 99 / 0.75 / 0.25 — 99% to the creator/artist/worker wallet, 0.75% to the Community Hardware Fund (WATSAN / mapping infrastructure), 0.25% to platform maintenance. Exoloc settlement deeds use 100 / 0 / 0 — the platform takes no cut. Primary settlement minting is free: you pay network gas and nothing else, so on that path there is no fee to divide. Paths are computed independently and always displayed before confirmation, never combined into a single figure with gas costs or community payout amounts (fee isolation rule). A settlement record carries no claim on future platform revenue and no resale royalty — seller_fee_basis_points is 0 and Exotopia does not operate a secondary market.',
+     related: [40],
+   },
+ 
+diff --git a/src/pages/MintPage.vue b/src/pages/MintPage.vue
+index e94d49c..a07f55a 100644
+--- a/src/pages/MintPage.vue
++++ b/src/pages/MintPage.vue
+@@ -1368,6 +1368,7 @@ import {
+ } from 'src/lib/evm/mint-evm'
+ import WalletOnboardingGuide from 'src/components/WalletOnboardingGuide.vue'
+ import { useSettlements, surfaceKey, clusterKey } from 'src/lib/settlements'
++import { SETTLEMENT_SPLIT } from 'src/lib/resonance-split'
+ 
+ const { hasSettlement, addSettlement } = useSettlements()
+ 
+@@ -1830,7 +1831,7 @@ function buildExolocParams(): ExolocParams {
+     moon_index:       exo.value.moonIndex > 1 ? exo.value.moonIndex : undefined,
+     lagrange_point:   exo.value.lagrangePoint || undefined,
+     interface_zone:   exo.value.interfaceZone || undefined,
+-    resonance_split:  { creator: 1.00, community_fund: 0, platform: 0 },
++    resonance_split:  { ...SETTLEMENT_SPLIT },
+   }
+ }
+ 
+-- 
+2.43.0
+

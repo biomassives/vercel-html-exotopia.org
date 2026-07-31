@@ -1,0 +1,416 @@
+From 7c5b447f62bf62a40480e8c94badaaf1120e7c00 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 31 Jul 2026 22:33:27 +0000
+Subject: [PATCH 2/2] fix(build): stub community-nodes store and pages; add
+ SPEC_COMMUNITY_NODES.md
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The community-nodes work in the tree referenced three files that were never
+created, so `quasar build` failed:
+
+  src/stores/community-nodes    (imported by GalaxyPage.vue, SurfaceViewPage.vue)
+  src/pages/CommunityNodesPage.vue  (imported by routes.ts)
+  src/pages/AdminNodesPage.vue      (imported by routes.ts)
+
+Adds deliberate stubs so the build passes, and the spec DOCS.md already links to.
+
+fetchGalleryNodes() returns an empty list rather than querying the
+`community_nodes` table, which has no migration and does not exist. That
+reproduces the pre-feature behaviour exactly — systems show no galleries — so
+nothing renders differently. The signature matches both call sites and is the
+one contract a real implementation must keep.
+
+SPEC_COMMUNITY_NODES.md documents the table, the mapping to OrbitalGalleryEntry,
+node_type extensibility without migrations, and the access-control posture
+inherited from migration 007 (clients never assert their own trust decisions;
+moderation goes through a SECURITY DEFINER RPC with search_path pinned). It
+records five open questions for review — the blocking one being where the admin
+role comes from, since /admin/community-nodes is not access-controlled today.
+
+Note: DOCS.md also links SETTLEMENT_ADDRESS_API.md and
+blog-settlement-address-api.md, which likewise do not exist. Not addressed here.
+
+Verified: `quasar build` exits 0; both stub routes render; vue-tsc drops from
+342 to 338 errors (the two missing-module errors in routes.ts are resolved) with
+zero errors in the new files; eslint clean.
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01E7Rw45eHMC4itUB54n78QF
+---
+ SPEC_COMMUNITY_NODES.md          | 186 +++++++++++++++++++++++++++++++
+ src/pages/AdminNodesPage.vue     |  54 +++++++++
+ src/pages/CommunityNodesPage.vue |  55 +++++++++
+ src/stores/community-nodes.ts    |  43 +++++++
+ 4 files changed, 338 insertions(+)
+ create mode 100644 SPEC_COMMUNITY_NODES.md
+ create mode 100644 src/pages/AdminNodesPage.vue
+ create mode 100644 src/pages/CommunityNodesPage.vue
+ create mode 100644 src/stores/community-nodes.ts
+
+diff --git a/SPEC_COMMUNITY_NODES.md b/SPEC_COMMUNITY_NODES.md
+new file mode 100644
+index 0000000..c7b538d
+--- /dev/null
++++ b/SPEC_COMMUNITY_NODES.md
+@@ -0,0 +1,186 @@
++# Exotopia Community Nodes — Specification
++
++**Version:** 0.1 (draft)
++**Date:** 2026-07-31
++**Status:** Specced — not implemented; stubs in tree
++
++---
++
++## Purpose
++
++Community nodes are the member-authored entries that populate a star system's
++orbital gallery: business listings and locations, creative pages, and node types
++not yet defined. They are the first thing to fill the `OrbitalGalleryEntry`
++pipeline, which has been rendered by `DefenderNav.vue` but never fed by real data.
++
++Three audiences:
++- **Members** — publish a listing or creative page tied to a place in the map
++- **Visitors** — see what exists around a system when they arrive
++- **Operators** — moderate submissions before they appear publicly
++
++---
++
++## Current state (what exists in the tree today)
++
++This spec was written against a set of deliberate stubs, added so the app builds
++while the feature is designed. Three call sites already exist and must keep working:
++
++| File | Expects |
++|---|---|
++| `src/stores/community-nodes.ts` | **stub** — `useCommunityNodesStore()` with `fetchGalleryNodes(hostname): Promise<OrbitalGalleryEntry[]>`, currently returns `[]` |
++| `src/pages/GalaxyPage.vue:1526` | `fetchGalleryNodes(sys.hostname)`, guards against a slow fetch resolving after navigation |
++| `src/pages/SurfaceViewPage.vue:2906` | `fetchGalleryNodes(system?.hostname ?? null)` |
++| `src/pages/CommunityNodesPage.vue` | **stub** — member-facing `/my-listings` |
++| `src/pages/AdminNodesPage.vue` | **stub** — `/admin/community-nodes` moderation |
++| `src/stores/member.ts:180` | already exports `community_nodes` rows filtered by `owner_id` — **the table does not exist yet**, so this export row is currently dead |
++
++The stubs return empty rather than querying a missing table, which reproduces the
++pre-feature behaviour exactly: systems show no galleries, nothing renders differently.
++
++**Also dangling:** `DOCS.md` references `SETTLEMENT_ADDRESS_API.md` and
++`blog-settlement-address-api.md`, neither of which exists. Unrelated to this spec,
++but they are broken links in the same doc table.
++
++---
++
++## Data model
++
++### `community_nodes`
++
++```sql
++create table public.community_nodes (
++  id             uuid primary key default gen_random_uuid(),
++  owner_id       uuid not null references auth.users(id) on delete cascade,
++  node_type      text not null,              -- see extensibility below
++  name           text not null,
++  description    text,
++  hostname       text not null,              -- host star; the gallery query key
++  status         text not null default 'draft',
++                 -- draft | submitted | approved | rejected | withdrawn
++  -- Orbit placement (maps to GalleryOrbitAnchor)
++  anchor_type    text not null default 'free',   -- free | lagrange | circumbinary
++  radius_au      numeric,
++  initial_angle_deg numeric,
++  anchor_planet  text,                       -- lagrange only
++  lagrange_point text,                        -- 'L4' | 'L5'
++  -- Presentation
++  gallery_type   text not null default 'community',  -- GalleryType
++  ownership_model text not null default 'solo',      -- GalleryOwnershipModel
++  access_level   text not null default 'public',     -- GalleryAccessLevel
++  pon_ink_url    text,
++  created_at     timestamptz not null default now(),
++  updated_at     timestamptz not null default now()
++);
++
++create index on public.community_nodes (hostname) where status = 'approved';
++create index on public.community_nodes (owner_id);
++```
++
++`hostname` is the query key because both call sites fetch by host star. It must be
++a bare NASA-archive designation — apply the same `assertBareField` discipline used
++in `src/lib/settlements.ts` so a hostname can never smuggle a delimiter.
++
++### Mapping to `OrbitalGalleryEntry`
++
++The store maps rows to the existing interface in `src/lib/defender-nav.types.ts`.
++Do **not** widen that interface for storage concerns — it is a render contract.
++
++| `OrbitalGalleryEntry` field | Source |
++|---|---|
++| `id`, `name` | column |
++| `galleryType`, `ownershipModel`, `accessLevel` | column |
++| `orbitAnchor` | assembled from `anchor_type` + the anchor columns into the discriminated union |
++| `radiusAU` | `radius_au`, or derived for `lagrange` from the anchor planet's orbit |
++| `currentAngleDeg` | **not stored** — initialised from `initial_angle_deg`, then updated per frame by the parent |
++| `meetingState` | `'idle'` until live meetings exist (see Deferred) |
++| `presenceCount` | `0` until presence exists (see Deferred) |
++| `scheduledEvent` | null until events exist |
++| `skyAzimuth` / `skyAltitude` | set by `SurfaceViewPage` when projected into `skyObjects`, not by the store |
++
++---
++
++## `node_type` extensibility
++
++`node_type` is a free-text column validated against a catalogue in code, not a
++Postgres enum — adding a type must not require a migration.
++
++- Catalogue lives in `src/data/community-node-types.ts` as
++  `Record<string, { label, description, galleryTypeDefault, fields }>`.
++- Unknown `node_type` values read from the DB render with a generic presentation
++  rather than throwing — a client on an older bundle must not break when a newer
++  type appears.
++- Validation on write is against the catalogue; validation on read is permissive.
++
++Starter types: `business_listing`, `location`, `creative_page`.
++
++---
++
++## Access control
++
++The reward-ledger hardening in `supabase/migrations/007_reward_integrity.sql`
++established the posture this feature must follow: **clients do not get to assert
++their own trust decisions.**
++
++- RLS on: owner can `select`/`insert`/`update` their own rows in `draft`/`submitted`.
++- Public `select` restricted to `status = 'approved'` only.
++- **Clients may never set `status` to `approved`.** Moderation transitions go
++  through a `SECURITY DEFINER` RPC with `search_path` pinned to `public, pg_temp`,
++  matching the pattern in migration 007.
++- `/admin/community-nodes` is **not** access-controlled by the router today. The
++  admin page must gate on a server-checked role; an unlisted route is not a control.
++  Decide the role source (a `profiles.role` column, or a dedicated `admins` table)
++  before building the page — this is the main open question below.
++
++---
++
++## Privacy and export
++
++`src/stores/member.ts` already lists `community_nodes` in the per-member data
++export, filtered by `owner_id`. Once the table exists that row starts returning
++data with no further change — confirm the export includes only the owner's rows and
++no moderation metadata about other members.
++
++Self-host / export story: a member's nodes should be exportable as a portable JSON
++document that a self-hosted instance can import, so a listing is not locked to this
++deployment. Define the envelope alongside the first implementation, not after.
++
++---
++
++## Deferred (explicitly not in a first pass)
++
++These fields exist on `OrbitalGalleryEntry` and must be populated with inert
++defaults rather than designed now:
++
++- **Live meetings** (`meetingState` beyond `'idle'`) — needs a realtime channel
++- **Presence** (`presenceCount`) — needs the same
++- **Scheduled events** (`scheduledEvent`) — needs a scheduling model and timezone story
++- **Ticketed access** (`accessLevel: 'ticket'`) — do not build; it implies payments,
++  which this repo has deliberately kept out (see `RISK_REDUCTION_RECOMMENDATIONS.md`
++  and the Exchange Depot removal). Leave the enum value unused.
++
++---
++
++## Open questions for review
++
++1. **Admin role source** — where does "is this user a moderator" come from? Nothing
++   in the schema answers this today. Blocks `AdminNodesPage.vue`.
++2. **Placement conflicts** — two nodes can claim the same radius/angle around one
++   host. Fail on write, or let them overlap visually?
++3. **Per-host cap** — should one system limit how many approved nodes it shows,
++   for both render cost and squatting?
++4. **Moderation SLA** — does a `submitted` node auto-expire if unreviewed?
++5. **Hostname validity** — must `hostname` resolve to a known system in the galaxy
++   dataset at write time, or can a node point at a not-yet-catalogued host?
++
++---
++
++## Implementation checklist
++
++1. Migration: table, indexes, RLS policies, moderation RPC (`search_path` pinned).
++2. `src/data/community-node-types.ts` — type catalogue.
++3. Replace the body of `fetchGalleryNodes()` in `src/stores/community-nodes.ts`;
++   keep the signature — both call sites depend on it.
++4. Build out `CommunityNodesPage.vue` (owner CRUD) and `AdminNodesPage.vue`
++   (moderation, behind the role gate from Q1).
++5. Verify the `member.ts` export row now returns owner-scoped rows.
++6. Add `SPEC_COMMUNITY_NODES.md` status → Active in `DOCS.md` once shipped.
+diff --git a/src/pages/AdminNodesPage.vue b/src/pages/AdminNodesPage.vue
+new file mode 100644
+index 0000000..93a1f4a
+--- /dev/null
++++ b/src/pages/AdminNodesPage.vue
+@@ -0,0 +1,54 @@
++<template>
++  <q-page class="cn-page">
++    <div class="cn-wrap">
++
++      <div class="cn-header">
++        <div class="cn-badge">ADMIN · COMMUNITY NODES</div>
++        <h1 class="cn-title">Community Node Review</h1>
++        <p class="cn-sub">
++          Moderation surface for submitted community nodes — listings, locations, and
++          creative pages awaiting review before they appear in a system's orbital gallery.
++        </p>
++      </div>
++
++      <div class="cn-notice">
++        <strong>Not built yet.</strong>
++        This page is a placeholder so the admin route resolves. There is no
++        <code>community_nodes</code> table yet, so there is nothing to moderate.
++      </div>
++
++      <p class="cn-p cn-p--dim">
++        When the feature is implemented, this page needs its access rules settled before it
++        ships: the route itself is not access-controlled today, so a real implementation must
++        gate reads and any moderation action server-side rather than relying on the route
++        being unlisted.
++      </p>
++
++    </div>
++  </q-page>
++</template>
++
++<script setup lang="ts">
++// Intentionally empty: placeholder page, no state to manage yet.
++// See src/stores/community-nodes.ts for the matching stub store.
++</script>
++
++<style scoped>
++.cn-page { background: #020408; min-height: 100vh; padding: 36px 24px 60px; font-family: 'Courier New', monospace; color: rgba(200,225,245,0.90); }
++.cn-wrap { max-width: 760px; margin: 0 auto; }
++
++.cn-badge { font-size: 8.5px; letter-spacing: 0.22em; color: rgba(220,175,90,0.65); margin-bottom: 8px; }
++.cn-title { font-size: 22px; font-weight: 300; color: rgba(215,238,255,0.94); margin: 0 0 12px; }
++.cn-sub   { font-size: 11.5px; line-height: 1.7; color: rgba(160,195,220,0.82); margin-bottom: 20px; }
++
++.cn-notice {
++  font-size: 10px; line-height: 1.6; color: rgba(255,195,120,0.80);
++  background: rgba(255,150,40,0.08); border: 1px solid rgba(255,150,40,0.22);
++  border-radius: 6px; padding: 10px 14px; margin-bottom: 20px;
++}
++.cn-notice strong { color: rgba(255,205,140,0.95); }
++.cn-notice code, .cn-p code { color: rgba(0,210,255,0.80); }
++
++.cn-p { font-size: 11px; line-height: 1.7; margin-bottom: 12px; }
++.cn-p--dim { color: rgba(100,140,170,0.70); }
++</style>
+diff --git a/src/pages/CommunityNodesPage.vue b/src/pages/CommunityNodesPage.vue
+new file mode 100644
+index 0000000..2fe1b3c
+--- /dev/null
++++ b/src/pages/CommunityNodesPage.vue
+@@ -0,0 +1,55 @@
++<template>
++  <q-page class="cn-page">
++    <div class="cn-wrap">
++
++      <div class="cn-header">
++        <div class="cn-badge">COMMUNITY NODES</div>
++        <h1 class="cn-title">My Listings</h1>
++        <p class="cn-sub">
++          Business listings, locations, and creative pages — the node types that will populate
++          the orbital gallery pipeline around a star system.
++        </p>
++      </div>
++
++      <div class="cn-notice">
++        <strong>Not built yet.</strong>
++        This page is a placeholder so the route resolves. The feature needs its
++        <code>community_nodes</code> table (no migration exists yet) and the
++        <code>SPEC_COMMUNITY_NODES.md</code> spec referenced from <code>DOCS.md</code>
++        before there is anything real to list here.
++      </div>
++
++      <p class="cn-p cn-p--dim">
++        Nothing is stored or submitted from this page today. Until the backing table exists,
++        <code>fetchGalleryNodes()</code> returns an empty list, so systems show no galleries —
++        the same as before the feature was started.
++      </p>
++
++    </div>
++  </q-page>
++</template>
++
++<script setup lang="ts">
++// Intentionally empty: placeholder page, no state to manage yet.
++// See src/stores/community-nodes.ts for the matching stub store.
++</script>
++
++<style scoped>
++.cn-page { background: #020408; min-height: 100vh; padding: 36px 24px 60px; font-family: 'Courier New', monospace; color: rgba(200,225,245,0.90); }
++.cn-wrap { max-width: 760px; margin: 0 auto; }
++
++.cn-badge { font-size: 8.5px; letter-spacing: 0.22em; color: rgba(220,175,90,0.65); margin-bottom: 8px; }
++.cn-title { font-size: 22px; font-weight: 300; color: rgba(215,238,255,0.94); margin: 0 0 12px; }
++.cn-sub   { font-size: 11.5px; line-height: 1.7; color: rgba(160,195,220,0.82); margin-bottom: 20px; }
++
++.cn-notice {
++  font-size: 10px; line-height: 1.6; color: rgba(255,195,120,0.80);
++  background: rgba(255,150,40,0.08); border: 1px solid rgba(255,150,40,0.22);
++  border-radius: 6px; padding: 10px 14px; margin-bottom: 20px;
++}
++.cn-notice strong { color: rgba(255,205,140,0.95); }
++.cn-notice code, .cn-p code { color: rgba(0,210,255,0.80); }
++
++.cn-p { font-size: 11px; line-height: 1.7; margin-bottom: 12px; }
++.cn-p--dim { color: rgba(100,140,170,0.70); }
++</style>
+diff --git a/src/stores/community-nodes.ts b/src/stores/community-nodes.ts
+new file mode 100644
+index 0000000..81f7b44
+--- /dev/null
++++ b/src/stores/community-nodes.ts
+@@ -0,0 +1,43 @@
++/**
++ * src/stores/community-nodes.ts
++ *
++ * STUB — placeholder for the community-nodes feature (business listings,
++ * creative pages, and future node types) described in DOCS.md.
++ *
++ * This exists so the routes and the two callers of fetchGalleryNodes() resolve
++ * and the app builds. The real implementation is not written yet:
++ *
++ *   - there is no `community_nodes` migration in supabase/migrations/, so the
++ *     table referenced by src/stores/member.ts:180 does not exist server-side
++ *   - SPEC_COMMUNITY_NODES.md, referenced from DOCS.md, has not been added
++ *
++ * fetchGalleryNodes() therefore returns an empty list rather than querying a
++ * table that isn't there — which is exactly the behaviour the orbital-gallery
++ * pipeline had before this feature was started. Callers already treat an empty
++ * array as "no galleries in this system", so nothing renders differently.
++ *
++ * When implementing for real: add the migration, then replace the body of
++ * fetchGalleryNodes() with a query filtered by hostname, mapping each row to an
++ * OrbitalGalleryEntry (see src/lib/defender-nav.types.ts).
++ */
++
++import { defineStore } from 'pinia'
++import { ref } from 'vue'
++import type { OrbitalGalleryEntry } from 'src/lib/defender-nav.types'
++
++export const useCommunityNodesStore = defineStore('community-nodes', () => {
++  const loading = ref(false)
++
++  /**
++   * Orbital gallery nodes for a star system.
++   *
++   * @param hostname  Host star name, or null when the system is unresolved.
++   * @returns         Always [] until the backing table and spec exist.
++   */
++  async function fetchGalleryNodes(hostname: string | null): Promise<OrbitalGalleryEntry[]> {
++    void hostname
++    return []
++  }
++
++  return { loading, fetchGalleryNodes }
++})
+-- 
+2.43.0
+

@@ -227,6 +227,21 @@ export function buildMoonRefBody(
 }
 
 // ── Address string builders ───────────────────────────────────────────────────
+//
+// Same structural guard as settlements.ts::moonKey — parentPlanet/moonName
+// must be bare designations, never another settlement's colon-delimited key,
+// so a moon can't be built with a moon (or any other settlement) as its
+// parent. Checked here rather than as a shared cross-module helper since this
+// file has three call sites and settlements.ts has its own single one.
+
+function assertBareName(field: 'parentPlanet' | 'moonName', value: string, fn: string): void {
+  if (value.includes(':')) {
+    throw new Error(
+      `${fn}: ${field} must be a bare designation, not a settlement key (got "${value}"). ` +
+      `Moons can only orbit planets — nesting under another settlement is not supported.`
+    )
+  }
+}
 
 /** Build the exolocation address string for a moon surface settlement. */
 export function moonSurfaceAddress(
@@ -235,6 +250,8 @@ export function moonSurfaceAddress(
   lat:          number,
   lng:          number,
 ): string {
+  assertBareName('parentPlanet', parentPlanet, 'moonSurfaceAddress')
+  assertBareName('moonName', moonName, 'moonSurfaceAddress')
   return `exo-moon-surface-v1:${parentPlanet}:${moonName}:${lat.toFixed(4)},${lng.toFixed(4)}`
 }
 
@@ -244,6 +261,8 @@ export function moonLagrangeAddress(
   moonName:     string,
   point:        LagrangePoint,
 ): string {
+  assertBareName('parentPlanet', parentPlanet, 'moonLagrangeAddress')
+  assertBareName('moonName', moonName, 'moonLagrangeAddress')
   return `exo-moon-lagrange-v1:${parentPlanet}:${moonName}:${point}`
 }
 
@@ -253,6 +272,8 @@ export function moonInterfaceAddress(
   moonName:     string,
   zone:         InterfaceZoneType,
 ): string {
+  assertBareName('parentPlanet', parentPlanet, 'moonInterfaceAddress')
+  assertBareName('moonName', moonName, 'moonInterfaceAddress')
   return `exo-moon-interface-v1:${parentPlanet}:${moonName}:${zone}`
 }
 

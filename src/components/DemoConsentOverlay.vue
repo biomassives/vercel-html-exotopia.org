@@ -29,7 +29,7 @@
 
         <div class="dco-repo-links">
           <a :href="REPO_URL" target="_blank" rel="noopener">View source on GitHub</a>
-          <a :href="`${REPO_URL}/issues/new`" target="_blank" rel="noopener">File an issue</a>
+          <a :href="`${REPO_URL}/issues`" target="_blank" rel="noopener">File an issue</a>
           <a :href="`${REPO_URL}/pulls`" target="_blank" rel="noopener">Open pull requests</a>
         </div>
 
@@ -62,7 +62,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 
 // Bump this if Terms/Privacy/Guidelines change materially — re-prompts everyone.
 const CONSENT_VERSION = '2026-07-22-v3'
@@ -70,16 +71,30 @@ const CONSENT_KEY = 'exo_demo_consent'
 
 const REPO_URL = 'https://github.com/biomassives/vercel-html-exotopia.org'
 
+// The modal asks you to confirm you've read the Terms/Privacy/Guidelines —
+// it can't also block the page that lets you actually read them, or that
+// becomes an unreadable circular gate. Suppressed on those three routes
+// specifically; still prompts on every other route until consent is given,
+// via the route watcher below rather than a one-time onMounted check (this
+// component mounts once for the whole SPA session, so a plain onMounted
+// check would permanently skip the prompt for anyone who happened to land
+// on /terms first, even after they navigate elsewhere).
+const EXEMPT_PATHS = ['/terms', '/privacy', '/community-guidelines']
+
+const route = useRoute()
 const visible = ref(false)
 const agreedTerms      = ref(false)
 const agreedProcessing = ref(false)
 
-onMounted(() => {
+function alreadyConsented(): boolean {
   try {
-    if (localStorage.getItem(CONSENT_KEY) === CONSENT_VERSION) return
-  } catch { /* private mode — fall through and show it every time */ }
-  visible.value = true
-})
+    return localStorage.getItem(CONSENT_KEY) === CONSENT_VERSION
+  } catch { return false }   // private mode — fall through and prompt every time
+}
+
+watch(() => route.path, (path) => {
+  visible.value = !EXEMPT_PATHS.includes(path) && !alreadyConsented()
+}, { immediate: true })
 
 // Logged the same way as MintPage.vue's mint-disclaimer acceptance — a
 // per-action, timestamped record beats "by using this site you agree" in a

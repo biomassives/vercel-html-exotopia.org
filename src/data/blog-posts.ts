@@ -427,6 +427,18 @@ export const BLOG_POSTS: BlogPostMeta[] = [
       'A product-facing tour (not a legal/compliance writeup) of the platform after the recent risk-reduction and Networks of Trust passes: the Settlement Registry at /pon-ink (identity records, no pricing, the former mock marketplace fully removed), the new Wisdom from Elders / Knowledge Keeper records feature at /knowledge-keepers with its graded consent tiers, the PFAS/PFOA citizen science page\'s standing disclaimer and field-safety waiver, the new self-service Account & Privacy page at /account (data export, deletion requests), the six-step onboarding flow with its self-attested age bracket, and the unbundled two-checkbox consent modal every visitor sees first. Includes a five-slide screenshot carousel across desktop and mobile.',
     editorialNote: 'Screenshots show the signed-out/empty states for features that require authentication (Knowledge Keeper submission, Account export/deletion) — this environment has no way to complete the magic-link sign-in flow for a live screenshot of the authenticated views.',
   },
+  {
+    slug:     'settlement-address-api',
+    title:    'The Settlement URL Is an Address, Not Yet an API',
+    subtitle: 'SPEC_EXOLOC_ADDRESS.md documents a public API for looking up a settlement. We went looking for it. Here\'s the actual dependency chain, and the gap.',
+    date:     'July 2026',
+    audience: ['dev', 'ecosystem'],
+    series:   'protocol',
+    status:   'public-draft',
+    description:
+      'Traces what actually happens when a settlement address gets "placed" — from the NASA Exoplanet Archive reference data, through the pure string-building functions in settlements.ts/moon-settlement.ts, into a client-only localStorage record, and out through three independent chain-specific metadata writers (EVM, Solana, Algorand) to a pon.ink mint. Confirms two real gaps found while writing this: the `GET /api/v1/exoloc` endpoint named in SPEC_EXOLOC_ADDRESS.md\'s header does not exist anywhere in the codebase (the /api folder holds one static gallery JSON file), and there is no settlements table in any Supabase migration — the blockchain itself is the only durable, shared record once a settlement is minted. Frames this as the deliberate "tool, not custodian" architecture already stated in compliance/INDEX.md rather than an oversight, and lays out what a read-only lookup API versus a write-side address-reservation ledger would each actually require.',
+    editorialNote: 'Companion to the new SETTLEMENT_ADDRESS_API.md reference doc. Describes current implementation status, not a roadmap commitment — the read/write API gap is an open design question, not yet scheduled work.',
+  },
 ]
 
 export function getRelatedPosts (post: BlogPostMeta, limit = 3): BlogPostMeta[] {

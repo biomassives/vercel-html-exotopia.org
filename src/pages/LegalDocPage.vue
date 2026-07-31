@@ -17,7 +17,7 @@
 
       <div class="ldg-repo-links">
         <a :href="REPO_URL" target="_blank" rel="noopener">View source on GitHub</a>
-        <a :href="`${REPO_URL}/issues/new`" target="_blank" rel="noopener">File an issue</a>
+        <a :href="`${REPO_URL}/issues`" target="_blank" rel="noopener">File an issue</a>
         <a :href="`${REPO_URL}/pulls`" target="_blank" rel="noopener">Open pull requests</a>
       </div>
     </div>

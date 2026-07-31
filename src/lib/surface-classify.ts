@@ -43,6 +43,9 @@ async function loadTopoParams(): Promise<TopoParams | null> {
 
 export const NO_GROUND_SURFACE_TYPES: ReadonlySet<SurfaceType> = new Set([
   'gas_giant', 'hot_gas_giant', 'magma_ocean', 'lava',
+  // hycean = deep H2O ocean under an H2-rich envelope (generate-topo-params.py) —
+  // no solid crust to walk on, same category as the gas giants above.
+  'hycean',
 ])
 
 /** Looks up a NASA-catalogued planet's surface_type. Returns null if unresolved (bodyless/malformed address). */

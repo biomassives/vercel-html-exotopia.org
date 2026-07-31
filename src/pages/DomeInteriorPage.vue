@@ -142,6 +142,8 @@ import {
   ZONE_POSITIONS,
   autoPosition,
   buildItemMesh,
+  STARTER_LIGHT_PRESET,
+  consumeStarterReveal,
   type ItemAcquisitionType,
   type SettlementItem,
 } from 'src/lib/settlement-items'
@@ -197,6 +199,8 @@ let clock:    THREE.Clock
 
 // Scene item meshes — keyed by item id
 const itemMeshes = new Map<string, THREE.Group>()
+// Starter-lantern reveal: item id -> tick() time the reveal animation started
+const revealStarts = new Map<string, number>()
 
 // Raycaster for hover
 let raycaster:  THREE.Raycaster
@@ -408,6 +412,10 @@ function buildItems() {
   for (const g of itemMeshes.values()) scene?.remove(g)
   itemMeshes.clear()
   itemMeshArr = []
+  revealStarts.clear()
+
+  // Founding reveal plays once per settlement, the first time its dome loads.
+  const playReveal = consumeStarterReveal(settlementKey.value)
 
   // Zone slot counters for auto-positioning
   const zoneCount: Record<string, number> = {}
@@ -420,6 +428,10 @@ function buildItems() {
     const group = buildItemMesh(item.meshPreset, item.color)
     group.position.set(pos.x, 0, pos.z)
     group.name = `item:${item.id}`
+    if (item.meshPreset === STARTER_LIGHT_PRESET && playReveal) {
+      group.scale.setScalar(0.001)
+      revealStarts.set(item.id, clock.getElapsedTime())
+    }
     scene!.add(group)
     itemMeshes.set(item.id, group)
 
@@ -428,6 +440,30 @@ function buildItems() {
       if ((obj as THREE.Mesh).isMesh) itemMeshArr.push({ mesh: obj, id: item.id })
     })
   }
+}
+
+const REVEAL_DURATION = 2.4
+
+/** Ease-out cube + hue sweep while a starter lantern's founding reveal plays. */
+function tickStarterReveal(id: string, group: THREE.Group, item: SettlementItem, t: number) {
+  const start = revealStarts.get(id)
+  if (start === undefined) return
+  const elapsed = t - start
+  const p = Math.min(elapsed / REVEAL_DURATION, 1)
+  const eased = 1 - Math.pow(1 - p, 3)
+  group.scale.setScalar(Math.max(0.001, eased))
+
+  const sweepColor = p < 1
+    ? new THREE.Color().setHSL((p * 1.4) % 1, 0.9, 0.6)
+    : new THREE.Color(item.color)
+  group.traverse(obj => {
+    const mesh = obj as THREE.Mesh
+    const mat  = mesh.isMesh ? (mesh.material as THREE.MeshPhongMaterial | THREE.MeshBasicMaterial) : null
+    if (mat?.color) mat.color.copy(sweepColor)
+    if ((obj as THREE.PointLight).isPointLight) (obj as THREE.PointLight).color.copy(sweepColor)
+  })
+
+  if (p >= 1) revealStarts.delete(id)
 }
 
 // ── Animation loop ─────────────────────────────────────────────────────────────
@@ -459,6 +495,9 @@ function tick() {
     if (item?.meshPreset === 'art-sphere') {
       const orbit = group.children[2]
       if (orbit) orbit.rotation.z = t * 0.4
+    }
+    if (item?.meshPreset === STARTER_LIGHT_PRESET) {
+      tickStarterReveal(id, group, item, t)
     }
   }
 

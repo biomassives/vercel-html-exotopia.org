@@ -68,6 +68,21 @@
         <div class="adm-card__arrow">→</div>
       </div>
 
+      <div class="adm-card" @click="$router.push('/admin/community-nodes')">
+        <div class="adm-card__icon">🏪</div>
+        <div class="adm-card__body">
+          <div class="adm-card__title">Community Nodes — Moderation</div>
+          <div class="adm-card__desc">
+            Business listings, business locations, and creative pages. Publish is
+            self-service (/my-listings); this is the takedown/restore view for
+            abuse response — RLS is_admin() is the real gate, same as elsewhere
+            on this page.
+          </div>
+          <div class="adm-card__meta">business_listing · business_location · creative_page</div>
+        </div>
+        <div class="adm-card__arrow">→</div>
+      </div>
+
     </div>
 
     <div class="adm-env">

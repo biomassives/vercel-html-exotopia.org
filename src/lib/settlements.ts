@@ -19,24 +19,62 @@ export interface SettlementRecord {
 }
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
+//
+// Every settlement key format below uses ':' as its field separator, and
+// every field is ultimately sourced from a route param or query string (see
+// SurfaceViewPage/StationInteriorPage/ClusterSurfacePage/MintPage etc.) — i.e.
+// user-editable. A real designation/slug/label never contains ':', but
+// another settlement's own key always does, so rejecting any ':' in these
+// fields is a structural guard against building one settlement's address out
+// of another settlement's address (e.g. a moon "orbiting" an orbital station,
+// or a surface settlement keyed under a cluster world) — an unrealistic
+// drill-down nesting the UI has no representation for. Same guard as
+// moon-settlement.ts's assertBareName, kept local to each file per call-site
+// count.
+
+function assertBareField(fnName: string, field: string, value: string): void {
+  if (value.includes(':')) {
+    throw new Error(
+      `${fnName}: ${field} must be a bare designation, not a settlement key (got "${value}"). ` +
+      `Nesting one settlement's key inside another is not supported.`
+    )
+  }
+}
 
 /** Canonical key for a NASA exoplanet surface settlement. */
 export function surfaceKey(planetName: string): string {
+  assertBareField('surfaceKey', 'planetName', planetName)
   return `surface:${planetName}`
 }
 
 /** Canonical key for a cluster-world settlement. */
 export function clusterKey(clusterSlug: string, memberId: string, systemName: string, planetLabel: string): string {
+  assertBareField('clusterKey', 'clusterSlug', clusterSlug)
+  assertBareField('clusterKey', 'memberId', memberId)
+  assertBareField('clusterKey', 'systemName', systemName)
+  assertBareField('clusterKey', 'planetLabel', planetLabel)
   return `cluster:${clusterSlug}:${memberId}:${systemName}:${planetLabel}`
 }
 
-/** Canonical key for a moon settlement. */
+/**
+ * Canonical key for a moon settlement.
+ *
+ * planetName must be a bare NASA-archive planet designation (never contains
+ * ':') — this is the structural guard against moon-of-moon nesting. Rejecting
+ * any ':' here means a moon can never be built with another settlement —
+ * moon included — as its parent, by construction, without needing a depth
+ * counter or allowed-transition state machine.
+ */
 export function moonKey(planetName: string, moonIdx: number, coordVariant: string): string {
+  assertBareField('moonKey', 'planetName', planetName)
   return `moon:${planetName}:${moonIdx}:${coordVariant}`
 }
 
 /** Canonical key for a bodyless orbital settlement (stellar/planetary/lunar orbit, or a black-hole zone). */
 export function orbitalKey(coordSystem: string, hostname: string, refName?: string): string {
+  assertBareField('orbitalKey', 'coordSystem', coordSystem)
+  assertBareField('orbitalKey', 'hostname', hostname)
+  if (refName !== undefined) assertBareField('orbitalKey', 'refName', refName)
   return refName ? `${coordSystem}:${hostname}:${refName}` : `${coordSystem}:${hostname}`
 }
 

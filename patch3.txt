@@ -1,0 +1,623 @@
+From 97a771d8506fabe2de7f4c47af31e86debc14684 Mon Sep 17 00:00:00 2001
+From: exotopia <dev@exotopia.org>
+Date: Sat, 25 Jul 2026 01:01:53 +0000
+Subject: [PATCH] chore: repo hygiene, env ignore rules, security headers
+
+Three cleanup items, none touching application logic.
+
+1. Untrack build/scratch artifacts: .quasar/ (5 generated files), a stray
+   '...swp' vim swap file, and three .scratch-*.mjs throwaway scripts.
+
+2. .gitignore covered .env and .env.test only. Vite actually loads .env.local,
+   .env.production and .env.<mode>.local - none of which were ignored. Nothing
+   has leaked (scanned for service-role keys, Stripe keys and JWTs: clean), but
+   the gap was one 'cp .env.example .env.local' away from being real. Also adds
+   .quasar/, /dist/, *.swp and .scratch-* so item 1 stays fixed.
+
+3. vercel.json set no security headers at all. For a site that connects crypto
+   wallets, missing frame-ancestors/X-Frame-Options is the standard precondition
+   for a drainer overlay. Adds X-Content-Type-Options, X-Frame-Options,
+   Referrer-Policy, HSTS and Permissions-Policy as enforced, plus a
+   Cache-Control rule for static data payloads.
+
+   CSP ships as Report-Only deliberately. connect-src has to cover Supabase,
+   four EVM/Solana RPCs, Algonode and two IPFS pinning services; three.js needs
+   'wasm-unsafe-eval'; Quasar emits inline styles. Enforcing that blind would
+   break the app on first deploy. Watch the violation reports, tighten, then
+   flip the header name to Content-Security-Policy.
+---
+ ...swp                         | Bin 12288 -> 0 bytes
+ .gitignore                     |  16 ++++
+ .quasar/app.js                 |  56 -----------
+ .quasar/artifacts.json         |   1 -
+ .quasar/client-entry.js        | 168 ---------------------------------
+ .quasar/client-prefetch.js     | 116 -----------------------
+ .quasar/quasar-user-options.js |  21 -----
+ .scratch-anticipated.mjs       |  24 -----
+ .scratch-defender.mjs          |  36 -------
+ .scratch-final-check.mjs       |  16 ----
+ vercel.json                    |  28 ++++++
+ 11 files changed, 44 insertions(+), 438 deletions(-)
+ delete mode 100644 ...swp
+ delete mode 100644 .quasar/app.js
+ delete mode 100644 .quasar/artifacts.json
+ delete mode 100644 .quasar/client-entry.js
+ delete mode 100644 .quasar/client-prefetch.js
+ delete mode 100644 .quasar/quasar-user-options.js
+ delete mode 100644 .scratch-anticipated.mjs
+ delete mode 100644 .scratch-defender.mjs
+ delete mode 100644 .scratch-final-check.mjs
+
+diff --git a/...swp b/...swp
+deleted file mode 100644
+index f8c66cbc4f4b8ab380bf5826c6f9bbcdcd7d0a8e..0000000000000000000000000000000000000000
+GIT binary patch
+literal 0
+HcmV?d00001
+
+literal 12288
+zcmeI%Jx;?g6u|M<?iEljU_RC+ZYu`F%EG`{1~yZy5^!Y8u~1o{ci=vVgTTUs#3e`&
+z9jWLT^>4|tY`-V_{Wi;2`r_<d9cM$S+qTHd=gIAR@3Oo2+L6k;Diu@PY^`eljeA@M
+z=BKv0OFrZ#ru^Q<sda;!RJwtk`+B)BnUAwP%T^uA9s&rgDbSmYM?>8t9qjL^-Tq|F
+ze8Lex009ILKmY**5I~^K0x5LlsV<=VTSVuNvCTDdcLWeX009ILKmY**5I_I{1U6m3
+zT#LMJiM-Xl`Tt+O|9|G2jzj$jAb<b@2q1s}0tg_000IcKK){3${k$kmvhG10j<o(*
+QJdcmG3O1_Bl)+i~2KwbRvj6}9
+
+diff --git a/.gitignore b/.gitignore
+index 6704566..388db3e 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -69,8 +69,24 @@ typings/
+ .yarn-integrity
+ 
+ # dotenv environment variables file
++# NOTE: `.env` and `.env.test` alone do NOT cover Vite's actual conventions.
++# Vite loads .env.local, .env.production, .env.<mode>.local — all of which were
++# previously untracked-by-luck rather than untracked-by-rule.
+ .env
+ .env.test
++.env.local
++.env.production
++.env.development
++.env*.local
++
++# Quasar build output (was previously committed)
++.quasar/
++/dist/
++
++# Editor swap files and throwaway scratch scripts
++*.swp
++*.swo
++.scratch-*
+ 
+ # parcel-bundler cache (https://parceljs.org/)
+ .cache
+diff --git a/.quasar/app.js b/.quasar/app.js
+deleted file mode 100644
+index 04f6b3a..0000000
+--- a/.quasar/app.js
++++ /dev/null
+@@ -1,56 +0,0 @@
+-/* eslint-disable */
+-/**
+- * THIS FILE IS GENERATED AUTOMATICALLY.
+- * DO NOT EDIT.
+- *
+- * You are probably looking on adding startup/initialization code.
+- * Use "quasar new boot <name>" and add it there.
+- * One boot file per concern. Then reference the file(s) in quasar.config.js > boot:
+- * boot: ['file', ...] // do not add ".js" extension to it.
+- *
+- * Boot files are your "main.js"
+- **/
+-
+-
+-
+-import { Quasar } from 'quasar'
+-import { markRaw } from 'vue'
+-import RootComponent from 'app/src/App.vue'
+-
+-
+-import createRouter from 'app/src/router/index'
+-
+-
+-
+-
+-
+-export default async function (createAppFn, quasarUserOptions) {
+-  // Create the app instance.
+-  // Here we inject into it the Quasar UI, the router & possibly the store.
+-  const app = createAppFn(RootComponent)
+-
+-  
+-
+-  app.use(Quasar, quasarUserOptions)
+-
+-  
+-
+-  
+-
+-  const router = markRaw(
+-    typeof createRouter === 'function'
+-      ? await createRouter({})
+-      : createRouter
+-  )
+-
+-  
+-
+-  // Expose the app, the router and the store.
+-  // Note that we are not mounting the app here, since bootstrapping will be
+-  // different depending on whether we are in a browser or on the server.
+-  return {
+-    app,
+-    
+-    router
+-  }
+-}
+diff --git a/.quasar/artifacts.json b/.quasar/artifacts.json
+deleted file mode 100644
+index 01556db..0000000
+--- a/.quasar/artifacts.json
++++ /dev/null
+@@ -1 +0,0 @@
+-{"folders":["/home/solstice/Desktop/art/vercel-html-exotopia.org/dist/spa"]}
+\ No newline at end of file
+diff --git a/.quasar/client-entry.js b/.quasar/client-entry.js
+deleted file mode 100644
+index 74ae559..0000000
+--- a/.quasar/client-entry.js
++++ /dev/null
+@@ -1,168 +0,0 @@
+-/* eslint-disable */
+-/**
+- * THIS FILE IS GENERATED AUTOMATICALLY.
+- * DO NOT EDIT.
+- *
+- * You are probably looking on adding startup/initialization code.
+- * Use "quasar new boot <name>" and add it there.
+- * One boot file per concern. Then reference the file(s) in quasar.config.js > boot:
+- * boot: ['file', ...] // do not add ".js" extension to it.
+- *
+- * Boot files are your "main.js"
+- **/
+-
+-
+-import { createApp } from 'vue'
+-
+-
+-
+-
+-
+-
+-
+-import '@quasar/extras/material-icons/material-icons.css'
+-
+-import '@quasar/extras/mdi-v7/mdi-v7.css'
+-
+-import '@quasar/extras/roboto-font/roboto-font.css'
+-
+-
+-
+-import '@quasar/extras/animate/fadeIn.css'
+-
+-import '@quasar/extras/animate/fadeOut.css'
+-
+-
+-// We load Quasar stylesheet file
+-import 'quasar/dist/quasar.css'
+-
+-
+-
+-
+-import 'src/css/app.scss'
+-
+-
+-import createQuasarApp from './app.js'
+-import quasarUserOptions from './quasar-user-options.js'
+-
+-
+-
+-
+-
+-
+-
+-const publicPath = `/`
+-
+-async function start ({
+-  app,
+-  router
+-  
+-}, bootFiles) {
+-  
+-
+-  
+-  let hasRedirected = false
+-  const getRedirectUrl = url => {
+-    try { return router.resolve(url).href }
+-    catch (err) {}
+-
+-    return Object(url) === url
+-      ? null
+-      : url
+-  }
+-  const redirect = url => {
+-    hasRedirected = true
+-
+-    if (typeof url === 'string' && /^https?:\/\//.test(url)) {
+-      window.location.href = url
+-      return
+-    }
+-
+-    const href = getRedirectUrl(url)
+-
+-    // continue if we didn't fail to resolve the url
+-    if (href !== null) {
+-      window.location.href = href
+-      
+-    }
+-  }
+-
+-  const urlPath = window.location.href.replace(window.location.origin, '')
+-
+-  for (let i = 0; hasRedirected === false && i < bootFiles.length; i++) {
+-    try {
+-      await bootFiles[i]({
+-        app,
+-        router,
+-        
+-        ssrContext: null,
+-        redirect,
+-        urlPath,
+-        publicPath
+-      })
+-    }
+-    catch (err) {
+-      if (err && err.url) {
+-        redirect(err.url)
+-        return
+-      }
+-
+-      console.error('[Quasar] boot error:', err)
+-      return
+-    }
+-  }
+-
+-  if (hasRedirected === true) {
+-    return
+-  }
+-  
+-
+-  app.use(router)
+-  
+-
+-  
+-
+-    
+-
+-    
+-      app.mount('#q-app')
+-    
+-
+-    
+-
+-  
+-
+-}
+-
+-createQuasarApp(createApp, quasarUserOptions)
+-
+-  .then(app => {
+-    // eventually remove this when Cordova/Capacitor/Electron support becomes old
+-    const [ method, mapFn ] = Promise.allSettled !== void 0
+-      ? [
+-        'allSettled',
+-        bootFiles => bootFiles.map(result => {
+-          if (result.status === 'rejected') {
+-            console.error('[Quasar] boot error:', result.reason)
+-            return
+-          }
+-          return result.value.default
+-        })
+-      ]
+-      : [
+-        'all',
+-        bootFiles => bootFiles.map(entry => entry.default)
+-      ]
+-
+-    return Promise[ method ]([
+-      
+-      import('boot/pinia'),
+-      
+-      import('boot/member')
+-      
+-    ]).then(bootFiles => {
+-      const boot = mapFn(bootFiles).filter(entry => typeof entry === 'function')
+-      start(app, boot)
+-    })
+-  })
+-
+diff --git a/.quasar/client-prefetch.js b/.quasar/client-prefetch.js
+deleted file mode 100644
+index f9c06d7..0000000
+--- a/.quasar/client-prefetch.js
++++ /dev/null
+@@ -1,116 +0,0 @@
+-/* eslint-disable */
+-/**
+- * THIS FILE IS GENERATED AUTOMATICALLY.
+- * DO NOT EDIT.
+- *
+- * You are probably looking on adding startup/initialization code.
+- * Use "quasar new boot <name>" and add it there.
+- * One boot file per concern. Then reference the file(s) in quasar.config.js > boot:
+- * boot: ['file', ...] // do not add ".js" extension to it.
+- *
+- * Boot files are your "main.js"
+- **/
+-
+-
+-
+-import App from 'app/src/App.vue'
+-let appPrefetch = typeof App.preFetch === 'function'
+-  ? App.preFetch
+-  : (
+-    // Class components return the component options (and the preFetch hook) inside __c property
+-    App.__c !== void 0 && typeof App.__c.preFetch === 'function'
+-      ? App.__c.preFetch
+-      : false
+-    )
+-
+-
+-function getMatchedComponents (to, router) {
+-  const route = to
+-    ? (to.matched ? to : router.resolve(to).route)
+-    : router.currentRoute.value
+-
+-  if (!route) { return [] }
+-
+-  const matched = route.matched.filter(m => m.components !== void 0)
+-
+-  if (matched.length === 0) { return [] }
+-
+-  return Array.prototype.concat.apply([], matched.map(m => {
+-    return Object.keys(m.components).map(key => {
+-      const comp = m.components[key]
+-      return {
+-        path: m.path,
+-        c: comp
+-      }
+-    })
+-  }))
+-}
+-
+-export function addPreFetchHooks ({ router, publicPath }) {
+-  // Add router hook for handling preFetch.
+-  // Doing it after initial route is resolved so that we don't double-fetch
+-  // the data that we already have. Using router.beforeResolve() so that all
+-  // async components are resolved.
+-  router.beforeResolve((to, from, next) => {
+-    const
+-      urlPath = window.location.href.replace(window.location.origin, ''),
+-      matched = getMatchedComponents(to, router),
+-      prevMatched = getMatchedComponents(from, router)
+-
+-    let diffed = false
+-    const preFetchList = matched
+-      .filter((m, i) => {
+-        return diffed || (diffed = (
+-          !prevMatched[i] ||
+-          prevMatched[i].c !== m.c ||
+-          m.path.indexOf('/:') > -1 // does it has params?
+-        ))
+-      })
+-      .filter(m => m.c !== void 0 && (
+-        typeof m.c.preFetch === 'function'
+-        // Class components return the component options (and the preFetch hook) inside __c property
+-        || (m.c.__c !== void 0 && typeof m.c.__c.preFetch === 'function')
+-      ))
+-      .map(m => m.c.__c !== void 0 ? m.c.__c.preFetch : m.c.preFetch)
+-
+-    
+-    if (appPrefetch !== false) {
+-      preFetchList.unshift(appPrefetch)
+-      appPrefetch = false
+-    }
+-    
+-
+-    if (preFetchList.length === 0) {
+-      return next()
+-    }
+-
+-    let hasRedirected = false
+-    const redirect = url => {
+-      hasRedirected = true
+-      next(url)
+-    }
+-    const proceed = () => {
+-      
+-      if (hasRedirected === false) { next() }
+-    }
+-
+-    
+-
+-    preFetchList.reduce(
+-      (promise, preFetch) => promise.then(() => hasRedirected === false && preFetch({
+-        
+-        currentRoute: to,
+-        previousRoute: from,
+-        redirect,
+-        urlPath,
+-        publicPath
+-      })),
+-      Promise.resolve()
+-    )
+-    .then(proceed)
+-    .catch(e => {
+-      console.error(e)
+-      proceed()
+-    })
+-  })
+-}
+diff --git a/.quasar/quasar-user-options.js b/.quasar/quasar-user-options.js
+deleted file mode 100644
+index f8c73e8..0000000
+--- a/.quasar/quasar-user-options.js
++++ /dev/null
+@@ -1,21 +0,0 @@
+-/* eslint-disable */
+-/**
+- * THIS FILE IS GENERATED AUTOMATICALLY.
+- * DO NOT EDIT.
+- *
+- * You are probably looking on adding startup/initialization code.
+- * Use "quasar new boot <name>" and add it there.
+- * One boot file per concern. Then reference the file(s) in quasar.config.js > boot:
+- * boot: ['file', ...] // do not add ".js" extension to it.
+- *
+- * Boot files are your "main.js"
+- **/
+-
+-
+-
+-import {Notify,Dialog,Loading} from 'quasar'
+-
+-
+-
+-export default { config: {"dark":true,"brand":{"primary":"#1a73e8","secondary":"#26a69a","accent":"#9c27b0","dark":"#0a0f1e","positive":"#21ba45","negative":"#c10015","info":"#31ccec","warning":"#f2c037"},"notify":{"position":"bottom-right"}},plugins: {Notify,Dialog,Loading} }
+-
+diff --git a/.scratch-anticipated.mjs b/.scratch-anticipated.mjs
+deleted file mode 100644
+index d129c4b..0000000
+--- a/.scratch-anticipated.mjs
++++ /dev/null
+@@ -1,24 +0,0 @@
+-import { chromium } from 'playwright'
+-const shotDir = '/tmp/claude-1000/-home-solstice-Desktop-art-vercel-html-exotopia-org/66f4f8f3-0173-49a3-b2b4-a4c1ed5a6946/scratchpad'
+-const browser = await chromium.launch({ args: ['--no-sandbox'] })
+-const page = await browser.newPage({ viewport: { width: 1280, height: 800 } })
+-const errs = []
+-page.on('pageerror', e => errs.push(e.message))
+-page.on('console', m => { if (m.type()==='error') errs.push(m.text()) })
+-
+-for (const id of ['Cygnus-X-1', 'Omega-Cen-IMBH', 'M87-star', 'NGC-4258', 'Gaia-BH1']) {
+-  await page.goto(`http://localhost:9303/bh/${id}`, { waitUntil: 'networkidle', timeout: 30000 })
+-  await page.waitForTimeout(2200)
+-  await page.screenshot({ path: `${shotDir}/ant-${id}-close.png` })
+-  // zoom out to see the anticipated shell — scroll wheel out several times
+-  for (let i = 0; i < 10; i++) {
+-    await page.mouse.move(640, 400)
+-    await page.mouse.wheel(0, 300)
+-    await page.waitForTimeout(80)
+-  }
+-  await page.waitForTimeout(600)
+-  await page.screenshot({ path: `${shotDir}/ant-${id}-far.png` })
+-}
+-
+-console.log('ERRORS:', JSON.stringify(errs))
+-await browser.close()
+diff --git a/.scratch-defender.mjs b/.scratch-defender.mjs
+deleted file mode 100644
+index 6c673ef..0000000
+--- a/.scratch-defender.mjs
++++ /dev/null
+@@ -1,36 +0,0 @@
+-import { chromium } from 'playwright'
+-const shotDir = '/tmp/claude-1000/-home-solstice-Desktop-art-vercel-html-exotopia-org/66f4f8f3-0173-49a3-b2b4-a4c1ed5a6946/scratchpad'
+-const browser = await chromium.launch({ args: ['--no-sandbox'] })
+-const page = await browser.newPage({ viewport: { width: 1280, height: 900 } })
+-const errs = []
+-page.on('pageerror', e => errs.push('pageerror: ' + e.message))
+-page.on('console', m => { if (m.type()==='error') errs.push(m.text()) })
+-
+-await page.goto('http://localhost:9304/bh/A0620-00', { waitUntil: 'networkidle', timeout: 30000 })
+-await page.waitForTimeout(2000)
+-await page.screenshot({ path: `${shotDir}/def-1-a0620.png` })
+-
+-// Drag the defender slider
+-const track = await page.$('.bhdn-track')
+-const box = await track.boundingBox()
+-await page.mouse.move(box.x + box.width * 0.2, box.y + box.height / 2)
+-await page.mouse.down()
+-await page.mouse.move(box.x + box.width * 0.85, box.y + box.height / 2, { steps: 20 })
+-await page.waitForTimeout(300)
+-await page.mouse.up()
+-await page.waitForTimeout(1200)
+-await page.screenshot({ path: `${shotDir}/def-2-after-drag.png` })
+-
+-// Click "OTHER OBJECTS" quick switch to jump bh->bh directly (exercises the
+-// route-param watcher + vector zoom tween while staying mounted)
+-const before = page.url()
+-await page.click('.bhdn-switch-btn:has-text("M87")')
+-await page.waitForTimeout(200)
+-await page.screenshot({ path: `${shotDir}/def-3-jump-mid.png` })
+-await page.waitForTimeout(1600)
+-await page.screenshot({ path: `${shotDir}/def-4-jump-done.png` })
+-console.log('URL before/after jump:', before, '->', page.url())
+-
+-await page.waitForTimeout(500)
+-console.log('ERRORS:', JSON.stringify(errs, null, 2))
+-await browser.close()
+diff --git a/.scratch-final-check.mjs b/.scratch-final-check.mjs
+deleted file mode 100644
+index 2d109fe..0000000
+--- a/.scratch-final-check.mjs
++++ /dev/null
+@@ -1,16 +0,0 @@
+-import { chromium } from 'playwright'
+-const shotDir = '/tmp/claude-1000/-home-solstice-Desktop-art-vercel-html-exotopia-org/66f4f8f3-0173-49a3-b2b4-a4c1ed5a6946/scratchpad'
+-const browser = await chromium.launch({ args: ['--no-sandbox'] })
+-const page = await browser.newPage({ viewport: { width: 1280, height: 900 } })
+-const errs = []
+-page.on('pageerror', e => errs.push('pageerror: ' + e.message))
+-page.on('console', m => { if (m.type()==='error') errs.push(m.text()) })
+-
+-for (const url of ['/galactic-center', '/bh/Gaia-BH2', '/bh/GRO-J1655-40', '/bh/NGC-4258']) {
+-  await page.goto(`http://localhost:9304${url}`, { waitUntil: 'networkidle', timeout: 30000 })
+-  await page.waitForTimeout(2200)
+-  await page.screenshot({ path: `${shotDir}/final2-${url.replace(/\//g,'_')}.png` })
+-}
+-
+-console.log('ERRORS:', JSON.stringify(errs, null, 2))
+-await browser.close()
+diff --git a/vercel.json b/vercel.json
+index 81693a0..ddc743c 100644
+--- a/vercel.json
++++ b/vercel.json
+@@ -3,6 +3,34 @@
+   "outputDirectory": "dist/spa",
+   "framework": null,
+   "cleanUrls": true,
++  "headers": [
++    {
++      "source": "/(.*)",
++      "headers": [
++        { "key": "X-Content-Type-Options", "value": "nosniff" },
++        { "key": "X-Frame-Options", "value": "DENY" },
++        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
++        {
++          "key": "Strict-Transport-Security",
++          "value": "max-age=63072000; includeSubDomains; preload"
++        },
++        {
++          "key": "Permissions-Policy",
++          "value": "geolocation=(self), camera=(self), microphone=(), payment=(), usb=(), interest-cohort=()"
++        },
++        {
++          "key": "Content-Security-Policy-Report-Only",
++          "value": "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; img-src 'self' data: blob: https:; media-src 'self' blob: https:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.algonode.cloud https://polygon-rpc.com https://rpc-amoy.polygon.technology https://forno.celo.org https://alfajores-forno.celo-testnet.org https://api.devnet.solana.com https://api.pinata.cloud https://api.nft.storage https://raw.githubusercontent.com"
++        }
++      ]
++    },
++    {
++      "source": "/(.*)\\.(json|glb|bin|png|jpg|webp|woff2)",
++      "headers": [
++        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
++      ]
++    }
++  ],
+   "rewrites": [
+     { "source": "/print/:path*", "destination": "/print/:path*" },
+     { "source": "/(.*)",         "destination": "/index.html"   }
+-- 
+2.43.0
+

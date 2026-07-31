@@ -1,0 +1,3862 @@
+From d14c6edf5b51f35f3b65e30a01432a6dc134aa33 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 31 Jul 2026 22:21:55 +0000
+Subject: [PATCH 1/2] =?UTF-8?q?feat:=20settlement=20design=20authoring=20?=
+ =?UTF-8?q?=E2=80=94=20recolour,=20theme=20packs,=20design=20sharing,=20re?=
+ =?UTF-8?q?wards=E2=86=92visual=20bridge?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Makes the per-settlement lighting/item system something a settler can actually
+shape, and closes a gap where earned certificates never produced a visible object.
+
+Settlement design authoring (src/lib/settlement-items.ts, SettlementInventory.vue):
+- add updateItem(); expandable per-item controls for colour and zone, the first
+  UI ever built against recolouring (placeItem existed but was never called)
+- theme packs (src/data/theme-packs.ts): curated bundles of existing presets,
+  applied in one action. Colours come from themePackItemColorHex(), derived from
+  the settlement's own hue, so a pack belongs to that settlement rather than
+  dropping in a stock palette
+- peer-to-peer design sharing via gift codes, reusing the existing site-wide
+  storage cipher (fixed seed, so a code made in one browser decodes in another).
+  Carries attribution (donorName) — no price, cart, or transfer of ownership,
+  keeping the resale-risk posture this repo already paid down
+- presets attesting real-world work (decon site marker, community monument) are
+  deliberately not shareable; the starter lantern stays unclonable
+
+Rewards → visible objects (RewardsPage.vue, rewards-catalog.ts):
+- attachObject() now also places a real lit mesh via addItem(), following the
+  pattern in PfasCitizenSciencePage.vue. Previously an earned certificate only
+  pushed a string onto SettlementRecord.objects[] and nothing appeared in the dome
+- new 'reward' acquisition type, kept out of the acquire picker so an earned
+  object can't be self-granted
+
+Correctness/scale:
+- addItem() now enforces the preset's acquiredBy list structurally; it was only
+  ever a UI filter, so a direct call could add any type/preset pair
+- cap dynamic point lights at 12 (MAX_ITEM_LIGHTS); later items still render in
+  full, they just stop adding real-time shading passes
+
+Also includes prior in-progress work already present in the working tree
+(docs, legal copy, community-nodes routing, onboarding and admin changes).
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01E7Rw45eHMC4itUB54n78QF
+---
+ DOCS.md                                |   3 +
+ legal-privacy.md                       |  31 +-
+ legal-terms.md                         | 156 +++++--
+ patch1.txt                             | 164 +++++++
+ patch2.txt                             | 341 ++++++++++++++
+ patch3.txt                             | 623 +++++++++++++++++++++++++
+ patch4.txt                             | 553 ++++++++++++++++++++++
+ src/components/DemoConsentOverlay.vue  |  29 +-
+ src/components/SettlementInventory.vue | 312 ++++++++++++-
+ src/components/SiteFooter.vue          |  28 +-
+ src/data/blog-posts.ts                 |  12 +
+ src/data/rewards-catalog.ts            |  16 +
+ src/data/theme-packs.ts                |  68 +++
+ src/lib/moon-settlement.ts             |  21 +
+ src/lib/settlement-items.ts            | 219 ++++++++-
+ src/lib/settlements.ts                 |  40 +-
+ src/lib/surface-classify.ts            |   3 +
+ src/pages/AccountPage.vue              |   6 +-
+ src/pages/AdminPage.vue                |  15 +
+ src/pages/DomeInteriorPage.vue         |  45 +-
+ src/pages/GalaxyPage.vue               |  33 +-
+ src/pages/KnowledgeKeepersPage.vue     |   3 +-
+ src/pages/LegalDocPage.vue             |   2 +-
+ src/pages/OnboardPage.vue              |   2 +-
+ src/pages/PfasCitizenSciencePage.vue   |  16 +-
+ src/pages/RewardsPage.vue              |  34 ++
+ src/pages/StationInteriorPage.vue      |  45 +-
+ src/pages/SurfaceViewPage.vue          |  14 +-
+ src/router/routes.ts                   |  12 +
+ src/stores/member.ts                   |   1 +
+ 30 files changed, 2708 insertions(+), 139 deletions(-)
+ create mode 100644 patch1.txt
+ create mode 100644 patch2.txt
+ create mode 100644 patch3.txt
+ create mode 100644 patch4.txt
+ create mode 100644 src/data/theme-packs.ts
+
+diff --git a/DOCS.md b/DOCS.md
+index ab8660c..399ca21 100644
+--- a/DOCS.md
++++ b/DOCS.md
+@@ -50,6 +50,8 @@ Technical specs for individual features and UI systems.
+ | [SPEC_NFT_FRONTIER.md](SPEC_NFT_FRONTIER.md) | Frontier exolocation NFTs for predicted/candidate/theoretical exoplanets; upgrade chain; 4-tier system | Specced |
+ | [SPEC_PROVENANCE.md](SPEC_PROVENANCE.md) | Provenance block schema; data source badging (catalog vs generated); observatory report field | Active |
+ | [SPEC_STARSYSTEM_ALGORITHM.md](SPEC_STARSYSTEM_ALGORITHM.md) | 3-stage deterministic pipeline: stellar populations → orbital architecture → planet composition; 2,823 galaxies → 10,900 planets | Active |
++| [SETTLEMENT_ADDRESS_API.md](SETTLEMENT_ADDRESS_API.md) | Dependency chain behind a settlement address (reference data → construction → local record → chain metadata → mint); companion to SPEC_EXOLOC_ADDRESS.md; documents that the spec's `/api/v1/exoloc` endpoint is not implemented | Active |
++| [SPEC_COMMUNITY_NODES.md](SPEC_COMMUNITY_NODES.md) | Business listings/locations, creative pages, and future node types; populates the previously-empty OrbitalGalleryEntry pipeline; node_type extensibility mechanism; self-host/export story | Active |
+ 
+ ---
+ 
+@@ -89,6 +91,7 @@ Published-intent writing about the platform, ecosystem, and communities. All GPL
+ | [blog-eco-ops-without-blockchain.md](blog-eco-ops-without-blockchain.md) | Digital certificates vs on-chain records for grassroots field work; when blockchain is not the answer | Community |
+ | [blog-shared-language-lamu-ecoledger.md](blog-shared-language-lamu-ecoledger.md) | Introducing the Eco-Ledger for Mpeketoni; shared vocabulary for land and livelihood records | Field |
+ | [blog-costa-rica-biodiversity-platform.md](blog-costa-rica-biodiversity-platform.md) | Three-generation vision for biodiversity collaboration in Costa Rica; SCD Hub regional strategy | Field |
++| [blog-settlement-address-api.md](blog-settlement-address-api.md) | The settlement address dependency chain end to end; confirms SPEC_EXOLOC_ADDRESS.md's `/api/v1/exoloc` endpoint isn't implemented and there's no server-side settlements table | Dev / ecosystem |
+ 
+ ---
+ 
+diff --git a/legal-privacy.md b/legal-privacy.md
+index 18bcf0e..9018f91 100644
+--- a/legal-privacy.md
++++ b/legal-privacy.md
+@@ -13,12 +13,14 @@ category this document doesn't disclose.
+ 
+ ## 1. Who this policy covers
+ 
+-This Privacy Policy explains how **[LEGAL ENTITY NAME — same gap as in the
+-Terms of Service, § 1]** ("we," "us") collects, uses, and shares personal
+-data when you use **Exotopia** (the "Service"), including where a payment or
+-minting step routes you through our sibling platform **pon.ink**. It applies
+-to visitors, registered users, wallet-connected users, citizen-science/
+-eco-ops participants, and blog/community contributors.
++This Privacy Policy explains how **Sustainable Community Development Hub**
++("SCD Hub," "we," "us") — a Colorado nonprofit corporation, tax-exempt under
++IRC § 501(c)(3), and the entity that operates **Exotopia** as a project —
++collects, uses, and shares personal data when you use Exotopia (the
++"Service"), including where a payment or minting step routes you through our
++sibling platform **pon.ink**. It applies to visitors, registered users,
++wallet-connected users, citizen-science/eco-ops participants, donors, and
++blog/community contributors.
+ 
+ ## 2. What we collect
+ 
+@@ -170,8 +172,20 @@ we will delete it.
+ 
+ ## 10. Region-specific notices
+ 
++### United States
++- SCD Hub is based in Colorado; Colorado residents have rights under the
++  **Colorado Privacy Act (CPA)** — including access, correction, deletion,
++  data portability, and the right to opt out of targeted advertising, the
++  sale of personal data, and profiling — enforceable by the Colorado
++  Attorney General. You can exercise these at `/account` (see § 8) or by
++  contacting us (§ 12).
++- **Children's privacy** is governed by COPPA — see § 9.
++- We do not sell personal data (see § 4), which limits the practical scope
++  of several state privacy laws' sale-specific provisions, but the access/
++  deletion rights above still apply.
++
+ ### European Union / EEA (incl. Netherlands/Amsterdam) — GDPR
+-- **Controller**: [LEGAL ENTITY NAME], [ADDRESS].
++- **Controller**: Sustainable Community Development Hub, **[ADDRESS]**.
+ - **EU representative** (if you are not established in the EU but process EU
+   residents' data at scale): [NAME/ADDRESS, required under GDPR Art. 27 —
+   see planning notes].
+@@ -244,7 +258,7 @@ take effect.
+ 
+ ## 12. Contact
+ 
+-**[PRIVACY CONTACT EMAIL — same recommendation as Terms of Service § 14]**
++**[PRIVACY CONTACT EMAIL — same recommendation as Terms of Service § 15]**
+ — for all data protection questions and rights requests.
+ 
+ ## 13. Changelog
+@@ -255,3 +269,4 @@ Material changes to this policy are logged here — see § 11.
+ |---|---|
+ | [DATE] | Initial draft template. |
+ | 2026-07-22 | Added the private-comments privacy-model explanation in § 4 (visibility, report path, lawful-request policy pointer) and this changelog. |
++| 2026-07-23 | Identified SCD Hub (Sustainable Community Development Hub) as the operating entity — Colorado nonprofit corporation, confirmed IRS 501(c)(3) — and Exotopia as its project, replacing the `[LEGAL ENTITY NAME]` placeholder in § 1 and the EU controller line in § 10. Added a "United States" regional notice in § 10 (previously missing) covering the Colorado Privacy Act. Updated the Terms of Service cross-reference in § 12 to match that document's renumbering. |
+diff --git a/legal-terms.md b/legal-terms.md
+index 0a3c0fe..d3392a2 100644
+--- a/legal-terms.md
++++ b/legal-terms.md
+@@ -15,23 +15,24 @@ needs attention.
+ 
+ ## 1. Who we are and what this agreement covers
+ 
+-"**Exotopia**" (exotopia.org) (the "**Platform**," "**we**," "**us**") is the
+-cosmic-navigation and virtual-real-estate layer of the SCD Hub ecosystem,
+-which also includes **pon.ink** (payments, NFT minting, and user dashboard)
+-and **ecocity.com** (sustainable-infrastructure design and vocational
+-education). Exotopia is operated by **[LEGAL ENTITY NAME — the entity that
+-owns/operates SCD Hub / Exotopia]**, a [company type, e.g. "corporation" /
+-"cooperative" / "unincorporated association" — confirm actual current
+-status] organized under the laws of **[JURISDICTION OF INCORPORATION]**,
+-with its registered address at **[ADDRESS]** (the "**Company**").
+-
+-*(This section has the one gap in this document I can't responsibly guess at
+-— I found no entity name, incorporation jurisdiction, or address anywhere in
+-the codebase or docs. If SCD Hub isn't yet a formal legal entity, that's
+-itself worth resolving before this ships to users in regulator-active
+-markets like the EU/UK — an unincorporated project taking payments and
+-processing personal data at scale is a real, personal liability exposure for
+-whoever is actually running it.)*
++"**Exotopia**" (exotopia.org) (the "**Platform**," "**we**," "**us**") is a
++project of **Sustainable Community Development Hub** ("**SCD Hub**," the
++"**Company**"), a Colorado nonprofit corporation recognized by the IRS as
++tax-exempt under Section 501(c)(3) of the Internal Revenue Code. SCD Hub is
++the legal entity that operates Exotopia — the cosmic-navigation and
++virtual-real-estate layer of the SCD Hub ecosystem — alongside **pon.ink**
++(settlement identity records and user dashboard) and **ecocity.com**
++(sustainable-infrastructure design and vocational education), all in
++furtherance of SCD Hub's charitable and educational mission. Exotopia itself
++is a project, not a separate legal entity — "we," "us," and "the Company" in
++these Terms all mean SCD Hub. SCD Hub's registered address is
++**[ADDRESS]**.
++
++*(The one remaining gap here is the street address — not something to guess
++at. Fill in SCD Hub's actual registered agent/principal address before this
++ships; everything else in this section reflects the entity's actual,
++confirmed status: Colorado nonprofit corporation, IRS 501(c)(3) determination
++received.)*
+ 
+ These Terms of Service ("**Terms**") govern your access to and use of
+ Exotopia's website, apps, and related services (collectively, the
+@@ -130,6 +131,14 @@ environmental monitoring, decontamination-site logging):
+ - If you are facilitating participation by minors (e.g. through a school
+   program), you confirm that appropriate parental/guardian consent has been
+   obtained under applicable local law before minors submit any data.
++- **Photos and recordings at in-person events.** If you participate in an
++  in-person eco-ops event, workshop, or field session, SCD Hub or its
++  volunteers may photograph or record the activity. By participating, you
++  consent to SCD Hub using your likeness in materials that document and
++  promote its charitable and educational work (website, blog, newsletters,
++  grant/funder reports, social media), unless you tell an on-site organizer
++  otherwise before the event or ask us to stop using a specific image
++  afterward — see § 15 for how to reach us.
+ 
+ ## 6. Community content and conduct
+ 
+@@ -156,60 +165,119 @@ Any point, badge, or reward system offered through the Service:
+ - Is void where prohibited by local law (e.g. jurisdictions with restrictions
+   on promotional sweepstakes/lottery-like mechanics — see planning notes).
+ 
+-## 8. Disclaimers
++## 8. Fundraising, donations, and tax-deductibility
++
++SCD Hub is a Colorado nonprofit corporation with a determination letter from
++the IRS recognizing it as tax-exempt under Section 501(c)(3). We may solicit
++monetary contributions in support of our charitable and educational mission —
++through the Service, at events, or through other channels — and share how
++those contributions are used (impact reports, funder updates, promotional
++materials referencing the support we've received, subject to any
++donor-privacy preference you tell us about).
++
++- **A gift is deductible to the extent allowed by law.** US taxpayers should
++  keep their own donation records; for any single contribution of $250 or
++  more we will provide a written acknowledgment as required by IRC § 170(f).
++- **Quid pro quo contributions.** If you receive something of value in
++  exchange for a payment — for example, a minted collectible, event
++  admission, or merchandise — only the portion of your payment that exceeds
++  the fair market value of what you received is tax-deductible, and where
++  required by IRC § 6115 we will disclose that fair market value to you at
++  the time of the transaction. **Unless we specifically label a transaction
++  as a donation and disclose the associated goods-or-services value, minting
++  or purchase transactions on the Service are not represented as tax-deductible
++  contributions** — see § 4 on the nature of minted items.
++- Contributions are non-refundable except where required by law or where we
++  determine, in our discretion, that a refund is appropriate (e.g. a
++  processing error).
++- Where a jurisdiction requires nonprofit charitable-solicitation
++  registration before we solicit contributions from residents there, we aim
++  to register before doing so, or to limit solicitation to jurisdictions
++  where we're registered or exempt — **[CONFIRM: charitable-solicitation
++  registration status by state before actively fundraising beyond
++  Colorado]**.
++
++## 9. Disclaimers
+ 
+ THE SERVICE IS PROVIDED "AS IS" WITHOUT WARRANTIES OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND
+ NON-INFRINGEMENT, TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW.
+ 
+ **Nothing in this section limits any consumer protection right that cannot be
+-waived under the law of your country of residence** (see § 13).
++waived under the law of your country of residence** (see § 14).
+ 
+-## 9. Limitation of liability
++## 10. Limitation of liability
+ 
+-To the maximum extent permitted by law, [LEGAL ENTITY NAME]'s aggregate
+-liability arising out of or relating to the Service will not exceed
+-**[the greater of USD $100 / the amount you paid us in the preceding 12
+-months]**. We are not liable for indirect, incidental, consequential, or
+-punitive damages, or for loss of data, cryptocurrency, or digital assets due
+-to blockchain network failure, third-party wallet compromise, or user error.
++To the maximum extent permitted by law, SCD Hub's aggregate liability
++arising out of or relating to the Service will not exceed **[the greater of
++USD $100 / the amount you paid us in the preceding 12 months]**. We are not
++liable for indirect, incidental, consequential, or punitive damages, or for
++loss of data, cryptocurrency, or digital assets due to blockchain network
++failure, third-party wallet compromise, or user error.
++
++**Volunteers.** To the fullest extent provided by the federal Volunteer
++Protection Act of 1997 (42 U.S.C. § 14501 et seq.) and Colorado's
++charitable-immunity statutes, SCD Hub's uncompensated volunteers acting
++within the scope of their duties for the Service are not personally liable
++for harm caused by their ordinary negligence. Nothing here limits liability
++for willful or criminal misconduct, gross negligence, or conduct outside the
++scope of a volunteer's SCD Hub duties.
+ 
+ *Some jurisdictions do not allow the exclusion of certain warranties or the
+ limitation of certain damages — in those jurisdictions, some of the above
+ limits may not apply to you.*
+ 
+-## 10. Indemnification
++## 11. Indemnification
+ 
+-You agree to indemnify and hold [LEGAL ENTITY NAME] harmless from claims
++You agree to indemnify and hold SCD Hub, and its directors, officers, and
++volunteers acting within the scope of their duties, harmless from claims
+ arising from your violation of these Terms or misuse of the Service, to the
+ extent permitted by applicable law (note: some consumer-protection regimes
+ restrict one-sided indemnification clauses against individual consumers —
+ see planning notes).
+ 
+-## 11. Dispute resolution, governing law, and venue
++## 12. Dispute resolution, governing law, and venue
+ 
+-These Terms are governed by the laws of **[JURISDICTION]**, without regard to
+-conflict-of-law principles. [Optional: arbitration clause — see planning
+-notes on why this is risky/unenforceable in several of your target markets.]
++These Terms are governed by the laws of the **State of Colorado, USA**,
++without regard to conflict-of-law principles. [Optional: arbitration clause
++— see planning notes on why this is risky/unenforceable in several of your
++target markets.]
+ 
+ **Nothing in this section limits any right you have to bring a claim before a
+ court or regulator in your home country where local consumer-protection or
+ data-protection law makes such a right non-waivable** (this applies notably
+-in the EU, UK, and several other jurisdictions listed in § 13).
++in the EU, UK, and several other jurisdictions listed in § 14).
+ 
+-## 12. Changes to these Terms
++## 13. Changes to these Terms
+ 
+ We may update these Terms from time to time. Material changes will be
+ notified via [the Service / email] at least [14/30] days before taking
+ effect. Continued use after the effective date constitutes acceptance.
+ 
+-## 13. Regional notices
++## 14. Regional notices
+ 
+ The following notices supplement, and do not replace, the sections above.
+ Where a notice conflicts with a section above for users in that region, the
+ regional notice controls **only for users physically located in that
+ region.**
+ 
++### United States
++- SCD Hub is a Colorado nonprofit corporation, tax-exempt under IRC
++  § 501(c)(3) — see § 1 and § 8.
++- **Volunteer Protection Act.** See § 10 for the liability protection this
++  gives SCD Hub's uncompensated volunteers under 42 U.S.C. § 14501 et seq.
++  and Colorado charitable-immunity law.
++- **Minors.** Where a program is directed at or knowingly collects
++  information from children under 13, the Children's Online Privacy
++  Protection Act (COPPA) applies — see the Privacy Policy and § 5 above on
++  school-program consent.
++- **State consumer-protection law** (e.g. Colorado's Consumer Protection
++  Act) is not waived by this agreement to the extent it can't be waived
++  under Colorado law.
++- **Charitable solicitation.** If you're contributing from a state that
++  requires nonprofit registration before solicitation, see § 8's
++  registration-status note.
++
+ ### European Union / European Economic Area, Amsterdam/Netherlands specifically, and UK
+ - You have statutory consumer rights (including a right of withdrawal for
+   most online purchases) that are not waived by this agreement except where
+@@ -256,19 +324,23 @@ region.**
+   believe no such notice applies to your country and you have concerns,
+   contact us at `[LEGAL/PRIVACY CONTACT]`.
+ 
+-## 14. Contact
++## 15. Contact
++
++Questions about these Terms, or to make a donor-privacy or photo-use request
++under § 5/§ 8: **[LEGAL/PRIVACY CONTACT EMAIL — recommend a dedicated
++address like legal@exotopia.org rather than a personal inbox, both for
++professionalism and because several of the regimes in § 14 expect a stable,
++monitored contact channel]**
+ 
+-Questions about these Terms: **[LEGAL/PRIVACY CONTACT EMAIL — recommend a
+-dedicated address like legal@exotopia.org rather than a personal inbox, both
+-for professionalism and because several of the regimes in § 13 expect a
+-stable, monitored contact channel]**
++Mail: Sustainable Community Development Hub, **[PO BOX / MAILING ADDRESS]**.
+ 
+-## 15. Changelog
++## 16. Changelog
+ 
+ Material changes to these Terms are logged here with a date, so you can
+-answer "what did I agree to on date X" — see § 12.
++answer "what did I agree to on date X" — see § 13.
+ 
+ | Date | Change |
+ |---|---|
+ | [DATE] | Initial draft template. |
+ | 2026-07-22 | Published the Community Guidelines document referenced in § 6, and this changelog. The product itself was also changed the same day to remove a secondary-marketplace/resale feature that existed in the app but was never described in these Terms — see `RISK_REDUCTION_RECOMMENDATIONS.md` §1 and `blog-risk-reduction-pass.md`. |
++| 2026-07-23 | Identified SCD Hub (Sustainable Community Development Hub) as the operating entity — a Colorado nonprofit corporation with a confirmed IRS 501(c)(3) determination — and Exotopia as its project, replacing the prior `[LEGAL ENTITY NAME]` placeholder throughout. Added § 8 (Fundraising, donations, and tax-deductibility, including IRC § 6115 quid-pro-quo disclosure for minted items received in exchange for a contribution), a Volunteer Protection Act / Colorado charitable-immunity clause in § 10, director/officer/volunteer indemnification in § 11, Colorado as the governing-law jurisdiction in § 12, a photo/media-release clause for in-person events in § 5, and a "United States" regional notice in § 14 (previously missing despite being the home jurisdiction). |
+diff --git a/patch1.txt b/patch1.txt
+new file mode 100644
+index 0000000..7f9f0f3
+--- /dev/null
++++ b/patch1.txt
+@@ -0,0 +1,164 @@
++From 42fbefb51724ffbbd6c8dfecc62020e481d90ae0 Mon Sep 17 00:00:00 2001
++From: exotopia <dev@exotopia.org>
++Date: Sat, 25 Jul 2026 00:43:19 +0000
++Subject: [PATCH 1/2] fix: remove ranked rarity tiering from GalaxyPage;
++ correct stale revenue-split line in README
++
++GalaxyPage.vue rendered LEGENDARY/RARE/UNCOMMON/COMMON tiers with
++"extreme rarity" copy on the planet panel, which links directly to /mint.
++RISK_REDUCTION_RECOMMENDATIONS.md 1 identifies ranked scarcity tiering on a
++pre-mint surface as the clearest Howey-test signal available to a regulator,
++and MintPage.vue already asserts "no rarity" - the two surfaces contradicted
++each other.
++
++planetRarity() becomes planetClass(): same physical thresholds, descriptive
++labels, no ordered tiers, no scarcity language, colours keyed to
++temperature/composition rather than a value ladder.
++
++README listed "80% of settlement revenue to settlement owner" as a stable
++assumption. That described the secondary-sale aftermarket removed in the
++risk-reduction pass (blog-risk-reduction-pass.md). Actual shipped behaviour is
++a mint-time resonance split with seller_fee_basis_points = 0 and no secondary
++market. Corrected, and made the no-passive-yield position explicit.
++---
++ README.md                |  8 +++++-
++ src/pages/GalaxyPage.vue | 57 +++++++++++++++++++++++-----------------
++ 2 files changed, 40 insertions(+), 25 deletions(-)
++
++diff --git a/README.md b/README.md
++index 01b271b..9996cd9 100644
++--- a/README.md
+++++ b/README.md
++@@ -147,7 +147,13 @@ One coordinate frame from the cosmic web to a settlement surface:
++ - Real data always takes precedence over generated data. Generated data is clearly labelled.
++ - Accessibility first: every feature reachable on mid-range Android at 3G.
++ - Culture is the vehicle: music, visual art, and spatial storytelling are not decoration.
++-- 80% of settlement revenue to settlement owner. 15% to SCD Hub treasury. 5% to platform.
+++- Mint-time contribution allocation only (the "resonance split"): the large majority to the
+++  creator, a slice to the Community Fund, a small platform-maintenance share. Paths are
+++  computed independently and never combined in one figure (fee isolation).
+++- No secondary market, no resale royalty, no yield to passive holders. Exotopia does not host
+++  or facilitate resale; `seller_fee_basis_points` is 0. A settlement record confers no claim on
+++  future platform revenue. The earlier "80/15/5 settlement revenue" line described a secondary-
+++  sale aftermarket that was removed in the risk-reduction pass — see blog-risk-reduction-pass.md.
++ - E8 lattice wormhole transit as the narrative mechanic for long-distance navigation.
++ 
++ ---
++diff --git a/src/pages/GalaxyPage.vue b/src/pages/GalaxyPage.vue
++index 8af7d35..6a7a4cf 100644
++--- a/src/pages/GalaxyPage.vue
+++++ b/src/pages/GalaxyPage.vue
++@@ -263,11 +263,11 @@
++           {{ selectedPlanet.st_spectype ? ' · ' + selectedPlanet.st_spectype : '' }}
++         </div>
++ 
++-        <!-- Rarity badge -->
++-        <div v-if="selectedRarity" class="rarity-badge q-mb-sm"
++-             :style="{ borderColor: selectedRarity.color, color: selectedRarity.color }">
++-          <span class="rarity-tier">{{ selectedRarity.tier }}</span>
++-          <span class="rarity-desc">{{ selectedRarity.desc }}</span>
+++        <!-- Physical classification badge (descriptive, not a rarity/value tier) -->
+++        <div v-if="selectedClass" class="pclass-badge q-mb-sm"
+++             :style="{ borderColor: selectedClass.color, color: selectedClass.color }">
+++          <span class="pclass-label">{{ selectedClass.label }}</span>
+++          <span class="pclass-desc">{{ selectedClass.desc }}</span>
++         </div>
++ 
++         <!-- Data sheet accordion toggle -->
++@@ -724,8 +724,8 @@ const planetCardStats = computed<Record<string, string>>(() => {
++   }
++ })
++ 
++-const selectedRarity = computed(() =>
++-  selectedPlanet.value ? planetRarity(selectedPlanet.value) : null
+++const selectedClass = computed(() =>
+++  selectedPlanet.value ? planetClass(selectedPlanet.value) : null
++ )
++ 
++ const statusText = computed(() => {
++@@ -1742,9 +1742,18 @@ function buildPlanetMaterial(pl: Planet, pCol: THREE.Color): THREE.MeshStandardM
++   return new THREE.MeshStandardMaterial({ color: pCol, emissive: pCol, emissiveIntensity: 0.18, roughness: 0.70, metalness: 0.02 })
++ }
++ 
++-// ── Planet rarity + atmosphere description (for card panel) ──────────────────
++-
++-function planetRarity(p: Planet): { tier: string; color: string; desc: string } {
+++// ── Planet physical classification + atmosphere description (for card panel) ──
+++//
+++// NOTE: this deliberately returns a *descriptive physical class*, not a ranked
+++// rarity tier. It previously returned LEGENDARY / RARE / UNCOMMON / COMMON with
+++// scarcity language ("extreme rarity") on a panel that links directly to /mint.
+++// Ranked scarcity tiering on a pre-mint surface is the exact signal called out
+++// in RISK_REDUCTION_RECOMMENDATIONS.md §1 as the clearest Howey-test hook
+++// available to a regulator. Do not reintroduce ordered tiers, counts, or
+++// scarcity wording here. Colours below are keyed to temperature/composition,
+++// not to a value ladder.
+++
+++function planetClass(p: Planet): { label: string; color: string; desc: string } {
++   const rade = p.pl_rade
++   const eqt  = p.pl_eqt
++   const au   = p.pl_orbsmax
++@@ -1758,15 +1767,15 @@ function planetRarity(p: Planet): { tier: string; color: string; desc: string }
++   const ultraHot = (eqt != null && eqt > 2000) || (au != null && au < 0.04)
++   const frozen   = (eqt != null && eqt < 80)
++ 
++-  if (earthSize && inHZ)          return { tier: 'LEGENDARY', color: '#00ffcc', desc: 'Earth analog — extreme rarity' }
++-  if (earthSize)                  return { tier: 'RARE',      color: '#cc88ff', desc: 'Earth-sized world' }
++-  if (superEarth && inHZ)         return { tier: 'RARE',      color: '#cc88ff', desc: 'Super-Earth in habitable zone' }
++-  if (inHZ)                       return { tier: 'UNCOMMON',  color: '#5599ff', desc: 'Habitable zone candidate' }
++-  if (ultraHot && !isGas)         return { tier: 'COMMON',    color: '#778899', desc: 'Extreme hot-zone world' }
++-  if (frozen)                     return { tier: 'COMMON',    color: '#778899', desc: 'Deep-frozen outer world' }
++-  if (superEarth)                 return { tier: 'UNCOMMON',  color: '#5599ff', desc: 'Super-Earth class' }
++-  if (isGas)                      return { tier: 'COMMON',    color: '#778899', desc: 'Gas / ice giant' }
++-  return                                 { tier: 'COMMON',    color: '#778899', desc: 'Cataloged rocky world' }
+++  if (earthSize && inHZ)  return { label: 'TEMPERATE TERRESTRIAL', color: '#44cc99', desc: 'Earth-sized, temperate orbit' }
+++  if (earthSize)          return { label: 'TERRESTRIAL',           color: '#44cc99', desc: 'Earth-sized world' }
+++  if (superEarth && inHZ) return { label: 'TEMPERATE SUPER-EARTH',  color: '#44cc99', desc: 'Super-Earth in habitable zone' }
+++  if (inHZ)               return { label: 'TEMPERATE ZONE',         color: '#5599ff', desc: 'Habitable zone candidate' }
+++  if (ultraHot && !isGas) return { label: 'HOT ROCKY',              color: '#ff8855', desc: 'Extreme hot-zone world' }
+++  if (frozen)             return { label: 'FROZEN',                 color: '#88bbdd', desc: 'Deep-frozen outer world' }
+++  if (superEarth)         return { label: 'SUPER-EARTH',            color: '#5599ff', desc: 'Super-Earth class' }
+++  if (isGas)              return { label: 'GAS / ICE GIANT',        color: '#c0a0d8', desc: 'Gas / ice giant' }
+++  return                         { label: 'ROCKY',                  color: '#9fb0c0', desc: 'Cataloged rocky world' }
++ }
++ 
++ function atmosphereDesc(p: Planet): string {
++@@ -1978,8 +1987,8 @@ function focusPlanet(pMesh: THREE.Mesh) {
++     },
++   })
++ 
++-  // Equatorial ring — colour-coded by rarity tier
++-  const rar = planetRarity(pMesh.userData.planet as Planet)
+++  // Equatorial ring — colour-coded by physical class (not a rarity tier)
+++  const rar = planetClass(pMesh.userData.planet as Planet)
++   const eqTorus = new THREE.Mesh(
++     new THREE.TorusGeometry(pR * 1.40, pR * 0.038, 8, 80),
++     new THREE.MeshBasicMaterial({
++@@ -3113,7 +3122,7 @@ onUnmounted(() => {
++   flex-shrink: 0;
++ }
++ 
++-.rarity-badge {
+++.pclass-badge {
++   display: flex;
++   align-items: baseline;
++   gap: 6px;
++@@ -3122,13 +3131,13 @@ onUnmounted(() => {
++   border-radius: 4px;
++   background: rgba(0,0,0,0.35);
++ }
++-.rarity-tier {
+++.pclass-label {
++   font-family: monospace;
++   font-size: 9px;
++   letter-spacing: 0.12em;
++   font-weight: 700;
++ }
++-.rarity-desc {
+++.pclass-desc {
++   font-family: monospace;
++   font-size: 9px;
++   opacity: 0.75;
++-- 
++2.43.0
++
+diff --git a/patch2.txt b/patch2.txt
+new file mode 100644
+index 0000000..7f6fe5f
+--- /dev/null
++++ b/patch2.txt
+@@ -0,0 +1,341 @@
++From ededd9bca0210ab3ac76a31aefa789c1e351c732 Mon Sep 17 00:00:00 2001
++From: exotopia <dev@exotopia.org>
++Date: Sat, 25 Jul 2026 00:47:48 +0000
++Subject: [PATCH 2/2] fix: single source of truth for resonance split; correct
++ wrong figures in deed hash and glossary
++
++The same concept was stated with four different sets of numbers:
++99/0.75/0.25 (DocsPage, DocPage, DocPage0, erc721-metadata, mint-style),
++80/15/5 (GlossaryPage summary, SettlementHashmark), 80/10/0 (GlossaryPage
++body, contradicting its own summary line), and 100/0/0 (exoloc settlement
++deed written by MintPage).
++
++Two of those were reaching immutable records. SettlementHashmark's 80/15/5
++sits inside the object SHA-256'd into design_hash, which is embedded in
++ERC-721 deed metadata - a permanent misstatement about where money goes,
++attached to an artefact a user paid gas to create.
++
++- New src/lib/resonance-split.ts holds STANDARD_SPLIT (99/0.75/0.25) and
++  SETTLEMENT_SPLIT (100/0/0). No on-chain value changes: every metadata
++  writer keeps the figure it already wrote.
++- SettlementHashmark corrected 80/15/5 -> SETTLEMENT_SPLIT. Hashmark schema
++  bumped v1 -> v2 so previously minted deed hashes stay reproducible under
++  the schema they were minted with.
++- GlossaryPage entry 31 rewritten: it stated 80/15/5 in the summary and
++  80/10/0 in the body, and matched no shipped writer.
++- DocsPage/DocPage0/DocPage no longer claim the standard split applies to
++  'all transactions' - settlement deeds differ and primary minting is free,
++  so on that path there is no fee to divide.
++- Added PRIMARY_MINT_IS_FREE with a note: quoting a split next to a free
++  mint implies a revenue stream that does not exist.
++---
++ src/components/SettlementHashmark.vue | 13 +++-
++ src/lib/evm/erc721-metadata.ts        |  4 +-
++ src/lib/mint-style.ts                 |  4 +-
++ src/lib/resonance-split.ts            | 87 +++++++++++++++++++++++++++
++ src/pages/DocPage.vue                 |  2 +-
++ src/pages/DocPage0.vue                |  8 +--
++ src/pages/DocsPage.vue                |  6 +-
++ src/pages/GlossaryPage.vue            |  4 +-
++ src/pages/MintPage.vue                |  3 +-
++ 9 files changed, 116 insertions(+), 15 deletions(-)
++ create mode 100644 src/lib/resonance-split.ts
++
++diff --git a/src/components/SettlementHashmark.vue b/src/components/SettlementHashmark.vue
++index 8f7701d..d6cc45f 100644
++--- a/src/components/SettlementHashmark.vue
+++++ b/src/components/SettlementHashmark.vue
++@@ -135,6 +135,7 @@
++ <script setup lang="ts">
++ import { ref, computed, watch, nextTick } from 'vue'
++ import type { Planet, StarSystem } from 'src/stores/galaxy'
+++import { SETTLEMENT_SPLIT } from 'src/lib/resonance-split'
++ 
++ // ── Props ─────────────────────────────────────────────────────────────────────
++ 
++@@ -282,7 +283,11 @@ const design = computed(() => {
++   }
++ 
++   return {
++-    schema:       'exotopia-settlement-v1',
+++    // v2: the `resonance` block previously hardcoded 80/15/5, which matched no
+++    // shipped metadata writer and was being SHA-256'd into `design_hash` and
+++    // embedded in ERC-721 deed metadata. Corrected to the real settlement split.
+++    // Schema version bumped so v1 deed hashes remain reproducible under v1.
+++    schema:       'exotopia-settlement-v2',
++     planet:       pl.pl_name,
++     hostname:     pl.hostname,
++     coordinate:   `exo-surface-v1:${pl.pl_name}:${Math.abs(baseLat)}${baseLat>=0?'N':'S'},${Math.abs(baseLon)}${baseLon>=0?'E':'W'}`,
++@@ -296,7 +301,11 @@ const design = computed(() => {
++     ecosystem:    { biome, water_state: waterState, n2_pct: n2Pct, o2_pct: o2Pct, co2_pct: co2Pct, flora: floraTypes },
++     items,
++     mule:         muleCorpus,
++-    resonance:    { creator_pct: 80, community_fund_pct: 15, platform_pct: 5 },
+++    resonance:    {
+++      creator_pct:        SETTLEMENT_SPLIT.creator        * 100,
+++      community_fund_pct: SETTLEMENT_SPLIT.community_fund * 100,
+++      platform_pct:       SETTLEMENT_SPLIT.platform       * 100,
+++    },
++   }
++ })
++ 
++diff --git a/src/lib/evm/erc721-metadata.ts b/src/lib/evm/erc721-metadata.ts
++index 8975a21..9e6b7eb 100644
++--- a/src/lib/evm/erc721-metadata.ts
+++++ b/src/lib/evm/erc721-metadata.ts
++@@ -18,6 +18,8 @@
++  *   Celo            — Community Badges, Eco-ops Participation Tokens
++  */
++ 
+++import { STANDARD_SPLIT, toSunlightShape } from '../resonance-split'
+++
++ // ── Shared types ──────────────────────────────────────────────────────────────
++ 
++ export interface Erc721Attribute {
++@@ -86,7 +88,7 @@ export function buildSunlightMeta(p: SunlightParams): Erc721Metadata {
++       audio_cid:      p.ipfs_audio_cid,
++       sample_credits: p.sample_credits ?? [],
++       license_terms:  p.license,
++-      resonance_split: { creator: 0.99, hardware_fund: 0.0075, platform: 0.0025 },
+++      resonance_split: toSunlightShape(STANDARD_SPLIT),
++     },
++   }
++ }
++diff --git a/src/lib/mint-style.ts b/src/lib/mint-style.ts
++index 2c5bd27..4934bd2 100644
++--- a/src/lib/mint-style.ts
+++++ b/src/lib/mint-style.ts
++@@ -17,6 +17,8 @@
++  *   settlement_status — Exotopia settlement state and eco-ops history
++  */
++ 
+++import { STANDARD_SPLIT, toSunlightShape } from './resonance-split'
+++
++ import type { Erc721Metadata, Erc721Attribute } from './evm/erc721-metadata'
++ 
++ // ── Source catalogue — Ecocity sustainable models ─────────────────────────────
++@@ -381,7 +383,7 @@ export function composeMetadata(style: MintingStyle): ComposeResult {
++       serial,
++       target_chain:  style.targetChain,
++       composed_at:   new Date().toISOString(),
++-      resonance_split: { creator: 0.99, hardware_fund: 0.0075, platform: 0.0025 },
+++      resonance_split: toSunlightShape(STANDARD_SPLIT),
++     },
++   }
++ 
++diff --git a/src/lib/resonance-split.ts b/src/lib/resonance-split.ts
++new file mode 100644
++index 0000000..6c4216d
++--- /dev/null
+++++ b/src/lib/resonance-split.ts
++@@ -0,0 +1,87 @@
+++/**
+++ * resonance-split.ts — single source of truth for allocation percentages.
+++ *
+++ * WHY THIS FILE EXISTS
+++ * --------------------
+++ * Before this, the same concept was stated with five different sets of numbers
+++ * across the app: 99/0.75/0.25 (DocsPage, DocPage, DocPage0, erc721-metadata,
+++ * mint-style), 80/15/5 (GlossaryPage summary line, SettlementHashmark),
+++ * 80/10/0 (GlossaryPage body — which also contradicted its own summary line),
+++ * and 100/0/0 (the exoloc settlement deed written by MintPage).
+++ *
+++ * Two of those were being committed to immutable records: the SettlementHashmark
+++ * figure is inside the object that gets SHA-256'd into `design_hash`, which is
+++ * then embedded in ERC-721 deed metadata. A wrong number in that position is not
+++ * a typo, it is a permanent misstatement about where money goes, attached to an
+++ * artefact a user paid gas to create.
+++ *
+++ * RULES
+++ * -----
+++ * 1. Import from here. Do not inline percentages anywhere, including in copy.
+++ * 2. `PRIMARY_MINT_IS_FREE` is not decoration — see the note below it. Any UI
+++ *    that displays a split must also make clear whether there is a fee to split.
+++ * 3. Fee isolation: never render a split figure combined into one expression
+++ *    with a gas figure or a community payout amount. Compute and display them
+++ *    independently.
+++ * 4. Changing SETTLEMENT_SPLIT changes the SettlementHashmark digest. Bump the
+++ *    hashmark schema version in the same commit so existing deed hashes stay
+++ *    reproducible against the schema they were minted under.
+++ */
+++
+++export interface ResonanceSplit {
+++  /** Fraction to the creator / artist / participant wallet. */
+++  creator: number
+++  /** Fraction to the Community Hardware Fund (WATSAN, mapping, field kit). */
+++  community_fund: number
+++  /** Fraction to platform maintenance. */
+++  platform: number
+++}
+++
+++/**
+++ * Standard split — $SUNLIGHT recordings and generative compositions.
+++ * Applies where a transaction actually carries a fee.
+++ */
+++export const STANDARD_SPLIT: ResonanceSplit = Object.freeze({
+++  creator:        0.99,
+++  community_fund: 0.0075,
+++  platform:       0.0025,
+++})
+++
+++/**
+++ * Exoloc settlement deeds. Currently 100% creator: the primary deed mint takes
+++ * no platform cut at all.
+++ *
+++ * This is deliberately a separate constant rather than an alias of
+++ * STANDARD_SPLIT — the two have always differed in the shipped metadata writers
+++ * and collapsing them would silently change what gets written on-chain.
+++ */
+++export const SETTLEMENT_SPLIT: ResonanceSplit = Object.freeze({
+++  creator:        1.00,
+++  community_fund: 0,
+++  platform:       0,
+++})
+++
+++/**
+++ * Primary settlement minting is free — the user pays network gas and nothing
+++ * else. There is therefore no platform fee to divide on the primary path today.
+++ *
+++ * This matters for how splits are described: stating "99% goes to the creator"
+++ * next to a free mint implies a revenue stream that does not currently exist.
+++ * Describe the split as the allocation that applies *if and when* a transaction
+++ * carries a fee, not as an ongoing distribution.
+++ */
+++export const PRIMARY_MINT_IS_FREE = true
+++
+++/** Legacy alias kept for $SUNLIGHT metadata, which names the field differently. */
+++export function toSunlightShape(s: ResonanceSplit) {
+++  return { creator: s.creator, hardware_fund: s.community_fund, platform: s.platform }
+++}
+++
+++/** "99 / 0.75 / 0.25" — for display. Trailing zeros trimmed. */
+++export function formatSplit(s: ResonanceSplit): string {
+++  const pct = (n: number) => {
+++    const v = n * 100
+++    return Number.isInteger(v) ? String(v) : String(parseFloat(v.toFixed(4)))
+++  }
+++  return `${pct(s.creator)} / ${pct(s.community_fund)} / ${pct(s.platform)}`
+++}
++diff --git a/src/pages/DocPage.vue b/src/pages/DocPage.vue
++index 7895fdd..5521d35 100644
++--- a/src/pages/DocPage.vue
+++++ b/src/pages/DocPage.vue
++@@ -476,7 +476,7 @@ const KEY_TERMS = [
++   { id: 11,  term: 'L5 SYZYGY',     short: 'Trophic level 5 — at a moon–planet Lagrange equilibrium point.' },
++   { id: 24,  term: 'Exolocation',   short: 'Permanent on-chain address anchoring a settlement to a specific location on an exoplanet.' },
++   { id: 29,  term: 'Stone Circle',  short: 'Cultural landmark at the centre of each settlement. Marks cardinal directions and carries the intention statement.' },
++-  { id: 31,  term: 'Resonance Split', short: '99 / 0.75 / 0.25 — 100% to creator. Platform is free and self-optimising.' },
+++  { id: 31,  term: 'Resonance Split', short: '99 / 0.75 / 0.25 on fee-carrying mints; 100 / 0 / 0 on settlement deeds. Primary minting is free — gas only.' },
++   { id: 40,  term: 'PON INK',       short: 'Primary operations portal for the SCD Hub — records every action on-chain.' },
++   { id: 41,  term: 'SCD Hub',       short: 'Sustainable Community Development Hub — US non-profit building digital infrastructure for community resilience.' },
++   { id: 42,  term: 'E8 Coxeter Lattice', short: 'Mathematical basis for the wormhole conduit network transit routing geometry.' },
++diff --git a/src/pages/DocPage0.vue b/src/pages/DocPage0.vue
++index cb8bde9..64a7b65 100644
++--- a/src/pages/DocPage0.vue
+++++ b/src/pages/DocPage0.vue
++@@ -67,7 +67,7 @@
++ 
++         <section :id="'getting-started'" class="dp-section">
++           <h1 class="dp-h1">Getting Started</h1>
++-          <p class="dp-p">Exotopia is an open, browser-based platform for virtual settlement on confirmed exoplanets, community-owned NFT minting, and real-world eco-ops field work. The standard Resonance Split is <strong>99 / 0.75 / 0.25</strong> — 99% to creator, 0.75% to the Community Hardware Fund, 0.25% platform maintenance.</p>
+++          <p class="dp-p">Exotopia is an open, browser-based platform for virtual settlement on confirmed exoplanets, community-owned NFT minting, and real-world eco-ops field work. The standard Resonance Split for fee-carrying mints is <strong>99 / 0.75 / 0.25</strong> — 99% to creator, 0.75% to the Community Hardware Fund, 0.25% platform maintenance. Settlement deeds are <strong>100 / 0 / 0</strong> and primary minting is free (gas only).</p>
++ 
++           <div :id="'what-is'" class="dp-sub">
++             <h2 class="dp-h2">What is Exotopia?</h2>
++@@ -92,7 +92,7 @@
++ 
++           <div :id="'free-platform'" class="dp-sub">
++             <h2 class="dp-h2">Platform model — 99 / 0.75 / 0.25</h2>
++-            <p class="dp-p">The standard Resonance Split applies to all transactions: <strong>99%</strong> to the creator/artist/worker wallet, <strong>0.75%</strong> to the Community Hardware Fund (WATSAN, mapping, field infrastructure), <strong>0.25%</strong> to platform maintenance. Primary minting is free (network gas only). Special mintings and airdrop events may use different parameters via additional contracts — any custom split requires co-sign approval and is logged on-chain.</p>
+++            <p class="dp-p">The standard Resonance Split applies to <em>fee-carrying</em> transactions — $SUNLIGHT recordings and generative compositions: <strong>99%</strong> to the creator/artist/worker wallet, <strong>0.75%</strong> to the Community Hardware Fund (WATSAN, mapping, field infrastructure), <strong>0.25%</strong> to platform maintenance. Exoloc settlement deeds use a different allocation — <strong>100 / 0 / 0</strong>, no platform cut. Primary settlement minting is free (network gas only), so on that path there is no fee to divide at all. None of these figures is a yield, a revenue share, or a claim on future platform revenue. Special mintings and airdrop events may use different parameters via additional contracts — any custom split requires co-sign approval and is logged on-chain.</p>
++             <div class="dp-callout">
++               <strong>Fee isolation rule:</strong> Gas costs are always displayed separately and never combined with creator payouts. The resonance split (99 / 0.75 / 0.25) is computed independently of gas.
++             </div>
++@@ -272,7 +272,7 @@
++ 
++         <section :id="'chains-section'" class="dp-section">
++           <h1 class="dp-h1">Networks</h1>
++-          <p class="dp-p">Two EVM testnet chains are active. Mainnet addresses are TBD. Standard Resonance Split: <strong>99 / 0.75 / 0.25</strong> on all chains.</p>
+++          <p class="dp-p">Two EVM testnet chains are active. Mainnet addresses are TBD. Standard Resonance Split for fee-carrying mints: <strong>99 / 0.75 / 0.25</strong> on all chains; settlement deeds 100 / 0 / 0.</p>
++ 
++           <div :id="'polygon'" class="dp-sub">
++             <h2 class="dp-h2">Polygon Amoy Testnet</h2>
++@@ -761,7 +761,7 @@ const KEY_TERMS = [
++   { id: 11,  term: 'L5 SYZYGY',     short: 'Trophic level 5 — at a moon–planet Lagrange equilibrium point.' },
++   { id: 24,  term: 'Exolocation',   short: 'Permanent on-chain address anchoring a settlement to a specific location on an exoplanet.' },
++   { id: 29,  term: 'Stone Circle',  short: 'Cultural landmark at the centre of each settlement. Marks cardinal directions and carries the intention statement.' },
++-  { id: 31,  term: 'Resonance Split', short: '99 / 0.75 / 0.25 — 100% to creator. Platform is free and self-optimising.' },
+++  { id: 31,  term: 'Resonance Split', short: '99 / 0.75 / 0.25 on fee-carrying mints; 100 / 0 / 0 on settlement deeds. Primary minting is free — gas only.' },
++   { id: 40,  term: 'PON INK',       short: 'Primary operations portal for the SCD Hub — records every action on-chain.' },
++   { id: 41,  term: 'SCD Hub',       short: 'Sustainable Community Development Hub — US non-profit building digital infrastructure for community resilience.' },
++   { id: 42,  term: 'E8 Coxeter Lattice', short: 'Mathematical basis for the wormhole conduit network transit routing geometry.' },
++diff --git a/src/pages/DocsPage.vue b/src/pages/DocsPage.vue
++index b36cd76..b14e281 100644
++--- a/src/pages/DocsPage.vue
+++++ b/src/pages/DocsPage.vue
++@@ -67,7 +67,7 @@
++ 
++         <section :id="'getting-started'" class="dp-section">
++           <h1 class="dp-h1">Getting Started</h1>
++-          <p class="dp-p">Exotopia is an open, browser-based platform for virtual settlement on confirmed exoplanets, community-owned NFT minting, and real-world eco-ops field work. The standard Resonance Split is <strong>99 / 0.75 / 0.25</strong> — 99% to creator, 0.75% to the Community Hardware Fund, 0.25% platform maintenance.</p>
+++          <p class="dp-p">Exotopia is an open, browser-based platform for virtual settlement on confirmed exoplanets, community-owned NFT minting, and real-world eco-ops field work. The standard Resonance Split for fee-carrying mints is <strong>99 / 0.75 / 0.25</strong> — 99% to creator, 0.75% to the Community Hardware Fund, 0.25% platform maintenance. Settlement deeds are <strong>100 / 0 / 0</strong> and primary minting is free (gas only).</p>
++ 
++           <div :id="'what-is'" class="dp-sub">
++             <h2 class="dp-h2">What is Exotopia?</h2>
++@@ -92,7 +92,7 @@
++ 
++           <div :id="'free-platform'" class="dp-sub">
++             <h2 class="dp-h2">Platform model — 99 / 0.75 / 0.25</h2>
++-            <p class="dp-p">The standard Resonance Split applies to all transactions: <strong>99%</strong> to the creator/artist/worker wallet, <strong>0.75%</strong> to the Community Hardware Fund (WATSAN, mapping, field infrastructure), <strong>0.25%</strong> to platform maintenance. Primary minting is free (network gas only). Special mintings and airdrop events may use different parameters via additional contracts — any custom split requires co-sign approval and is logged on-chain.</p>
+++            <p class="dp-p">The standard Resonance Split applies to <em>fee-carrying</em> transactions — $SUNLIGHT recordings and generative compositions: <strong>99%</strong> to the creator/artist/worker wallet, <strong>0.75%</strong> to the Community Hardware Fund (WATSAN, mapping, field infrastructure), <strong>0.25%</strong> to platform maintenance. Exoloc settlement deeds use a different allocation — <strong>100 / 0 / 0</strong>, no platform cut. Primary settlement minting is free (network gas only), so on that path there is no fee to divide at all. None of these figures is a yield, a revenue share, or a claim on future platform revenue. Special mintings and airdrop events may use different parameters via additional contracts — any custom split requires co-sign approval and is logged on-chain.</p>
++             <div class="dp-callout">
++               <strong>Fee isolation rule:</strong> Gas costs are always displayed separately and never combined with creator payouts. The resonance split (99 / 0.75 / 0.25) is computed independently of gas.
++             </div>
++@@ -193,7 +193,7 @@
++ 
++         <section :id="'chains-section'" class="dp-section">
++           <h1 class="dp-h1">Networks</h1>
++-          <p class="dp-p">Two EVM testnet chains are active. Mainnet addresses are TBD. Standard Resonance Split: <strong>99 / 0.75 / 0.25</strong> on all chains.</p>
+++          <p class="dp-p">Two EVM testnet chains are active. Mainnet addresses are TBD. Standard Resonance Split for fee-carrying mints: <strong>99 / 0.75 / 0.25</strong> on all chains; settlement deeds 100 / 0 / 0.</p>
++ 
++           <div :id="'polygon'" class="dp-sub">
++             <h2 class="dp-h2">Polygon Amoy Testnet</h2>
++diff --git a/src/pages/GlossaryPage.vue b/src/pages/GlossaryPage.vue
++index 54cb964..070ba82 100644
++--- a/src/pages/GlossaryPage.vue
+++++ b/src/pages/GlossaryPage.vue
++@@ -332,8 +332,8 @@ const TERMS: GlossTerm[] = [
++   },
++   {
++     id: 31, category: 'settlement', term: 'Resonance Split',
++-    short: '80 / 15 / 5 — the fee allocation applied to all PON INK transactions.',
++-    body: 'Always displayed before confirmation; never combined in a single expression with community payout amounts (fee isolation rule). Three independent paths: 80% → artist/participant wallet; 10% → Community Fund (WATSAN / mapping infrastructure); 0% → platform maintenance.',
+++    short: 'The allocation applied when a transaction carries a fee. It is not a yield or a revenue share.',
+++    body: 'Two allocations, depending on what is being minted. $SUNLIGHT recordings and generative compositions use 99 / 0.75 / 0.25 — 99% to the creator/artist/worker wallet, 0.75% to the Community Hardware Fund (WATSAN / mapping infrastructure), 0.25% to platform maintenance. Exoloc settlement deeds use 100 / 0 / 0 — the platform takes no cut. Primary settlement minting is free: you pay network gas and nothing else, so on that path there is no fee to divide. Paths are computed independently and always displayed before confirmation, never combined into a single figure with gas costs or community payout amounts (fee isolation rule). A settlement record carries no claim on future platform revenue and no resale royalty — seller_fee_basis_points is 0 and Exotopia does not operate a secondary market.',
++     related: [40],
++   },
++ 
++diff --git a/src/pages/MintPage.vue b/src/pages/MintPage.vue
++index e94d49c..a07f55a 100644
++--- a/src/pages/MintPage.vue
+++++ b/src/pages/MintPage.vue
++@@ -1368,6 +1368,7 @@ import {
++ } from 'src/lib/evm/mint-evm'
++ import WalletOnboardingGuide from 'src/components/WalletOnboardingGuide.vue'
++ import { useSettlements, surfaceKey, clusterKey } from 'src/lib/settlements'
+++import { SETTLEMENT_SPLIT } from 'src/lib/resonance-split'
++ 
++ const { hasSettlement, addSettlement } = useSettlements()
++ 
++@@ -1830,7 +1831,7 @@ function buildExolocParams(): ExolocParams {
++     moon_index:       exo.value.moonIndex > 1 ? exo.value.moonIndex : undefined,
++     lagrange_point:   exo.value.lagrangePoint || undefined,
++     interface_zone:   exo.value.interfaceZone || undefined,
++-    resonance_split:  { creator: 1.00, community_fund: 0, platform: 0 },
+++    resonance_split:  { ...SETTLEMENT_SPLIT },
++   }
++ }
++ 
++-- 
++2.43.0
++
+diff --git a/patch3.txt b/patch3.txt
+new file mode 100644
+index 0000000..586c220
+--- /dev/null
++++ b/patch3.txt
+@@ -0,0 +1,623 @@
++From 97a771d8506fabe2de7f4c47af31e86debc14684 Mon Sep 17 00:00:00 2001
++From: exotopia <dev@exotopia.org>
++Date: Sat, 25 Jul 2026 01:01:53 +0000
++Subject: [PATCH] chore: repo hygiene, env ignore rules, security headers
++
++Three cleanup items, none touching application logic.
++
++1. Untrack build/scratch artifacts: .quasar/ (5 generated files), a stray
++   '...swp' vim swap file, and three .scratch-*.mjs throwaway scripts.
++
++2. .gitignore covered .env and .env.test only. Vite actually loads .env.local,
++   .env.production and .env.<mode>.local - none of which were ignored. Nothing
++   has leaked (scanned for service-role keys, Stripe keys and JWTs: clean), but
++   the gap was one 'cp .env.example .env.local' away from being real. Also adds
++   .quasar/, /dist/, *.swp and .scratch-* so item 1 stays fixed.
++
++3. vercel.json set no security headers at all. For a site that connects crypto
++   wallets, missing frame-ancestors/X-Frame-Options is the standard precondition
++   for a drainer overlay. Adds X-Content-Type-Options, X-Frame-Options,
++   Referrer-Policy, HSTS and Permissions-Policy as enforced, plus a
++   Cache-Control rule for static data payloads.
++
++   CSP ships as Report-Only deliberately. connect-src has to cover Supabase,
++   four EVM/Solana RPCs, Algonode and two IPFS pinning services; three.js needs
++   'wasm-unsafe-eval'; Quasar emits inline styles. Enforcing that blind would
++   break the app on first deploy. Watch the violation reports, tighten, then
++   flip the header name to Content-Security-Policy.
++---
++ ...swp                         | Bin 12288 -> 0 bytes
++ .gitignore                     |  16 ++++
++ .quasar/app.js                 |  56 -----------
++ .quasar/artifacts.json         |   1 -
++ .quasar/client-entry.js        | 168 ---------------------------------
++ .quasar/client-prefetch.js     | 116 -----------------------
++ .quasar/quasar-user-options.js |  21 -----
++ .scratch-anticipated.mjs       |  24 -----
++ .scratch-defender.mjs          |  36 -------
++ .scratch-final-check.mjs       |  16 ----
++ vercel.json                    |  28 ++++++
++ 11 files changed, 44 insertions(+), 438 deletions(-)
++ delete mode 100644 ...swp
++ delete mode 100644 .quasar/app.js
++ delete mode 100644 .quasar/artifacts.json
++ delete mode 100644 .quasar/client-entry.js
++ delete mode 100644 .quasar/client-prefetch.js
++ delete mode 100644 .quasar/quasar-user-options.js
++ delete mode 100644 .scratch-anticipated.mjs
++ delete mode 100644 .scratch-defender.mjs
++ delete mode 100644 .scratch-final-check.mjs
++
++diff --git a/...swp b/...swp
++deleted file mode 100644
++index f8c66cbc4f4b8ab380bf5826c6f9bbcdcd7d0a8e..0000000000000000000000000000000000000000
++GIT binary patch
++literal 0
++HcmV?d00001
++
++literal 12288
++zcmeI%Jx;?g6u|M<?iEljU_RC+ZYu`F%EG`{1~yZy5^!Y8u~1o{ci=vVgTTUs#3e`&
++z9jWLT^>4|tY`-V_{Wi;2`r_<d9cM$S+qTHd=gIAR@3Oo2+L6k;Diu@PY^`eljeA@M
++z=BKv0OFrZ#ru^Q<sda;!RJwtk`+B)BnUAwP%T^uA9s&rgDbSmYM?>8t9qjL^-Tq|F
++ze8Lex009ILKmY**5I~^K0x5LlsV<=VTSVuNvCTDdcLWeX009ILKmY**5I_I{1U6m3
++zT#LMJiM-Xl`Tt+O|9|G2jzj$jAb<b@2q1s}0tg_000IcKK){3${k$kmvhG10j<o(*
++QJdcmG3O1_Bl)+i~2KwbRvj6}9
++
++diff --git a/.gitignore b/.gitignore
++index 6704566..388db3e 100644
++--- a/.gitignore
+++++ b/.gitignore
++@@ -69,8 +69,24 @@ typings/
++ .yarn-integrity
++ 
++ # dotenv environment variables file
+++# NOTE: `.env` and `.env.test` alone do NOT cover Vite's actual conventions.
+++# Vite loads .env.local, .env.production, .env.<mode>.local — all of which were
+++# previously untracked-by-luck rather than untracked-by-rule.
++ .env
++ .env.test
+++.env.local
+++.env.production
+++.env.development
+++.env*.local
+++
+++# Quasar build output (was previously committed)
+++.quasar/
+++/dist/
+++
+++# Editor swap files and throwaway scratch scripts
+++*.swp
+++*.swo
+++.scratch-*
++ 
++ # parcel-bundler cache (https://parceljs.org/)
++ .cache
++diff --git a/.quasar/app.js b/.quasar/app.js
++deleted file mode 100644
++index 04f6b3a..0000000
++--- a/.quasar/app.js
+++++ /dev/null
++@@ -1,56 +0,0 @@
++-/* eslint-disable */
++-/**
++- * THIS FILE IS GENERATED AUTOMATICALLY.
++- * DO NOT EDIT.
++- *
++- * You are probably looking on adding startup/initialization code.
++- * Use "quasar new boot <name>" and add it there.
++- * One boot file per concern. Then reference the file(s) in quasar.config.js > boot:
++- * boot: ['file', ...] // do not add ".js" extension to it.
++- *
++- * Boot files are your "main.js"
++- **/
++-
++-
++-
++-import { Quasar } from 'quasar'
++-import { markRaw } from 'vue'
++-import RootComponent from 'app/src/App.vue'
++-
++-
++-import createRouter from 'app/src/router/index'
++-
++-
++-
++-
++-
++-export default async function (createAppFn, quasarUserOptions) {
++-  // Create the app instance.
++-  // Here we inject into it the Quasar UI, the router & possibly the store.
++-  const app = createAppFn(RootComponent)
++-
++-  
++-
++-  app.use(Quasar, quasarUserOptions)
++-
++-  
++-
++-  
++-
++-  const router = markRaw(
++-    typeof createRouter === 'function'
++-      ? await createRouter({})
++-      : createRouter
++-  )
++-
++-  
++-
++-  // Expose the app, the router and the store.
++-  // Note that we are not mounting the app here, since bootstrapping will be
++-  // different depending on whether we are in a browser or on the server.
++-  return {
++-    app,
++-    
++-    router
++-  }
++-}
++diff --git a/.quasar/artifacts.json b/.quasar/artifacts.json
++deleted file mode 100644
++index 01556db..0000000
++--- a/.quasar/artifacts.json
+++++ /dev/null
++@@ -1 +0,0 @@
++-{"folders":["/home/solstice/Desktop/art/vercel-html-exotopia.org/dist/spa"]}
++\ No newline at end of file
++diff --git a/.quasar/client-entry.js b/.quasar/client-entry.js
++deleted file mode 100644
++index 74ae559..0000000
++--- a/.quasar/client-entry.js
+++++ /dev/null
++@@ -1,168 +0,0 @@
++-/* eslint-disable */
++-/**
++- * THIS FILE IS GENERATED AUTOMATICALLY.
++- * DO NOT EDIT.
++- *
++- * You are probably looking on adding startup/initialization code.
++- * Use "quasar new boot <name>" and add it there.
++- * One boot file per concern. Then reference the file(s) in quasar.config.js > boot:
++- * boot: ['file', ...] // do not add ".js" extension to it.
++- *
++- * Boot files are your "main.js"
++- **/
++-
++-
++-import { createApp } from 'vue'
++-
++-
++-
++-
++-
++-
++-
++-import '@quasar/extras/material-icons/material-icons.css'
++-
++-import '@quasar/extras/mdi-v7/mdi-v7.css'
++-
++-import '@quasar/extras/roboto-font/roboto-font.css'
++-
++-
++-
++-import '@quasar/extras/animate/fadeIn.css'
++-
++-import '@quasar/extras/animate/fadeOut.css'
++-
++-
++-// We load Quasar stylesheet file
++-import 'quasar/dist/quasar.css'
++-
++-
++-
++-
++-import 'src/css/app.scss'
++-
++-
++-import createQuasarApp from './app.js'
++-import quasarUserOptions from './quasar-user-options.js'
++-
++-
++-
++-
++-
++-
++-
++-const publicPath = `/`
++-
++-async function start ({
++-  app,
++-  router
++-  
++-}, bootFiles) {
++-  
++-
++-  
++-  let hasRedirected = false
++-  const getRedirectUrl = url => {
++-    try { return router.resolve(url).href }
++-    catch (err) {}
++-
++-    return Object(url) === url
++-      ? null
++-      : url
++-  }
++-  const redirect = url => {
++-    hasRedirected = true
++-
++-    if (typeof url === 'string' && /^https?:\/\//.test(url)) {
++-      window.location.href = url
++-      return
++-    }
++-
++-    const href = getRedirectUrl(url)
++-
++-    // continue if we didn't fail to resolve the url
++-    if (href !== null) {
++-      window.location.href = href
++-      
++-    }
++-  }
++-
++-  const urlPath = window.location.href.replace(window.location.origin, '')
++-
++-  for (let i = 0; hasRedirected === false && i < bootFiles.length; i++) {
++-    try {
++-      await bootFiles[i]({
++-        app,
++-        router,
++-        
++-        ssrContext: null,
++-        redirect,
++-        urlPath,
++-        publicPath
++-      })
++-    }
++-    catch (err) {
++-      if (err && err.url) {
++-        redirect(err.url)
++-        return
++-      }
++-
++-      console.error('[Quasar] boot error:', err)
++-      return
++-    }
++-  }
++-
++-  if (hasRedirected === true) {
++-    return
++-  }
++-  
++-
++-  app.use(router)
++-  
++-
++-  
++-
++-    
++-
++-    
++-      app.mount('#q-app')
++-    
++-
++-    
++-
++-  
++-
++-}
++-
++-createQuasarApp(createApp, quasarUserOptions)
++-
++-  .then(app => {
++-    // eventually remove this when Cordova/Capacitor/Electron support becomes old
++-    const [ method, mapFn ] = Promise.allSettled !== void 0
++-      ? [
++-        'allSettled',
++-        bootFiles => bootFiles.map(result => {
++-          if (result.status === 'rejected') {
++-            console.error('[Quasar] boot error:', result.reason)
++-            return
++-          }
++-          return result.value.default
++-        })
++-      ]
++-      : [
++-        'all',
++-        bootFiles => bootFiles.map(entry => entry.default)
++-      ]
++-
++-    return Promise[ method ]([
++-      
++-      import('boot/pinia'),
++-      
++-      import('boot/member')
++-      
++-    ]).then(bootFiles => {
++-      const boot = mapFn(bootFiles).filter(entry => typeof entry === 'function')
++-      start(app, boot)
++-    })
++-  })
++-
++diff --git a/.quasar/client-prefetch.js b/.quasar/client-prefetch.js
++deleted file mode 100644
++index f9c06d7..0000000
++--- a/.quasar/client-prefetch.js
+++++ /dev/null
++@@ -1,116 +0,0 @@
++-/* eslint-disable */
++-/**
++- * THIS FILE IS GENERATED AUTOMATICALLY.
++- * DO NOT EDIT.
++- *
++- * You are probably looking on adding startup/initialization code.
++- * Use "quasar new boot <name>" and add it there.
++- * One boot file per concern. Then reference the file(s) in quasar.config.js > boot:
++- * boot: ['file', ...] // do not add ".js" extension to it.
++- *
++- * Boot files are your "main.js"
++- **/
++-
++-
++-
++-import App from 'app/src/App.vue'
++-let appPrefetch = typeof App.preFetch === 'function'
++-  ? App.preFetch
++-  : (
++-    // Class components return the component options (and the preFetch hook) inside __c property
++-    App.__c !== void 0 && typeof App.__c.preFetch === 'function'
++-      ? App.__c.preFetch
++-      : false
++-    )
++-
++-
++-function getMatchedComponents (to, router) {
++-  const route = to
++-    ? (to.matched ? to : router.resolve(to).route)
++-    : router.currentRoute.value
++-
++-  if (!route) { return [] }
++-
++-  const matched = route.matched.filter(m => m.components !== void 0)
++-
++-  if (matched.length === 0) { return [] }
++-
++-  return Array.prototype.concat.apply([], matched.map(m => {
++-    return Object.keys(m.components).map(key => {
++-      const comp = m.components[key]
++-      return {
++-        path: m.path,
++-        c: comp
++-      }
++-    })
++-  }))
++-}
++-
++-export function addPreFetchHooks ({ router, publicPath }) {
++-  // Add router hook for handling preFetch.
++-  // Doing it after initial route is resolved so that we don't double-fetch
++-  // the data that we already have. Using router.beforeResolve() so that all
++-  // async components are resolved.
++-  router.beforeResolve((to, from, next) => {
++-    const
++-      urlPath = window.location.href.replace(window.location.origin, ''),
++-      matched = getMatchedComponents(to, router),
++-      prevMatched = getMatchedComponents(from, router)
++-
++-    let diffed = false
++-    const preFetchList = matched
++-      .filter((m, i) => {
++-        return diffed || (diffed = (
++-          !prevMatched[i] ||
++-          prevMatched[i].c !== m.c ||
++-          m.path.indexOf('/:') > -1 // does it has params?
++-        ))
++-      })
++-      .filter(m => m.c !== void 0 && (
++-        typeof m.c.preFetch === 'function'
++-        // Class components return the component options (and the preFetch hook) inside __c property
++-        || (m.c.__c !== void 0 && typeof m.c.__c.preFetch === 'function')
++-      ))
++-      .map(m => m.c.__c !== void 0 ? m.c.__c.preFetch : m.c.preFetch)
++-
++-    
++-    if (appPrefetch !== false) {
++-      preFetchList.unshift(appPrefetch)
++-      appPrefetch = false
++-    }
++-    
++-
++-    if (preFetchList.length === 0) {
++-      return next()
++-    }
++-
++-    let hasRedirected = false
++-    const redirect = url => {
++-      hasRedirected = true
++-      next(url)
++-    }
++-    const proceed = () => {
++-      
++-      if (hasRedirected === false) { next() }
++-    }
++-
++-    
++-
++-    preFetchList.reduce(
++-      (promise, preFetch) => promise.then(() => hasRedirected === false && preFetch({
++-        
++-        currentRoute: to,
++-        previousRoute: from,
++-        redirect,
++-        urlPath,
++-        publicPath
++-      })),
++-      Promise.resolve()
++-    )
++-    .then(proceed)
++-    .catch(e => {
++-      console.error(e)
++-      proceed()
++-    })
++-  })
++-}
++diff --git a/.quasar/quasar-user-options.js b/.quasar/quasar-user-options.js
++deleted file mode 100644
++index f8c73e8..0000000
++--- a/.quasar/quasar-user-options.js
+++++ /dev/null
++@@ -1,21 +0,0 @@
++-/* eslint-disable */
++-/**
++- * THIS FILE IS GENERATED AUTOMATICALLY.
++- * DO NOT EDIT.
++- *
++- * You are probably looking on adding startup/initialization code.
++- * Use "quasar new boot <name>" and add it there.
++- * One boot file per concern. Then reference the file(s) in quasar.config.js > boot:
++- * boot: ['file', ...] // do not add ".js" extension to it.
++- *
++- * Boot files are your "main.js"
++- **/
++-
++-
++-
++-import {Notify,Dialog,Loading} from 'quasar'
++-
++-
++-
++-export default { config: {"dark":true,"brand":{"primary":"#1a73e8","secondary":"#26a69a","accent":"#9c27b0","dark":"#0a0f1e","positive":"#21ba45","negative":"#c10015","info":"#31ccec","warning":"#f2c037"},"notify":{"position":"bottom-right"}},plugins: {Notify,Dialog,Loading} }
++-
++diff --git a/.scratch-anticipated.mjs b/.scratch-anticipated.mjs
++deleted file mode 100644
++index d129c4b..0000000
++--- a/.scratch-anticipated.mjs
+++++ /dev/null
++@@ -1,24 +0,0 @@
++-import { chromium } from 'playwright'
++-const shotDir = '/tmp/claude-1000/-home-solstice-Desktop-art-vercel-html-exotopia-org/66f4f8f3-0173-49a3-b2b4-a4c1ed5a6946/scratchpad'
++-const browser = await chromium.launch({ args: ['--no-sandbox'] })
++-const page = await browser.newPage({ viewport: { width: 1280, height: 800 } })
++-const errs = []
++-page.on('pageerror', e => errs.push(e.message))
++-page.on('console', m => { if (m.type()==='error') errs.push(m.text()) })
++-
++-for (const id of ['Cygnus-X-1', 'Omega-Cen-IMBH', 'M87-star', 'NGC-4258', 'Gaia-BH1']) {
++-  await page.goto(`http://localhost:9303/bh/${id}`, { waitUntil: 'networkidle', timeout: 30000 })
++-  await page.waitForTimeout(2200)
++-  await page.screenshot({ path: `${shotDir}/ant-${id}-close.png` })
++-  // zoom out to see the anticipated shell — scroll wheel out several times
++-  for (let i = 0; i < 10; i++) {
++-    await page.mouse.move(640, 400)
++-    await page.mouse.wheel(0, 300)
++-    await page.waitForTimeout(80)
++-  }
++-  await page.waitForTimeout(600)
++-  await page.screenshot({ path: `${shotDir}/ant-${id}-far.png` })
++-}
++-
++-console.log('ERRORS:', JSON.stringify(errs))
++-await browser.close()
++diff --git a/.scratch-defender.mjs b/.scratch-defender.mjs
++deleted file mode 100644
++index 6c673ef..0000000
++--- a/.scratch-defender.mjs
+++++ /dev/null
++@@ -1,36 +0,0 @@
++-import { chromium } from 'playwright'
++-const shotDir = '/tmp/claude-1000/-home-solstice-Desktop-art-vercel-html-exotopia-org/66f4f8f3-0173-49a3-b2b4-a4c1ed5a6946/scratchpad'
++-const browser = await chromium.launch({ args: ['--no-sandbox'] })
++-const page = await browser.newPage({ viewport: { width: 1280, height: 900 } })
++-const errs = []
++-page.on('pageerror', e => errs.push('pageerror: ' + e.message))
++-page.on('console', m => { if (m.type()==='error') errs.push(m.text()) })
++-
++-await page.goto('http://localhost:9304/bh/A0620-00', { waitUntil: 'networkidle', timeout: 30000 })
++-await page.waitForTimeout(2000)
++-await page.screenshot({ path: `${shotDir}/def-1-a0620.png` })
++-
++-// Drag the defender slider
++-const track = await page.$('.bhdn-track')
++-const box = await track.boundingBox()
++-await page.mouse.move(box.x + box.width * 0.2, box.y + box.height / 2)
++-await page.mouse.down()
++-await page.mouse.move(box.x + box.width * 0.85, box.y + box.height / 2, { steps: 20 })
++-await page.waitForTimeout(300)
++-await page.mouse.up()
++-await page.waitForTimeout(1200)
++-await page.screenshot({ path: `${shotDir}/def-2-after-drag.png` })
++-
++-// Click "OTHER OBJECTS" quick switch to jump bh->bh directly (exercises the
++-// route-param watcher + vector zoom tween while staying mounted)
++-const before = page.url()
++-await page.click('.bhdn-switch-btn:has-text("M87")')
++-await page.waitForTimeout(200)
++-await page.screenshot({ path: `${shotDir}/def-3-jump-mid.png` })
++-await page.waitForTimeout(1600)
++-await page.screenshot({ path: `${shotDir}/def-4-jump-done.png` })
++-console.log('URL before/after jump:', before, '->', page.url())
++-
++-await page.waitForTimeout(500)
++-console.log('ERRORS:', JSON.stringify(errs, null, 2))
++-await browser.close()
++diff --git a/.scratch-final-check.mjs b/.scratch-final-check.mjs
++deleted file mode 100644
++index 2d109fe..0000000
++--- a/.scratch-final-check.mjs
+++++ /dev/null
++@@ -1,16 +0,0 @@
++-import { chromium } from 'playwright'
++-const shotDir = '/tmp/claude-1000/-home-solstice-Desktop-art-vercel-html-exotopia-org/66f4f8f3-0173-49a3-b2b4-a4c1ed5a6946/scratchpad'
++-const browser = await chromium.launch({ args: ['--no-sandbox'] })
++-const page = await browser.newPage({ viewport: { width: 1280, height: 900 } })
++-const errs = []
++-page.on('pageerror', e => errs.push('pageerror: ' + e.message))
++-page.on('console', m => { if (m.type()==='error') errs.push(m.text()) })
++-
++-for (const url of ['/galactic-center', '/bh/Gaia-BH2', '/bh/GRO-J1655-40', '/bh/NGC-4258']) {
++-  await page.goto(`http://localhost:9304${url}`, { waitUntil: 'networkidle', timeout: 30000 })
++-  await page.waitForTimeout(2200)
++-  await page.screenshot({ path: `${shotDir}/final2-${url.replace(/\//g,'_')}.png` })
++-}
++-
++-console.log('ERRORS:', JSON.stringify(errs, null, 2))
++-await browser.close()
++diff --git a/vercel.json b/vercel.json
++index 81693a0..ddc743c 100644
++--- a/vercel.json
+++++ b/vercel.json
++@@ -3,6 +3,34 @@
++   "outputDirectory": "dist/spa",
++   "framework": null,
++   "cleanUrls": true,
+++  "headers": [
+++    {
+++      "source": "/(.*)",
+++      "headers": [
+++        { "key": "X-Content-Type-Options", "value": "nosniff" },
+++        { "key": "X-Frame-Options", "value": "DENY" },
+++        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+++        {
+++          "key": "Strict-Transport-Security",
+++          "value": "max-age=63072000; includeSubDomains; preload"
+++        },
+++        {
+++          "key": "Permissions-Policy",
+++          "value": "geolocation=(self), camera=(self), microphone=(), payment=(), usb=(), interest-cohort=()"
+++        },
+++        {
+++          "key": "Content-Security-Policy-Report-Only",
+++          "value": "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; img-src 'self' data: blob: https:; media-src 'self' blob: https:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.algonode.cloud https://polygon-rpc.com https://rpc-amoy.polygon.technology https://forno.celo.org https://alfajores-forno.celo-testnet.org https://api.devnet.solana.com https://api.pinata.cloud https://api.nft.storage https://raw.githubusercontent.com"
+++        }
+++      ]
+++    },
+++    {
+++      "source": "/(.*)\\.(json|glb|bin|png|jpg|webp|woff2)",
+++      "headers": [
+++        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+++      ]
+++    }
+++  ],
++   "rewrites": [
++     { "source": "/print/:path*", "destination": "/print/:path*" },
++     { "source": "/(.*)",         "destination": "/index.html"   }
++-- 
++2.43.0
++
+diff --git a/patch4.txt b/patch4.txt
+new file mode 100644
+index 0000000..fda5628
+--- /dev/null
++++ b/patch4.txt
+@@ -0,0 +1,553 @@
++From 4b368574ba30ab5becd1965e9d47bad864ed45ae Mon Sep 17 00:00:00 2001
++From: exotopia <dev@exotopia.org>
++Date: Sat, 25 Jul 2026 05:32:49 +0000
++Subject: [PATCH] fix(security): lock down reward ledger writes; pin
++ search_path on definer functions
++
++Migration 007. Two issues held back from the cleanup pass because neither is
++cleanup.
++
++(A) search_path. Five-plus SECURITY DEFINER functions in public had no
++    search_path pinned. A definer function resolves unqualified names using the
++    caller's search_path, so a caller able to create objects in an earlier
++    schema can shadow a referenced table or operator and have it run with the
++    definer's privileges. Pinned via ALTER FUNCTION in a DO block over
++    pg_proc.prosecdef, so no function body is rewritten and functions added
++    later are covered too.
++
++(B) The reward ledger was self-serve. reward_events_insert allowed
++    WITH CHECK (member_id = auth.uid() OR is_admin()) and points had only
++    CHECK (points >= 0). The anon key is public and RLS was the only gate, so
++    any authenticated user could POST to PostgREST with arbitrary points and
++    skip the app. certificates_insert had the same shape - a user could
++    self-issue 'mentorship', which compliance/digital-credentials-law frames as
++    carrying real-world standing. All of mentor_session_guard()'s anti-fraud
++    work was bypassable by inserting the reward row directly.
++
++    Clients lose INSERT on both tables. Awards now go through definer RPCs:
++    - points_catalog / quiz_reward_rules hold point values, caps and quiz
++      thresholds server-side
++    - award_self_reported() sets points from the catalogue, enforces a per
++      action daily cap, and marks rows self_reported so audits can tell
++      asserted work from verified work
++    - award_quiz_completion() enforces threshold, prerequisite chain and the
++      one-shot rule
++    - refresh_certificates() derives certificates from ledger state; it is the
++      only issuance path and is not client-executable
++    - unique indexes kill replay of quiz awards and duplicate certificates
++    - mentor pair cooldown + unique (mentor, mentee, topic) bounds the
++      two-account collusion loop
++    - admin_members no longer readable by anonymous visitors
++
++    src/stores/rewards.ts migrated to the RPCs; without this the app breaks on
++    deploy, since the INSERT paths it relied on are gone.
++---
++ src/stores/rewards.ts                        | 104 +++---
++ supabase/migrations/007_reward_integrity.sql | 356 +++++++++++++++++++
++ 2 files changed, 396 insertions(+), 64 deletions(-)
++ create mode 100644 supabase/migrations/007_reward_integrity.sql
++
++diff --git a/src/stores/rewards.ts b/src/stores/rewards.ts
++index fc36bca..a53b3e9 100644
++--- a/src/stores/rewards.ts
+++++ b/src/stores/rewards.ts
++@@ -138,44 +138,33 @@ export const useRewardsStore = defineStore('rewards', () => {
++     return data ?? []
++   }
++ 
++-  /** Public wrapper — lets other domain stores (e.g. PFAS citizen science) issue a certificate for the current member once they've determined a threshold is crossed, without duplicating the idempotency check. */
++-  async function issueCertificate(certificateType: string, settlementObjectKey: string) {
++-    await issueCertificateIfMissing(certificateType, settlementObjectKey)
++-  }
++-
++-  /** Issue a certificate for the current member if not already held (idempotent). */
++-  async function issueCertificateIfMissing(certificateType: string, settlementObjectKey: string, sourceEventId?: string) {
++-    const member = useMemberStore()
++-    if (!supabase || !member.userId) return
++-    if (certificateTypes.value.has(certificateType)) return
++-    const { data, error: e } = await supabase.from('certificates').insert({
++-      member_id:              member.userId,
++-      certificate_type:       certificateType,
++-      settlement_object_key:  settlementObjectKey,
++-      source_event_id:        sourceEventId ?? null,
++-    }).select().single()
++-    if (!e && data) certificates.value = [...certificates.value, data as Certificate]
+++  /**
+++   * Certificates are no longer issued by the client. Migration 007 revoked
+++   * INSERT on `certificates` — a self-issuable credential is not a credential,
+++   * and 'mentorship' in particular is framed in compliance/digital-credentials-law
+++   * as carrying real-world standing.
+++   *
+++   * Issuance is derived server-side from ledger state by refresh_certificates(),
+++   * which every award RPC calls. Callers that previously asked for a certificate
+++   * now just re-read: if the threshold was crossed, the row is already there.
+++   */
+++  async function issueCertificate(_certificateType: string, _settlementObjectKey: string) {
+++    await loadMyRewards()
++   }
++ 
++   /** Called after a quiz completes in LearnPage.vue — awards points + certificate if the area maps to a reward and the score clears the threshold. */
++   async function awardQuizCompletion(areaId: string, score: number, _total: number) {
++     const member = useMemberStore()
++-    const cfg = QUIZ_REWARD_MAP[areaId]
++-    if (!supabase || !member.userId || !cfg) return
++-    if (score < cfg.minScore) return
++-    if (cfg.prerequisite && !certificateTypes.value.has(QUIZ_REWARD_MAP[cfg.prerequisite]?.certificateType ?? '')) return
++-    if (certificateTypes.value.has(cfg.certificateType)) return   // already awarded
++-
++-    const { data, error: e } = await supabase.from('reward_events').insert({
++-      member_id:  member.userId,
++-      track:      cfg.track,
++-      action_key: cfg.actionKey,
++-      points:     POINTS[cfg.actionKey] ?? 0,
++-      metadata:   { score, area_id: areaId },
++-    }).select().single()
++-    if (e || !data) return
++-    rewardEvents.value = [data as RewardEvent, ...rewardEvents.value]
++-    await issueCertificateIfMissing(cfg.certificateType, cfg.settlementObjectKey, (data as RewardEvent).id)
+++    if (!supabase || !member.userId) return
+++    // Threshold, prerequisite chain, point value and the one-shot rule are all
+++    // enforced in award_quiz_completion(). The client no longer decides any of
+++    // them; QUIZ_REWARD_MAP is now display metadata only.
+++    const { error: e } = await supabase.rpc('award_quiz_completion', {
+++      p_area_id: areaId,
+++      p_score:   score,
+++    })
+++    if (e) { error.value = e.message; return }
+++    await loadMyRewards()
++   }
++ 
++   /**
++@@ -188,42 +177,27 @@ export const useRewardsStore = defineStore('rewards', () => {
++   async function logVolunteerAction(actionKey: string, metadata: Record<string, unknown> = {}) {
++     const member = useMemberStore()
++     if (!supabase || !member.userId) return
++-    const points = POINTS[actionKey] ?? POINTS.volunteer_self_report ?? 0
++-    const { data, error: e } = await supabase.from('reward_events').insert({
++-      member_id:  member.userId,
++-      track:      'volunteering',
++-      action_key: actionKey,
++-      points,
++-      metadata,
++-    }).select().single()
++-    if (e || !data) return
++-    rewardEvents.value = [data as RewardEvent, ...rewardEvents.value]
++-
++-    if (pointsByTrack.value.volunteering >= VOLUNTEER_CERTIFICATE_THRESHOLD) {
++-      await issueCertificateIfMissing('field_volunteer', 'volunteer_dome_object', (data as RewardEvent).id)
++-    }
++-    if (actionKey === 'decon_progress_log') {
++-      const logCount = rewardEvents.value.filter(e => e.action_key === 'decon_progress_log').length
++-      if (logCount >= PFAS_RESEARCHER_LOG_THRESHOLD) {
++-        await issueCertificateIfMissing('pfas_field_researcher', 'pfas_researcher_marker', (data as RewardEvent).id)
++-      }
++-    }
+++    // Points come from points_catalog server-side; the daily cap and the
+++    // self_reported flag are enforced there too. Passing a point value from
+++    // here is no longer possible.
+++    const { error: e } = await supabase.rpc('award_self_reported', {
+++      p_action_key: actionKey,
+++      p_metadata:   metadata,
+++    })
+++    if (e) { error.value = e.message; return }
+++    await loadMyRewards()
++   }
++ 
++   /** Self-serve credit for the educating_others track outside mentor sessions — e.g. publishing a public method proposal. Same client-trust model as logVolunteerAction. */
++   async function logEducatingAction(actionKey: string, metadata: Record<string, unknown> = {}) {
++     const member = useMemberStore()
++     if (!supabase || !member.userId) return
++-    const points = POINTS[actionKey] ?? 0
++-    const { data, error: e } = await supabase.from('reward_events').insert({
++-      member_id:  member.userId,
++-      track:      'educating_others',
++-      action_key: actionKey,
++-      points,
++-      metadata,
++-    }).select().single()
++-    if (e || !data) return
++-    rewardEvents.value = [data as RewardEvent, ...rewardEvents.value]
+++    const { error: e } = await supabase.rpc('award_self_reported', {
+++      p_action_key: actionKey,
+++      p_metadata:   metadata,
+++    })
+++    if (e) { error.value = e.message; return }
+++    await loadMyRewards()
++   }
++ 
++   async function requestMentorSession(menteeId: string, topic: string) {
++@@ -253,7 +227,9 @@ export const useRewardsStore = defineStore('rewards', () => {
++     }
++   }
++ 
++-  /** Admin-only (enforced by RLS is_admin()) — for bounty/doc-contribution credit that isn't self-serve. */
+++  /** Admin-only (enforced by RLS is_admin()). Migration 007 additionally caps
+++   *  `points` at the points_catalog value for the action_key, so a compromised
+++   *  admin session can't mint an unbounded balance. */
++   async function adminGrantReward(memberId: string, track: RewardTrack, actionKey: string, points: number, metadata: Record<string, unknown> = {}) {
++     if (!supabase) return
++     await supabase.from('reward_events').insert({ member_id: memberId, track, action_key: actionKey, points, metadata })
++diff --git a/supabase/migrations/007_reward_integrity.sql b/supabase/migrations/007_reward_integrity.sql
++new file mode 100644
++index 0000000..48cbea9
++--- /dev/null
+++++ b/supabase/migrations/007_reward_integrity.sql
++@@ -0,0 +1,356 @@
+++-- ============================================================================
+++-- 007_reward_integrity.sql
+++--
+++-- Two security fixes deliberately left out of the cleanup pass.
+++--
+++-- (A) SECURITY DEFINER functions had no `search_path` pinned. A definer
+++--     function resolves unqualified object names using the *caller's*
+++--     search_path; a caller who can create objects in an earlier schema can
+++--     shadow a referenced table or operator and have it execute with the
+++--     definer's privileges. Pinned below for every definer function in public.
+++--
+++-- (B) The reward ledger was self-serve. `reward_events_insert` allowed
+++--     `WITH CHECK (member_id = auth.uid() OR is_admin())`, and `points` had
+++--     only `CHECK (points >= 0)` — no upper bound, no catalogue check, no
+++--     dedupe. The anon key is public by design and RLS is the only gate, so
+++--     any authenticated user could POST straight to PostgREST with
+++--     {member_id: <self>, track: 'volunteering', action_key: 'anything',
+++--      points: 999999} and skip the app entirely. `certificates_insert` had
+++--     the same shape, meaning a user could self-issue any certificate_type
+++--     including 'mentorship' — the credentials that compliance/
+++--     digital-credentials-law/ frames as a trust hierarchy for local
+++--     ecologist and educator standing.
+++--
+++--     The careful anti-fraud work in mentor_session_guard() (immutable
+++--     mentor_id/mentee_id, each party flips only their own flag) was fully
+++--     bypassable by inserting the reward row directly.
+++--
+++-- Approach for (B): clients lose INSERT on both tables entirely. All writes go
+++-- through SECURITY DEFINER RPCs that own the trust decisions — point values
+++-- come from a server-side catalogue, not the request body, and certificates are
+++-- derived from ledger state rather than asserted.
+++--
+++-- NOTE ON SELF-REPORTING: some actions are genuinely self-attested (see the
+++-- comment on logVolunteerAction in src/stores/rewards.ts — eco_ops-backed
+++-- tables don't exist yet). This migration does not pretend to verify them. It
+++-- bounds them: server-set point values, a per-action daily cap, and a
+++-- `self_reported` flag on the row so a later audit can tell asserted work from
+++-- verified work. That distinction should be surfaced in the UI and on any
+++-- certificate derived from self-reported points.
+++-- ============================================================================
+++
+++BEGIN;
+++
+++-- ─────────────────────────────────────────────────────────────────────────────
+++-- (A) Pin search_path on every SECURITY DEFINER function in public.
+++--     Done dynamically rather than by name so functions added since this file
+++--     was written are covered too. ALTER FUNCTION is used instead of
+++--     CREATE OR REPLACE so no function body is rewritten.
+++-- ─────────────────────────────────────────────────────────────────────────────
+++DO $$
+++DECLARE fn record;
+++BEGIN
+++  FOR fn IN
+++    SELECT p.oid::regprocedure AS sig
+++    FROM   pg_proc p
+++    JOIN   pg_namespace n ON n.oid = p.pronamespace
+++    WHERE  n.nspname = 'public'
+++      AND  p.prosecdef                                     -- SECURITY DEFINER
+++      AND  NOT EXISTS (                                    -- not already pinned
+++             SELECT 1 FROM unnest(coalesce(p.proconfig, '{}')) c
+++             WHERE c LIKE 'search_path=%'
+++           )
+++  LOOP
+++    EXECUTE format('ALTER FUNCTION %s SET search_path = public, pg_temp', fn.sig);
+++    RAISE NOTICE 'pinned search_path on %', fn.sig;
+++  END LOOP;
+++END $$;
+++
+++-- ─────────────────────────────────────────────────────────────────────────────
+++-- (B1) Server-side points catalogue. Point values must never come from the
+++--      client. `self_report_allowed` marks actions a member may claim without
+++--      third-party verification; `daily_cap` bounds how many times per day.
+++-- ─────────────────────────────────────────────────────────────────────────────
+++CREATE TABLE IF NOT EXISTS public.points_catalog (
+++  action_key          text PRIMARY KEY,
+++  track               text    NOT NULL CHECK (track IN ('volunteering','educating_others','finance_literacy')),
+++  points              integer NOT NULL CHECK (points >= 0 AND points <= 500),
+++  self_report_allowed boolean NOT NULL DEFAULT false,
+++  daily_cap           integer NOT NULL DEFAULT 0 CHECK (daily_cap >= 0),
+++  description         text
+++);
+++
+++-- Seeded from src/data/rewards-catalog.ts POINTS. That file becomes display
+++-- metadata only; this table is the source of truth.
+++INSERT INTO public.points_catalog
+++  (action_key, track, points, self_report_allowed, daily_cap, description) VALUES
+++  ('pfin8_complete',            'finance_literacy',  25, false, 0, 'PFIN-8 quiz, awarded via award_quiz_completion'),
+++  ('pfin28_complete',           'finance_literacy',  60, false, 0, 'PFIN-28 quiz, awarded via award_quiz_completion'),
+++  ('eco_submission',            'volunteering',      10, false, 0, 'Auto-logged from a verified eco-offline sync'),
+++  ('volunteer_self_report',     'volunteering',       8, true,  3, 'Self-reported volunteering entry'),
+++  ('mentor_session',            'educating_others',  40, false, 0, 'Emitted by mentor_session_reward() trigger only'),
+++  ('bounty_verified',           'volunteering',      30, false, 0, 'Admin-granted'),
+++  ('contribution_verified',     'educating_others',  20, false, 0, 'Admin-granted'),
+++  ('decon_progress_log',        'volunteering',       6, true,  2, 'Self-reported decontamination progress log'),
+++  ('method_proposal_published', 'educating_others',  25, true,  1, 'Publishing a public cleanup method proposal'),
+++  ('method_proposal_endorsed',  'educating_others',   4, false, 0, 'Emitted by proposal_endorsement_reward() trigger only'),
+++  ('knowledge_keeper_record',   'educating_others',  15, true,  1, 'Documenting a Knowledge Keeper contribution')
+++ON CONFLICT (action_key) DO NOTHING;
+++
+++ALTER TABLE public.points_catalog ENABLE ROW LEVEL SECURITY;
+++CREATE POLICY "points_catalog_read" ON public.points_catalog FOR SELECT USING (true);
+++-- No INSERT/UPDATE/DELETE policy: catalogue changes are migrations, not runtime.
+++
+++-- ─────────────────────────────────────────────────────────────────────────────
+++-- (B2) Quiz reward rules, mirroring QUIZ_REWARD_MAP. Server-side so the pass
+++--      threshold and prerequisite chain can't be edited in devtools.
+++-- ─────────────────────────────────────────────────────────────────────────────
+++CREATE TABLE IF NOT EXISTS public.quiz_reward_rules (
+++  area_id               text PRIMARY KEY,
+++  action_key            text NOT NULL REFERENCES public.points_catalog(action_key),
+++  certificate_type      text NOT NULL,
+++  settlement_object_key text NOT NULL,
+++  min_score             integer NOT NULL CHECK (min_score >= 0),
+++  prerequisite_area_id  text REFERENCES public.quiz_reward_rules(area_id)
+++);
+++
+++INSERT INTO public.quiz_reward_rules VALUES
+++  ('pfin8',  'pfin8_complete',  'pfin8',  'finance_seed',              6,  NULL),
+++  ('pfin28', 'pfin28_complete', 'pfin28', 'parallel_universe_beacon', 20, 'pfin8')
+++ON CONFLICT (area_id) DO NOTHING;
+++
+++ALTER TABLE public.quiz_reward_rules ENABLE ROW LEVEL SECURITY;
+++CREATE POLICY "quiz_reward_rules_read" ON public.quiz_reward_rules FOR SELECT USING (true);
+++
+++-- ─────────────────────────────────────────────────────────────────────────────
+++-- (B3) Revoke direct write access. This is the core of the fix — everything
+++--      else is machinery to keep the app working without it.
+++-- ─────────────────────────────────────────────────────────────────────────────
+++DROP POLICY IF EXISTS "reward_events_insert" ON public.reward_events;
+++DROP POLICY IF EXISTS "certificates_insert"  ON public.certificates;
+++
+++-- Admin grants keep a narrow, explicit path.
+++CREATE POLICY "reward_events_insert_admin" ON public.reward_events
+++  FOR INSERT WITH CHECK (
+++    public.is_admin()
+++    AND points <= (SELECT c.points FROM public.points_catalog c WHERE c.action_key = action_key)
+++  );
+++
+++REVOKE INSERT, UPDATE, DELETE ON public.reward_events FROM anon, authenticated;
+++REVOKE INSERT, UPDATE, DELETE ON public.certificates  FROM anon, authenticated;
+++GRANT  INSERT                  ON public.reward_events TO authenticated;  -- gated by the admin policy above
+++
+++-- Provenance: distinguish asserted work from verified work.
+++ALTER TABLE public.reward_events
+++  ADD COLUMN IF NOT EXISTS self_reported boolean NOT NULL DEFAULT false;
+++
+++-- Kill replay of the same logical action.
+++CREATE UNIQUE INDEX IF NOT EXISTS reward_events_once_per_action
+++  ON public.reward_events (member_id, action_key)
+++  WHERE action_key IN ('pfin8_complete','pfin28_complete');
+++
+++CREATE UNIQUE INDEX IF NOT EXISTS certificates_one_per_type
+++  ON public.certificates (member_id, certificate_type);
+++
+++-- ─────────────────────────────────────────────────────────────────────────────
+++-- (B4) Certificate issuance is derived, never asserted.
+++-- ─────────────────────────────────────────────────────────────────────────────
+++CREATE OR REPLACE FUNCTION public.refresh_certificates(p_member uuid)
+++RETURNS void
+++LANGUAGE plpgsql
+++SECURITY DEFINER
+++SET search_path = public, pg_temp
+++AS $$
+++DECLARE
+++  v_volunteer_points integer;
+++  v_decon_logs       integer;
+++  v_mentor_cycles    integer;
+++BEGIN
+++  SELECT coalesce(sum(points), 0) INTO v_volunteer_points
+++    FROM public.reward_events WHERE member_id = p_member AND track = 'volunteering';
+++
+++  SELECT count(*) INTO v_decon_logs
+++    FROM public.reward_events WHERE member_id = p_member AND action_key = 'decon_progress_log';
+++
+++  SELECT count(*) INTO v_mentor_cycles
+++    FROM public.mentor_sessions
+++    WHERE mentor_id = p_member AND confirmed_mentor AND confirmed_mentee;
+++
+++  IF v_volunteer_points >= 50 THEN
+++    INSERT INTO public.certificates (member_id, certificate_type, settlement_object_key)
+++    VALUES (p_member, 'field_volunteer', 'volunteer_dome_object')
+++    ON CONFLICT DO NOTHING;
+++  END IF;
+++
+++  IF v_decon_logs >= 10 THEN
+++    INSERT INTO public.certificates (member_id, certificate_type, settlement_object_key)
+++    VALUES (p_member, 'pfas_field_researcher', 'pfas_researcher_marker')
+++    ON CONFLICT DO NOTHING;
+++  END IF;
+++
+++  IF v_mentor_cycles >= 4 THEN
+++    INSERT INTO public.certificates (member_id, certificate_type, settlement_object_key)
+++    VALUES (p_member, 'mentorship', 'mentor_beacon')
+++    ON CONFLICT DO NOTHING;
+++  END IF;
+++END $$;
+++
+++REVOKE EXECUTE ON FUNCTION public.refresh_certificates(uuid) FROM anon, authenticated;
+++
+++-- ─────────────────────────────────────────────────────────────────────────────
+++-- (B5) The only client-callable award paths.
+++-- ─────────────────────────────────────────────────────────────────────────────
+++
+++-- Self-reported actions: server sets points, enforces the daily cap, and flags
+++-- the row as asserted rather than verified.
+++CREATE OR REPLACE FUNCTION public.award_self_reported(
+++  p_action_key text,
+++  p_metadata   jsonb DEFAULT '{}'::jsonb
+++) RETURNS public.reward_events
+++LANGUAGE plpgsql
+++SECURITY DEFINER
+++SET search_path = public, pg_temp
+++AS $$
+++DECLARE
+++  v_uid   uuid := auth.uid();
+++  v_cat   public.points_catalog;
+++  v_today integer;
+++  v_row   public.reward_events;
+++BEGIN
+++  IF v_uid IS NULL THEN
+++    RAISE EXCEPTION 'not authenticated' USING ERRCODE = '28000';
+++  END IF;
+++
+++  SELECT * INTO v_cat FROM public.points_catalog WHERE action_key = p_action_key;
+++  IF NOT FOUND OR NOT v_cat.self_report_allowed THEN
+++    RAISE EXCEPTION 'action % is not self-reportable', p_action_key USING ERRCODE = '42501';
+++  END IF;
+++
+++  SELECT count(*) INTO v_today
+++    FROM public.reward_events
+++    WHERE member_id = v_uid
+++      AND action_key = p_action_key
+++      AND created_at >= date_trunc('day', now());
+++
+++  IF v_today >= v_cat.daily_cap THEN
+++    RAISE EXCEPTION 'daily limit reached for %', p_action_key USING ERRCODE = '53400';
+++  END IF;
+++
+++  INSERT INTO public.reward_events (member_id, track, action_key, points, metadata, self_reported)
+++  VALUES (v_uid, v_cat.track, p_action_key, v_cat.points,
+++          coalesce(p_metadata, '{}'::jsonb), true)
+++  RETURNING * INTO v_row;
+++
+++  PERFORM public.refresh_certificates(v_uid);
+++  RETURN v_row;
+++END $$;
+++
+++GRANT EXECUTE ON FUNCTION public.award_self_reported(text, jsonb) TO authenticated;
+++
+++-- Quiz completion. Score is still supplied by the client — this function does
+++-- not make quiz results trustworthy, it makes the *reward* consistent: the
+++-- threshold, the prerequisite chain, the point value and the one-shot rule are
+++-- all enforced server-side. Making the score itself trustworthy requires
+++-- server-side grading (submit answers, not a score); tracked as follow-up.
+++CREATE OR REPLACE FUNCTION public.award_quiz_completion(
+++  p_area_id text,
+++  p_score   integer
+++) RETURNS public.reward_events
+++LANGUAGE plpgsql
+++SECURITY DEFINER
+++SET search_path = public, pg_temp
+++AS $$
+++DECLARE
+++  v_uid  uuid := auth.uid();
+++  v_rule public.quiz_reward_rules;
+++  v_pts  integer;
+++  v_row  public.reward_events;
+++BEGIN
+++  IF v_uid IS NULL THEN
+++    RAISE EXCEPTION 'not authenticated' USING ERRCODE = '28000';
+++  END IF;
+++
+++  SELECT * INTO v_rule FROM public.quiz_reward_rules WHERE area_id = p_area_id;
+++  IF NOT FOUND THEN
+++    RAISE EXCEPTION 'unknown quiz area %', p_area_id USING ERRCODE = '42501';
+++  END IF;
+++
+++  IF p_score < v_rule.min_score THEN
+++    RETURN NULL;
+++  END IF;
+++
+++  IF v_rule.prerequisite_area_id IS NOT NULL THEN
+++    PERFORM 1 FROM public.certificates c
+++      JOIN public.quiz_reward_rules r ON r.certificate_type = c.certificate_type
+++      WHERE c.member_id = v_uid AND r.area_id = v_rule.prerequisite_area_id;
+++    IF NOT FOUND THEN
+++      RAISE EXCEPTION 'prerequisite % not met', v_rule.prerequisite_area_id USING ERRCODE = '42501';
+++    END IF;
+++  END IF;
+++
+++  SELECT points INTO v_pts FROM public.points_catalog WHERE action_key = v_rule.action_key;
+++
+++  INSERT INTO public.reward_events (member_id, track, action_key, points, metadata, self_reported)
+++  SELECT v_uid, c.track, v_rule.action_key, v_pts,
+++         jsonb_build_object('score', p_score, 'area_id', p_area_id), false
+++  FROM public.points_catalog c WHERE c.action_key = v_rule.action_key
+++  ON CONFLICT DO NOTHING
+++  RETURNING * INTO v_row;
+++
+++  IF v_row.id IS NULL THEN
+++    RETURN NULL;   -- already awarded
+++  END IF;
+++
+++  INSERT INTO public.certificates
+++    (member_id, certificate_type, settlement_object_key, source_event_id)
+++  VALUES (v_uid, v_rule.certificate_type, v_rule.settlement_object_key, v_row.id)
+++  ON CONFLICT DO NOTHING;
+++
+++  RETURN v_row;
+++END $$;
+++
+++GRANT EXECUTE ON FUNCTION public.award_quiz_completion(text, integer) TO authenticated;
+++
+++-- ─────────────────────────────────────────────────────────────────────────────
+++-- (B6) Mentor-session collusion bound.
+++--      Two accounts could previously confirm unlimited sessions at 40 points
+++--      each, and four with the same partner minted the mentorship certificate.
+++-- ─────────────────────────────────────────────────────────────────────────────
+++CREATE UNIQUE INDEX IF NOT EXISTS mentor_sessions_unique_pair_topic
+++  ON public.mentor_sessions (mentor_id, mentee_id, lower(topic));
+++
+++CREATE OR REPLACE FUNCTION public.mentor_session_pair_cooldown()
+++RETURNS trigger
+++LANGUAGE plpgsql
+++SECURITY DEFINER
+++SET search_path = public, pg_temp
+++AS $$
+++BEGIN
+++  PERFORM 1 FROM public.mentor_sessions
+++    WHERE mentor_id = NEW.mentor_id
+++      AND mentee_id = NEW.mentee_id
+++      AND created_at > now() - interval '7 days';
+++  IF FOUND THEN
+++    RAISE EXCEPTION 'a session with this mentee already exists in the last 7 days'
+++      USING ERRCODE = '53400';
+++  END IF;
+++  RETURN NEW;
+++END $$;
+++
+++DROP TRIGGER IF EXISTS trg_mentor_session_pair_cooldown ON public.mentor_sessions;
+++CREATE TRIGGER trg_mentor_session_pair_cooldown
+++  BEFORE INSERT ON public.mentor_sessions
+++  FOR EACH ROW EXECUTE FUNCTION public.mentor_session_pair_cooldown();
+++
+++-- Distinct-mentee requirement for the mentorship certificate is enforced in
+++-- refresh_certificates() by counting confirmed sessions; tighten to
+++-- count(DISTINCT mentee_id) if four separate mentees is the intended bar.
+++
+++-- ─────────────────────────────────────────────────────────────────────────────
+++-- (B7) Stop publishing the admin allow-list to every anonymous visitor.
+++-- ─────────────────────────────────────────────────────────────────────────────
+++DROP POLICY IF EXISTS "admin_members_read_all" ON public.admin_members;
+++CREATE POLICY "admin_members_read_self" ON public.admin_members
+++  FOR SELECT USING (member_id = auth.uid() OR public.is_admin());
+++
+++COMMIT;
++-- 
++2.43.0
+diff --git a/src/components/DemoConsentOverlay.vue b/src/components/DemoConsentOverlay.vue
+index 156eb6e..426ee54 100644
+--- a/src/components/DemoConsentOverlay.vue
++++ b/src/components/DemoConsentOverlay.vue
+@@ -29,7 +29,7 @@
+ 
+         <div class="dco-repo-links">
+           <a :href="REPO_URL" target="_blank" rel="noopener">View source on GitHub</a>
+-          <a :href="`${REPO_URL}/issues/new`" target="_blank" rel="noopener">File an issue</a>
++          <a :href="`${REPO_URL}/issues`" target="_blank" rel="noopener">File an issue</a>
+           <a :href="`${REPO_URL}/pulls`" target="_blank" rel="noopener">Open pull requests</a>
+         </div>
+ 
+@@ -62,7 +62,8 @@
+ </template>
+ 
+ <script setup lang="ts">
+-import { ref, onMounted } from 'vue'
++import { ref, watch } from 'vue'
++import { useRoute } from 'vue-router'
+ 
+ // Bump this if Terms/Privacy/Guidelines change materially — re-prompts everyone.
+ const CONSENT_VERSION = '2026-07-22-v3'
+@@ -70,16 +71,30 @@ const CONSENT_KEY = 'exo_demo_consent'
+ 
+ const REPO_URL = 'https://github.com/biomassives/vercel-html-exotopia.org'
+ 
++// The modal asks you to confirm you've read the Terms/Privacy/Guidelines —
++// it can't also block the page that lets you actually read them, or that
++// becomes an unreadable circular gate. Suppressed on those three routes
++// specifically; still prompts on every other route until consent is given,
++// via the route watcher below rather than a one-time onMounted check (this
++// component mounts once for the whole SPA session, so a plain onMounted
++// check would permanently skip the prompt for anyone who happened to land
++// on /terms first, even after they navigate elsewhere).
++const EXEMPT_PATHS = ['/terms', '/privacy', '/community-guidelines']
++
++const route = useRoute()
+ const visible = ref(false)
+ const agreedTerms      = ref(false)
+ const agreedProcessing = ref(false)
+ 
+-onMounted(() => {
++function alreadyConsented(): boolean {
+   try {
+-    if (localStorage.getItem(CONSENT_KEY) === CONSENT_VERSION) return
+-  } catch { /* private mode — fall through and show it every time */ }
+-  visible.value = true
+-})
++    return localStorage.getItem(CONSENT_KEY) === CONSENT_VERSION
++  } catch { return false }   // private mode — fall through and prompt every time
++}
++
++watch(() => route.path, (path) => {
++  visible.value = !EXEMPT_PATHS.includes(path) && !alreadyConsented()
++}, { immediate: true })
+ 
+ // Logged the same way as MintPage.vue's mint-disclaimer acceptance — a
+ // per-action, timestamped record beats "by using this site you agree" in a
+diff --git a/src/components/SettlementInventory.vue b/src/components/SettlementInventory.vue
+index e4c516d..ab2fcaf 100644
+--- a/src/components/SettlementInventory.vue
++++ b/src/components/SettlementInventory.vue
+@@ -53,20 +53,52 @@
+               <div v-if="item.community" class="si-provenance">
+                 <q-icon name="groups" size="9px" class="q-mr-xxs" />{{ item.community }}
+               </div>
+-              <div v-if="item.donorKey" class="si-provenance">
+-                <q-icon name="swap_horiz" size="9px" class="q-mr-xxs" />From {{ item.donorKey }}
++              <div v-if="item.donorName" class="si-provenance">
++                <q-icon name="brush" size="9px" class="q-mr-xxs" />Designed by {{ item.donorName }}
++              </div>
++              <div v-if="item.donorKey" class="si-provenance" :title="item.donorKey">
++                <q-icon name="swap_horiz" size="9px" class="q-mr-xxs" />From {{ donorLabel(item.donorKey) }}
+               </div>
+               <div class="si-item-date">{{ fmtDate(item.acquiredAt) }}</div>
++
++              <!-- Design controls -->
++              <div v-if="editingId === item.id" class="si-edit">
++                <div class="si-edit-row">
++                  <label class="si-edit-label">Colour</label>
++                  <input type="color" class="si-color-input" :value="item.color"
++                    @input="onColorInput(item.id, $event)" />
++                </div>
++                <div class="si-edit-row">
++                  <label class="si-edit-label">Zone</label>
++                  <select class="si-zone-select" :value="item.zone" @change="onZoneChange(item.id, $event)">
++                    <option v-for="zone in ZONES" :key="zone" :value="zone">{{ zone }}</option>
++                  </select>
++                </div>
++                <button v-if="canShare(item)" class="si-share-btn" @click="openShare(item)">
++                  <q-icon name="ios_share" size="11px" class="q-mr-xxs" />Share this design
++                </button>
++                <div v-else class="si-share-note">
++                  This item records real-world work, so it can't be shared as a design.
++                </div>
++              </div>
++            </div>
++            <div class="si-item-actions">
++              <q-btn flat dense round :icon="editingId === item.id ? 'expand_less' : 'tune'" size="xs"
++                :color="editingId === item.id ? 'cyan-5' : 'blue-grey-7'"
++                @click="editingId = editingId === item.id ? null : item.id"
++                :title="editingId === item.id ? 'Close design controls' : 'Edit design'" />
++              <q-btn flat dense round icon="delete_outline" size="xs" color="blue-grey-7"
++                @click="confirmRemove(item)" title="Remove item" />
+             </div>
+-            <q-btn flat dense round icon="delete_outline" size="xs" color="blue-grey-7"
+-              @click="confirmRemove(item)" title="Remove item" />
+           </div>
+         </div>
+ 
+-        <!-- Acquire button -->
++        <!-- Acquire / theme buttons -->
+         <div class="si-footer">
+           <q-btn flat dense icon="add_circle" label="Acquire item" color="cyan-5" size="sm"
+             @click="acquireOpen = true" />
++          <q-btn flat dense icon="palette" label="Apply a theme" color="purple-4" size="sm"
++            @click="themeOpen = true" />
+         </div>
+ 
+       </div>
+@@ -96,6 +128,21 @@
+               <div class="si-acq-desc">{{ at.desc }}</div>
+             </button>
+           </div>
++
++          <!-- Redeem a gift code -->
++          <div class="si-redeem">
++            <div class="text-caption text-blue-grey-5 q-mb-xs" style="letter-spacing:0.08em">
++              OR REDEEM A GIFT CODE
++            </div>
++            <div class="si-redeem-hint">
++              Someone can share a design with you from their own settlement — paste their code here.
++            </div>
++            <textarea v-model="redeemCode" class="si-redeem-input" rows="2"
++              placeholder="Paste gift code…" @input="redeemError = ''" />
++            <div v-if="redeemError" class="si-redeem-error">{{ redeemError }}</div>
++            <q-btn flat dense size="sm" color="cyan-5" label="Redeem" :disable="!redeemCode.trim()"
++              @click="doRedeem" />
++          </div>
+         </q-card-section>
+ 
+         <!-- Step 2: select preset -->
+@@ -147,6 +194,83 @@
+       </q-card>
+     </q-dialog>
+ 
++    <!-- Apply a theme -->
++    <q-dialog v-model="themeOpen" position="right">
++      <q-card class="si-acquire-card">
++        <q-card-section class="q-pb-xs">
++          <div class="row items-center q-mb-xs">
++            <q-icon name="palette" color="purple-4" size="18px" class="q-mr-sm" />
++            <div class="text-subtitle2 text-blue-grey-1" style="letter-spacing:0.06em">APPLY A THEME</div>
++          </div>
++          <q-separator color="blue-grey-8" />
++        </q-card-section>
++
++        <q-card-section>
++          <div class="si-theme-intro">
++            A theme adds several items at once, coloured from your settlement's own hue.
++          </div>
++          <div class="si-preset-list">
++            <button v-for="pack in THEME_PACK_LIST" :key="pack.key"
++              class="si-preset-btn"
++              :class="{ 'si-preset-btn--sel': themePack === pack.key }"
++              @click="themePack = pack.key">
++              <div class="si-theme-dots">
++                <span v-for="(_, i) in pack.items" :key="i" class="si-theme-dot"
++                  :style="{ background: themePackItemColorHex(settlementKey, i) }" />
++              </div>
++              <div>
++                <div class="si-preset-label">{{ pack.label }}</div>
++                <div class="si-preset-desc">{{ pack.description }}</div>
++                <div class="si-preset-cost">{{ pack.items.length }} items</div>
++              </div>
++            </button>
++          </div>
++        </q-card-section>
++
++        <q-card-actions align="right">
++          <q-btn flat label="Cancel" color="blue-grey-5" @click="closeTheme" />
++          <q-btn v-if="themePack" unelevated label="Apply theme" color="purple-8" @click="doApplyTheme" />
++        </q-card-actions>
++      </q-card>
++    </q-dialog>
++
++    <!-- Share a design -->
++    <q-dialog v-model="shareOpen">
++      <q-card class="si-acquire-card">
++        <q-card-section class="q-pb-xs">
++          <div class="row items-center q-mb-xs">
++            <q-icon name="ios_share" color="cyan-5" size="18px" class="q-mr-sm" />
++            <div class="text-subtitle2 text-blue-grey-1" style="letter-spacing:0.06em">SHARE THIS DESIGN</div>
++          </div>
++          <q-separator color="blue-grey-8" />
++        </q-card-section>
++
++        <q-card-section>
++          <div class="si-theme-intro">
++            Send this code to someone else — they can redeem it to place your design in their own
++            settlement, credited to you. Nothing is bought, sold, or transferred away from you.
++          </div>
++
++          <div class="text-caption text-blue-grey-6 q-mb-xs" style="font-size:9px;letter-spacing:0.1em">
++            CREDIT THE DESIGN TO (OPTIONAL)
++          </div>
++          <input v-model="designerName" type="text" class="si-redeem-input" placeholder="Your name or handle" />
++
++          <div class="text-caption text-blue-grey-6 q-mt-sm q-mb-xs" style="font-size:9px;letter-spacing:0.1em">
++            GIFT CODE
++          </div>
++          <textarea class="si-redeem-input si-code-out" rows="4" readonly :value="shareCode" />
++          <q-btn flat dense size="sm" :color="copied ? 'green-5' : 'cyan-5'"
++            :icon="copied ? 'check' : 'content_copy'"
++            :label="copied ? 'Copied' : 'Copy code'" @click="copyShareCode" />
++        </q-card-section>
++
++        <q-card-actions align="right">
++          <q-btn flat label="Done" color="blue-grey-5" @click="shareOpen = false" />
++        </q-card-actions>
++      </q-card>
++    </q-dialog>
++
+     <!-- Remove confirm -->
+     <q-dialog v-model="removeConfirmOpen">
+       <q-card class="bg-dark text-blue-grey-1" style="min-width:280px">
+@@ -169,15 +293,19 @@ import { ref, computed } from 'vue'
+ import {
+   useSettlementItems,
+   ITEM_MESH_PRESETS,
++  themePackItemColorHex,
++  exportItemGiftCode,
++  importItemGiftCode,
+   type ItemAcquisitionType,
+   type ItemZone,
+   type SettlementItem,
+ } from 'src/lib/settlement-items'
++import { THEME_PACKS } from 'src/data/theme-packs'
+ 
+ const props = defineProps<{ settlementKey: string }>()
+ 
+ const skRef  = computed(() => props.settlementKey)
+-const { items, byType, addItem, removeItem } = useSettlementItems(skRef)
++const { items, byType, addItem, removeItem, updateItem } = useSettlementItems(skRef)
+ 
+ // ── UI state ──────────────────────────────────────────────────────────────────
+ 
+@@ -190,6 +318,7 @@ const TABS = [
+   { key: 'traded' as const,       label: 'Traded',     icon: 'swap_horiz' },
+   { key: 'generated' as const,    label: 'Airdrop',    icon: 'bolt' },
+   { key: 'eco-ops' as const,      label: 'Eco-ops',    icon: 'eco' },
++  { key: 'reward' as const,       label: 'Earned',     icon: 'workspace_premium' },
+ ]
+ 
+ const TYPE_LABELS: Record<ItemAcquisitionType, string> = {
+@@ -197,6 +326,7 @@ const TYPE_LABELS: Record<ItemAcquisitionType, string> = {
+   traded:      'traded',
+   generated:   'airdrop',
+   'eco-ops':   'eco-ops',
++  reward:      'earned',
+ }
+ 
+ function tabCount(tab: typeof activeTab.value): number {
+@@ -208,6 +338,14 @@ const visibleItems = computed<SettlementItem[]>(() =>
+   activeTab.value === 'all' ? items.value : byType.value[activeTab.value]
+ )
+ 
++/**
++ * Settlement keys are `type:name[:…]` (see settlements.ts). Show the name part,
++ * which is the human-meaningful "where", rather than the internal prefix.
++ */
++function donorLabel(donorKey: string): string {
++  return donorKey.split(':')[1] || donorKey
++}
++
+ function fmtDate(ts: number): string {
+   return new Date(ts).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: '2-digit' })
+ }
+@@ -222,6 +360,9 @@ const acquireZone  = ref<ItemZone>('open-floor')
+ 
+ const ZONES: ItemZone[] = ['library', 'water-edge', 'garden', 'gateway', 'courtyard', 'open-floor']
+ 
++// No 'reward' entry: reward objects are unlocked by an Impact Profile
++// certificate and attached from /rewards. Letting them be picked here would
++// make an earned object self-serve.
+ const ACQ_TYPES: { key: ItemAcquisitionType; label: string; icon: string; color: string; desc: string }[] = [
+   { key: 'constructed', label: 'Construct',  icon: 'build',       color: 'amber-5',  desc: 'Build with eco-ops points' },
+   { key: 'traded',      label: 'Trade',      icon: 'swap_horiz',  color: 'cyan-5',   desc: 'Receive from another settlement' },
+@@ -237,6 +378,8 @@ function resetAcquire() {
+   acquireOpen.value  = false
+   acquireStep.value  = 1
+   acquirePreset.value = ''
++  redeemCode.value   = ''
++  redeemError.value  = ''
+ }
+ 
+ function doAcquire() {
+@@ -251,6 +394,105 @@ function doAcquire() {
+   resetAcquire()
+ }
+ 
++// ── Design controls (recolour / re-zone) ──────────────────────────────────────
++
++const editingId = ref<string | null>(null)
++
++function onColorInput(id: string, ev: Event) {
++  updateItem(id, { color: (ev.target as HTMLInputElement).value })
++}
++
++function onZoneChange(id: string, ev: Event) {
++  updateItem(id, { zone: (ev.target as HTMLSelectElement).value as ItemZone })
++}
++
++// ── Theme packs ───────────────────────────────────────────────────────────────
++
++const THEME_PACK_LIST = Object.values(THEME_PACKS)
++
++const themeOpen = ref(false)
++const themePack = ref<string>('')
++
++function closeTheme() {
++  themeOpen.value = false
++  themePack.value = ''
++}
++
++function doApplyTheme() {
++  const pack = THEME_PACKS[themePack.value]
++  if (!pack) return
++  pack.items.forEach((entry, i) => {
++    addItem({
++      type:       'constructed',
++      meshPreset: entry.meshPreset,
++      zone:       entry.zone,
++      color:      themePackItemColorHex(props.settlementKey, i),
++    })
++  })
++  closeTheme()
++}
++
++// ── Share / redeem a design ───────────────────────────────────────────────────
++// Peer-to-peer only: a copyable code, carrying attribution. No price, no ledger.
++
++const shareOpen    = ref(false)
++const shareItem    = ref<SettlementItem | null>(null)
++const designerName = ref('')
++const copied       = ref(false)
++
++/** Items attesting real-world work aren't shareable — see ITEM_MESH_PRESETS. */
++function canShare(item: SettlementItem): boolean {
++  return ITEM_MESH_PRESETS[item.meshPreset]?.acquiredBy.includes('traded') ?? false
++}
++
++const shareCode = computed(() =>
++  shareItem.value
++    ? exportItemGiftCode(shareItem.value, props.settlementKey, designerName.value.trim() || undefined)
++    : ''
++)
++
++function openShare(item: SettlementItem) {
++  shareItem.value    = item
++  designerName.value = ''
++  copied.value       = false
++  shareOpen.value    = true
++}
++
++async function copyShareCode() {
++  try {
++    await navigator.clipboard.writeText(shareCode.value)
++    copied.value = true
++    setTimeout(() => { copied.value = false }, 1800)
++  } catch {
++    // Clipboard blocked (insecure context / denied) — the code stays selectable.
++  }
++}
++
++const redeemCode  = ref('')
++const redeemError = ref('')
++
++function doRedeem() {
++  const decoded = importItemGiftCode(redeemCode.value)
++  if (!decoded) {
++    redeemError.value = 'That code could not be read. Check it was copied in full.'
++    return
++  }
++  if (decoded.donorKey === props.settlementKey) {
++    redeemError.value = 'That design was shared from this settlement.'
++    return
++  }
++  addItem({
++    type:           'traded',
++    meshPreset:     decoded.meshPreset,
++    zone:           decoded.zone,
++    color:          decoded.color,
++    donorKey:       decoded.donorKey,
++    donorStarColor: decoded.donorStarColor,
++    ...(decoded.donorName ? { donorName: decoded.donorName } : {}),
++  })
++  resetAcquire()
++}
++
+ // ── Remove flow ───────────────────────────────────────────────────────────────
+ 
+ const removeConfirmOpen = ref(false)
+@@ -357,14 +599,50 @@ function doRemove() {
+ .si-type--traded      { background: rgba(0, 120, 180, 0.20);  color: rgba(80, 200, 240, 0.75); }
+ .si-type--generated   { background: rgba(120, 0, 180, 0.20);  color: rgba(190, 100, 255, 0.80); }
+ .si-type--eco-ops     { background: rgba(0, 130, 50, 0.20);   color: rgba(80, 210, 120, 0.80); }
++.si-type--reward      { background: rgba(180, 140, 0, 0.22);  color: rgba(255, 215, 110, 0.85); }
+ 
+ .si-provenance { font-size: 8px; color: rgba(100, 160, 200, 0.55); display: flex; align-items: center; gap: 2px; }
+ 
++.si-item-actions { display: flex; flex-direction: column; gap: 1px; flex-shrink: 0; }
++
++/* Per-item design controls */
++.si-edit {
++  margin-top: 6px; padding: 6px 7px;
++  background: rgba(0, 20, 45, 0.55);
++  border: 1px solid rgba(0, 90, 140, 0.25);
++  border-radius: 4px;
++  display: flex; flex-direction: column; gap: 5px;
++}
++.si-edit-row { display: flex; align-items: center; gap: 6px; }
++.si-edit-label {
++  font-size: 8px; letter-spacing: 0.08em; color: rgba(100, 160, 200, 0.70);
++  width: 38px; flex-shrink: 0;
++}
++.si-color-input {
++  width: 34px; height: 20px; padding: 0; cursor: pointer;
++  background: transparent; border: 1px solid rgba(0, 100, 150, 0.35); border-radius: 3px;
++}
++.si-zone-select {
++  flex: 1; min-width: 0;
++  font-size: 9px; padding: 2px 4px; border-radius: 3px;
++  background: rgba(0, 20, 45, 0.85); color: rgba(150, 200, 230, 0.85);
++  border: 1px solid rgba(0, 90, 140, 0.30);
++}
++.si-share-btn {
++  display: flex; align-items: center; justify-content: center;
++  font-size: 9px; padding: 4px 6px; border-radius: 3px; cursor: pointer;
++  background: rgba(0, 70, 110, 0.35); border: 1px solid rgba(0, 130, 180, 0.30);
++  color: rgba(120, 200, 235, 0.85);
++}
++.si-share-btn:hover { background: rgba(0, 100, 150, 0.45); color: #00ccee; }
++.si-share-note { font-size: 8px; color: rgba(90, 130, 160, 0.60); line-height: 1.35; }
++
+ /* Footer */
+ .si-footer {
+   padding: 7px 10px;
+   border-top: 1px solid rgba(0, 60, 100, 0.20);
+   flex-shrink: 0;
++  display: flex; flex-wrap: wrap; gap: 2px;
+ }
+ 
+ /* Acquire dialog */
+@@ -406,6 +684,28 @@ function doRemove() {
+ }
+ .si-zone-btn:hover, .si-zone-btn--sel { background: rgba(0, 80, 130, 0.40); color: #00ccee; border-color: rgba(0, 150, 200, 0.45); }
+ 
++/* Theme packs */
++.si-theme-intro { font-size: 9px; color: rgba(100, 150, 180, 0.70); line-height: 1.45; margin-bottom: 8px; }
++.si-theme-dots { display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; margin-top: 2px; }
++.si-theme-dot  { width: 9px; height: 9px; border-radius: 50%; }
++
++/* Redeem / share codes */
++.si-redeem {
++  margin-top: 12px; padding-top: 10px;
++  border-top: 1px solid rgba(0, 70, 110, 0.25);
++}
++.si-redeem-hint { font-size: 8.5px; color: rgba(90, 135, 165, 0.65); line-height: 1.4; margin-bottom: 5px; }
++.si-redeem-input {
++  width: 100%; resize: vertical;
++  font-size: 9px; font-family: monospace; line-height: 1.4;
++  padding: 5px 6px; border-radius: 3px;
++  background: rgba(0, 12, 30, 0.85); color: rgba(150, 200, 230, 0.90);
++  border: 1px solid rgba(0, 90, 140, 0.30);
++}
++.si-redeem-input:focus { outline: none; border-color: rgba(0, 160, 210, 0.55); }
++.si-code-out { color: rgba(120, 200, 235, 0.75); }
++.si-redeem-error { font-size: 8.5px; color: rgba(255, 120, 120, 0.85); margin-top: 4px; }
++
+ /* Slide transition */
+ .si-slide-enter-active, .si-slide-leave-active { transition: transform 0.22s ease, opacity 0.22s ease; }
+ .si-slide-enter-from, .si-slide-leave-to { transform: translateX(100%) translateY(-50%); opacity: 0; }
+diff --git a/src/components/SiteFooter.vue b/src/components/SiteFooter.vue
+index 18cbd43..22109f8 100644
+--- a/src/components/SiteFooter.vue
++++ b/src/components/SiteFooter.vue
+@@ -1,27 +1,24 @@
+ <template>
+-  <div class="sf-bar" :class="{ 'sf-bar--collapsed': collapsed }">
+-    <button class="sf-toggle" :aria-label="collapsed ? 'Show site links' : 'Hide site links'" @click="collapsed = !collapsed">
+-      {{ collapsed ? '⌃' : '⌄' }}
+-    </button>
+-    <div v-if="!collapsed" class="sf-links">
++  <div class="sf-bar">
++    <div class="sf-links">
+       <router-link to="/terms">Terms</router-link>
+       <router-link to="/privacy">Privacy</router-link>
+       <router-link to="/community-guidelines">Community Guidelines</router-link>
+       <router-link to="/account">Your Data</router-link>
+-      <a :href="`${REPO_URL}/issues/new`" target="_blank" rel="noopener" class="sf-report">Report a problem</a>
++      <a :href="`${REPO_URL}/issues`" target="_blank" rel="noopener" class="sf-report">Report a problem</a>
+       <a :href="REPO_URL" target="_blank" rel="noopener">Source</a>
+     </div>
+   </div>
+ </template>
+ 
+ <script setup lang="ts">
+-import { ref } from 'vue'
+-
+ const REPO_URL = 'https://github.com/biomassives/vercel-html-exotopia.org'
+-const collapsed = ref(true)
+ </script>
+ 
+ <style scoped>
++/* Always visible, no collapse toggle — a legal-links footer that hides
++   itself behind a click isn't actually discoverable. See the "toggle out
++   of view in an unusable manner" bug report this replaced. */
+ .sf-bar {
+   position: fixed;
+   left: 0;
+@@ -30,7 +27,6 @@ const collapsed = ref(true)
+   z-index: 8000;
+   display: flex;
+   align-items: center;
+-  gap: 12px;
+   padding: 4px 12px;
+   background: rgba(3, 6, 12, 0.82);
+   border-top: 1px solid rgba(255, 255, 255, 0.06);
+@@ -40,18 +36,6 @@ const collapsed = ref(true)
+ }
+ .sf-bar > * { pointer-events: auto; }
+ 
+-.sf-toggle {
+-  flex-shrink: 0;
+-  background: none;
+-  border: none;
+-  color: rgba(140, 170, 200, 0.55);
+-  font-size: 11px;
+-  line-height: 1;
+-  cursor: pointer;
+-  padding: 3px 6px;
+-}
+-.sf-toggle:hover { color: rgba(180, 210, 240, 0.85); }
+-
+ .sf-links {
+   display: flex;
+   flex-wrap: wrap;
+diff --git a/src/data/blog-posts.ts b/src/data/blog-posts.ts
+index 124b080..3323f59 100644
+--- a/src/data/blog-posts.ts
++++ b/src/data/blog-posts.ts
+@@ -427,6 +427,18 @@ export const BLOG_POSTS: BlogPostMeta[] = [
+       'A product-facing tour (not a legal/compliance writeup) of the platform after the recent risk-reduction and Networks of Trust passes: the Settlement Registry at /pon-ink (identity records, no pricing, the former mock marketplace fully removed), the new Wisdom from Elders / Knowledge Keeper records feature at /knowledge-keepers with its graded consent tiers, the PFAS/PFOA citizen science page\'s standing disclaimer and field-safety waiver, the new self-service Account & Privacy page at /account (data export, deletion requests), the six-step onboarding flow with its self-attested age bracket, and the unbundled two-checkbox consent modal every visitor sees first. Includes a five-slide screenshot carousel across desktop and mobile.',
+     editorialNote: 'Screenshots show the signed-out/empty states for features that require authentication (Knowledge Keeper submission, Account export/deletion) — this environment has no way to complete the magic-link sign-in flow for a live screenshot of the authenticated views.',
+   },
++  {
++    slug:     'settlement-address-api',
++    title:    'The Settlement URL Is an Address, Not Yet an API',
++    subtitle: 'SPEC_EXOLOC_ADDRESS.md documents a public API for looking up a settlement. We went looking for it. Here\'s the actual dependency chain, and the gap.',
++    date:     'July 2026',
++    audience: ['dev', 'ecosystem'],
++    series:   'protocol',
++    status:   'public-draft',
++    description:
++      'Traces what actually happens when a settlement address gets "placed" — from the NASA Exoplanet Archive reference data, through the pure string-building functions in settlements.ts/moon-settlement.ts, into a client-only localStorage record, and out through three independent chain-specific metadata writers (EVM, Solana, Algorand) to a pon.ink mint. Confirms two real gaps found while writing this: the `GET /api/v1/exoloc` endpoint named in SPEC_EXOLOC_ADDRESS.md\'s header does not exist anywhere in the codebase (the /api folder holds one static gallery JSON file), and there is no settlements table in any Supabase migration — the blockchain itself is the only durable, shared record once a settlement is minted. Frames this as the deliberate "tool, not custodian" architecture already stated in compliance/INDEX.md rather than an oversight, and lays out what a read-only lookup API versus a write-side address-reservation ledger would each actually require.',
++    editorialNote: 'Companion to the new SETTLEMENT_ADDRESS_API.md reference doc. Describes current implementation status, not a roadmap commitment — the read/write API gap is an open design question, not yet scheduled work.',
++  },
+ ]
+ 
+ export function getRelatedPosts (post: BlogPostMeta, limit = 3): BlogPostMeta[] {
+diff --git a/src/data/rewards-catalog.ts b/src/data/rewards-catalog.ts
+index d3abe4d..bef9d4e 100644
+--- a/src/data/rewards-catalog.ts
++++ b/src/data/rewards-catalog.ts
+@@ -83,6 +83,22 @@ export const SETTLEMENT_OBJECTS: Record<string, SettlementObject> = {
+   },
+ }
+ 
++// Which mesh preset each unlocked object renders as inside a settlement.
++// Keys match SETTLEMENT_OBJECTS above; values are ITEM_MESH_PRESETS keys from
++// src/lib/settlement-items.ts, each of which lists 'reward' in its acquiredBy.
++// Without this, attaching a certificate object only ever wrote a string to
++// SettlementRecord.objects[] and nothing appeared in the dome.
++
++export const SETTLEMENT_OBJECT_MESH: Record<string, string> = {
++  finance_seed:              'seed-vault',
++  parallel_universe_beacon:  'beacon',
++  mentorship_beacon:         'comms-relay',
++  volunteer_dome_object:     'monument',
++  pfas_researcher_marker:    'decon-site-marker',
++  method_contributor_beacon: 'archive-node',
++  logging_streak_flame:      'crystal',
++}
++
+ // ── Finance-literacy quiz → reward mapping ──────────────────────────────────
+ // Keyed by QuizArea.id from src/data/finance-literacy-quiz.ts.
+ 
+diff --git a/src/data/theme-packs.ts b/src/data/theme-packs.ts
+new file mode 100644
+index 0000000..c8cab09
+--- /dev/null
++++ b/src/data/theme-packs.ts
+@@ -0,0 +1,68 @@
++/**
++ * src/data/theme-packs.ts
++ *
++ * Curated multi-item bundles a settler can apply in one action, so designing
++ * an interior doesn't mean adding items one at a time.
++ *
++ * Scope: these are arrangements of the existing ITEM_MESH_PRESETS, not custom
++ * geometry. Every preset used here must list 'constructed' in its acquiredBy
++ * (see ITEM_MESH_PRESETS in src/lib/settlement-items.ts) — applying a pack goes
++ * through the same addItem() guard as any other build.
++ *
++ * Colours are deliberately absent: they come from themePackItemColorHex(), which
++ * derives from the settlement's own hue, so an applied pack reads as belonging
++ * to that settlement rather than dropping in a stock palette.
++ */
++
++import type { ItemZone } from 'src/lib/settlement-items'
++
++export interface ThemePack {
++  key:         string
++  label:       string
++  description: string
++  items:       { meshPreset: string; zone: ItemZone }[]
++}
++
++export const THEME_PACKS: Record<string, ThemePack> = {
++  garden_sanctuary: {
++    key: 'garden_sanctuary',
++    label: 'Garden Sanctuary',
++    description: 'A planted quarter with its own water treatment — the greenest way to fill an empty dome.',
++    items: [
++      { meshPreset: 'planter',      zone: 'garden' },
++      { meshPreset: 'planter',      zone: 'garden' },
++      { meshPreset: 'planter',      zone: 'garden' },
++      { meshPreset: 'water-filter', zone: 'water-edge' },
++    ],
++  },
++  research_outpost: {
++    key: 'research_outpost',
++    label: 'Research Outpost',
++    description: 'Archive, relay and power — a working layout for a settlement used as a field base.',
++    items: [
++      { meshPreset: 'archive-node', zone: 'library' },
++      { meshPreset: 'comms-relay',  zone: 'gateway' },
++      { meshPreset: 'solar-array',  zone: 'open-floor' },
++    ],
++  },
++  signal_array: {
++    key: 'signal_array',
++    label: 'Signal Array',
++    description: 'Beacon and relay at the gateway, powered from the open floor — built to be seen from orbit.',
++    items: [
++      { meshPreset: 'beacon',      zone: 'gateway' },
++      { meshPreset: 'comms-relay', zone: 'gateway' },
++      { meshPreset: 'solar-array', zone: 'open-floor' },
++    ],
++  },
++  waterworks: {
++    key: 'waterworks',
++    label: 'Waterworks',
++    description: 'Twin filtration units feeding a planted bed — a settlement organised around its water.',
++    items: [
++      { meshPreset: 'water-filter', zone: 'water-edge' },
++      { meshPreset: 'water-filter', zone: 'water-edge' },
++      { meshPreset: 'planter',      zone: 'garden' },
++    ],
++  },
++}
+diff --git a/src/lib/moon-settlement.ts b/src/lib/moon-settlement.ts
+index e932ce0..e713374 100644
+--- a/src/lib/moon-settlement.ts
++++ b/src/lib/moon-settlement.ts
+@@ -227,6 +227,21 @@ export function buildMoonRefBody(
+ }
+ 
+ // ── Address string builders ───────────────────────────────────────────────────
++//
++// Same structural guard as settlements.ts::moonKey — parentPlanet/moonName
++// must be bare designations, never another settlement's colon-delimited key,
++// so a moon can't be built with a moon (or any other settlement) as its
++// parent. Checked here rather than as a shared cross-module helper since this
++// file has three call sites and settlements.ts has its own single one.
++
++function assertBareName(field: 'parentPlanet' | 'moonName', value: string, fn: string): void {
++  if (value.includes(':')) {
++    throw new Error(
++      `${fn}: ${field} must be a bare designation, not a settlement key (got "${value}"). ` +
++      `Moons can only orbit planets — nesting under another settlement is not supported.`
++    )
++  }
++}
+ 
+ /** Build the exolocation address string for a moon surface settlement. */
+ export function moonSurfaceAddress(
+@@ -235,6 +250,8 @@ export function moonSurfaceAddress(
+   lat:          number,
+   lng:          number,
+ ): string {
++  assertBareName('parentPlanet', parentPlanet, 'moonSurfaceAddress')
++  assertBareName('moonName', moonName, 'moonSurfaceAddress')
+   return `exo-moon-surface-v1:${parentPlanet}:${moonName}:${lat.toFixed(4)},${lng.toFixed(4)}`
+ }
+ 
+@@ -244,6 +261,8 @@ export function moonLagrangeAddress(
+   moonName:     string,
+   point:        LagrangePoint,
+ ): string {
++  assertBareName('parentPlanet', parentPlanet, 'moonLagrangeAddress')
++  assertBareName('moonName', moonName, 'moonLagrangeAddress')
+   return `exo-moon-lagrange-v1:${parentPlanet}:${moonName}:${point}`
+ }
+ 
+@@ -253,6 +272,8 @@ export function moonInterfaceAddress(
+   moonName:     string,
+   zone:         InterfaceZoneType,
+ ): string {
++  assertBareName('parentPlanet', parentPlanet, 'moonInterfaceAddress')
++  assertBareName('moonName', moonName, 'moonInterfaceAddress')
+   return `exo-moon-interface-v1:${parentPlanet}:${moonName}:${zone}`
+ }
+ 
+diff --git a/src/lib/settlement-items.ts b/src/lib/settlement-items.ts
+index b2b58a7..133a195 100644
+--- a/src/lib/settlement-items.ts
++++ b/src/lib/settlement-items.ts
+@@ -8,6 +8,7 @@
+  *   traded      — received from another settlement; carries donor provenance
+  *   generated   — awarded via pon.ink airdrop events
+  *   eco-ops     — earned through community SHG / field-work milestones
++ *   reward      — unlocked by an Impact Profile certificate (see rewards-catalog.ts)
+  *
+  * Storage (hybrid model):
+  *   localStorage  — source of truth for constructed/placed items
+@@ -18,11 +19,11 @@
+ import { reactive, computed, watch } from 'vue'
+ import type { Ref } from 'vue'
+ import * as THREE from 'three'
+-import { safeRead, safeWrite, hashStorageKey } from './storage-cipher'
++import { safeRead, safeWrite, hashStorageKey, encryptForStorage, decryptFromStorage } from './storage-cipher'
+ 
+ // ── Core types ────────────────────────────────────────────────────────────────
+ 
+-export type ItemAcquisitionType = 'constructed' | 'traded' | 'generated' | 'eco-ops'
++export type ItemAcquisitionType = 'constructed' | 'traded' | 'generated' | 'eco-ops' | 'reward'
+ 
+ export type ItemZone =
+   | 'library'
+@@ -47,6 +48,7 @@ export interface SettlementItem {
+   // Traded
+   donorKey?:       string        // donor settlement key
+   donorStarColor?: string        // '#RRGGBB' — trail colour on arrival
++  donorName?:      string        // human-readable design credit (attribution, not a price)
+   // Generated
+   airdropBundle?:  string        // pon.ink bundle type
+   // Eco-ops
+@@ -67,38 +69,48 @@ export interface ItemMeshPreset {
+   buildCost?:   number           // for constructed items
+ }
+ 
++/** Preset key for the free lighting item every settlement is founded with. */
++export const STARTER_LIGHT_PRESET = 'starter-lantern'
++
+ export const ITEM_MESH_PRESETS: Record<string, ItemMeshPreset> = {
++  [STARTER_LIGHT_PRESET]: {
++    label: 'Settlement Lantern', defaultColor: 0xffffff, zoneDefault: 'gateway',
++    acquiredBy: [],   // system-granted only at founding — never manually acquirable
++    description: 'Baseline illumination granted automatically when a settlement is founded. Its colour is unique to this settlement.',
++  },
+   'beacon': {
+     label: 'Signal Beacon', defaultColor: 0x00ddff, zoneDefault: 'gateway',
+-    acquiredBy: ['constructed', 'generated'],
++    acquiredBy: ['constructed', 'generated', 'reward', 'traded'],
+     description: 'Broadcasts settlement presence to the conduit network.',
+     buildCost: 40,
+   },
+   'crystal': {
+     label: 'Resonance Crystal', defaultColor: 0xcc88ff, zoneDefault: 'courtyard',
+-    acquiredBy: ['generated', 'eco-ops'],
++    acquiredBy: ['generated', 'eco-ops', 'reward', 'traded'],
+     description: 'Harmonic receiver that amplifies ambient light.',
+   },
+   'planter': {
+     label: 'Garden Planter', defaultColor: 0x44bb44, zoneDefault: 'garden',
+-    acquiredBy: ['constructed', 'eco-ops'],
++    acquiredBy: ['constructed', 'eco-ops', 'traded'],
+     description: 'Cultivates alien flora adapted to local conditions.',
+     buildCost: 20,
+   },
+   'solar-array': {
+     label: 'Solar Array', defaultColor: 0xffcc44, zoneDefault: 'open-floor',
+-    acquiredBy: ['constructed'],
++    acquiredBy: ['constructed', 'traded'],
+     description: 'Harvests light from the host star.',
+     buildCost: 60,
+   },
+   'monument': {
+     label: 'Community Monument', defaultColor: 0x88aacc, zoneDefault: 'courtyard',
+-    acquiredBy: ['eco-ops'],
++    // No 'traded': this attests a real community milestone, so it is not
++    // shareable via a gift code the way decorative presets are.
++    acquiredBy: ['eco-ops', 'reward'],
+     description: 'Marks a community milestone or declaration.',
+   },
+   'archive-node': {
+     label: 'Archive Node', defaultColor: 0x4488ff, zoneDefault: 'library',
+-    acquiredBy: ['constructed', 'traded'],
++    acquiredBy: ['constructed', 'traded', 'reward'],
+     description: 'Extends the settlement knowledge base.',
+     buildCost: 35,
+   },
+@@ -115,18 +127,20 @@ export const ITEM_MESH_PRESETS: Record<string, ItemMeshPreset> = {
+   },
+   'comms-relay': {
+     label: 'Comms Relay', defaultColor: 0x55ffaa, zoneDefault: 'gateway',
+-    acquiredBy: ['constructed', 'generated'],
++    acquiredBy: ['constructed', 'generated', 'reward', 'traded'],
+     description: 'Strengthens conduit range to neighbouring settlements.',
+     buildCost: 45,
+   },
+   'seed-vault': {
+     label: 'Seed Vault', defaultColor: 0xbbcc88, zoneDefault: 'library',
+-    acquiredBy: ['eco-ops', 'traded'],
++    acquiredBy: ['eco-ops', 'traded', 'reward'],
+     description: 'Stores genetic diversity — a symbol of long-term commitment.',
+   },
+   'decon-site-marker': {
+     label: 'Decontamination Site Marker', defaultColor: 0xffaa33, zoneDefault: 'water-edge',
+-    acquiredBy: ['eco-ops'],
++    // No 'traded': this attests real logged citizen-science work, so it is not
++    // shareable via a gift code the way decorative presets are.
++    acquiredBy: ['eco-ops', 'reward'],
+     description: 'Marks a PFAS/PFOA decontamination project logged in your citizen-science work. Color reflects project status at the time it was attached (amber = planning/active, cyan = monitoring, green = complete) — set via the color override when the item is added, not live-updating.',
+   },
+ }
+@@ -175,7 +189,14 @@ export function autoPosition(
+ 
+ // ── Item mesh builder (shared by DomeInteriorPage.vue and StationInteriorPage.vue) ──
+ 
+-export function buildItemMesh(presetKey: string, colorHex: string): THREE.Group {
++/**
++ * How many items get their own dynamic point light. Beyond this the meshes still
++ * render in full — they just rely on the scene's existing lighting, since every
++ * additional PointLight costs a real-time shading pass on every lit material.
++ */
++export const MAX_ITEM_LIGHTS = 12
++
++export function buildItemMesh(presetKey: string, colorHex: string, withLight = true): THREE.Group {
+   const col   = new THREE.Color(colorHex)
+   const group = new THREE.Group()
+ 
+@@ -185,6 +206,18 @@ export function buildItemMesh(presetKey: string, colorHex: string): THREE.Group
+   )
+ 
+   switch (presetKey) {
++    case STARTER_LIGHT_PRESET: {
++      const post  = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.16, 3.0, 6), new THREE.MeshPhongMaterial({ color: 0x2a2a2a }))
++      post.position.y = 1.5
++      const shade = new THREE.Mesh(
++        new THREE.IcosahedronGeometry(0.6, 0),
++        new THREE.MeshPhongMaterial({ color: col, emissive: col.clone().multiplyScalar(0.45), transparent: true, opacity: 0.88 })
++      )
++      shade.position.y = 3.1
++      const g = glow(1.1, 3.1, 0.24)
++      group.add(post, shade, g)
++      break
++    }
+     case 'beacon': {
+       const post = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.26, 4.2, 7), new THREE.MeshPhongMaterial({ color: 0x223344 }))
+       post.position.y = 2.1
+@@ -319,20 +352,109 @@ export function buildItemMesh(presetKey: string, colorHex: string): THREE.Group
+     }
+   }
+ 
+-  // Point light per item — keeps the surrounding area lit
+-  const pl = new THREE.PointLight(col.getHex(), 0.5, 14)
+-  pl.position.y = 2.0
+-  group.add(pl)
++  // Point light per item — keeps the surrounding area lit. Callers cap how many
++  // items get one, since every light costs a real-time shading pass.
++  if (withLight) {
++    const pl = new THREE.PointLight(col.getHex(), 0.5, 14)
++    pl.position.y = 2.0
++    group.add(pl)
++  }
+ 
+   return group
+ }
+ 
++// ── Per-settlement colour ─────────────────────────────────────────────────────
++// Deterministic hue from the settlement key, so every settlement's starter
++// lantern reads as visually distinct rather than one fixed stock colour.
++
++function settlementHue(sk: string): number {
++  const h = parseInt(hashStorageKey(sk), 36)
++  return (h % 360) / 360
++}
++
++export function starterLightColorHex(sk: string): string {
++  const c = new THREE.Color()
++  c.setHSL(settlementHue(sk), 0.72, 0.58)
++  return '#' + c.getHexString()
++}
++
++/**
++ * Colour for the nth item of an applied theme pack. Hue-shifts off the same
++ * per-settlement base as the starter lantern, so a pack reads as belonging to
++ * this settlement rather than dropping in a stock palette.
++ */
++export function themePackItemColorHex(sk: string, index: number): string {
++  const c = new THREE.Color()
++  c.setHSL((settlementHue(sk) + index * 0.055) % 1, 0.66, 0.52 + (index % 3) * 0.05)
++  return '#' + c.getHexString()
++}
++
++// ── Gift codes (peer-to-peer item sharing) ────────────────────────────────────
++// A design travels between two browsers as an opaque copyable string. Uses the
++// same site-wide storage cipher (its seed is a fixed constant, not per-browser,
++// so a code made in one browser decodes in any other). This is attribution and
++// distribution only — there is no price, ledger, or transfer of ownership.
++
++export interface GiftCodePayload {
++  meshPreset:     string
++  zone:           ItemZone
++  color:          string
++  donorKey:       string
++  donorStarColor: string
++  donorName?:     string
++}
++
++export function exportItemGiftCode(
++  item: SettlementItem,
++  fromSettlementKey: string,
++  designerName?: string,
++): string {
++  const payload: GiftCodePayload = {
++    meshPreset:     item.meshPreset,
++    zone:           item.zone,
++    color:          item.color,
++    donorKey:       fromSettlementKey,
++    donorStarColor: starterLightColorHex(fromSettlementKey),
++    ...(designerName ? { donorName: designerName } : {}),
++  }
++  return encryptForStorage(JSON.stringify(payload))
++}
++
++/** Decode a gift code. Returns null for malformed, foreign, or unknown-preset input. */
++export function importItemGiftCode(code: string): GiftCodePayload | null {
++  try {
++    const d = JSON.parse(decryptFromStorage(code.trim())) as Partial<GiftCodePayload>
++    if (!d || typeof d.meshPreset !== 'string') return null
++    const preset = ITEM_MESH_PRESETS[d.meshPreset]
++    // A gift arrives as a trade, so the preset must be tradeable — this keeps
++    // the starter lantern (acquiredBy: []) from being clonable via a code.
++    if (!preset || !preset.acquiredBy.includes('traded')) return null
++    if (typeof d.zone !== 'string' || !(d.zone in ZONE_POSITIONS)) return null
++    if (typeof d.color !== 'string' || !/^#[0-9a-fA-F]{6}$/.test(d.color)) return null
++    if (typeof d.donorKey !== 'string' || !d.donorKey) return null
++    return {
++      meshPreset:     d.meshPreset,
++      zone:           d.zone as ItemZone,
++      color:          d.color,
++      donorKey:       d.donorKey,
++      donorStarColor: typeof d.donorStarColor === 'string' ? d.donorStarColor : d.color,
++      ...(typeof d.donorName === 'string' && d.donorName ? { donorName: d.donorName } : {}),
++    }
++  } catch {
++    return null
++  }
++}
++
+ // ── Storage ───────────────────────────────────────────────────────────────────
+ 
+ const STORAGE_PREFIX = 'e8.2'   // opaque — was 'exotopia_items_v1'
++const SEEDED_PREFIX  = 'e8.2s'  // tracks whether the starter lantern was ever granted
++const REVEAL_PREFIX  = 'e8.2r'  // tracks whether the one-time reveal animation has played
+ 
+ // Hash the settlement key so no location names appear as localStorage keys
+ function storageKey(sk: string) { return `${STORAGE_PREFIX}:${hashStorageKey(sk)}` }
++function seededKey(sk: string)  { return `${SEEDED_PREFIX}:${hashStorageKey(sk)}` }
++function revealKey(sk: string)  { return `${REVEAL_PREFIX}:${hashStorageKey(sk)}` }
+ 
+ function loadItems(sk: string): SettlementItem[] {
+   return safeRead<SettlementItem[]>(storageKey(sk), [])
+@@ -342,6 +464,33 @@ function saveItems(sk: string, items: SettlementItem[]) {
+   safeWrite(storageKey(sk), items)
+ }
+ 
++function makeStarterLight(sk: string): SettlementItem {
++  const preset = ITEM_MESH_PRESETS[STARTER_LIGHT_PRESET]!
++  return {
++    id:            `starter-${hashStorageKey(sk)}`,
++    type:          'generated',
++    meshPreset:    STARTER_LIGHT_PRESET,
++    label:         preset.label,
++    description:   preset.description,
++    zone:          preset.zoneDefault,
++    color:         starterLightColorHex(sk),
++    acquiredAt:    Date.now(),
++    settlementKey: sk,
++  }
++}
++
++/**
++ * One-time check: has this settlement's founding reveal animation played yet?
++ * Consumes the flag — a true result means "play it now", and it will return
++ * false for every call after (per settlement, persisted across sessions).
++ */
++export function consumeStarterReveal(sk: string): boolean {
++  const key  = revealKey(sk)
++  const seen = safeRead<boolean>(key, false)
++  if (!seen) safeWrite(key, true)
++  return !seen
++}
++
+ // ── Shared store ──────────────────────────────────────────────────────────────
+ // Module-level reactive cache, keyed by settlement key, so every component
+ // instance pointed at the same settlement shares one live item list (and
+@@ -350,7 +499,18 @@ function saveItems(sk: string, items: SettlementItem[]) {
+ const itemsStore: Record<string, SettlementItem[]> = reactive({})
+ 
+ function ensureLoaded(sk: string) {
+-  if (!(sk in itemsStore)) itemsStore[sk] = loadItems(sk)
++  if (sk in itemsStore) return
++  let items = loadItems(sk)
++  // Every settlement is founded with a free lantern — grant it once, on first
++  // load, to settlements that don't already have items. Gated by its own
++  // persisted flag (not items.length) so removing the lantern later doesn't
++  // cause it to be re-granted on the next visit.
++  if (items.length === 0 && !safeRead<boolean>(seededKey(sk), false)) {
++    items = [makeStarterLight(sk)]
++    saveItems(sk, items)
++    safeWrite(seededKey(sk), true)
++  }
++  itemsStore[sk] = items
+ }
+ 
+ // ── Composable ────────────────────────────────────────────────────────────────
+@@ -371,10 +531,18 @@ export function useSettlementItems(settlementKey: Ref<string>) {
+              Partial<Omit<SettlementItem, 'id' | 'acquiredAt' | 'settlementKey' | 'type' | 'meshPreset' | 'zone'>>
+   ): SettlementItem {
+     const preset = ITEM_MESH_PRESETS[partial.meshPreset]
+-    const colHex = '#' + (preset?.defaultColor ?? 0xffffff).toString(16).padStart(6, '0')
++    // Structural guard, not just a UI filter: the acquire picker already hides
++    // ineligible presets, but nothing stopped a direct call from bypassing it.
++    if (!preset) {
++      throw new Error(`Unknown mesh preset "${partial.meshPreset}"`)
++    }
++    if (!preset.acquiredBy.includes(partial.type)) {
++      throw new Error(`"${partial.meshPreset}" cannot be acquired via "${partial.type}"`)
++    }
++    const colHex = '#' + preset.defaultColor.toString(16).padStart(6, '0')
+     const item: SettlementItem = {
+-      label:        preset?.label       ?? partial.meshPreset,
+-      description:  preset?.description ?? '',
++      label:        preset.label,
++      description:  preset.description,
+       color:        colHex,
+       ...partial,
+       id:           `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+@@ -391,6 +559,14 @@ export function useSettlementItems(settlementKey: Ref<string>) {
+     persist()
+   }
+ 
++  function updateItem(
++    id: string,
++    patch: Partial<Pick<SettlementItem, 'color' | 'zone' | 'label'>>,
++  ) {
++    items.value = items.value.map(i => i.id === id ? { ...i, ...patch } : i)
++    persist()
++  }
++
+   function placeItem(id: string, posX: number, posZ: number) {
+     items.value = items.value.map(i => i.id === id ? { ...i, posX, posZ } : i)
+     persist()
+@@ -401,7 +577,8 @@ export function useSettlementItems(settlementKey: Ref<string>) {
+     'traded':      items.value.filter(i => i.type === 'traded'),
+     'generated':   items.value.filter(i => i.type === 'generated'),
+     'eco-ops':     items.value.filter(i => i.type === 'eco-ops'),
++    'reward':      items.value.filter(i => i.type === 'reward'),
+   }))
+ 
+-  return { items, byType, addItem, removeItem, placeItem }
++  return { items, byType, addItem, removeItem, updateItem, placeItem }
+ }
+diff --git a/src/lib/settlements.ts b/src/lib/settlements.ts
+index 18e738d..7413d04 100644
+--- a/src/lib/settlements.ts
++++ b/src/lib/settlements.ts
+@@ -19,24 +19,62 @@ export interface SettlementRecord {
+ }
+ 
+ // ── Helpers ─────────────────────────────────────────────────────────────────
++//
++// Every settlement key format below uses ':' as its field separator, and
++// every field is ultimately sourced from a route param or query string (see
++// SurfaceViewPage/StationInteriorPage/ClusterSurfacePage/MintPage etc.) — i.e.
++// user-editable. A real designation/slug/label never contains ':', but
++// another settlement's own key always does, so rejecting any ':' in these
++// fields is a structural guard against building one settlement's address out
++// of another settlement's address (e.g. a moon "orbiting" an orbital station,
++// or a surface settlement keyed under a cluster world) — an unrealistic
++// drill-down nesting the UI has no representation for. Same guard as
++// moon-settlement.ts's assertBareName, kept local to each file per call-site
++// count.
++
++function assertBareField(fnName: string, field: string, value: string): void {
++  if (value.includes(':')) {
++    throw new Error(
++      `${fnName}: ${field} must be a bare designation, not a settlement key (got "${value}"). ` +
++      `Nesting one settlement's key inside another is not supported.`
++    )
++  }
++}
+ 
+ /** Canonical key for a NASA exoplanet surface settlement. */
+ export function surfaceKey(planetName: string): string {
++  assertBareField('surfaceKey', 'planetName', planetName)
+   return `surface:${planetName}`
+ }
+ 
+ /** Canonical key for a cluster-world settlement. */
+ export function clusterKey(clusterSlug: string, memberId: string, systemName: string, planetLabel: string): string {
++  assertBareField('clusterKey', 'clusterSlug', clusterSlug)
++  assertBareField('clusterKey', 'memberId', memberId)
++  assertBareField('clusterKey', 'systemName', systemName)
++  assertBareField('clusterKey', 'planetLabel', planetLabel)
+   return `cluster:${clusterSlug}:${memberId}:${systemName}:${planetLabel}`
+ }
+ 
+-/** Canonical key for a moon settlement. */
++/**
++ * Canonical key for a moon settlement.
++ *
++ * planetName must be a bare NASA-archive planet designation (never contains
++ * ':') — this is the structural guard against moon-of-moon nesting. Rejecting
++ * any ':' here means a moon can never be built with another settlement —
++ * moon included — as its parent, by construction, without needing a depth
++ * counter or allowed-transition state machine.
++ */
+ export function moonKey(planetName: string, moonIdx: number, coordVariant: string): string {
++  assertBareField('moonKey', 'planetName', planetName)
+   return `moon:${planetName}:${moonIdx}:${coordVariant}`
+ }
+ 
+ /** Canonical key for a bodyless orbital settlement (stellar/planetary/lunar orbit, or a black-hole zone). */
+ export function orbitalKey(coordSystem: string, hostname: string, refName?: string): string {
++  assertBareField('orbitalKey', 'coordSystem', coordSystem)
++  assertBareField('orbitalKey', 'hostname', hostname)
++  if (refName !== undefined) assertBareField('orbitalKey', 'refName', refName)
+   return refName ? `${coordSystem}:${hostname}:${refName}` : `${coordSystem}:${hostname}`
+ }
+ 
+diff --git a/src/lib/surface-classify.ts b/src/lib/surface-classify.ts
+index 87b0332..045be8f 100644
+--- a/src/lib/surface-classify.ts
++++ b/src/lib/surface-classify.ts
+@@ -43,6 +43,9 @@ async function loadTopoParams(): Promise<TopoParams | null> {
+ 
+ export const NO_GROUND_SURFACE_TYPES: ReadonlySet<SurfaceType> = new Set([
+   'gas_giant', 'hot_gas_giant', 'magma_ocean', 'lava',
++  // hycean = deep H2O ocean under an H2-rich envelope (generate-topo-params.py) —
++  // no solid crust to walk on, same category as the gas giants above.
++  'hycean',
+ ])
+ 
+ /** Looks up a NASA-catalogued planet's surface_type. Returns null if unresolved (bodyless/malformed address). */
+diff --git a/src/pages/AccountPage.vue b/src/pages/AccountPage.vue
+index 127ce25..3b9dd93 100644
+--- a/src/pages/AccountPage.vue
++++ b/src/pages/AccountPage.vue
+@@ -25,7 +25,7 @@
+           <div class="acc-row"><span class="acc-lbl">Member since</span><span>{{ formatDate(member.profile?.created_at) }}</span></div>
+           <p class="acc-hint">
+             To correct your display name or handle, sign in and update it from where you set it —
+-            a dedicated edit form isn't built yet; <a :href="issueUrl('Add a profile-edit form')" target="_blank" rel="noopener">file a request</a> if you need this sooner.
++            a dedicated edit form isn't built yet; <a :href="issueUrl" target="_blank" rel="noopener">file a request</a> if you need this sooner.
+           </p>
+         </section>
+ 
+@@ -86,9 +86,7 @@ function formatDate(iso?: string | null): string {
+   return new Date(iso).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
+ }
+ 
+-function issueUrl(title: string): string {
+-  return `https://github.com/biomassives/vercel-html-exotopia.org/issues/new?title=${encodeURIComponent(title)}`
+-}
++const issueUrl = 'https://github.com/biomassives/vercel-html-exotopia.org/issues'
+ 
+ // ── Export ────────────────────────────────────────────────────────────────
+ const exporting = ref(false)
+diff --git a/src/pages/AdminPage.vue b/src/pages/AdminPage.vue
+index dbbfd85..fc91de9 100644
+--- a/src/pages/AdminPage.vue
++++ b/src/pages/AdminPage.vue
+@@ -68,6 +68,21 @@
+         <div class="adm-card__arrow">→</div>
+       </div>
+ 
++      <div class="adm-card" @click="$router.push('/admin/community-nodes')">
++        <div class="adm-card__icon">🏪</div>
++        <div class="adm-card__body">
++          <div class="adm-card__title">Community Nodes — Moderation</div>
++          <div class="adm-card__desc">
++            Business listings, business locations, and creative pages. Publish is
++            self-service (/my-listings); this is the takedown/restore view for
++            abuse response — RLS is_admin() is the real gate, same as elsewhere
++            on this page.
++          </div>
++          <div class="adm-card__meta">business_listing · business_location · creative_page</div>
++        </div>
++        <div class="adm-card__arrow">→</div>
++      </div>
++
+     </div>
+ 
+     <div class="adm-env">
+diff --git a/src/pages/DomeInteriorPage.vue b/src/pages/DomeInteriorPage.vue
+index c610a9a..70e7ff7 100644
+--- a/src/pages/DomeInteriorPage.vue
++++ b/src/pages/DomeInteriorPage.vue
+@@ -142,6 +142,9 @@ import {
+   ZONE_POSITIONS,
+   autoPosition,
+   buildItemMesh,
++  MAX_ITEM_LIGHTS,
++  STARTER_LIGHT_PRESET,
++  consumeStarterReveal,
+   type ItemAcquisitionType,
+   type SettlementItem,
+ } from 'src/lib/settlement-items'
+@@ -176,6 +179,7 @@ const TYPE_LABELS: Record<ItemAcquisitionType, string> = {
+   traded:      'traded',
+   generated:   'airdrop',
+   'eco-ops':   'eco-ops',
++  reward:      'earned',
+ }
+ 
+ // ── UI state ──────────────────────────────────────────────────────────────────
+@@ -197,6 +201,8 @@ let clock:    THREE.Clock
+ 
+ // Scene item meshes — keyed by item id
+ const itemMeshes = new Map<string, THREE.Group>()
++// Starter-lantern reveal: item id -> tick() time the reveal animation started
++const revealStarts = new Map<string, number>()
+ 
+ // Raycaster for hover
+ let raycaster:  THREE.Raycaster
+@@ -408,18 +414,26 @@ function buildItems() {
+   for (const g of itemMeshes.values()) scene?.remove(g)
+   itemMeshes.clear()
+   itemMeshArr = []
++  revealStarts.clear()
++
++  // Founding reveal plays once per settlement, the first time its dome loads.
++  const playReveal = consumeStarterReveal(settlementKey.value)
+ 
+   // Zone slot counters for auto-positioning
+   const zoneCount: Record<string, number> = {}
+ 
+-  for (const item of items.value) {
++  for (const [idx, item] of items.value.entries()) {
+     const slotIdx = zoneCount[item.zone] ?? 0
+     zoneCount[item.zone] = slotIdx + 1
+ 
+     const pos   = autoPosition(item, slotIdx)
+-    const group = buildItemMesh(item.meshPreset, item.color)
++    const group = buildItemMesh(item.meshPreset, item.color, idx < MAX_ITEM_LIGHTS)
+     group.position.set(pos.x, 0, pos.z)
+     group.name = `item:${item.id}`
++    if (item.meshPreset === STARTER_LIGHT_PRESET && playReveal) {
++      group.scale.setScalar(0.001)
++      revealStarts.set(item.id, clock.getElapsedTime())
++    }
+     scene!.add(group)
+     itemMeshes.set(item.id, group)
+ 
+@@ -430,6 +444,30 @@ function buildItems() {
+   }
+ }
+ 
++const REVEAL_DURATION = 2.4
++
++/** Ease-out cube + hue sweep while a starter lantern's founding reveal plays. */
++function tickStarterReveal(id: string, group: THREE.Group, item: SettlementItem, t: number) {
++  const start = revealStarts.get(id)
++  if (start === undefined) return
++  const elapsed = t - start
++  const p = Math.min(elapsed / REVEAL_DURATION, 1)
++  const eased = 1 - Math.pow(1 - p, 3)
++  group.scale.setScalar(Math.max(0.001, eased))
++
++  const sweepColor = p < 1
++    ? new THREE.Color().setHSL((p * 1.4) % 1, 0.9, 0.6)
++    : new THREE.Color(item.color)
++  group.traverse(obj => {
++    const mesh = obj as THREE.Mesh
++    const mat  = mesh.isMesh ? (mesh.material as THREE.MeshPhongMaterial | THREE.MeshBasicMaterial) : null
++    if (mat?.color) mat.color.copy(sweepColor)
++    if ((obj as THREE.PointLight).isPointLight) (obj as THREE.PointLight).color.copy(sweepColor)
++  })
++
++  if (p >= 1) revealStarts.delete(id)
++}
++
+ // ── Animation loop ─────────────────────────────────────────────────────────────
+ 
+ function tick() {
+@@ -460,6 +498,9 @@ function tick() {
+       const orbit = group.children[2]
+       if (orbit) orbit.rotation.z = t * 0.4
+     }
++    if (item?.meshPreset === STARTER_LIGHT_PRESET) {
++      tickStarterReveal(id, group, item, t)
++    }
+   }
+ 
+   // Selection ring pulse
+diff --git a/src/pages/GalaxyPage.vue b/src/pages/GalaxyPage.vue
+index 6a7a4cf..7d67926 100644
+--- a/src/pages/GalaxyPage.vue
++++ b/src/pages/GalaxyPage.vue
+@@ -505,11 +505,12 @@ import NavigatorInset                   from 'src/components/NavigatorInset.vue'
+ import StarDetailLens                   from 'src/components/StarDetailLens.vue'
+ import type { StarSystem, Planet }      from 'src/stores/galaxy'
+ import DefenderNav from 'src/components/DefenderNav.vue'
+-import type { DefenderNavData, PlanetStripEntry, StellarConfig, DefenderTarget } from 'src/lib/defender-nav.types'
++import type { DefenderNavData, PlanetStripEntry, StellarConfig, DefenderTarget, OrbitalGalleryEntry } from 'src/lib/defender-nav.types'
+ import { usePortalStore } from 'src/stores/portal'
+ import { useSceneTransitionStore } from 'src/stores/scene-transition'
+ import { BLACK_HOLE_CATALOG, bhColorHex } from 'src/data/black-holes'
+ import { getSurfaceType, NO_GROUND_SURFACE_TYPES } from 'src/lib/surface-classify'
++import { useCommunityNodesStore } from 'src/stores/community-nodes'
+ 
+ // ── Galaxy star shader — one draw call for all ~5 000 confirmed systems ───────
+ // Vertex: size-attenuated points (pSize in scene-unit scale; 700 / depth → pixels).
+@@ -541,9 +542,15 @@ void main() {
+ const galaxyStore = useGalaxyStore()
+ const portalStore = usePortalStore()
+ const transition  = useSceneTransitionStore()
++const communityNodesStore = useCommunityNodesStore()
+ const router      = useRouter()
+ const route       = useRoute()
+ 
++// Populated once per enterSystemView() call, read synchronously by
++// buildDefenderData() — that function runs in the render loop (throttled to
++// every 6th frame), so it can't itself make an async Supabase call.
++const galleriesForCurrentSystem = ref<OrbitalGalleryEntry[]>([])
++
+ // ── UI state ──────────────────────────────────────────────────────────────────
+ 
+ // canvas ref removed — canvas is in MainLayout
+@@ -1433,7 +1440,10 @@ function resolveStellarConfig(sys: import('src/stores/galaxy').StarSystem): Stel
+ 
+   if (snum === 2) {
+     if (isCircumbinary) {
+-      const sep = Math.max(0.05, isNaN(innermostAU) ? 0.2 : innermostAU / 4)
++      // Number.isFinite (not isNaN) — an all-filtered planets.map() makes
++      // Math.min(...[]) return Infinity, which is not NaN and would
++      // otherwise flow straight into separation/period/forbiddenZoneRadius.
++      const sep = Math.max(0.05, Number.isFinite(innermostAU) ? innermostAU / 4 : 0.2)
+       return {
+         type: 'circumbinary',
+         innerBinary: {
+@@ -1452,7 +1462,8 @@ function resolveStellarConfig(sys: import('src/stores/galaxy').StarSystem): Stel
+     }
+   }
+ 
+-  const sep = Math.max(0.05, isNaN(innermostAU) ? 0.1 : innermostAU / 4)
++  const sep = Math.max(0.05, Number.isFinite(innermostAU) ? innermostAU / 4 : 0.1)
++  const forbiddenZoneRadius = sep * 3.5
+   return {
+     type: 'hierarchical_triple',
+     innerBinary: {
+@@ -1461,9 +1472,12 @@ function resolveStellarConfig(sys: import('src/stores/galaxy').StarSystem): Stel
+       periodDays: Math.pow(sep, 1.5) * 365.25,
+       angle: 0,
+       massRatio: 0.72,
+-      forbiddenZoneRadius: sep * 3.5,
++      forbiddenZoneRadius,
+     },
+-    outerCompanion: { teff: companionTeff * 0.8, orbitalRadius: 200, orbitalAngle: 0 },
++    // Outer companion must always render outside the inner binary's forbidden
++    // zone — a wide inner separation (large innermostAU) would otherwise let
++    // the hardcoded 200 AU default fall inside the hatched exclusion band.
++    outerCompanion: { teff: companionTeff * 0.8, orbitalRadius: Math.max(200, forbiddenZoneRadius * 1.3), orbitalAngle: 0 },
+   }
+ }
+ 
+@@ -1507,6 +1521,13 @@ function enterSystemView(sys: StarSystem) {
+   buildSystemScene(sys, starPos)
+   _stellarCfgCache = resolveStellarConfig(sys)
+   moveCameraToSystem(starPos, sys.planets.length)
++
++  galleriesForCurrentSystem.value = []
++  void communityNodesStore.fetchGalleryNodes(sys.hostname).then(entries => {
++    // Guard against a slow fetch resolving after the user has already
++    // navigated to a different system.
++    if (currentSystem.value?.hostname === sys.hostname) galleriesForCurrentSystem.value = entries
++  })
+ }
+ 
+ function buildSystemScene(sys: StarSystem, starPos: THREE.Vector3) {
+@@ -2678,7 +2699,7 @@ function buildDefenderData(): DefenderNavData {
+       starTeff:      sys.st_teff ?? 5778,
+       starPos:       { x: starPos.x, z: starPos.z },
+       planets,
+-      galleries:     [],
++      galleries:     galleriesForCurrentSystem.value,
+       cameraAngle:   cameraAngleDeg,
+       cameraRadius:  cameraRadiusAU,
+       stellarConfig: cfg,
+diff --git a/src/pages/KnowledgeKeepersPage.vue b/src/pages/KnowledgeKeepersPage.vue
+index 1f77edf..9ff45a6 100644
+--- a/src/pages/KnowledgeKeepersPage.vue
++++ b/src/pages/KnowledgeKeepersPage.vue
+@@ -137,8 +137,7 @@ const store  = useKnowledgeKeepersStore()
+ 
+ const tab = ref<'browse' | 'submit'>('browse')
+ 
+-const issueUrl = 'https://github.com/biomassives/vercel-html-exotopia.org/issues/new?title=' +
+-  encodeURIComponent('Endangered language documentation inquiry')
++const issueUrl = 'https://github.com/biomassives/vercel-html-exotopia.org/issues'
+ 
+ onMounted(() => { void store.loadPublished() })
+ 
+diff --git a/src/pages/LegalDocPage.vue b/src/pages/LegalDocPage.vue
+index 4eab66e..8237831 100644
+--- a/src/pages/LegalDocPage.vue
++++ b/src/pages/LegalDocPage.vue
+@@ -17,7 +17,7 @@
+ 
+       <div class="ldg-repo-links">
+         <a :href="REPO_URL" target="_blank" rel="noopener">View source on GitHub</a>
+-        <a :href="`${REPO_URL}/issues/new`" target="_blank" rel="noopener">File an issue</a>
++        <a :href="`${REPO_URL}/issues`" target="_blank" rel="noopener">File an issue</a>
+         <a :href="`${REPO_URL}/pulls`" target="_blank" rel="noopener">Open pull requests</a>
+       </div>
+     </div>
+diff --git a/src/pages/OnboardPage.vue b/src/pages/OnboardPage.vue
+index 13f3bc8..c35f3f1 100644
+--- a/src/pages/OnboardPage.vue
++++ b/src/pages/OnboardPage.vue
+@@ -121,7 +121,7 @@
+               EU rules require a parent or guardian's verifiable consent first, and a
+               checkbox here isn't enough to satisfy that. If you're a parent, guardian,
+               or teacher setting this up for a young person, please
+-              <a href="https://github.com/biomassives/vercel-html-exotopia.org/issues/new" target="_blank" rel="noopener">reach out to the team directly</a>
++              <a href="https://github.com/biomassives/vercel-html-exotopia.org/issues" target="_blank" rel="noopener">reach out to the team directly</a>
+               and we'll walk through it together.
+             </p>
+           </div>
+diff --git a/src/pages/PfasCitizenSciencePage.vue b/src/pages/PfasCitizenSciencePage.vue
+index 6b467ce..4f0bc1b 100644
+--- a/src/pages/PfasCitizenSciencePage.vue
++++ b/src/pages/PfasCitizenSciencePage.vue
+@@ -235,18 +235,10 @@ onMounted(() => {
+ // Correction-request path for named sites — see RISK_REDUCTION_RECOMMENDATIONS.md
+ // §5. Data here is self-reported (see the standing disclaimer above), so a
+ // named site/brand needs a real due-process step to dispute a report. This
+-// opens a pre-filled issue on the project's public tracker rather than
+-// silently accepting or rejecting the dispute client-side.
+-function disputeListing(area: FocusArea) {
+-  const title = encodeURIComponent(`Dispute PFAS listing: ${area.name}`)
+-  const body  = encodeURIComponent(
+-    `Focus area ID: ${area.id}\nSite name: ${area.name}\n\n` +
+-    `Describe what's inaccurate about this listing and any supporting evidence:\n\n`
+-  )
+-  window.open(
+-    `https://github.com/biomassives/vercel-html-exotopia.org/issues/new?title=${title}&body=${body}`,
+-    '_blank', 'noopener'
+-  )
++// opens the project's public issue tracker rather than silently accepting
++// or rejecting the dispute client-side.
++function disputeListing(_area: FocusArea) {
++  window.open('https://github.com/biomassives/vercel-html-exotopia.org/issues', '_blank', 'noopener')
+ }
+ 
+ function projectsFor(focusAreaId: string): DeconProject[] {
+diff --git a/src/pages/RewardsPage.vue b/src/pages/RewardsPage.vue
+index 11cf5f0..76df76e 100644
+--- a/src/pages/RewardsPage.vue
++++ b/src/pages/RewardsPage.vue
+@@ -118,6 +118,11 @@
+         </div>
+         <p v-else class="rw-p rw-p--dim">No green-light connections yet — connect with someone first to request or receive mentor sessions.</p>
+ 
++        <p class="rw-p rw-p--dim">
++          Mentoring someone? You can share a settlement design with them — open your settlement's
++          inventory, expand an item and choose "Share this design" to generate a code they can redeem.
++        </p>
++
+         <div v-if="rewards.pendingMentorConfirmations.length" class="rw-event-list">
+           <div v-for="s in rewards.pendingMentorConfirmations" :key="s.id" class="rw-event-row">
+             <span class="rw-event-key">{{ s.topic }}</span>
+@@ -150,6 +155,10 @@
+             </div>
+           </div>
+         </div>
++        <p v-if="attachError" class="rw-p rw-attach-error">{{ attachError }}</p>
++        <p v-if="rewards.unlockedObjects.length" class="rw-p rw-p--dim">
++          Attached objects appear as lit structures inside that settlement's dome.
++        </p>
+       </section>
+ 
+     </template>
+@@ -163,6 +172,8 @@ import { supabase } from 'src/lib/supabase'
+ import { useMemberStore } from 'src/stores/member'
+ import { useRewardsStore, type RewardEvent } from 'src/stores/rewards'
+ import { useSettlements } from 'src/lib/settlements'
++import { useSettlementItems } from 'src/lib/settlement-items'
++import { SETTLEMENT_OBJECT_MESH } from 'src/data/rewards-catalog'
+ import MemberSignIn from 'src/components/MemberSignIn.vue'
+ 
+ const member  = useMemberStore()
+@@ -234,7 +245,11 @@ async function submitMentorRequest() {
+ // ── Impact profile — attach an unlocked object to a settlement ──────────────
+ 
+ const attachTarget = reactive<Record<string, string>>({})
++const attachError  = ref('')
+ 
++// Attaching does two things: records the unlock on the settlement record, and
++// places a real lit object in the settlement's interior. Before the second call
++// existed, an earned certificate only ever produced a badge on this page.
+ function attachObject(objectKey: string) {
+   const settlementKey = attachTarget[objectKey]
+   if (!settlementKey) return
+@@ -242,6 +257,24 @@ function attachObject(objectKey: string) {
+   if (!target) return
+   const existing = target.objects ?? []
+   if (existing.includes(objectKey)) return
++
++  const meshPreset = SETTLEMENT_OBJECT_MESH[objectKey]
++  if (!meshPreset) return
++
++  attachError.value = ''
++  try {
++    const skRef = ref(settlementKey)
++    useSettlementItems(skRef).addItem({
++      type:       'reward',
++      meshPreset,
++      zone:       'courtyard',
++      color:      rewards.unlockedObjects.find(o => o.key === objectKey)?.color,
++    })
++  } catch {
++    attachError.value = 'That object could not be placed in the selected settlement.'
++    return
++  }
++
+   updateSettlement(settlementKey, { objects: [...existing, objectKey] })
+   attachTarget[objectKey] = ''
+ }
+@@ -282,6 +315,7 @@ function attachObject(objectKey: string) {
+ .rw-h2 { font-size: 15px; font-weight: 600; color: rgba(210,235,255,0.90); margin: 0 0 8px; }
+ .rw-p  { font-size: 10.5px; color: rgba(130,185,220,0.72); line-height: 1.6; margin: 0 0 12px; }
+ .rw-p--dim { color: rgba(100,140,170,0.55); }
++.rw-attach-error { color: rgba(255,120,120,0.85); }
+ 
+ .rw-pfin-row { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+ .rw-pfin-status { font-size: 10.5px; color: rgba(150,180,205,0.60); }
+diff --git a/src/pages/StationInteriorPage.vue b/src/pages/StationInteriorPage.vue
+index 662fbc3..f6540c4 100644
+--- a/src/pages/StationInteriorPage.vue
++++ b/src/pages/StationInteriorPage.vue
+@@ -139,6 +139,9 @@ import {
+   CYLINDER_ZONE_POSITIONS,
+   autoPosition,
+   buildItemMesh,
++  MAX_ITEM_LIGHTS,
++  STARTER_LIGHT_PRESET,
++  consumeStarterReveal,
+   type ItemAcquisitionType,
+   type SettlementItem,
+ } from 'src/lib/settlement-items'
+@@ -174,6 +177,7 @@ const TYPE_LABELS: Record<ItemAcquisitionType, string> = {
+   traded:      'traded',
+   generated:   'airdrop',
+   'eco-ops':   'eco-ops',
++  reward:      'earned',
+ }
+ 
+ const CYL_R   = 70
+@@ -203,6 +207,8 @@ let hullB: THREE.Mesh | null = null
+ let deckY = 0
+ 
+ const itemMeshes = new Map<string, THREE.Group>()
++// Starter-lantern reveal: item id -> tick() time the reveal animation started
++const revealStarts = new Map<string, number>()
+ 
+ let raycaster:  THREE.Raycaster
+ let itemMeshArr: { mesh: THREE.Object3D; id: string }[] = []
+@@ -385,17 +391,25 @@ function buildItems() {
+   for (const g of itemMeshes.values()) scene?.remove(g)
+   itemMeshes.clear()
+   itemMeshArr = []
++  revealStarts.clear()
++
++  // Founding reveal plays once per settlement, the first time its deck loads.
++  const playReveal = consumeStarterReveal(settlementKey.value)
+ 
+   const zoneCount: Record<string, number> = {}
+ 
+-  for (const item of items.value) {
++  for (const [idx, item] of items.value.entries()) {
+     const slotIdx = zoneCount[item.zone] ?? 0
+     zoneCount[item.zone] = slotIdx + 1
+ 
+     const pos   = autoPosition(item, slotIdx, CYLINDER_ZONE_POSITIONS)
+-    const group = buildItemMesh(item.meshPreset, item.color)
++    const group = buildItemMesh(item.meshPreset, item.color, idx < MAX_ITEM_LIGHTS)
+     group.position.set(pos.x, deckY, pos.z)
+     group.name = `item:${item.id}`
++    if (item.meshPreset === STARTER_LIGHT_PRESET && playReveal) {
++      group.scale.setScalar(0.001)
++      revealStarts.set(item.id, clock.getElapsedTime())
++    }
+     scene!.add(group)
+     itemMeshes.set(item.id, group)
+ 
+@@ -405,6 +419,30 @@ function buildItems() {
+   }
+ }
+ 
++const REVEAL_DURATION = 2.4
++
++/** Ease-out cube + hue sweep while a starter lantern's founding reveal plays. */
++function tickStarterReveal(id: string, group: THREE.Group, item: SettlementItem, t: number) {
++  const start = revealStarts.get(id)
++  if (start === undefined) return
++  const elapsed = t - start
++  const p = Math.min(elapsed / REVEAL_DURATION, 1)
++  const eased = 1 - Math.pow(1 - p, 3)
++  group.scale.setScalar(Math.max(0.001, eased))
++
++  const sweepColor = p < 1
++    ? new THREE.Color().setHSL((p * 1.4) % 1, 0.9, 0.6)
++    : new THREE.Color(item.color)
++  group.traverse(obj => {
++    const mesh = obj as THREE.Mesh
++    const mat  = mesh.isMesh ? (mesh.material as THREE.MeshPhongMaterial | THREE.MeshBasicMaterial) : null
++    if (mat?.color) mat.color.copy(sweepColor)
++    if ((obj as THREE.PointLight).isPointLight) (obj as THREE.PointLight).color.copy(sweepColor)
++  })
++
++  if (p >= 1) revealStarts.delete(id)
++}
++
+ // ── Animation loop ─────────────────────────────────────────────────────────────
+ 
+ function tick() {
+@@ -425,6 +463,9 @@ function tick() {
+       const orbit = group.children[2]
+       if (orbit) orbit.rotation.z = t * 0.4
+     }
++    if (item?.meshPreset === STARTER_LIGHT_PRESET) {
++      tickStarterReveal(id, group, item, t)
++    }
+   }
+ 
+   if (selectionRing?.visible) {
+diff --git a/src/pages/SurfaceViewPage.vue b/src/pages/SurfaceViewPage.vue
+index 04aefa4..ec6da8a 100644
+--- a/src/pages/SurfaceViewPage.vue
++++ b/src/pages/SurfaceViewPage.vue
+@@ -824,7 +824,7 @@ import NavigatorInset                                    from 'src/components/Na
+ import PlanetClaimOverlay                               from 'src/components/PlanetClaimOverlay.vue'
+ import SettlementHashmark                               from 'src/components/SettlementHashmark.vue'
+ import DefenderNav                                       from 'src/components/DefenderNav.vue'
+-import type { DefenderNavData, SkyObjectEntry, SkyObjectType, DefenderTarget } from 'src/lib/defender-nav.types'
++import type { DefenderNavData, SkyObjectEntry, SkyObjectType, DefenderTarget, OrbitalGalleryEntry } from 'src/lib/defender-nav.types'
+ import gsap                                              from 'gsap'
+ import * as THREE                                        from 'three'
+ import { OrbitControls }                                from 'three/examples/jsm/controls/OrbitControls.js'
+@@ -847,6 +847,7 @@ import {
+   buildClimateProfile, formatTempK, formatRangeK, usesFahrenheit,
+ } from 'src/lib/planet-climate'
+ import { hasNoSolidGround } from 'src/lib/surface-classify'
++import { useCommunityNodesStore } from 'src/stores/community-nodes'
+ 
+ // ── Route / props ─────────────────────────────────────────────────────────────
+ 
+@@ -867,6 +868,11 @@ const isMoonView = computed(() => !!parentName.value)
+ 
+ const galaxyStore = useGalaxyStore()
+ const portalStore = usePortalStore()
++const communityNodesStore = useCommunityNodesStore()
++
++// Populated once in onMounted, read synchronously by buildSkyDefenderData()
++// (called every render-loop tick) — same reasoning as GalaxyPage.vue.
++const galleriesForCurrentSystem = ref<OrbitalGalleryEntry[]>([])
+ const { hasSettlement, addSettlement: recordSettlement } = useSettlements()
+ 
+ const system      = computed(() => galaxyStore.getSystem(hostname.value) ?? null)
+@@ -2627,7 +2633,7 @@ function buildSkyDefenderData(): DefenderNavData {
+       cameraAzimuth:  azimuth,
+       cameraFov:      fov,
+       skyObjects,
+-      galleries:      [],
++      galleries:      galleriesForCurrentSystem.value,
+       localTimeDeg:   localTimeDeg.value,
+       terrainProfile,
+     },
+@@ -2897,6 +2903,10 @@ onMounted(async () => {
+ 
+   await galaxyStore.loadData()
+ 
++  void communityNodesStore.fetchGalleryNodes(system.value?.hostname ?? null).then(entries => {
++    galleriesForCurrentSystem.value = entries
++  })
++
+   // No-solid-ground backstop: bodyless/malformed addresses (planet.value is null
+   // for ANY unresolved hostname/planetName, from any entry path — deep link,
+   // bookmark, hand-edited URL), and real gas-giant/magma-ocean/lava worlds, don't
+diff --git a/src/router/routes.ts b/src/router/routes.ts
+index d3007b6..d39f8c8 100644
+--- a/src/router/routes.ts
++++ b/src/router/routes.ts
+@@ -173,6 +173,12 @@ const routes: RouteRecordRaw[] = [
+         component: () => import('src/pages/AccountPage.vue'),
+         meta: { title: 'Account & Privacy' },
+       },
++      {
++        path: 'my-listings',
++        name: 'community-nodes',
++        component: () => import('src/pages/CommunityNodesPage.vue'),
++        meta: { title: 'My Listings' },
++      },
+       {
+         path: 'station/:stationId?',
+         name: 'station',
+@@ -257,6 +263,12 @@ const routes: RouteRecordRaw[] = [
+         component: () => import('src/pages/AdminPage.vue'),
+         meta: { title: 'Admin · Configuration' },
+       },
++      {
++        path: 'admin/community-nodes',
++        name: 'admin-community-nodes',
++        component: () => import('src/pages/AdminNodesPage.vue'),
++        meta: { title: 'Admin · Community Nodes' },
++      },
+       {
+         path: 'learn',
+         name: 'learn',
+diff --git a/src/stores/member.ts b/src/stores/member.ts
+index 05b4c3b..08a36ad 100644
+--- a/src/stores/member.ts
++++ b/src/stores/member.ts
+@@ -177,6 +177,7 @@ export const useMemberStore = defineStore('member', () => {
+       ['method_proposals',     () => supabase!.from('method_proposals').select('*').eq('author_id', uid)],
+       ['proposal_endorsements',() => supabase!.from('proposal_endorsements').select('*').eq('member_id', uid)],
+       ['branch_settlements',   () => supabase!.from('branch_settlements').select('*').eq('owner_id', uid)],
++      ['community_nodes',      () => supabase!.from('community_nodes').select('*').eq('owner_id', uid)],
+     ]
+     const out: Record<string, unknown> = { exportedAt: new Date().toISOString(), memberId: uid }
+     for (const [key, run] of tables) {
+-- 
+2.43.0
+

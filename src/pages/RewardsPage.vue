@@ -118,6 +118,11 @@
         </div>
         <p v-else class="rw-p rw-p--dim">No green-light connections yet — connect with someone first to request or receive mentor sessions.</p>
 
+        <p class="rw-p rw-p--dim">
+          Mentoring someone? You can share a settlement design with them — open your settlement's
+          inventory, expand an item and choose "Share this design" to generate a code they can redeem.
+        </p>
+
         <div v-if="rewards.pendingMentorConfirmations.length" class="rw-event-list">
           <div v-for="s in rewards.pendingMentorConfirmations" :key="s.id" class="rw-event-row">
             <span class="rw-event-key">{{ s.topic }}</span>
@@ -150,6 +155,10 @@
             </div>
           </div>
         </div>
+        <p v-if="attachError" class="rw-p rw-attach-error">{{ attachError }}</p>
+        <p v-if="rewards.unlockedObjects.length" class="rw-p rw-p--dim">
+          Attached objects appear as lit structures inside that settlement's dome.
+        </p>
       </section>
 
     </template>
@@ -163,6 +172,8 @@ import { supabase } from 'src/lib/supabase'
 import { useMemberStore } from 'src/stores/member'
 import { useRewardsStore, type RewardEvent } from 'src/stores/rewards'
 import { useSettlements } from 'src/lib/settlements'
+import { useSettlementItems } from 'src/lib/settlement-items'
+import { SETTLEMENT_OBJECT_MESH } from 'src/data/rewards-catalog'
 import MemberSignIn from 'src/components/MemberSignIn.vue'
 
 const member  = useMemberStore()
@@ -234,7 +245,11 @@ async function submitMentorRequest() {
 // ── Impact profile — attach an unlocked object to a settlement ──────────────
 
 const attachTarget = reactive<Record<string, string>>({})
+const attachError  = ref('')
 
+// Attaching does two things: records the unlock on the settlement record, and
+// places a real lit object in the settlement's interior. Before the second call
+// existed, an earned certificate only ever produced a badge on this page.
 function attachObject(objectKey: string) {
   const settlementKey = attachTarget[objectKey]
   if (!settlementKey) return
@@ -242,6 +257,24 @@ function attachObject(objectKey: string) {
   if (!target) return
   const existing = target.objects ?? []
   if (existing.includes(objectKey)) return
+
+  const meshPreset = SETTLEMENT_OBJECT_MESH[objectKey]
+  if (!meshPreset) return
+
+  attachError.value = ''
+  try {
+    const skRef = ref(settlementKey)
+    useSettlementItems(skRef).addItem({
+      type:       'reward',
+      meshPreset,
+      zone:       'courtyard',
+      color:      rewards.unlockedObjects.find(o => o.key === objectKey)?.color,
+    })
+  } catch {
+    attachError.value = 'That object could not be placed in the selected settlement.'
+    return
+  }
+
   updateSettlement(settlementKey, { objects: [...existing, objectKey] })
   attachTarget[objectKey] = ''
 }
@@ -282,6 +315,7 @@ function attachObject(objectKey: string) {
 .rw-h2 { font-size: 15px; font-weight: 600; color: rgba(210,235,255,0.90); margin: 0 0 8px; }
 .rw-p  { font-size: 10.5px; color: rgba(130,185,220,0.72); line-height: 1.6; margin: 0 0 12px; }
 .rw-p--dim { color: rgba(100,140,170,0.55); }
+.rw-attach-error { color: rgba(255,120,120,0.85); }
 
 .rw-pfin-row { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
 .rw-pfin-status { font-size: 10.5px; color: rgba(150,180,205,0.60); }

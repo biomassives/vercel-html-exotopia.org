@@ -137,8 +137,7 @@ const store  = useKnowledgeKeepersStore()
 
 const tab = ref<'browse' | 'submit'>('browse')
 
-const issueUrl = 'https://github.com/biomassives/vercel-html-exotopia.org/issues/new?title=' +
-  encodeURIComponent('Endangered language documentation inquiry')
+const issueUrl = 'https://github.com/biomassives/vercel-html-exotopia.org/issues'
 
 onMounted(() => { void store.loadPublished() })
 

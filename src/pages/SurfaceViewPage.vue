@@ -824,7 +824,7 @@ import NavigatorInset                                    from 'src/components/Na
 import PlanetClaimOverlay                               from 'src/components/PlanetClaimOverlay.vue'
 import SettlementHashmark                               from 'src/components/SettlementHashmark.vue'
 import DefenderNav                                       from 'src/components/DefenderNav.vue'
-import type { DefenderNavData, SkyObjectEntry, SkyObjectType, DefenderTarget } from 'src/lib/defender-nav.types'
+import type { DefenderNavData, SkyObjectEntry, SkyObjectType, DefenderTarget, OrbitalGalleryEntry } from 'src/lib/defender-nav.types'
 import gsap                                              from 'gsap'
 import * as THREE                                        from 'three'
 import { OrbitControls }                                from 'three/examples/jsm/controls/OrbitControls.js'
@@ -847,6 +847,7 @@ import {
   buildClimateProfile, formatTempK, formatRangeK, usesFahrenheit,
 } from 'src/lib/planet-climate'
 import { hasNoSolidGround } from 'src/lib/surface-classify'
+import { useCommunityNodesStore } from 'src/stores/community-nodes'
 
 // ── Route / props ─────────────────────────────────────────────────────────────
 
@@ -867,6 +868,11 @@ const isMoonView = computed(() => !!parentName.value)
 
 const galaxyStore = useGalaxyStore()
 const portalStore = usePortalStore()
+const communityNodesStore = useCommunityNodesStore()
+
+// Populated once in onMounted, read synchronously by buildSkyDefenderData()
+// (called every render-loop tick) — same reasoning as GalaxyPage.vue.
+const galleriesForCurrentSystem = ref<OrbitalGalleryEntry[]>([])
 const { hasSettlement, addSettlement: recordSettlement } = useSettlements()
 
 const system      = computed(() => galaxyStore.getSystem(hostname.value) ?? null)
@@ -2627,7 +2633,7 @@ function buildSkyDefenderData(): DefenderNavData {
       cameraAzimuth:  azimuth,
       cameraFov:      fov,
       skyObjects,
-      galleries:      [],
+      galleries:      galleriesForCurrentSystem.value,
       localTimeDeg:   localTimeDeg.value,
       terrainProfile,
     },
@@ -2896,6 +2902,10 @@ onMounted(async () => {
   }, 1000)
 
   await galaxyStore.loadData()
+
+  void communityNodesStore.fetchGalleryNodes(system.value?.hostname ?? null).then(entries => {
+    galleriesForCurrentSystem.value = entries
+  })
 
   // No-solid-ground backstop: bodyless/malformed addresses (planet.value is null
   // for ANY unresolved hostname/planetName, from any entry path — deep link,

@@ -1,0 +1,564 @@
+diff --git a/src/lib/settlement-items.ts b/src/lib/settlement-items.ts
+index b2b58a7..133a195 100644
+--- a/src/lib/settlement-items.ts
++++ b/src/lib/settlement-items.ts
+@@ -8,6 +8,7 @@
+  *   traded      — received from another settlement; carries donor provenance
+  *   generated   — awarded via pon.ink airdrop events
+  *   eco-ops     — earned through community SHG / field-work milestones
++ *   reward      — unlocked by an Impact Profile certificate (see rewards-catalog.ts)
+  *
+  * Storage (hybrid model):
+  *   localStorage  — source of truth for constructed/placed items
+@@ -18,11 +19,11 @@
+ import { reactive, computed, watch } from 'vue'
+ import type { Ref } from 'vue'
+ import * as THREE from 'three'
+-import { safeRead, safeWrite, hashStorageKey } from './storage-cipher'
++import { safeRead, safeWrite, hashStorageKey, encryptForStorage, decryptFromStorage } from './storage-cipher'
+ 
+ // ── Core types ────────────────────────────────────────────────────────────────
+ 
+-export type ItemAcquisitionType = 'constructed' | 'traded' | 'generated' | 'eco-ops'
++export type ItemAcquisitionType = 'constructed' | 'traded' | 'generated' | 'eco-ops' | 'reward'
+ 
+ export type ItemZone =
+   | 'library'
+@@ -47,6 +48,7 @@ export interface SettlementItem {
+   // Traded
+   donorKey?:       string        // donor settlement key
+   donorStarColor?: string        // '#RRGGBB' — trail colour on arrival
++  donorName?:      string        // human-readable design credit (attribution, not a price)
+   // Generated
+   airdropBundle?:  string        // pon.ink bundle type
+   // Eco-ops
+@@ -67,38 +69,48 @@ export interface ItemMeshPreset {
+   buildCost?:   number           // for constructed items
+ }
+ 
++/** Preset key for the free lighting item every settlement is founded with. */
++export const STARTER_LIGHT_PRESET = 'starter-lantern'
++
+ export const ITEM_MESH_PRESETS: Record<string, ItemMeshPreset> = {
++  [STARTER_LIGHT_PRESET]: {
++    label: 'Settlement Lantern', defaultColor: 0xffffff, zoneDefault: 'gateway',
++    acquiredBy: [],   // system-granted only at founding — never manually acquirable
++    description: 'Baseline illumination granted automatically when a settlement is founded. Its colour is unique to this settlement.',
++  },
+   'beacon': {
+     label: 'Signal Beacon', defaultColor: 0x00ddff, zoneDefault: 'gateway',
+-    acquiredBy: ['constructed', 'generated'],
++    acquiredBy: ['constructed', 'generated', 'reward', 'traded'],
+     description: 'Broadcasts settlement presence to the conduit network.',
+     buildCost: 40,
+   },
+   'crystal': {
+     label: 'Resonance Crystal', defaultColor: 0xcc88ff, zoneDefault: 'courtyard',
+-    acquiredBy: ['generated', 'eco-ops'],
++    acquiredBy: ['generated', 'eco-ops', 'reward', 'traded'],
+     description: 'Harmonic receiver that amplifies ambient light.',
+   },
+   'planter': {
+     label: 'Garden Planter', defaultColor: 0x44bb44, zoneDefault: 'garden',
+-    acquiredBy: ['constructed', 'eco-ops'],
++    acquiredBy: ['constructed', 'eco-ops', 'traded'],
+     description: 'Cultivates alien flora adapted to local conditions.',
+     buildCost: 20,
+   },
+   'solar-array': {
+     label: 'Solar Array', defaultColor: 0xffcc44, zoneDefault: 'open-floor',
+-    acquiredBy: ['constructed'],
++    acquiredBy: ['constructed', 'traded'],
+     description: 'Harvests light from the host star.',
+     buildCost: 60,
+   },
+   'monument': {
+     label: 'Community Monument', defaultColor: 0x88aacc, zoneDefault: 'courtyard',
+-    acquiredBy: ['eco-ops'],
++    // No 'traded': this attests a real community milestone, so it is not
++    // shareable via a gift code the way decorative presets are.
++    acquiredBy: ['eco-ops', 'reward'],
+     description: 'Marks a community milestone or declaration.',
+   },
+   'archive-node': {
+     label: 'Archive Node', defaultColor: 0x4488ff, zoneDefault: 'library',
+-    acquiredBy: ['constructed', 'traded'],
++    acquiredBy: ['constructed', 'traded', 'reward'],
+     description: 'Extends the settlement knowledge base.',
+     buildCost: 35,
+   },
+@@ -115,18 +127,20 @@ export const ITEM_MESH_PRESETS: Record<string, ItemMeshPreset> = {
+   },
+   'comms-relay': {
+     label: 'Comms Relay', defaultColor: 0x55ffaa, zoneDefault: 'gateway',
+-    acquiredBy: ['constructed', 'generated'],
++    acquiredBy: ['constructed', 'generated', 'reward', 'traded'],
+     description: 'Strengthens conduit range to neighbouring settlements.',
+     buildCost: 45,
+   },
+   'seed-vault': {
+     label: 'Seed Vault', defaultColor: 0xbbcc88, zoneDefault: 'library',
+-    acquiredBy: ['eco-ops', 'traded'],
++    acquiredBy: ['eco-ops', 'traded', 'reward'],
+     description: 'Stores genetic diversity — a symbol of long-term commitment.',
+   },
+   'decon-site-marker': {
+     label: 'Decontamination Site Marker', defaultColor: 0xffaa33, zoneDefault: 'water-edge',
+-    acquiredBy: ['eco-ops'],
++    // No 'traded': this attests real logged citizen-science work, so it is not
++    // shareable via a gift code the way decorative presets are.
++    acquiredBy: ['eco-ops', 'reward'],
+     description: 'Marks a PFAS/PFOA decontamination project logged in your citizen-science work. Color reflects project status at the time it was attached (amber = planning/active, cyan = monitoring, green = complete) — set via the color override when the item is added, not live-updating.',
+   },
+ }
+@@ -175,7 +189,14 @@ export function autoPosition(
+ 
+ // ── Item mesh builder (shared by DomeInteriorPage.vue and StationInteriorPage.vue) ──
+ 
+-export function buildItemMesh(presetKey: string, colorHex: string): THREE.Group {
++/**
++ * How many items get their own dynamic point light. Beyond this the meshes still
++ * render in full — they just rely on the scene's existing lighting, since every
++ * additional PointLight costs a real-time shading pass on every lit material.
++ */
++export const MAX_ITEM_LIGHTS = 12
++
++export function buildItemMesh(presetKey: string, colorHex: string, withLight = true): THREE.Group {
+   const col   = new THREE.Color(colorHex)
+   const group = new THREE.Group()
+ 
+@@ -185,6 +206,18 @@ export function buildItemMesh(presetKey: string, colorHex: string): THREE.Group
+   )
+ 
+   switch (presetKey) {
++    case STARTER_LIGHT_PRESET: {
++      const post  = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.16, 3.0, 6), new THREE.MeshPhongMaterial({ color: 0x2a2a2a }))
++      post.position.y = 1.5
++      const shade = new THREE.Mesh(
++        new THREE.IcosahedronGeometry(0.6, 0),
++        new THREE.MeshPhongMaterial({ color: col, emissive: col.clone().multiplyScalar(0.45), transparent: true, opacity: 0.88 })
++      )
++      shade.position.y = 3.1
++      const g = glow(1.1, 3.1, 0.24)
++      group.add(post, shade, g)
++      break
++    }
+     case 'beacon': {
+       const post = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.26, 4.2, 7), new THREE.MeshPhongMaterial({ color: 0x223344 }))
+       post.position.y = 2.1
+@@ -319,20 +352,109 @@ export function buildItemMesh(presetKey: string, colorHex: string): THREE.Group
+     }
+   }
+ 
+-  // Point light per item — keeps the surrounding area lit
+-  const pl = new THREE.PointLight(col.getHex(), 0.5, 14)
+-  pl.position.y = 2.0
+-  group.add(pl)
++  // Point light per item — keeps the surrounding area lit. Callers cap how many
++  // items get one, since every light costs a real-time shading pass.
++  if (withLight) {
++    const pl = new THREE.PointLight(col.getHex(), 0.5, 14)
++    pl.position.y = 2.0
++    group.add(pl)
++  }
+ 
+   return group
+ }
+ 
++// ── Per-settlement colour ─────────────────────────────────────────────────────
++// Deterministic hue from the settlement key, so every settlement's starter
++// lantern reads as visually distinct rather than one fixed stock colour.
++
++function settlementHue(sk: string): number {
++  const h = parseInt(hashStorageKey(sk), 36)
++  return (h % 360) / 360
++}
++
++export function starterLightColorHex(sk: string): string {
++  const c = new THREE.Color()
++  c.setHSL(settlementHue(sk), 0.72, 0.58)
++  return '#' + c.getHexString()
++}
++
++/**
++ * Colour for the nth item of an applied theme pack. Hue-shifts off the same
++ * per-settlement base as the starter lantern, so a pack reads as belonging to
++ * this settlement rather than dropping in a stock palette.
++ */
++export function themePackItemColorHex(sk: string, index: number): string {
++  const c = new THREE.Color()
++  c.setHSL((settlementHue(sk) + index * 0.055) % 1, 0.66, 0.52 + (index % 3) * 0.05)
++  return '#' + c.getHexString()
++}
++
++// ── Gift codes (peer-to-peer item sharing) ────────────────────────────────────
++// A design travels between two browsers as an opaque copyable string. Uses the
++// same site-wide storage cipher (its seed is a fixed constant, not per-browser,
++// so a code made in one browser decodes in any other). This is attribution and
++// distribution only — there is no price, ledger, or transfer of ownership.
++
++export interface GiftCodePayload {
++  meshPreset:     string
++  zone:           ItemZone
++  color:          string
++  donorKey:       string
++  donorStarColor: string
++  donorName?:     string
++}
++
++export function exportItemGiftCode(
++  item: SettlementItem,
++  fromSettlementKey: string,
++  designerName?: string,
++): string {
++  const payload: GiftCodePayload = {
++    meshPreset:     item.meshPreset,
++    zone:           item.zone,
++    color:          item.color,
++    donorKey:       fromSettlementKey,
++    donorStarColor: starterLightColorHex(fromSettlementKey),
++    ...(designerName ? { donorName: designerName } : {}),
++  }
++  return encryptForStorage(JSON.stringify(payload))
++}
++
++/** Decode a gift code. Returns null for malformed, foreign, or unknown-preset input. */
++export function importItemGiftCode(code: string): GiftCodePayload | null {
++  try {
++    const d = JSON.parse(decryptFromStorage(code.trim())) as Partial<GiftCodePayload>
++    if (!d || typeof d.meshPreset !== 'string') return null
++    const preset = ITEM_MESH_PRESETS[d.meshPreset]
++    // A gift arrives as a trade, so the preset must be tradeable — this keeps
++    // the starter lantern (acquiredBy: []) from being clonable via a code.
++    if (!preset || !preset.acquiredBy.includes('traded')) return null
++    if (typeof d.zone !== 'string' || !(d.zone in ZONE_POSITIONS)) return null
++    if (typeof d.color !== 'string' || !/^#[0-9a-fA-F]{6}$/.test(d.color)) return null
++    if (typeof d.donorKey !== 'string' || !d.donorKey) return null
++    return {
++      meshPreset:     d.meshPreset,
++      zone:           d.zone as ItemZone,
++      color:          d.color,
++      donorKey:       d.donorKey,
++      donorStarColor: typeof d.donorStarColor === 'string' ? d.donorStarColor : d.color,
++      ...(typeof d.donorName === 'string' && d.donorName ? { donorName: d.donorName } : {}),
++    }
++  } catch {
++    return null
++  }
++}
++
+ // ── Storage ───────────────────────────────────────────────────────────────────
+ 
+ const STORAGE_PREFIX = 'e8.2'   // opaque — was 'exotopia_items_v1'
++const SEEDED_PREFIX  = 'e8.2s'  // tracks whether the starter lantern was ever granted
++const REVEAL_PREFIX  = 'e8.2r'  // tracks whether the one-time reveal animation has played
+ 
+ // Hash the settlement key so no location names appear as localStorage keys
+ function storageKey(sk: string) { return `${STORAGE_PREFIX}:${hashStorageKey(sk)}` }
++function seededKey(sk: string)  { return `${SEEDED_PREFIX}:${hashStorageKey(sk)}` }
++function revealKey(sk: string)  { return `${REVEAL_PREFIX}:${hashStorageKey(sk)}` }
+ 
+ function loadItems(sk: string): SettlementItem[] {
+   return safeRead<SettlementItem[]>(storageKey(sk), [])
+@@ -342,6 +464,33 @@ function saveItems(sk: string, items: SettlementItem[]) {
+   safeWrite(storageKey(sk), items)
+ }
+ 
++function makeStarterLight(sk: string): SettlementItem {
++  const preset = ITEM_MESH_PRESETS[STARTER_LIGHT_PRESET]!
++  return {
++    id:            `starter-${hashStorageKey(sk)}`,
++    type:          'generated',
++    meshPreset:    STARTER_LIGHT_PRESET,
++    label:         preset.label,
++    description:   preset.description,
++    zone:          preset.zoneDefault,
++    color:         starterLightColorHex(sk),
++    acquiredAt:    Date.now(),
++    settlementKey: sk,
++  }
++}
++
++/**
++ * One-time check: has this settlement's founding reveal animation played yet?
++ * Consumes the flag — a true result means "play it now", and it will return
++ * false for every call after (per settlement, persisted across sessions).
++ */
++export function consumeStarterReveal(sk: string): boolean {
++  const key  = revealKey(sk)
++  const seen = safeRead<boolean>(key, false)
++  if (!seen) safeWrite(key, true)
++  return !seen
++}
++
+ // ── Shared store ──────────────────────────────────────────────────────────────
+ // Module-level reactive cache, keyed by settlement key, so every component
+ // instance pointed at the same settlement shares one live item list (and
+@@ -350,7 +499,18 @@ function saveItems(sk: string, items: SettlementItem[]) {
+ const itemsStore: Record<string, SettlementItem[]> = reactive({})
+ 
+ function ensureLoaded(sk: string) {
+-  if (!(sk in itemsStore)) itemsStore[sk] = loadItems(sk)
++  if (sk in itemsStore) return
++  let items = loadItems(sk)
++  // Every settlement is founded with a free lantern — grant it once, on first
++  // load, to settlements that don't already have items. Gated by its own
++  // persisted flag (not items.length) so removing the lantern later doesn't
++  // cause it to be re-granted on the next visit.
++  if (items.length === 0 && !safeRead<boolean>(seededKey(sk), false)) {
++    items = [makeStarterLight(sk)]
++    saveItems(sk, items)
++    safeWrite(seededKey(sk), true)
++  }
++  itemsStore[sk] = items
+ }
+ 
+ // ── Composable ────────────────────────────────────────────────────────────────
+@@ -371,10 +531,18 @@ export function useSettlementItems(settlementKey: Ref<string>) {
+              Partial<Omit<SettlementItem, 'id' | 'acquiredAt' | 'settlementKey' | 'type' | 'meshPreset' | 'zone'>>
+   ): SettlementItem {
+     const preset = ITEM_MESH_PRESETS[partial.meshPreset]
+-    const colHex = '#' + (preset?.defaultColor ?? 0xffffff).toString(16).padStart(6, '0')
++    // Structural guard, not just a UI filter: the acquire picker already hides
++    // ineligible presets, but nothing stopped a direct call from bypassing it.
++    if (!preset) {
++      throw new Error(`Unknown mesh preset "${partial.meshPreset}"`)
++    }
++    if (!preset.acquiredBy.includes(partial.type)) {
++      throw new Error(`"${partial.meshPreset}" cannot be acquired via "${partial.type}"`)
++    }
++    const colHex = '#' + preset.defaultColor.toString(16).padStart(6, '0')
+     const item: SettlementItem = {
+-      label:        preset?.label       ?? partial.meshPreset,
+-      description:  preset?.description ?? '',
++      label:        preset.label,
++      description:  preset.description,
+       color:        colHex,
+       ...partial,
+       id:           `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+@@ -391,6 +559,14 @@ export function useSettlementItems(settlementKey: Ref<string>) {
+     persist()
+   }
+ 
++  function updateItem(
++    id: string,
++    patch: Partial<Pick<SettlementItem, 'color' | 'zone' | 'label'>>,
++  ) {
++    items.value = items.value.map(i => i.id === id ? { ...i, ...patch } : i)
++    persist()
++  }
++
+   function placeItem(id: string, posX: number, posZ: number) {
+     items.value = items.value.map(i => i.id === id ? { ...i, posX, posZ } : i)
+     persist()
+@@ -401,7 +577,8 @@ export function useSettlementItems(settlementKey: Ref<string>) {
+     'traded':      items.value.filter(i => i.type === 'traded'),
+     'generated':   items.value.filter(i => i.type === 'generated'),
+     'eco-ops':     items.value.filter(i => i.type === 'eco-ops'),
++    'reward':      items.value.filter(i => i.type === 'reward'),
+   }))
+ 
+-  return { items, byType, addItem, removeItem, placeItem }
++  return { items, byType, addItem, removeItem, updateItem, placeItem }
+ }
+diff --git a/src/pages/DomeInteriorPage.vue b/src/pages/DomeInteriorPage.vue
+index c610a9a..70e7ff7 100644
+--- a/src/pages/DomeInteriorPage.vue
++++ b/src/pages/DomeInteriorPage.vue
+@@ -142,6 +142,9 @@ import {
+   ZONE_POSITIONS,
+   autoPosition,
+   buildItemMesh,
++  MAX_ITEM_LIGHTS,
++  STARTER_LIGHT_PRESET,
++  consumeStarterReveal,
+   type ItemAcquisitionType,
+   type SettlementItem,
+ } from 'src/lib/settlement-items'
+@@ -176,6 +179,7 @@ const TYPE_LABELS: Record<ItemAcquisitionType, string> = {
+   traded:      'traded',
+   generated:   'airdrop',
+   'eco-ops':   'eco-ops',
++  reward:      'earned',
+ }
+ 
+ // ── UI state ──────────────────────────────────────────────────────────────────
+@@ -197,6 +201,8 @@ let clock:    THREE.Clock
+ 
+ // Scene item meshes — keyed by item id
+ const itemMeshes = new Map<string, THREE.Group>()
++// Starter-lantern reveal: item id -> tick() time the reveal animation started
++const revealStarts = new Map<string, number>()
+ 
+ // Raycaster for hover
+ let raycaster:  THREE.Raycaster
+@@ -408,18 +414,26 @@ function buildItems() {
+   for (const g of itemMeshes.values()) scene?.remove(g)
+   itemMeshes.clear()
+   itemMeshArr = []
++  revealStarts.clear()
++
++  // Founding reveal plays once per settlement, the first time its dome loads.
++  const playReveal = consumeStarterReveal(settlementKey.value)
+ 
+   // Zone slot counters for auto-positioning
+   const zoneCount: Record<string, number> = {}
+ 
+-  for (const item of items.value) {
++  for (const [idx, item] of items.value.entries()) {
+     const slotIdx = zoneCount[item.zone] ?? 0
+     zoneCount[item.zone] = slotIdx + 1
+ 
+     const pos   = autoPosition(item, slotIdx)
+-    const group = buildItemMesh(item.meshPreset, item.color)
++    const group = buildItemMesh(item.meshPreset, item.color, idx < MAX_ITEM_LIGHTS)
+     group.position.set(pos.x, 0, pos.z)
+     group.name = `item:${item.id}`
++    if (item.meshPreset === STARTER_LIGHT_PRESET && playReveal) {
++      group.scale.setScalar(0.001)
++      revealStarts.set(item.id, clock.getElapsedTime())
++    }
+     scene!.add(group)
+     itemMeshes.set(item.id, group)
+ 
+@@ -430,6 +444,30 @@ function buildItems() {
+   }
+ }
+ 
++const REVEAL_DURATION = 2.4
++
++/** Ease-out cube + hue sweep while a starter lantern's founding reveal plays. */
++function tickStarterReveal(id: string, group: THREE.Group, item: SettlementItem, t: number) {
++  const start = revealStarts.get(id)
++  if (start === undefined) return
++  const elapsed = t - start
++  const p = Math.min(elapsed / REVEAL_DURATION, 1)
++  const eased = 1 - Math.pow(1 - p, 3)
++  group.scale.setScalar(Math.max(0.001, eased))
++
++  const sweepColor = p < 1
++    ? new THREE.Color().setHSL((p * 1.4) % 1, 0.9, 0.6)
++    : new THREE.Color(item.color)
++  group.traverse(obj => {
++    const mesh = obj as THREE.Mesh
++    const mat  = mesh.isMesh ? (mesh.material as THREE.MeshPhongMaterial | THREE.MeshBasicMaterial) : null
++    if (mat?.color) mat.color.copy(sweepColor)
++    if ((obj as THREE.PointLight).isPointLight) (obj as THREE.PointLight).color.copy(sweepColor)
++  })
++
++  if (p >= 1) revealStarts.delete(id)
++}
++
+ // ── Animation loop ─────────────────────────────────────────────────────────────
+ 
+ function tick() {
+@@ -460,6 +498,9 @@ function tick() {
+       const orbit = group.children[2]
+       if (orbit) orbit.rotation.z = t * 0.4
+     }
++    if (item?.meshPreset === STARTER_LIGHT_PRESET) {
++      tickStarterReveal(id, group, item, t)
++    }
+   }
+ 
+   // Selection ring pulse
+diff --git a/src/pages/StationInteriorPage.vue b/src/pages/StationInteriorPage.vue
+index 662fbc3..f6540c4 100644
+--- a/src/pages/StationInteriorPage.vue
++++ b/src/pages/StationInteriorPage.vue
+@@ -139,6 +139,9 @@ import {
+   CYLINDER_ZONE_POSITIONS,
+   autoPosition,
+   buildItemMesh,
++  MAX_ITEM_LIGHTS,
++  STARTER_LIGHT_PRESET,
++  consumeStarterReveal,
+   type ItemAcquisitionType,
+   type SettlementItem,
+ } from 'src/lib/settlement-items'
+@@ -174,6 +177,7 @@ const TYPE_LABELS: Record<ItemAcquisitionType, string> = {
+   traded:      'traded',
+   generated:   'airdrop',
+   'eco-ops':   'eco-ops',
++  reward:      'earned',
+ }
+ 
+ const CYL_R   = 70
+@@ -203,6 +207,8 @@ let hullB: THREE.Mesh | null = null
+ let deckY = 0
+ 
+ const itemMeshes = new Map<string, THREE.Group>()
++// Starter-lantern reveal: item id -> tick() time the reveal animation started
++const revealStarts = new Map<string, number>()
+ 
+ let raycaster:  THREE.Raycaster
+ let itemMeshArr: { mesh: THREE.Object3D; id: string }[] = []
+@@ -385,17 +391,25 @@ function buildItems() {
+   for (const g of itemMeshes.values()) scene?.remove(g)
+   itemMeshes.clear()
+   itemMeshArr = []
++  revealStarts.clear()
++
++  // Founding reveal plays once per settlement, the first time its deck loads.
++  const playReveal = consumeStarterReveal(settlementKey.value)
+ 
+   const zoneCount: Record<string, number> = {}
+ 
+-  for (const item of items.value) {
++  for (const [idx, item] of items.value.entries()) {
+     const slotIdx = zoneCount[item.zone] ?? 0
+     zoneCount[item.zone] = slotIdx + 1
+ 
+     const pos   = autoPosition(item, slotIdx, CYLINDER_ZONE_POSITIONS)
+-    const group = buildItemMesh(item.meshPreset, item.color)
++    const group = buildItemMesh(item.meshPreset, item.color, idx < MAX_ITEM_LIGHTS)
+     group.position.set(pos.x, deckY, pos.z)
+     group.name = `item:${item.id}`
++    if (item.meshPreset === STARTER_LIGHT_PRESET && playReveal) {
++      group.scale.setScalar(0.001)
++      revealStarts.set(item.id, clock.getElapsedTime())
++    }
+     scene!.add(group)
+     itemMeshes.set(item.id, group)
+ 
+@@ -405,6 +419,30 @@ function buildItems() {
+   }
+ }
+ 
++const REVEAL_DURATION = 2.4
++
++/** Ease-out cube + hue sweep while a starter lantern's founding reveal plays. */
++function tickStarterReveal(id: string, group: THREE.Group, item: SettlementItem, t: number) {
++  const start = revealStarts.get(id)
++  if (start === undefined) return
++  const elapsed = t - start
++  const p = Math.min(elapsed / REVEAL_DURATION, 1)
++  const eased = 1 - Math.pow(1 - p, 3)
++  group.scale.setScalar(Math.max(0.001, eased))
++
++  const sweepColor = p < 1
++    ? new THREE.Color().setHSL((p * 1.4) % 1, 0.9, 0.6)
++    : new THREE.Color(item.color)
++  group.traverse(obj => {
++    const mesh = obj as THREE.Mesh
++    const mat  = mesh.isMesh ? (mesh.material as THREE.MeshPhongMaterial | THREE.MeshBasicMaterial) : null
++    if (mat?.color) mat.color.copy(sweepColor)
++    if ((obj as THREE.PointLight).isPointLight) (obj as THREE.PointLight).color.copy(sweepColor)
++  })
++
++  if (p >= 1) revealStarts.delete(id)
++}
++
+ // ── Animation loop ─────────────────────────────────────────────────────────────
+ 
+ function tick() {
+@@ -425,6 +463,9 @@ function tick() {
+       const orbit = group.children[2]
+       if (orbit) orbit.rotation.z = t * 0.4
+     }
++    if (item?.meshPreset === STARTER_LIGHT_PRESET) {
++      tickStarterReveal(id, group, item, t)
++    }
+   }
+ 
+   if (selectionRing?.visible) {

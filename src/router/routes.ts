@@ -174,6 +174,12 @@ const routes: RouteRecordRaw[] = [
         meta: { title: 'Account & Privacy' },
       },
       {
+        path: 'my-listings',
+        name: 'community-nodes',
+        component: () => import('src/pages/CommunityNodesPage.vue'),
+        meta: { title: 'My Listings' },
+      },
+      {
         path: 'station/:stationId?',
         name: 'station',
         component: () => import('src/pages/StationPage.vue'),
@@ -256,6 +262,12 @@ const routes: RouteRecordRaw[] = [
         name: 'admin',
         component: () => import('src/pages/AdminPage.vue'),
         meta: { title: 'Admin · Configuration' },
+      },
+      {
+        path: 'admin/community-nodes',
+        name: 'admin-community-nodes',
+        component: () => import('src/pages/AdminNodesPage.vue'),
+        meta: { title: 'Admin · Community Nodes' },
       },
       {
         path: 'learn',

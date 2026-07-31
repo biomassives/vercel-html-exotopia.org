@@ -121,7 +121,7 @@
               EU rules require a parent or guardian's verifiable consent first, and a
               checkbox here isn't enough to satisfy that. If you're a parent, guardian,
               or teacher setting this up for a young person, please
-              <a href="https://github.com/biomassives/vercel-html-exotopia.org/issues/new" target="_blank" rel="noopener">reach out to the team directly</a>
+              <a href="https://github.com/biomassives/vercel-html-exotopia.org/issues" target="_blank" rel="noopener">reach out to the team directly</a>
               and we'll walk through it together.
             </p>
           </div>

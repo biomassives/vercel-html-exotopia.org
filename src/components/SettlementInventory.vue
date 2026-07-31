@@ -53,20 +53,52 @@
               <div v-if="item.community" class="si-provenance">
                 <q-icon name="groups" size="9px" class="q-mr-xxs" />{{ item.community }}
               </div>
-              <div v-if="item.donorKey" class="si-provenance">
-                <q-icon name="swap_horiz" size="9px" class="q-mr-xxs" />From {{ item.donorKey }}
+              <div v-if="item.donorName" class="si-provenance">
+                <q-icon name="brush" size="9px" class="q-mr-xxs" />Designed by {{ item.donorName }}
+              </div>
+              <div v-if="item.donorKey" class="si-provenance" :title="item.donorKey">
+                <q-icon name="swap_horiz" size="9px" class="q-mr-xxs" />From {{ donorLabel(item.donorKey) }}
               </div>
               <div class="si-item-date">{{ fmtDate(item.acquiredAt) }}</div>
+
+              <!-- Design controls -->
+              <div v-if="editingId === item.id" class="si-edit">
+                <div class="si-edit-row">
+                  <label class="si-edit-label">Colour</label>
+                  <input type="color" class="si-color-input" :value="item.color"
+                    @input="onColorInput(item.id, $event)" />
+                </div>
+                <div class="si-edit-row">
+                  <label class="si-edit-label">Zone</label>
+                  <select class="si-zone-select" :value="item.zone" @change="onZoneChange(item.id, $event)">
+                    <option v-for="zone in ZONES" :key="zone" :value="zone">{{ zone }}</option>
+                  </select>
+                </div>
+                <button v-if="canShare(item)" class="si-share-btn" @click="openShare(item)">
+                  <q-icon name="ios_share" size="11px" class="q-mr-xxs" />Share this design
+                </button>
+                <div v-else class="si-share-note">
+                  This item records real-world work, so it can't be shared as a design.
+                </div>
+              </div>
             </div>
-            <q-btn flat dense round icon="delete_outline" size="xs" color="blue-grey-7"
-              @click="confirmRemove(item)" title="Remove item" />
+            <div class="si-item-actions">
+              <q-btn flat dense round :icon="editingId === item.id ? 'expand_less' : 'tune'" size="xs"
+                :color="editingId === item.id ? 'cyan-5' : 'blue-grey-7'"
+                @click="editingId = editingId === item.id ? null : item.id"
+                :title="editingId === item.id ? 'Close design controls' : 'Edit design'" />
+              <q-btn flat dense round icon="delete_outline" size="xs" color="blue-grey-7"
+                @click="confirmRemove(item)" title="Remove item" />
+            </div>
           </div>
         </div>
 
-        <!-- Acquire button -->
+        <!-- Acquire / theme buttons -->
         <div class="si-footer">
           <q-btn flat dense icon="add_circle" label="Acquire item" color="cyan-5" size="sm"
             @click="acquireOpen = true" />
+          <q-btn flat dense icon="palette" label="Apply a theme" color="purple-4" size="sm"
+            @click="themeOpen = true" />
         </div>
 
       </div>
@@ -95,6 +127,21 @@
               <div class="si-acq-label">{{ at.label }}</div>
               <div class="si-acq-desc">{{ at.desc }}</div>
             </button>
+          </div>
+
+          <!-- Redeem a gift code -->
+          <div class="si-redeem">
+            <div class="text-caption text-blue-grey-5 q-mb-xs" style="letter-spacing:0.08em">
+              OR REDEEM A GIFT CODE
+            </div>
+            <div class="si-redeem-hint">
+              Someone can share a design with you from their own settlement — paste their code here.
+            </div>
+            <textarea v-model="redeemCode" class="si-redeem-input" rows="2"
+              placeholder="Paste gift code…" @input="redeemError = ''" />
+            <div v-if="redeemError" class="si-redeem-error">{{ redeemError }}</div>
+            <q-btn flat dense size="sm" color="cyan-5" label="Redeem" :disable="!redeemCode.trim()"
+              @click="doRedeem" />
           </div>
         </q-card-section>
 
@@ -147,6 +194,83 @@
       </q-card>
     </q-dialog>
 
+    <!-- Apply a theme -->
+    <q-dialog v-model="themeOpen" position="right">
+      <q-card class="si-acquire-card">
+        <q-card-section class="q-pb-xs">
+          <div class="row items-center q-mb-xs">
+            <q-icon name="palette" color="purple-4" size="18px" class="q-mr-sm" />
+            <div class="text-subtitle2 text-blue-grey-1" style="letter-spacing:0.06em">APPLY A THEME</div>
+          </div>
+          <q-separator color="blue-grey-8" />
+        </q-card-section>
+
+        <q-card-section>
+          <div class="si-theme-intro">
+            A theme adds several items at once, coloured from your settlement's own hue.
+          </div>
+          <div class="si-preset-list">
+            <button v-for="pack in THEME_PACK_LIST" :key="pack.key"
+              class="si-preset-btn"
+              :class="{ 'si-preset-btn--sel': themePack === pack.key }"
+              @click="themePack = pack.key">
+              <div class="si-theme-dots">
+                <span v-for="(_, i) in pack.items" :key="i" class="si-theme-dot"
+                  :style="{ background: themePackItemColorHex(settlementKey, i) }" />
+              </div>
+              <div>
+                <div class="si-preset-label">{{ pack.label }}</div>
+                <div class="si-preset-desc">{{ pack.description }}</div>
+                <div class="si-preset-cost">{{ pack.items.length }} items</div>
+              </div>
+            </button>
+          </div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="Cancel" color="blue-grey-5" @click="closeTheme" />
+          <q-btn v-if="themePack" unelevated label="Apply theme" color="purple-8" @click="doApplyTheme" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
+    <!-- Share a design -->
+    <q-dialog v-model="shareOpen">
+      <q-card class="si-acquire-card">
+        <q-card-section class="q-pb-xs">
+          <div class="row items-center q-mb-xs">
+            <q-icon name="ios_share" color="cyan-5" size="18px" class="q-mr-sm" />
+            <div class="text-subtitle2 text-blue-grey-1" style="letter-spacing:0.06em">SHARE THIS DESIGN</div>
+          </div>
+          <q-separator color="blue-grey-8" />
+        </q-card-section>
+
+        <q-card-section>
+          <div class="si-theme-intro">
+            Send this code to someone else — they can redeem it to place your design in their own
+            settlement, credited to you. Nothing is bought, sold, or transferred away from you.
+          </div>
+
+          <div class="text-caption text-blue-grey-6 q-mb-xs" style="font-size:9px;letter-spacing:0.1em">
+            CREDIT THE DESIGN TO (OPTIONAL)
+          </div>
+          <input v-model="designerName" type="text" class="si-redeem-input" placeholder="Your name or handle" />
+
+          <div class="text-caption text-blue-grey-6 q-mt-sm q-mb-xs" style="font-size:9px;letter-spacing:0.1em">
+            GIFT CODE
+          </div>
+          <textarea class="si-redeem-input si-code-out" rows="4" readonly :value="shareCode" />
+          <q-btn flat dense size="sm" :color="copied ? 'green-5' : 'cyan-5'"
+            :icon="copied ? 'check' : 'content_copy'"
+            :label="copied ? 'Copied' : 'Copy code'" @click="copyShareCode" />
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="Done" color="blue-grey-5" @click="shareOpen = false" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
     <!-- Remove confirm -->
     <q-dialog v-model="removeConfirmOpen">
       <q-card class="bg-dark text-blue-grey-1" style="min-width:280px">
@@ -169,15 +293,19 @@ import { ref, computed } from 'vue'
 import {
   useSettlementItems,
   ITEM_MESH_PRESETS,
+  themePackItemColorHex,
+  exportItemGiftCode,
+  importItemGiftCode,
   type ItemAcquisitionType,
   type ItemZone,
   type SettlementItem,
 } from 'src/lib/settlement-items'
+import { THEME_PACKS } from 'src/data/theme-packs'
 
 const props = defineProps<{ settlementKey: string }>()
 
 const skRef  = computed(() => props.settlementKey)
-const { items, byType, addItem, removeItem } = useSettlementItems(skRef)
+const { items, byType, addItem, removeItem, updateItem } = useSettlementItems(skRef)
 
 // ── UI state ──────────────────────────────────────────────────────────────────
 
@@ -190,6 +318,7 @@ const TABS = [
   { key: 'traded' as const,       label: 'Traded',     icon: 'swap_horiz' },
   { key: 'generated' as const,    label: 'Airdrop',    icon: 'bolt' },
   { key: 'eco-ops' as const,      label: 'Eco-ops',    icon: 'eco' },
+  { key: 'reward' as const,       label: 'Earned',     icon: 'workspace_premium' },
 ]
 
 const TYPE_LABELS: Record<ItemAcquisitionType, string> = {
@@ -197,6 +326,7 @@ const TYPE_LABELS: Record<ItemAcquisitionType, string> = {
   traded:      'traded',
   generated:   'airdrop',
   'eco-ops':   'eco-ops',
+  reward:      'earned',
 }
 
 function tabCount(tab: typeof activeTab.value): number {
@@ -207,6 +337,14 @@ function tabCount(tab: typeof activeTab.value): number {
 const visibleItems = computed<SettlementItem[]>(() =>
   activeTab.value === 'all' ? items.value : byType.value[activeTab.value]
 )
+
+/**
+ * Settlement keys are `type:name[:…]` (see settlements.ts). Show the name part,
+ * which is the human-meaningful "where", rather than the internal prefix.
+ */
+function donorLabel(donorKey: string): string {
+  return donorKey.split(':')[1] || donorKey
+}
 
 function fmtDate(ts: number): string {
   return new Date(ts).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: '2-digit' })
@@ -222,6 +360,9 @@ const acquireZone  = ref<ItemZone>('open-floor')
 
 const ZONES: ItemZone[] = ['library', 'water-edge', 'garden', 'gateway', 'courtyard', 'open-floor']
 
+// No 'reward' entry: reward objects are unlocked by an Impact Profile
+// certificate and attached from /rewards. Letting them be picked here would
+// make an earned object self-serve.
 const ACQ_TYPES: { key: ItemAcquisitionType; label: string; icon: string; color: string; desc: string }[] = [
   { key: 'constructed', label: 'Construct',  icon: 'build',       color: 'amber-5',  desc: 'Build with eco-ops points' },
   { key: 'traded',      label: 'Trade',      icon: 'swap_horiz',  color: 'cyan-5',   desc: 'Receive from another settlement' },
@@ -237,6 +378,8 @@ function resetAcquire() {
   acquireOpen.value  = false
   acquireStep.value  = 1
   acquirePreset.value = ''
+  redeemCode.value   = ''
+  redeemError.value  = ''
 }
 
 function doAcquire() {
@@ -247,6 +390,105 @@ function doAcquire() {
     meshPreset: acquirePreset.value,
     zone:     acquireZone.value || preset.zoneDefault,
     buildCost: preset.buildCost,
+  })
+  resetAcquire()
+}
+
+// ── Design controls (recolour / re-zone) ──────────────────────────────────────
+
+const editingId = ref<string | null>(null)
+
+function onColorInput(id: string, ev: Event) {
+  updateItem(id, { color: (ev.target as HTMLInputElement).value })
+}
+
+function onZoneChange(id: string, ev: Event) {
+  updateItem(id, { zone: (ev.target as HTMLSelectElement).value as ItemZone })
+}
+
+// ── Theme packs ───────────────────────────────────────────────────────────────
+
+const THEME_PACK_LIST = Object.values(THEME_PACKS)
+
+const themeOpen = ref(false)
+const themePack = ref<string>('')
+
+function closeTheme() {
+  themeOpen.value = false
+  themePack.value = ''
+}
+
+function doApplyTheme() {
+  const pack = THEME_PACKS[themePack.value]
+  if (!pack) return
+  pack.items.forEach((entry, i) => {
+    addItem({
+      type:       'constructed',
+      meshPreset: entry.meshPreset,
+      zone:       entry.zone,
+      color:      themePackItemColorHex(props.settlementKey, i),
+    })
+  })
+  closeTheme()
+}
+
+// ── Share / redeem a design ───────────────────────────────────────────────────
+// Peer-to-peer only: a copyable code, carrying attribution. No price, no ledger.
+
+const shareOpen    = ref(false)
+const shareItem    = ref<SettlementItem | null>(null)
+const designerName = ref('')
+const copied       = ref(false)
+
+/** Items attesting real-world work aren't shareable — see ITEM_MESH_PRESETS. */
+function canShare(item: SettlementItem): boolean {
+  return ITEM_MESH_PRESETS[item.meshPreset]?.acquiredBy.includes('traded') ?? false
+}
+
+const shareCode = computed(() =>
+  shareItem.value
+    ? exportItemGiftCode(shareItem.value, props.settlementKey, designerName.value.trim() || undefined)
+    : ''
+)
+
+function openShare(item: SettlementItem) {
+  shareItem.value    = item
+  designerName.value = ''
+  copied.value       = false
+  shareOpen.value    = true
+}
+
+async function copyShareCode() {
+  try {
+    await navigator.clipboard.writeText(shareCode.value)
+    copied.value = true
+    setTimeout(() => { copied.value = false }, 1800)
+  } catch {
+    // Clipboard blocked (insecure context / denied) — the code stays selectable.
+  }
+}
+
+const redeemCode  = ref('')
+const redeemError = ref('')
+
+function doRedeem() {
+  const decoded = importItemGiftCode(redeemCode.value)
+  if (!decoded) {
+    redeemError.value = 'That code could not be read. Check it was copied in full.'
+    return
+  }
+  if (decoded.donorKey === props.settlementKey) {
+    redeemError.value = 'That design was shared from this settlement.'
+    return
+  }
+  addItem({
+    type:           'traded',
+    meshPreset:     decoded.meshPreset,
+    zone:           decoded.zone,
+    color:          decoded.color,
+    donorKey:       decoded.donorKey,
+    donorStarColor: decoded.donorStarColor,
+    ...(decoded.donorName ? { donorName: decoded.donorName } : {}),
   })
   resetAcquire()
 }
@@ -357,14 +599,50 @@ function doRemove() {
 .si-type--traded      { background: rgba(0, 120, 180, 0.20);  color: rgba(80, 200, 240, 0.75); }
 .si-type--generated   { background: rgba(120, 0, 180, 0.20);  color: rgba(190, 100, 255, 0.80); }
 .si-type--eco-ops     { background: rgba(0, 130, 50, 0.20);   color: rgba(80, 210, 120, 0.80); }
+.si-type--reward      { background: rgba(180, 140, 0, 0.22);  color: rgba(255, 215, 110, 0.85); }
 
 .si-provenance { font-size: 8px; color: rgba(100, 160, 200, 0.55); display: flex; align-items: center; gap: 2px; }
+
+.si-item-actions { display: flex; flex-direction: column; gap: 1px; flex-shrink: 0; }
+
+/* Per-item design controls */
+.si-edit {
+  margin-top: 6px; padding: 6px 7px;
+  background: rgba(0, 20, 45, 0.55);
+  border: 1px solid rgba(0, 90, 140, 0.25);
+  border-radius: 4px;
+  display: flex; flex-direction: column; gap: 5px;
+}
+.si-edit-row { display: flex; align-items: center; gap: 6px; }
+.si-edit-label {
+  font-size: 8px; letter-spacing: 0.08em; color: rgba(100, 160, 200, 0.70);
+  width: 38px; flex-shrink: 0;
+}
+.si-color-input {
+  width: 34px; height: 20px; padding: 0; cursor: pointer;
+  background: transparent; border: 1px solid rgba(0, 100, 150, 0.35); border-radius: 3px;
+}
+.si-zone-select {
+  flex: 1; min-width: 0;
+  font-size: 9px; padding: 2px 4px; border-radius: 3px;
+  background: rgba(0, 20, 45, 0.85); color: rgba(150, 200, 230, 0.85);
+  border: 1px solid rgba(0, 90, 140, 0.30);
+}
+.si-share-btn {
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; padding: 4px 6px; border-radius: 3px; cursor: pointer;
+  background: rgba(0, 70, 110, 0.35); border: 1px solid rgba(0, 130, 180, 0.30);
+  color: rgba(120, 200, 235, 0.85);
+}
+.si-share-btn:hover { background: rgba(0, 100, 150, 0.45); color: #00ccee; }
+.si-share-note { font-size: 8px; color: rgba(90, 130, 160, 0.60); line-height: 1.35; }
 
 /* Footer */
 .si-footer {
   padding: 7px 10px;
   border-top: 1px solid rgba(0, 60, 100, 0.20);
   flex-shrink: 0;
+  display: flex; flex-wrap: wrap; gap: 2px;
 }
 
 /* Acquire dialog */
@@ -405,6 +683,28 @@ function doRemove() {
   color: rgba(100, 160, 200, 0.65);
 }
 .si-zone-btn:hover, .si-zone-btn--sel { background: rgba(0, 80, 130, 0.40); color: #00ccee; border-color: rgba(0, 150, 200, 0.45); }
+
+/* Theme packs */
+.si-theme-intro { font-size: 9px; color: rgba(100, 150, 180, 0.70); line-height: 1.45; margin-bottom: 8px; }
+.si-theme-dots { display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; margin-top: 2px; }
+.si-theme-dot  { width: 9px; height: 9px; border-radius: 50%; }
+
+/* Redeem / share codes */
+.si-redeem {
+  margin-top: 12px; padding-top: 10px;
+  border-top: 1px solid rgba(0, 70, 110, 0.25);
+}
+.si-redeem-hint { font-size: 8.5px; color: rgba(90, 135, 165, 0.65); line-height: 1.4; margin-bottom: 5px; }
+.si-redeem-input {
+  width: 100%; resize: vertical;
+  font-size: 9px; font-family: monospace; line-height: 1.4;
+  padding: 5px 6px; border-radius: 3px;
+  background: rgba(0, 12, 30, 0.85); color: rgba(150, 200, 230, 0.90);
+  border: 1px solid rgba(0, 90, 140, 0.30);
+}
+.si-redeem-input:focus { outline: none; border-color: rgba(0, 160, 210, 0.55); }
+.si-code-out { color: rgba(120, 200, 235, 0.75); }
+.si-redeem-error { font-size: 8.5px; color: rgba(255, 120, 120, 0.85); margin-top: 4px; }
 
 /* Slide transition */
 .si-slide-enter-active, .si-slide-leave-active { transition: transform 0.22s ease, opacity 0.22s ease; }

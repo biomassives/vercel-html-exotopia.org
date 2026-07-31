@@ -67,7 +67,15 @@ export interface ItemMeshPreset {
   buildCost?:   number           // for constructed items
 }
 
+/** Preset key for the free lighting item every settlement is founded with. */
+export const STARTER_LIGHT_PRESET = 'starter-lantern'
+
 export const ITEM_MESH_PRESETS: Record<string, ItemMeshPreset> = {
+  [STARTER_LIGHT_PRESET]: {
+    label: 'Settlement Lantern', defaultColor: 0xffffff, zoneDefault: 'gateway',
+    acquiredBy: [],   // system-granted only at founding — never manually acquirable
+    description: 'Baseline illumination granted automatically when a settlement is founded. Its colour is unique to this settlement.',
+  },
   'beacon': {
     label: 'Signal Beacon', defaultColor: 0x00ddff, zoneDefault: 'gateway',
     acquiredBy: ['constructed', 'generated'],
@@ -185,6 +193,18 @@ export function buildItemMesh(presetKey: string, colorHex: string): THREE.Group 
   )
 
   switch (presetKey) {
+    case STARTER_LIGHT_PRESET: {
+      const post  = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.16, 3.0, 6), new THREE.MeshPhongMaterial({ color: 0x2a2a2a }))
+      post.position.y = 1.5
+      const shade = new THREE.Mesh(
+        new THREE.IcosahedronGeometry(0.6, 0),
+        new THREE.MeshPhongMaterial({ color: col, emissive: col.clone().multiplyScalar(0.45), transparent: true, opacity: 0.88 })
+      )
+      shade.position.y = 3.1
+      const g = glow(1.1, 3.1, 0.24)
+      group.add(post, shade, g)
+      break
+    }
     case 'beacon': {
       const post = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.26, 4.2, 7), new THREE.MeshPhongMaterial({ color: 0x223344 }))
       post.position.y = 2.1
@@ -327,12 +347,31 @@ export function buildItemMesh(presetKey: string, colorHex: string): THREE.Group 
   return group
 }
 
+// ── Per-settlement colour ─────────────────────────────────────────────────────
+// Deterministic hue from the settlement key, so every settlement's starter
+// lantern reads as visually distinct rather than one fixed stock colour.
+
+function settlementHue(sk: string): number {
+  const h = parseInt(hashStorageKey(sk), 36)
+  return (h % 360) / 360
+}
+
+export function starterLightColorHex(sk: string): string {
+  const c = new THREE.Color()
+  c.setHSL(settlementHue(sk), 0.72, 0.58)
+  return '#' + c.getHexString()
+}
+
 // ── Storage ───────────────────────────────────────────────────────────────────
 
 const STORAGE_PREFIX = 'e8.2'   // opaque — was 'exotopia_items_v1'
+const SEEDED_PREFIX  = 'e8.2s'  // tracks whether the starter lantern was ever granted
+const REVEAL_PREFIX  = 'e8.2r'  // tracks whether the one-time reveal animation has played
 
 // Hash the settlement key so no location names appear as localStorage keys
 function storageKey(sk: string) { return `${STORAGE_PREFIX}:${hashStorageKey(sk)}` }
+function seededKey(sk: string)  { return `${SEEDED_PREFIX}:${hashStorageKey(sk)}` }
+function revealKey(sk: string)  { return `${REVEAL_PREFIX}:${hashStorageKey(sk)}` }
 
 function loadItems(sk: string): SettlementItem[] {
   return safeRead<SettlementItem[]>(storageKey(sk), [])
@@ -340,6 +379,33 @@ function loadItems(sk: string): SettlementItem[] {
 
 function saveItems(sk: string, items: SettlementItem[]) {
   safeWrite(storageKey(sk), items)
+}
+
+function makeStarterLight(sk: string): SettlementItem {
+  const preset = ITEM_MESH_PRESETS[STARTER_LIGHT_PRESET]!
+  return {
+    id:            `starter-${hashStorageKey(sk)}`,
+    type:          'generated',
+    meshPreset:    STARTER_LIGHT_PRESET,
+    label:         preset.label,
+    description:   preset.description,
+    zone:          preset.zoneDefault,
+    color:         starterLightColorHex(sk),
+    acquiredAt:    Date.now(),
+    settlementKey: sk,
+  }
+}
+
+/**
+ * One-time check: has this settlement's founding reveal animation played yet?
+ * Consumes the flag — a true result means "play it now", and it will return
+ * false for every call after (per settlement, persisted across sessions).
+ */
+export function consumeStarterReveal(sk: string): boolean {
+  const key  = revealKey(sk)
+  const seen = safeRead<boolean>(key, false)
+  if (!seen) safeWrite(key, true)
+  return !seen
 }
 
 // ── Shared store ──────────────────────────────────────────────────────────────
@@ -350,7 +416,18 @@ function saveItems(sk: string, items: SettlementItem[]) {
 const itemsStore: Record<string, SettlementItem[]> = reactive({})
 
 function ensureLoaded(sk: string) {
-  if (!(sk in itemsStore)) itemsStore[sk] = loadItems(sk)
+  if (sk in itemsStore) return
+  let items = loadItems(sk)
+  // Every settlement is founded with a free lantern — grant it once, on first
+  // load, to settlements that don't already have items. Gated by its own
+  // persisted flag (not items.length) so removing the lantern later doesn't
+  // cause it to be re-granted on the next visit.
+  if (items.length === 0 && !safeRead<boolean>(seededKey(sk), false)) {
+    items = [makeStarterLight(sk)]
+    saveItems(sk, items)
+    safeWrite(seededKey(sk), true)
+  }
+  itemsStore[sk] = items
 }
 
 // ── Composable ────────────────────────────────────────────────────────────────

@@ -235,18 +235,10 @@ onMounted(() => {
 // Correction-request path for named sites — see RISK_REDUCTION_RECOMMENDATIONS.md
 // §5. Data here is self-reported (see the standing disclaimer above), so a
 // named site/brand needs a real due-process step to dispute a report. This
-// opens a pre-filled issue on the project's public tracker rather than
-// silently accepting or rejecting the dispute client-side.
-function disputeListing(area: FocusArea) {
-  const title = encodeURIComponent(`Dispute PFAS listing: ${area.name}`)
-  const body  = encodeURIComponent(
-    `Focus area ID: ${area.id}\nSite name: ${area.name}\n\n` +
-    `Describe what's inaccurate about this listing and any supporting evidence:\n\n`
-  )
-  window.open(
-    `https://github.com/biomassives/vercel-html-exotopia.org/issues/new?title=${title}&body=${body}`,
-    '_blank', 'noopener'
-  )
+// opens the project's public issue tracker rather than silently accepting
+// or rejecting the dispute client-side.
+function disputeListing(_area: FocusArea) {
+  window.open('https://github.com/biomassives/vercel-html-exotopia.org/issues', '_blank', 'noopener')
 }
 
 function projectsFor(focusAreaId: string): DeconProject[] {

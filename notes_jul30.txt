@@ -1,0 +1,76 @@
+inpage.js:1 [09:46:08] ERROR Error: Channel secret not available yet
+    at ExtendedBroadcastMessage.initBroadcastMessage (inpage.js:1:49788)
+    at inpage.js:1:48628
+    at new Promise (<anonymous>)
+    at ExtendedBroadcastMessage.tryLoadBroadcastMessage (inpage.js:1:48602)
+    at ExtendedBroadcastMessage.getBroadcastMessage (inpage.js:1:48924)
+    at ExtendedBroadcastMessage.addListener (inpage.js:1:49416)
+    at TronAdapter.registerEventListeners (inpage.js:1:3582765)
+    at inpage.js:1:51484
+    at Array.forEach (<anonymous>)
+    at ProvidersManager.start (inpage.js:1:51355)
+inpage.js:1 [09:46:08] ERROR Error: Channel secret not available yet
+    at ExtendedBroadcastMessage.initBroadcastMessage (inpage.js:1:49788)
+    at inpage.js:1:48628
+    at new Promise (<anonymous>)
+    at ExtendedBroadcastMessage.tryLoadBroadcastMessage (inpage.js:1:48602)
+    at ExtendedBroadcastMessage.getBroadcastMessage (inpage.js:1:48924)
+    at ExtendedBroadcastMessage.addListener (inpage.js:1:49416)
+    at TronAdapter.registerEventListeners (inpage.js:1:3582927)
+    at inpage.js:1:51484
+    at Array.forEach (<anonymous>)
+    at ProvidersManager.start (inpage.js:1:51355)
+inpage.js:1 [09:46:08] ERROR Error: Channel secret not available yet
+    at ExtendedBroadcastMessage.initBroadcastMessage (inpage.js:1:49788)
+    at inpage.js:1:48628
+    at new Promise (<anonymous>)
+    at ExtendedBroadcastMessage.tryLoadBroadcastMessage (inpage.js:1:48602)
+    at ExtendedBroadcastMessage.getBroadcastMessage (inpage.js:1:48924)
+    at ExtendedBroadcastMessage.emit (inpage.js:1:50042)
+    at BitcoinAdapter.setDefaultWallet (inpage.js:1:112252)
+    at BitcoinAdapter.start (inpage.js:1:111171)
+    at inpage.js:1:51407
+    at Array.forEach (<anonymous>)
+inpage.js:1 [09:46:08] ERROR Error: Channel secret not available yet
+    at ExtendedBroadcastMessage.initBroadcastMessage (inpage.js:1:49788)
+    at inpage.js:1:48628
+    at new Promise (<anonymous>)
+    at ExtendedBroadcastMessage.tryLoadBroadcastMessage (inpage.js:1:48602)
+    at ExtendedBroadcastMessage.getBroadcastMessage (inpage.js:1:48924)
+    at ExtendedBroadcastMessage.addListener (inpage.js:1:49416)
+    at BitcoinAdapter.registerEventListeners (inpage.js:1:111457)
+    at inpage.js:1:51484
+    at Array.forEach (<anonymous>)
+    at ProvidersManager.start (inpage.js:1:51355)
+inpage.js:1 [09:46:08] ERROR Error: Channel secret not available yet
+    at ExtendedBroadcastMessage.initBroadcastMessage (inpage.js:1:49788)
+    at inpage.js:1:48628
+    at new Promise (<anonymous>)
+    at ExtendedBroadcastMessage.tryLoadBroadcastMessage (inpage.js:1:48602)
+    at ExtendedBroadcastMessage.getBroadcastMessage (inpage.js:1:48924)
+    at ExtendedBroadcastMessage.addListener (inpage.js:1:49416)
+    at BitcoinAdapter.registerEventListeners (inpage.js:1:111638)
+    at inpage.js:1:51484
+    at Array.forEach (<anonymous>)
+    at ProvidersManager.start (inpage.js:1:51355)
+inpage.js:1 [09:46:08] ERROR Error: Channel secret not available yet
+    at ExtendedBroadcastMessage.initBroadcastMessage (inpage.js:1:49788)
+    at inpage.js:1:48628
+    at new Promise (<anonymous>)
+    at ExtendedBroadcastMessage.tryLoadBroadcastMessage (inpage.js:1:48602)
+    at ExtendedBroadcastMessage.getBroadcastMessage (inpage.js:1:48924)
+    at ExtendedBroadcastMessage.addListener (inpage.js:1:49416)
+    at BitcoinAdapter.registerEventListeners (inpage.js:1:111885)
+    at inpage.js:1:51484
+    at Array.forEach (<anonymous>)
+    at ProvidersManager.start (inpage.js:1:51355)
+25
+inpage.js:1 [09:46:08] ERROR Error: Channel secret not available yet
+    at ExtendedBroadcastMessage.initBroadcastMessage (inpage.js:1:49788)
+    at inpage.js:1:48628
+    at new Promise (<anonymous>)
+    at ExtendedBroadcastMessage.tryLoadBroadcastMessage (inpage.js:1:48602)
+    at inpage.js:1:48839
+﻿
+
+

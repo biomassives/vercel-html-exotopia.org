@@ -25,7 +25,7 @@
           <div class="acc-row"><span class="acc-lbl">Member since</span><span>{{ formatDate(member.profile?.created_at) }}</span></div>
           <p class="acc-hint">
             To correct your display name or handle, sign in and update it from where you set it —
-            a dedicated edit form isn't built yet; <a :href="issueUrl('Add a profile-edit form')" target="_blank" rel="noopener">file a request</a> if you need this sooner.
+            a dedicated edit form isn't built yet; <a :href="issueUrl" target="_blank" rel="noopener">file a request</a> if you need this sooner.
           </p>
         </section>
 
@@ -86,9 +86,7 @@ function formatDate(iso?: string | null): string {
   return new Date(iso).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
 }
 
-function issueUrl(title: string): string {
-  return `https://github.com/biomassives/vercel-html-exotopia.org/issues/new?title=${encodeURIComponent(title)}`
-}
+const issueUrl = 'https://github.com/biomassives/vercel-html-exotopia.org/issues'
 
 // ── Export ────────────────────────────────────────────────────────────────
 const exporting = ref(false)

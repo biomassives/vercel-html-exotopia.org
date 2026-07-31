@@ -505,11 +505,12 @@ import NavigatorInset                   from 'src/components/NavigatorInset.vue'
 import StarDetailLens                   from 'src/components/StarDetailLens.vue'
 import type { StarSystem, Planet }      from 'src/stores/galaxy'
 import DefenderNav from 'src/components/DefenderNav.vue'
-import type { DefenderNavData, PlanetStripEntry, StellarConfig, DefenderTarget } from 'src/lib/defender-nav.types'
+import type { DefenderNavData, PlanetStripEntry, StellarConfig, DefenderTarget, OrbitalGalleryEntry } from 'src/lib/defender-nav.types'
 import { usePortalStore } from 'src/stores/portal'
 import { useSceneTransitionStore } from 'src/stores/scene-transition'
 import { BLACK_HOLE_CATALOG, bhColorHex } from 'src/data/black-holes'
 import { getSurfaceType, NO_GROUND_SURFACE_TYPES } from 'src/lib/surface-classify'
+import { useCommunityNodesStore } from 'src/stores/community-nodes'
 
 // ── Galaxy star shader — one draw call for all ~5 000 confirmed systems ───────
 // Vertex: size-attenuated points (pSize in scene-unit scale; 700 / depth → pixels).
@@ -541,8 +542,14 @@ void main() {
 const galaxyStore = useGalaxyStore()
 const portalStore = usePortalStore()
 const transition  = useSceneTransitionStore()
+const communityNodesStore = useCommunityNodesStore()
 const router      = useRouter()
 const route       = useRoute()
+
+// Populated once per enterSystemView() call, read synchronously by
+// buildDefenderData() — that function runs in the render loop (throttled to
+// every 6th frame), so it can't itself make an async Supabase call.
+const galleriesForCurrentSystem = ref<OrbitalGalleryEntry[]>([])
 
 // ── UI state ──────────────────────────────────────────────────────────────────
 
@@ -1433,7 +1440,10 @@ function resolveStellarConfig(sys: import('src/stores/galaxy').StarSystem): Stel
 
   if (snum === 2) {
     if (isCircumbinary) {
-      const sep = Math.max(0.05, isNaN(innermostAU) ? 0.2 : innermostAU / 4)
+      // Number.isFinite (not isNaN) — an all-filtered planets.map() makes
+      // Math.min(...[]) return Infinity, which is not NaN and would
+      // otherwise flow straight into separation/period/forbiddenZoneRadius.
+      const sep = Math.max(0.05, Number.isFinite(innermostAU) ? innermostAU / 4 : 0.2)
       return {
         type: 'circumbinary',
         innerBinary: {
@@ -1452,7 +1462,8 @@ function resolveStellarConfig(sys: import('src/stores/galaxy').StarSystem): Stel
     }
   }
 
-  const sep = Math.max(0.05, isNaN(innermostAU) ? 0.1 : innermostAU / 4)
+  const sep = Math.max(0.05, Number.isFinite(innermostAU) ? innermostAU / 4 : 0.1)
+  const forbiddenZoneRadius = sep * 3.5
   return {
     type: 'hierarchical_triple',
     innerBinary: {
@@ -1461,9 +1472,12 @@ function resolveStellarConfig(sys: import('src/stores/galaxy').StarSystem): Stel
       periodDays: Math.pow(sep, 1.5) * 365.25,
       angle: 0,
       massRatio: 0.72,
-      forbiddenZoneRadius: sep * 3.5,
+      forbiddenZoneRadius,
     },
-    outerCompanion: { teff: companionTeff * 0.8, orbitalRadius: 200, orbitalAngle: 0 },
+    // Outer companion must always render outside the inner binary's forbidden
+    // zone — a wide inner separation (large innermostAU) would otherwise let
+    // the hardcoded 200 AU default fall inside the hatched exclusion band.
+    outerCompanion: { teff: companionTeff * 0.8, orbitalRadius: Math.max(200, forbiddenZoneRadius * 1.3), orbitalAngle: 0 },
   }
 }
 
@@ -1507,6 +1521,13 @@ function enterSystemView(sys: StarSystem) {
   buildSystemScene(sys, starPos)
   _stellarCfgCache = resolveStellarConfig(sys)
   moveCameraToSystem(starPos, sys.planets.length)
+
+  galleriesForCurrentSystem.value = []
+  void communityNodesStore.fetchGalleryNodes(sys.hostname).then(entries => {
+    // Guard against a slow fetch resolving after the user has already
+    // navigated to a different system.
+    if (currentSystem.value?.hostname === sys.hostname) galleriesForCurrentSystem.value = entries
+  })
 }
 
 function buildSystemScene(sys: StarSystem, starPos: THREE.Vector3) {
@@ -2678,7 +2699,7 @@ function buildDefenderData(): DefenderNavData {
       starTeff:      sys.st_teff ?? 5778,
       starPos:       { x: starPos.x, z: starPos.z },
       planets,
-      galleries:     [],
+      galleries:     galleriesForCurrentSystem.value,
       cameraAngle:   cameraAngleDeg,
       cameraRadius:  cameraRadiusAU,
       stellarConfig: cfg,

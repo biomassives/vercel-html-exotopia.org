@@ -13,12 +13,14 @@ category this document doesn't disclose.
 
 ## 1. Who this policy covers
 
-This Privacy Policy explains how **[LEGAL ENTITY NAME — same gap as in the
-Terms of Service, § 1]** ("we," "us") collects, uses, and shares personal
-data when you use **Exotopia** (the "Service"), including where a payment or
-minting step routes you through our sibling platform **pon.ink**. It applies
-to visitors, registered users, wallet-connected users, citizen-science/
-eco-ops participants, and blog/community contributors.
+This Privacy Policy explains how **Sustainable Community Development Hub**
+("SCD Hub," "we," "us") — a Colorado nonprofit corporation, tax-exempt under
+IRC § 501(c)(3), and the entity that operates **Exotopia** as a project —
+collects, uses, and shares personal data when you use Exotopia (the
+"Service"), including where a payment or minting step routes you through our
+sibling platform **pon.ink**. It applies to visitors, registered users,
+wallet-connected users, citizen-science/eco-ops participants, donors, and
+blog/community contributors.
 
 ## 2. What we collect
 
@@ -170,8 +172,20 @@ we will delete it.
 
 ## 10. Region-specific notices
 
+### United States
+- SCD Hub is based in Colorado; Colorado residents have rights under the
+  **Colorado Privacy Act (CPA)** — including access, correction, deletion,
+  data portability, and the right to opt out of targeted advertising, the
+  sale of personal data, and profiling — enforceable by the Colorado
+  Attorney General. You can exercise these at `/account` (see § 8) or by
+  contacting us (§ 12).
+- **Children's privacy** is governed by COPPA — see § 9.
+- We do not sell personal data (see § 4), which limits the practical scope
+  of several state privacy laws' sale-specific provisions, but the access/
+  deletion rights above still apply.
+
 ### European Union / EEA (incl. Netherlands/Amsterdam) — GDPR
-- **Controller**: [LEGAL ENTITY NAME], [ADDRESS].
+- **Controller**: Sustainable Community Development Hub, **[ADDRESS]**.
 - **EU representative** (if you are not established in the EU but process EU
   residents' data at scale): [NAME/ADDRESS, required under GDPR Art. 27 —
   see planning notes].
@@ -244,7 +258,7 @@ take effect.
 
 ## 12. Contact
 
-**[PRIVACY CONTACT EMAIL — same recommendation as Terms of Service § 14]**
+**[PRIVACY CONTACT EMAIL — same recommendation as Terms of Service § 15]**
 — for all data protection questions and rights requests.
 
 ## 13. Changelog
@@ -255,3 +269,4 @@ Material changes to this policy are logged here — see § 11.
 |---|---|
 | [DATE] | Initial draft template. |
 | 2026-07-22 | Added the private-comments privacy-model explanation in § 4 (visibility, report path, lawful-request policy pointer) and this changelog. |
+| 2026-07-23 | Identified SCD Hub (Sustainable Community Development Hub) as the operating entity — Colorado nonprofit corporation, confirmed IRS 501(c)(3) — and Exotopia as its project, replacing the `[LEGAL ENTITY NAME]` placeholder in § 1 and the EU controller line in § 10. Added a "United States" regional notice in § 10 (previously missing) covering the Colorado Privacy Act. Updated the Terms of Service cross-reference in § 12 to match that document's renumbering. |

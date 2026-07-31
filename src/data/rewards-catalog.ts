@@ -83,6 +83,22 @@ export const SETTLEMENT_OBJECTS: Record<string, SettlementObject> = {
   },
 }
 
+// Which mesh preset each unlocked object renders as inside a settlement.
+// Keys match SETTLEMENT_OBJECTS above; values are ITEM_MESH_PRESETS keys from
+// src/lib/settlement-items.ts, each of which lists 'reward' in its acquiredBy.
+// Without this, attaching a certificate object only ever wrote a string to
+// SettlementRecord.objects[] and nothing appeared in the dome.
+
+export const SETTLEMENT_OBJECT_MESH: Record<string, string> = {
+  finance_seed:              'seed-vault',
+  parallel_universe_beacon:  'beacon',
+  mentorship_beacon:         'comms-relay',
+  volunteer_dome_object:     'monument',
+  pfas_researcher_marker:    'decon-site-marker',
+  method_contributor_beacon: 'archive-node',
+  logging_streak_flame:      'crystal',
+}
+
 // ── Finance-literacy quiz → reward mapping ──────────────────────────────────
 // Keyed by QuizArea.id from src/data/finance-literacy-quiz.ts.
 

@@ -50,6 +50,8 @@ Technical specs for individual features and UI systems.
 | [SPEC_NFT_FRONTIER.md](SPEC_NFT_FRONTIER.md) | Frontier exolocation NFTs for predicted/candidate/theoretical exoplanets; upgrade chain; 4-tier system | Specced |
 | [SPEC_PROVENANCE.md](SPEC_PROVENANCE.md) | Provenance block schema; data source badging (catalog vs generated); observatory report field | Active |
 | [SPEC_STARSYSTEM_ALGORITHM.md](SPEC_STARSYSTEM_ALGORITHM.md) | 3-stage deterministic pipeline: stellar populations → orbital architecture → planet composition; 2,823 galaxies → 10,900 planets | Active |
+| [SETTLEMENT_ADDRESS_API.md](SETTLEMENT_ADDRESS_API.md) | Dependency chain behind a settlement address (reference data → construction → local record → chain metadata → mint); companion to SPEC_EXOLOC_ADDRESS.md; documents that the spec's `/api/v1/exoloc` endpoint is not implemented | Active |
+| [SPEC_COMMUNITY_NODES.md](SPEC_COMMUNITY_NODES.md) | Business listings/locations, creative pages, and future node types; populates the previously-empty OrbitalGalleryEntry pipeline; node_type extensibility mechanism; self-host/export story | Active |
 
 ---
 
@@ -89,6 +91,7 @@ Published-intent writing about the platform, ecosystem, and communities. All GPL
 | [blog-eco-ops-without-blockchain.md](blog-eco-ops-without-blockchain.md) | Digital certificates vs on-chain records for grassroots field work; when blockchain is not the answer | Community |
 | [blog-shared-language-lamu-ecoledger.md](blog-shared-language-lamu-ecoledger.md) | Introducing the Eco-Ledger for Mpeketoni; shared vocabulary for land and livelihood records | Field |
 | [blog-costa-rica-biodiversity-platform.md](blog-costa-rica-biodiversity-platform.md) | Three-generation vision for biodiversity collaboration in Costa Rica; SCD Hub regional strategy | Field |
+| [blog-settlement-address-api.md](blog-settlement-address-api.md) | The settlement address dependency chain end to end; confirms SPEC_EXOLOC_ADDRESS.md's `/api/v1/exoloc` endpoint isn't implemented and there's no server-side settlements table | Dev / ecosystem |
 
 ---
 
