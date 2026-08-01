@@ -168,6 +168,16 @@ const routes: RouteRecordRaw[] = [
         meta: { title: 'Orbital Gallery' },
       },
       {
+        // A single published community_nodes row, clicked from a gallery marker
+        // in DefenderNav.vue (which already builds this exact path) — was 404ing
+        // since this route never existed.
+        path: 'gallery/:hostname/:galleryId',
+        name: 'gallery-node',
+        component: () => import('src/pages/GalleryNodePage.vue'),
+        meta: { title: 'Community Listing' },
+        props: true,
+      },
+      {
         path: 'account',
         name: 'account',
         component: () => import('src/pages/AccountPage.vue'),

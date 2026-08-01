@@ -78,6 +78,50 @@ export function orbitalKey(coordSystem: string, hostname: string, refName?: stri
   return refName ? `${coordSystem}:${hostname}:${refName}` : `${coordSystem}:${hostname}`
 }
 
+// ── Reverse routing (address → route path) ───────────────────────────────────
+//
+// Used by GalleryNodePage.vue's "visit this settlement" link. Only handles key
+// shapes that carry enough information to reconstruct their route on their
+// own, resolvable for ANY visitor — not just the settlement's own browser
+// (settlements are localStorage-only per SETTLEMENT_ADDRESS_API.md, so a
+// visitor never has the author's SettlementRecord to look up):
+//   - surface:<planetName>   — hostname isn't in the key, but it's a lookup
+//     against the public static exoplanet-archive data (galaxy store), not
+//     anything user-specific, so any visitor's browser can resolve it.
+//   - <coordSystem>:<hostname>[:<refName>] (orbital/station keys) — both
+//     fields the station-interior route needs are already in the key.
+// moon:/cluster: keys don't carry enough to reconstruct losslessly (a moon's
+// parent hostname isn't stored in moonKey; a cluster key's systemName isn't
+// the systemIdx its route needs) — return null rather than guess wrong.
+
+export interface ExolocRoute { path: string }
+
+export function resolveExolocRoute(
+  address: string,
+  getPlanetHostname: (planetName: string) => string | undefined,
+): ExolocRoute | null {
+  const parts  = address.split(':')
+  const prefix = parts[0] ?? ''
+
+  if (prefix === 'surface') {
+    const planetName = parts.slice(1).join(':')
+    const hostname    = planetName ? getPlanetHostname(planetName) : undefined
+    if (!hostname) return null
+    return { path: `/surface/${encodeURIComponent(hostname)}/${encodeURIComponent(planetName)}` }
+  }
+
+  if (prefix.startsWith('exo-') && prefix.endsWith('-v1')) {
+    const [, hostname, refName] = parts
+    if (!hostname) return null
+    const query = `?coordSystem=${encodeURIComponent(prefix)}`
+    return { path: refName
+      ? `/station-interior/${encodeURIComponent(hostname)}/${encodeURIComponent(refName)}${query}`
+      : `/station-interior/${encodeURIComponent(hostname)}${query}` }
+  }
+
+  return null
+}
+
 // ── Reactive store ───────────────────────────────────────────────────────────
 
 function loadFromStorage(): SettlementRecord[] {

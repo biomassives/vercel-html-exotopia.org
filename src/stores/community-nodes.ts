@@ -231,8 +231,28 @@ export const useCommunityNodesStore = defineStore('communityNodes', () => {
         accessLevel:     n.access_level,
         presenceCount:   0,
         ponInkUrl:       (n.metadata?.ponInkUrl as string | undefined),
+        description:     n.description ?? undefined,
+        mediaLinks:      Array.isArray(n.metadata?.mediaLinks) ? n.metadata.mediaLinks as string[] : undefined,
+        exolocAddress:   n.exoloc_address ?? undefined,
       }
     })
+  }
+
+  /**
+   * Anonymous single-node read for the public gallery-node page
+   * (GalleryNodePage.vue). Relies entirely on the community_nodes_read RLS
+   * policy (008_community_nodes.sql), which already allows SELECT on any
+   * status = 'published' row to anyone — no owner check needed here, and no
+   * schema/policy change required. A non-published id (draft/archived, or
+   * someone else's) simply comes back null.
+   */
+  async function fetchPublicNode(id: string): Promise<CommunityNode | null> {
+    if (!supabase) return null
+    const { data, error } = await supabase
+      .from('community_nodes').select('*')
+      .eq('id', id).eq('status', 'published')
+      .maybeSingle()
+    return error || !data ? null : (data as CommunityNode)
   }
 
   function nodeTypeToGalleryType(t: CommunityNodeType): GalleryType {
@@ -384,7 +404,7 @@ export const useCommunityNodesStore = defineStore('communityNodes', () => {
     // Computed
     pending, failed, pendingCount, draftCount,
     // Lifecycle
-    init, refreshQueue, refreshDrafts, fetchMyNodes, fetchGalleryNodes,
+    init, refreshQueue, refreshDrafts, fetchMyNodes, fetchGalleryNodes, fetchPublicNode,
     // Admin
     fetchAllNodesForAdmin, setNodeStatusAsAdmin,
     // Drafts

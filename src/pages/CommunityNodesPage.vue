@@ -84,6 +84,14 @@
               <input v-model="hostname" class="cn-input" placeholder="e.g. Kepler-442 — leave blank to not appear in any system's gallery yet" />
             </div>
 
+            <div class="cn-field">
+              <label class="cn-label">Attach to one of your settlements (optional)</label>
+              <select v-model="exolocAddress" class="cn-input" @change="onSettlementPick">
+                <option value="">— not attached to a settlement —</option>
+                <option v-for="s in settlements" :key="s.key" :value="s.key">{{ s.displayName }}</option>
+              </select>
+            </div>
+
             <!-- business_listing fields -->
             <template v-if="nodeType === 'business_listing'">
               <div class="cn-field">
@@ -138,10 +146,12 @@
 import { ref, computed, onMounted } from 'vue'
 import { useMemberStore } from 'src/stores/member'
 import { useCommunityNodesStore, type CommunityNode, type CommunityNodeType } from 'src/stores/community-nodes'
+import { useSettlements } from 'src/lib/settlements'
 import MemberSignIn from 'src/components/MemberSignIn.vue'
 
 const member = useMemberStore()
 const store  = useCommunityNodesStore()
+const { settlements, getSettlement } = useSettlements()
 
 const tab = ref<'browse' | 'create'>('browse')
 
@@ -164,6 +174,7 @@ const nodeType    = ref<CommunityNodeType>('business_listing')
 const title       = ref('')
 const description = ref('')
 const hostname    = ref('')
+const exolocAddress = ref('')
 const metaItems       = ref('')
 const metaContact     = ref('')
 const metaAddress     = ref('')
@@ -180,12 +191,21 @@ function startCreate() {
   tab.value = 'create'
 }
 
+/** Auto-fill the star-system field from the picked settlement, without
+ *  clobbering a hostname the user already typed in by hand. */
+function onSettlementPick() {
+  if (hostname.value.trim()) return
+  const s = getSettlement(exolocAddress.value)
+  if (s?.hostname) hostname.value = s.hostname
+}
+
 function startEdit(n: CommunityNode) {
   editingId.value = n.id
   nodeType.value  = n.node_type
   title.value     = n.title
   description.value = n.description ?? ''
   hostname.value  = n.hostname ?? ''
+  exolocAddress.value = n.exoloc_address ?? ''
   const md = n.metadata ?? {}
   metaItems.value      = Array.isArray(md.items) ? md.items.join(', ') : ''
   metaContact.value    = typeof md.contact === 'string' ? md.contact : ''
@@ -199,7 +219,7 @@ function startEdit(n: CommunityNode) {
 function resetForm() {
   editingId.value = null
   nodeType.value  = 'business_listing'
-  title.value = ''; description.value = ''; hostname.value = ''
+  title.value = ''; description.value = ''; hostname.value = ''; exolocAddress.value = ''
   metaItems.value = ''; metaContact.value = ''
   metaAddress.value = ''; metaHours.value = ''
   metaPonInkUrl.value = ''; metaMediaLinks.value = ''
@@ -231,6 +251,7 @@ async function submit() {
       title:       title.value.trim(),
       description: description.value.trim() || null,
       hostname:    hostname.value.trim() || null,
+      exoloc_address: exolocAddress.value || null,
       metadata:    buildMetadata(),
       status:      'published' as const,
     }

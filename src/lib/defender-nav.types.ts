@@ -29,6 +29,9 @@ export interface OrbitalGalleryEntry {
   accessLevel:     GalleryAccessLevel
   presenceCount:   number
   ponInkUrl?:      string
+  description?:      string
+  mediaLinks?:        string[]
+  exolocAddress?:     string   // settlement address this node is attached to, if any
   scheduledEvent?: {
     title:        string
     startUtc:     string
