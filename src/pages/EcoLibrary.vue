@@ -13,6 +13,51 @@
         <div class="eco-header-sub" v-else>Loading resources…</div>
       </div>
       <div class="eco-header-controls" v-if="!loading">
+        <div class="eco-search-wrap" ref="searchWrapEl">
+          <q-btn
+            flat dense size="sm" round
+            icon="mdi-magnify"
+            color="blue-grey-4"
+            title="Search subcategories & videos"
+            @click="searchOpen = !searchOpen"
+          />
+          <div v-if="searchOpen" class="eco-search-panel">
+            <input
+              ref="searchInputEl"
+              v-model="searchQuery"
+              class="eco-search-input"
+              placeholder="Search subcategories & videos…"
+              @keydown.esc="closeSearch"
+            />
+            <div v-if="searchQuery.trim()" class="eco-search-results">
+              <template v-if="searchResults.subs.length">
+                <div class="eco-search-group-label">Subcategories</div>
+                <div
+                  v-for="r in searchResults.subs" :key="`s-${r.uniqueId}`"
+                  class="eco-search-item"
+                  @click="goToSubcat(r)"
+                >
+                  <q-icon name="mdi-folder-outline" size="13px" class="q-mr-xs" />
+                  <span v-html="highlightMatch(r.title)" />
+                </div>
+              </template>
+              <template v-if="searchResults.vids.length">
+                <div class="eco-search-group-label">Videos</div>
+                <div
+                  v-for="r in searchResults.vids" :key="`v-${r.subcatUniqueId}-${r.title}`"
+                  class="eco-search-item"
+                  @click="goToVideo(r)"
+                >
+                  <q-icon name="mdi-play-circle-outline" size="13px" class="q-mr-xs" />
+                  <span v-html="highlightMatch(r.title)" />
+                </div>
+              </template>
+              <div v-if="!searchResults.subs.length && !searchResults.vids.length" class="eco-search-empty">
+                No results found.
+              </div>
+            </div>
+          </div>
+        </div>
         <q-btn
           flat dense size="sm"
           :icon="editMode ? 'mdi-pencil-off-outline' : 'mdi-pencil-outline'"
@@ -95,6 +140,7 @@
         <div
           v-for="(sub, si) in activeArea?.subcategories ?? []"
           :key="sub.uniqueId"
+          :id="`subcat-${sub.uniqueId}`"
           class="eco-subcat"
           :class="{ 'eco-subcat--open': openSubcats.has(sub.uniqueId) }"
         >
@@ -202,6 +248,7 @@
               <div v-if="getFilteredVideos(sub).length" class="eco-videos">
                 <div
                   v-for="(vid, vi) in getFilteredVideos(sub)" :key="`${sub.uniqueId}-${vi}`"
+                  :id="`video-${sub.uniqueId}-${sub.videos?.indexOf(vid) ?? vi}`"
                   class="eco-video-wrap"
                   :class="{ 'eco-video-wrap--edit': editMode }"
                 >
@@ -536,7 +583,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 interface OtVideo {
@@ -648,28 +695,37 @@ function getSelectedTagMeta(subcatId: string): OtTagMeta | null {
 
 // ── Area config ────────────────────────────────────────────────────────────────
 const AREA_ICONS: Record<string, string> = {
-  Water:   'mdi-water',
-  Energy:  'mdi-lightning-bolt',
-  Waste:   'mdi-recycle',
-  Food:    'mdi-sprout',
-  Shelter: 'mdi-home-outline',
-  Health:  'mdi-heart-outline',
+  Water:            'mdi-water',
+  Energy:           'mdi-lightning-bolt',
+  Waste:            'mdi-recycle',
+  Food:             'mdi-sprout',
+  Shelter:          'mdi-home-outline',
+  Health:           'mdi-heart-outline',
+  Decontamination:  'mdi-biohazard',
+  'Ecology & Biodiversity': 'mdi-paw-outline',
+  Microplastics:    'mdi-microscope',
 }
 const AREA_COLORS: Record<string, string> = {
-  Water:   'cyan-4',
-  Energy:  'amber-4',
-  Waste:   'green-4',
-  Food:    'light-green-3',
-  Shelter: 'blue-grey-4',
-  Health:  'red-3',
+  Water:            'cyan-4',
+  Energy:           'amber-4',
+  Waste:            'green-4',
+  Food:             'light-green-3',
+  Shelter:          'blue-grey-4',
+  Health:           'red-3',
+  Decontamination:  'deep-orange-4',
+  'Ecology & Biodiversity': 'teal-7',
+  Microplastics:    'indigo-4',
 }
 const AREA_ACCENTS: Record<string, string> = {
-  Water:   '#26c6da',
-  Energy:  '#ffca28',
-  Waste:   '#66bb6a',
-  Food:    '#9ccc65',
-  Shelter: '#78909c',
-  Health:  '#ef9a9a',
+  Water:            '#26c6da',
+  Energy:           '#ffca28',
+  Waste:            '#66bb6a',
+  Food:             '#9ccc65',
+  Shelter:          '#78909c',
+  Health:           '#ef9a9a',
+  Decontamination:  '#ff7043',
+  'Ecology & Biodiversity': '#00695c',
+  Microplastics:    '#5c6bc0',
 }
 
 const areaIcon   = (n: string) => AREA_ICONS[n]   ?? 'mdi-leaf'
@@ -714,6 +770,107 @@ watch(activeArea, area => {
     openSubcats.value = new Set([area.subcategories[0].uniqueId])
   }
 })
+
+// ── Search — Vue-native equivalent of the live-search-as-you-type feature on
+// hub.approvideo.org (searches subcategories + videos, jumps straight to the
+// result). Built as a flat index over the same `areas` data already loaded,
+// rather than porting any of their DOM/vanilla-JS implementation directly. ──
+
+interface SearchSubcatHit { uniqueId: string; areaKey: string; title: string }
+interface SearchVideoHit  { subcatUniqueId: string; areaKey: string; title: string }
+
+const searchOpen    = ref(false)
+const searchQuery   = ref('')
+const searchWrapEl   = ref<HTMLElement>()
+const searchInputEl  = ref<HTMLInputElement>()
+
+const searchIndex = computed(() => {
+  const subs: (SearchSubcatHit & { subtitle?: string; description?: string })[] = []
+  const vids: (SearchVideoHit & { description?: string })[] = []
+  for (const area of areas.value) {
+    const areaKey = area.area.toLowerCase()
+    for (const sub of area.subcategories) {
+      subs.push({ uniqueId: sub.uniqueId, areaKey, title: sub.title, subtitle: sub.subtitle, description: sub.description })
+      for (const v of sub.videos ?? []) {
+        vids.push({ subcatUniqueId: sub.uniqueId, areaKey, title: v.title, description: v.description })
+      }
+    }
+  }
+  return { subs, vids }
+})
+
+const searchResults = computed(() => {
+  const q = searchQuery.value.trim().toLowerCase()
+  if (!q) return { subs: [] as typeof searchIndex.value.subs, vids: [] as typeof searchIndex.value.vids }
+  const matchSub = (s: (typeof searchIndex.value.subs)[number]) =>
+    s.title.toLowerCase().includes(q) || (s.subtitle?.toLowerCase().includes(q) ?? false) || (s.description?.toLowerCase().includes(q) ?? false)
+  const matchVid = (v: (typeof searchIndex.value.vids)[number]) =>
+    v.title.toLowerCase().includes(q) || (v.description?.toLowerCase().includes(q) ?? false)
+  return {
+    subs: searchIndex.value.subs.filter(matchSub).slice(0, 8),
+    vids: searchIndex.value.vids.filter(matchVid).slice(0, 8),
+  }
+})
+
+function highlightMatch(text: string): string {
+  const q = searchQuery.value.trim()
+  if (!q) return text
+  const escaped = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  return text.replace(new RegExp(`(${escaped})`, 'gi'), '<mark>$1</mark>')
+}
+
+function closeSearch() {
+  searchOpen.value  = false
+  searchQuery.value = ''
+}
+
+function revealSubcat(areaKey: string, uniqueId: string) {
+  switchTab(areaKey)
+  void nextTick(() => {
+    openSubcats.value = new Set([...openSubcats.value, uniqueId])
+    void nextTick(() => {
+      document.getElementById(`subcat-${uniqueId}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    })
+  })
+}
+
+function goToSubcat(r: SearchSubcatHit) {
+  revealSubcat(r.areaKey, r.uniqueId)
+  closeSearch()
+}
+
+function goToVideo(r: SearchVideoHit) {
+  switchTab(r.areaKey)
+  void nextTick(() => {
+    openSubcats.value = new Set([...openSubcats.value, r.subcatUniqueId])
+    void nextTick(() => {
+      const el = document.getElementById(`subcat-${r.subcatUniqueId}`)
+      // Scroll to the subcategory first (it needs a tick to render its body open),
+      // then to the specific video card once it exists in the DOM.
+      el?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      setTimeout(() => {
+        const videoEls = document.querySelectorAll(`[id^="video-${r.subcatUniqueId}-"]`)
+        for (const vEl of videoEls) {
+          if (vEl.textContent?.includes(r.title)) {
+            vEl.scrollIntoView({ behavior: 'smooth', block: 'center' })
+            break
+          }
+        }
+      }, 150)
+    })
+  })
+  closeSearch()
+}
+
+watch(searchOpen, open => {
+  if (open) void nextTick(() => searchInputEl.value?.focus())
+})
+
+function onDocumentClick(e: MouseEvent) {
+  if (searchOpen.value && searchWrapEl.value && !searchWrapEl.value.contains(e.target as Node)) {
+    closeSearch()
+  }
+}
 
 // ── YouTube helpers ────────────────────────────────────────────────────────────
 const isValidYtId = (id: string) => /^[A-Za-z0-9_-]{11}$/.test(id ?? '')
@@ -1178,9 +1335,13 @@ onMounted(async () => {
   drawHeader()
   resizeObs = new ResizeObserver(drawHeader)
   if (headerWrap.value) resizeObs.observe(headerWrap.value)
+  document.addEventListener('click', onDocumentClick)
   await loadData()
 })
-onBeforeUnmount(() => resizeObs?.disconnect())
+onBeforeUnmount(() => {
+  resizeObs?.disconnect()
+  document.removeEventListener('click', onDocumentClick)
+})
 </script>
 
 <style scoped>
@@ -1201,6 +1362,37 @@ onBeforeUnmount(() => resizeObs?.disconnect())
   background: rgba(2,8,14,0.65); padding: 4px 8px; border-radius: 20px;
   backdrop-filter: blur(6px);
 }
+
+/* ── Search ─────────────────────────────────────────────────────── */
+.eco-search-wrap { position: relative; }
+.eco-search-panel {
+  position: absolute; top: calc(100% + 8px); right: 0; z-index: 30;
+  width: 320px; max-width: 80vw;
+  background: rgba(4, 12, 20, 0.97); border: 1px solid rgba(0, 150, 200, 0.22);
+  border-radius: 8px; padding: 10px; backdrop-filter: blur(10px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+.eco-search-input {
+  width: 100%; box-sizing: border-box;
+  background: rgba(0, 20, 35, 0.80); border: 1px solid rgba(0, 100, 160, 0.30);
+  border-radius: 5px; color: rgba(200, 230, 255, 0.90);
+  font-size: 12px; padding: 7px 10px; outline: none;
+}
+.eco-search-input:focus { border-color: rgba(0, 180, 220, 0.55); }
+.eco-search-results { max-height: 320px; overflow-y: auto; margin-top: 8px; }
+.eco-search-group-label {
+  font-size: 8.5px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: rgba(100, 150, 180, 0.60); margin: 8px 4px 4px;
+}
+.eco-search-group-label:first-child { margin-top: 0; }
+.eco-search-item {
+  display: flex; align-items: center;
+  font-size: 11.5px; color: rgba(190, 220, 240, 0.88);
+  padding: 6px 8px; border-radius: 4px; cursor: pointer;
+}
+.eco-search-item:hover { background: rgba(0, 100, 160, 0.20); }
+.eco-search-item :deep(mark) { background: rgba(255, 210, 60, 0.35); color: inherit; border-radius: 2px; }
+.eco-search-empty { font-size: 10.5px; color: rgba(100, 140, 170, 0.55); padding: 8px 4px; font-style: italic; }
 
 @keyframes pulse-glow {
   0%, 100% { box-shadow: 0 0 0 0 rgba(38,198,218,0); }

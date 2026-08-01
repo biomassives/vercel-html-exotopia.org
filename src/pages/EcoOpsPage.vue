@@ -699,28 +699,37 @@ watch(dirty, (newVal) => {
 
 // ── Area config ────────────────────────────────────────────────────────────────
 const AREA_ICONS: Record<string, string> = {
-  Water:   'mdi-water',
-  Energy:  'mdi-lightning-bolt',
-  Waste:   'mdi-recycle',
-  Food:    'mdi-sprout',
-  Shelter: 'mdi-home-outline',
-  Health:  'mdi-heart-outline',
+  Water:            'mdi-water',
+  Energy:           'mdi-lightning-bolt',
+  Waste:            'mdi-recycle',
+  Food:             'mdi-sprout',
+  Shelter:          'mdi-home-outline',
+  Health:           'mdi-heart-outline',
+  Decontamination:  'mdi-biohazard',
+  'Ecology & Biodiversity': 'mdi-paw-outline',
+  Microplastics:    'mdi-microscope',
 }
 const AREA_COLORS: Record<string, string> = {
-  Water:   'cyan-4',
-  Energy:  'amber-4',
-  Waste:   'green-4',
-  Food:    'light-green-3',
-  Shelter: 'blue-grey-4',
-  Health:  'red-3',
+  Water:            'cyan-4',
+  Energy:           'amber-4',
+  Waste:            'green-4',
+  Food:             'light-green-3',
+  Shelter:          'blue-grey-4',
+  Health:           'red-3',
+  Decontamination:  'deep-orange-4',
+  'Ecology & Biodiversity': 'teal-7',
+  Microplastics:    'indigo-4',
 }
 const AREA_ACCENTS: Record<string, string> = {
-  Water:   '#26c6da',
-  Energy:  '#ffca28',
-  Waste:   '#66bb6a',
-  Food:    '#9ccc65',
-  Shelter: '#78909c',
-  Health:  '#ef9a9a',
+  Water:            '#26c6da',
+  Energy:           '#ffca28',
+  Waste:            '#66bb6a',
+  Food:             '#9ccc65',
+  Shelter:          '#78909c',
+  Health:           '#ef9a9a',
+  Decontamination:  '#ff7043',
+  'Ecology & Biodiversity': '#00695c',
+  Microplastics:    '#5c6bc0',
 }
 
 const areaIcon   = (n: string) => AREA_ICONS[n]   ?? 'mdi-leaf'

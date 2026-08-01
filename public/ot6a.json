@@ -190,6 +190,54 @@
               "rammed earth",
               "comparative"
             ]
+          },
+          {
+            "icon_tag_fa": "fas fa-tree",
+            "color_tag": "#16a34a",
+            "title": "Bamboo Harvesting and Treatment for Construction",
+            "youtubeId": "9-Ka4YcyOFo",
+            "description": "How to select, harvest, and treat bamboo for long-lasting building materials",
+            "localVideoFilename": "shelter_bamboo_harvest.mp4",
+            "authors": "",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          },
+          {
+            "icon_tag_fa": "fas fa-paint-roller",
+            "color_tag": "#a16207",
+            "title": "How to Identify and Process Local Clay for Construction",
+            "youtubeId": "eOOYrY4zxpw",
+            "description": "Testing and preparing natural clay for building projects",
+            "localVideoFilename": "shelter_local_clay.mp4",
+            "authors": "",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          },
+          {
+            "icon_tag_fa": "fas fa-recycle",
+            "color_tag": "#059669",
+            "title": "Creative Reuse: Building With Glass Bottles",
+            "youtubeId": "M7P8YAIhBkY",
+            "description": "How to incorporate waste glass bottles into walls for beauty and function",
+            "localVideoFilename": "shelter_glass_bottles.mp4",
+            "authors": "",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
           }
         ]
       },
@@ -303,6 +351,22 @@
             "authors": "Hungry SciANNtist",
             "researchReviewItems": [],
             "contentCreatorArchive": "https://www.youtube.com/@HungrySciANNtist",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          },
+          {
+            "icon_tag_fa": "fas fa-filter",
+            "color_tag": "#4b5563",
+            "title": "DIY Water Filter Build (Microbial Safety Focus)",
+            "youtubeId": "PENDING",
+            "description": "[from approvideo.org upstream, needs a real YouTube ID or local hosting] Detailed guide (City Prepping)...",
+            "localVideoFilename": "water_diy_filter_safety.mp4",
+            "authors": "City Prepping",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "https://www.youtube.com/@CityPrepping",
             "licence": "Standard YouTube License",
             "patreon": "",
             "socials": {},
@@ -475,6 +539,43 @@
               "Polybutylene",
               "industry upgrades"
             ]
+          },
+          {
+            "icon_tag_fa": "fas fa-water",
+            "color_tag": "#3b82f6",
+            "title": "DIY Hydraulic Ram Pump Installation - Part 1 (Water Power Pumping)",
+            "youtubeId": "PENDING",
+            "description": "[from approvideo.org upstream, needs a real YouTube ID or local hosting] Demonstrates how to build and install a hydraulic ram pump using only water power to move water from a stream up to garden level. Mike Collinson shows the complete process from surveying requirements (minimum 3-foot drop) through assembly using standard plumbing parts including expansion tanks and brass swing check valves. Initial results show 11 liters per hour output. Covers drive pipe installation and pump positioning in stream.",
+            "localVideoFilename": "hydraulic_ram_pump_part1.mp4",
+            "authors": "Mike Collinson",
+            "researchReviewItems": [
+              "Minimum 3-foot water drop required for operation",
+              "Higher fall allows higher pumping height",
+              "Two brass swing check valves must be oriented correctly",
+              "Uses standard plumbing expansion tank",
+              "Drive pipe approximately 120 feet in this example",
+              "Initial output: 11 liters per hour",
+              "Part 1 of multi-part series"
+            ],
+            "contentCreatorArchive": "",
+            "licence": "Educational/Tutorial Content",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": [],
+            "tags": [
+              "hydraulic",
+              "water pump",
+              "DIY",
+              "renewable energy",
+              "water power",
+              "garden irrigation",
+              "sustainable technology"
+            ],
+            "difficulty": "Intermediate",
+            "duration_minutes": 5,
+            "part_number": 1,
+            "series_name": "DIY Hydraulic Ram Pump"
           }
         ]
       }
@@ -576,6 +677,39 @@
             "youtubeId": "NrabZQOVxqc",
             "description": "Mar 3, 2026\nStarting an indoor worm compost bin is simple, but many first-time bins fail because small mistakes build up over time. In this video I show exactly how I start and run my indoor worm compost bin so it stays productive while you learn. This method focuses on forgiveness, balance, and simple materials so beginners can succeed without expensive systems or complicated setups.",
             "authors": "Indiana Worm & Garden"
+          },
+          {
+            "icon_tag_fa": "fas fa-seedling",
+            "color_tag": "#84cc16",
+            "title": "Making Compost: Homemade Worm Farm Compost System | Vermicompost",
+            "youtubeId": "JehP4xlF4gI",
+            "youtubeType": "short",
+            "description": "Creating an efficient composting setup...",
+            "localVideoFilename": "waste_3bin_compost.mp4",
+            "authors": "",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          },
+          {
+            "icon_tag_fa": "fas fa-temperature-high",
+            "color_tag": "#f97316",
+            "title": "Hot Composting Technique for Fast Results",
+            "youtubeId": "HWypVv1dzJQ",
+            "description": "Learn the accelerated composting method...",
+            "localVideoFilename": "waste_hot_compost.mp4",
+            "authors": "",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
           }
         ]
       },
@@ -667,6 +801,38 @@
             "tags": [
               "papermaking"
             ]
+          },
+          {
+            "icon_tag_fa": "fas fa-newspaper",
+            "color_tag": "#a8a29e",
+            "title": "Paper Recycling and Homemade Paper Making",
+            "youtubeId": "Gq7L9-0XdVw",
+            "description": "How to create new paper products...",
+            "localVideoFilename": "waste_paper_recycling.mp4",
+            "authors": "",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          },
+          {
+            "icon_tag_fa": "fas fa-users",
+            "color_tag": "#6366f1",
+            "title": "Setting Up a Community Recycling Station",
+            "youtubeId": "IsTnQ9U5wN8",
+            "description": "Organizing an effective central collection point...",
+            "localVideoFilename": "waste_community_recycling.mp4",
+            "authors": "",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
           }
         ]
       },
@@ -741,6 +907,38 @@
             "youtubeId": "AxiI17y0fNk",
             "description": "Transforming old tires into planters...",
             "localVideoFilename": "waste_tire_garden.mp4",
+            "authors": "",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          },
+          {
+            "icon_tag_fa": "fas fa-couch",
+            "color_tag": "#78350f",
+            "title": "Making Furniture From Wooden Pallets",
+            "youtubeId": "zIcDVPkHVmI",
+            "description": "Constructing chairs, tables, beds...",
+            "localVideoFilename": "waste_pallet_furniture.mp4",
+            "authors": "",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          },
+          {
+            "icon_tag_fa": "fas fa-bottle-water",
+            "color_tag": "#0ea5e9",
+            "title": "Plastic Bottle Building Blocks and Construction",
+            "youtubeId": "lnT1qY0a4KA",
+            "description": "Using plastic bottles filled with sand...",
+            "localVideoFilename": "waste_bottle_bricks.mp4",
             "authors": "",
             "researchReviewItems": [],
             "contentCreatorArchive": "",
@@ -1111,6 +1309,22 @@
             "color_tag": "#059669",
             "localVideoFilename": "",
             "authors": "OK at EVERYTHING - PRO at NOTHING",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "Standard YouTube License",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": []
+          },
+          {
+            "title": "DIY Biogas Digester from IBC Tote (Practical Guide)",
+            "youtubeId": "PENDING",
+            "description": "[from approvideo.org upstream, needs a real YouTube ID or local hosting] Step-by-step instructions for building a small-scale biogas digester using an IBC tote.",
+            "icon_tag_fa": "fas fa-gas-pump",
+            "color_tag": "#059669",
+            "localVideoFilename": "",
+            "authors": "",
             "researchReviewItems": [],
             "contentCreatorArchive": "",
             "licence": "Standard YouTube License",
@@ -1540,8 +1754,8 @@
           },
           {
             "title": "Community Gardens as health and vitality nodes",
-            "youtubeId": "QZQpIHIr7s0",
-            "description": "Growing Together...",
+            "youtubeId": "PENDING",
+            "description": "PLACEHOLDER — Target: a video on community gardens as hubs for physical/mental health and social vitality, distinct from the food-desert-access angle covered by the next entry. Previously mis-assigned the same YouTube ID (QZQpIHIr7s0) as \"Community Gardens address food deserts\" below — that video is about Westraven Community Garden specifically, not this topic.",
             "icon_tag_fa": "fas fa-sprout",
             "color_tag": "#6B7280",
             "localVideoFilename": "",
@@ -2039,6 +2253,1087 @@
             "sponsorPages": []
           }
         ]
+      }
+    ]
+  },
+  {
+    "area": "Decontamination",
+    "featherIcon": "shield",
+    "subcategories": [
+      {
+        "uniqueId": "decon-0",
+        "title": "PFAS & Forever Chemicals",
+        "subtitle": "Removing and destroying PFOA, PFOS, and related persistent compounds",
+        "description": "Real, citable remediation methods for PFAS-family contamination in water and soil — from established sorbent-based treatment (GAC, ion exchange, reverse osmosis) to emerging destruction technologies (electrochemical oxidation, supercritical water oxidation). Paired with field-safety and legal-sampling guidance so citizen-science investigation doesn't create new exposure.",
+        "tags": [
+          "PFAS",
+          "PFOA",
+          "PFOS",
+          "forever chemicals",
+          "GAC",
+          "ion exchange",
+          "reverse osmosis",
+          "water treatment",
+          "field safety"
+        ],
+        "context": "See src/data/pfas-methods-library.ts for the full curated method/safety/regulatory reference this video set should stay consistent with — REMEDIATION_METHODS, FIELD_SAFETY_GUIDANCE, REGULATORY_CONTEXT.",
+        "materials": [
+          "Granular activated carbon media",
+          "Ion exchange resin",
+          "RO/NF membrane units",
+          "Nitrile gloves and PPE",
+          "EPA 537.1/533-capable lab test kit"
+        ],
+        "processSteps": [
+          "1. Site/source screening",
+          "2. Accredited-lab sampling with chain of custody",
+          "3. Method selection (media vs. destruction)",
+          "4. Installation or in-situ treatment",
+          "5. Ongoing monitoring",
+          "6. Spent-media disposal or destruction"
+        ],
+        "videos": [
+          {
+            "title": "PFAS 101 — What Forever Chemicals Are and Why They Persist",
+            "youtubeId": "PENDING",
+            "description": "PLACEHOLDER — Target: a 10-15 min community-facing explainer covering what PFAS is, why the carbon-fluorine bond resists breakdown, common exposure sources (AFFF firefighting foam, industrial discharge, consumer products), and what the EPA's 4 ppt PFOA/PFOS MCL means in practice. Suggested sources: EPA, EWG, or a state health department.",
+            "icon_tag_fa": "fas fa-flask",
+            "color_tag": "#ff7043",
+            "localVideoFilename": "",
+            "authors": "PENDING",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "PENDING",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": [],
+            "tags": [
+              "PFAS",
+              "PFOA",
+              "PFOS"
+            ]
+          },
+          {
+            "title": "Field Safety When Investigating a Suspected PFAS Site",
+            "youtubeId": "PENDING",
+            "description": "PLACEHOLDER — Target: PPE use, avoiding skin contact and ingestion, extra caution around visible foam (AFFF/fire-training sites), and not tracking contamination home. Should complement, not duplicate, the FIELD_SAFETY_GUIDANCE text already on the PFAS Citizen Science page.",
+            "icon_tag_fa": "fas fa-user-shield",
+            "color_tag": "#ff7043",
+            "localVideoFilename": "",
+            "authors": "PENDING",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "PENDING",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": [],
+            "tags": [
+              "PFAS",
+              "field safety",
+              "PPE"
+            ]
+          }
+        ],
+        "videoTagDirectory": {
+          "PFAS": {
+            "tagName": "PFAS",
+            "description": "Per- and polyfluoroalkyl substances — a class of ~12,000 synthetic 'forever chemicals' that do not biodegrade. EPA set enforceable 4 ppt limits for PFOA and PFOS in drinking water in 2024.",
+            "link": "https://www.epa.gov/pfas",
+            "linkLabel": "EPA — PFAS Information"
+          }
+        }
+      },
+      {
+        "uniqueId": "decon-1",
+        "title": "Heavy Metals",
+        "subtitle": "Lead, mercury, arsenic, and cadmium — sources and real remediation",
+        "description": "Legacy and ongoing heavy-metal contamination (lead pipes/paint, mercury from artisanal mining and fish consumption, naturally-occurring groundwater arsenic, cadmium/chromium from industrial discharge) and the remediation methods that actually work — including phytoextraction, which unlike PFAS phytoremediation has real documented success for certain metals and hyperaccumulator plant species.",
+        "tags": [
+          "lead",
+          "mercury",
+          "arsenic",
+          "cadmium",
+          "heavy metals",
+          "phytoextraction",
+          "soil stabilization"
+        ],
+        "context": "Phytoextraction effectiveness is metal- and species-specific — cite the specific plant/metal pairing a video demonstrates rather than treating it as a general claim, the same honesty standard pfas-methods-library.ts applies to PFAS phytoremediation.",
+        "materials": [
+          "Hyperaccumulator plant species (site-appropriate)",
+          "Phosphate soil amendments (lead stabilization)",
+          "XRF or lab soil test kit",
+          "Chemical-resistant gloves"
+        ],
+        "processSteps": [
+          "1. Source identification",
+          "2. Accredited soil/water testing",
+          "3. Method selection (extraction vs. stabilization)",
+          "4. Treatment or planting",
+          "5. Harvest and safe disposal (if phytoextraction)",
+          "6. Long-term monitoring"
+        ],
+        "videos": [
+          {
+            "title": "Lead Contamination — Sources, Testing, and Removal",
+            "youtubeId": "PENDING",
+            "description": "PLACEHOLDER — Target: lead service line replacement, lead paint hazards in older housing, at-home water test kits vs. accredited lab testing, and what a filter (NSF/ANSI 53 certified) actually removes.",
+            "icon_tag_fa": "fas fa-faucet-drip",
+            "color_tag": "#ff7043",
+            "localVideoFilename": "",
+            "authors": "PENDING",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "PENDING",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": [],
+            "tags": [
+              "lead",
+              "water testing"
+            ]
+          },
+          {
+            "title": "Phytoextraction — Plants That Actually Remove Metals From Soil",
+            "youtubeId": "PENDING",
+            "description": "PLACEHOLDER — Target: a real field/research demonstration of a hyperaccumulator species (e.g. Thlaspi/Noccaea for cadmium/zinc) pulling a specific metal from soil, including harvest and disposal of the contaminated biomass — the honesty caveat that makes this different from PFAS phytoremediation.",
+            "icon_tag_fa": "fas fa-seedling",
+            "color_tag": "#ff7043",
+            "localVideoFilename": "",
+            "authors": "PENDING",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "PENDING",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": [],
+            "tags": [
+              "phytoextraction",
+              "heavy metals"
+            ]
+          }
+        ],
+        "videoTagDirectory": {
+          "phytoextraction": {
+            "tagName": "phytoextraction",
+            "description": "Using hyperaccumulator plant species to draw specific heavy metals out of soil into harvestable biomass. Real and documented for several metals (cadmium, zinc, nickel) — a genuinely different evidence base than PFAS phytoremediation.",
+            "link": "https://www.epa.gov/remedytech/phytoremediation-contaminated-sites-and-groundwater",
+            "linkLabel": "EPA — Phytoremediation"
+          }
+        }
+      },
+      {
+        "uniqueId": "decon-2",
+        "title": "Industrial & Legacy Sites",
+        "subtitle": "Chlorinated solvents, petroleum contamination, and brownfield cleanup",
+        "description": "The most common industrial groundwater contamination class (TCE/PCE and other chlorinated solvents) and petroleum hydrocarbons, plus the regulatory/funding path (EPA Brownfields program) that turns a contaminated industrial site back into usable land.",
+        "tags": [
+          "brownfield",
+          "TCE",
+          "PCE",
+          "solvents",
+          "petroleum",
+          "bioremediation",
+          "soil vapor extraction"
+        ],
+        "context": "Distinct from the Heavy Metals and PFAS subcategories above — this is about legacy industrial-site cleanup process and the specific solvent/hydrocarbon chemistry, not persistent 'forever' compounds.",
+        "materials": [
+          "Soil vapor extraction wellfield",
+          "Petroleum-degrading microbial amendments",
+          "Site assessment (Phase I/II ESA) documentation"
+        ],
+        "processSteps": [
+          "1. Phase I Environmental Site Assessment",
+          "2. Phase II subsurface investigation",
+          "3. Remedy selection (extraction vs. bioremediation vs. monitored natural attenuation)",
+          "4. Remediation",
+          "5. Regulatory closure",
+          "6. Redevelopment"
+        ],
+        "videos": [
+          {
+            "title": "Soil Vapor Extraction — How It Pulls Solvent Vapor Out of the Ground",
+            "youtubeId": "PENDING",
+            "description": "PLACEHOLDER — Target: how SVE wells extract volatile TCE/PCE vapor from the vadose zone, with a real operating site if available.",
+            "icon_tag_fa": "fas fa-industry",
+            "color_tag": "#ff7043",
+            "localVideoFilename": "",
+            "authors": "PENDING",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "PENDING",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": [],
+            "tags": [
+              "brownfield",
+              "solvents"
+            ]
+          },
+          {
+            "title": "Bioremediation of Petroleum-Contaminated Soil",
+            "youtubeId": "PENDING",
+            "description": "PLACEHOLDER — Target: how petroleum-degrading microbes break down fuel/oil contamination in soil, an established and relatively low-cost method compared to excavation.",
+            "icon_tag_fa": "fas fa-bacteria",
+            "color_tag": "#ff7043",
+            "localVideoFilename": "",
+            "authors": "PENDING",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "PENDING",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": [],
+            "tags": [
+              "bioremediation",
+              "petroleum"
+            ]
+          }
+        ],
+        "videoTagDirectory": {
+          "brownfield": {
+            "tagName": "brownfield",
+            "description": "A property where redevelopment is complicated by real or suspected contamination. The EPA Brownfields program provides assessment and cleanup grants to return these sites to productive use.",
+            "link": "https://www.epa.gov/brownfields",
+            "linkLabel": "EPA — Brownfields Program"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "area": "Ecology & Biodiversity",
+    "featherIcon": "feather",
+    "subcategories": [
+      {
+        "uniqueId": "eco-0",
+        "title": "Biodiversity Monitoring",
+        "subtitle": "Citizen-science protocols for tracking species and habitat health",
+        "description": "Practical field methods for documenting species presence and habitat condition at a site the community is invested in — the biodiversity-support counterpart to the decontamination work above, tracked through the same focus-area/project logging pipeline.",
+        "tags": [
+          "biodiversity",
+          "citizen science",
+          "species monitoring",
+          "habitat",
+          "transect"
+        ],
+        "context": "Pairs with a site's decontamination project where relevant (e.g. tracking habitat recovery alongside remediation progress) but stands on its own for sites with no contamination angle at all.",
+        "materials": [
+          "Transect tape or marked cord",
+          "Field ID guide (regional)",
+          "Camera trap (optional)",
+          "GPS-enabled phone/device"
+        ],
+        "processSteps": [
+          "1. Define transect or plot",
+          "2. Baseline species/habitat survey",
+          "3. Repeat survey on a set interval",
+          "4. Log observations with photo + GPS",
+          "5. Submit to platform site record"
+        ],
+        "videos": [
+          {
+            "title": "Running a Biodiversity Transect Survey",
+            "youtubeId": "PENDING",
+            "description": "PLACEHOLDER — Target: a practical walkthrough of laying out a transect, recording species observed, and repeating the survey for a comparable longitudinal record.",
+            "icon_tag_fa": "fas fa-binoculars",
+            "color_tag": "#00695c",
+            "localVideoFilename": "",
+            "authors": "PENDING",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "PENDING",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": [],
+            "tags": [
+              "biodiversity",
+              "transect"
+            ]
+          },
+          {
+            "title": "Camera Trapping for Citizen Scientists",
+            "youtubeId": "PENDING",
+            "description": "PLACEHOLDER — Target: camera trap placement, settings, and how to submit/tag captured species data to a citizen-science database.",
+            "icon_tag_fa": "fas fa-camera",
+            "color_tag": "#00695c",
+            "localVideoFilename": "",
+            "authors": "PENDING",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "PENDING",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": [],
+            "tags": [
+              "biodiversity",
+              "camera trap"
+            ]
+          }
+        ],
+        "videoTagDirectory": {
+          "biodiversity": {
+            "tagName": "biodiversity",
+            "description": "The variety of species and ecological communities present at a site — tracked over time as an indicator of habitat health, independent of any specific contamination question.",
+            "link": "https://www.inaturalist.org/",
+            "linkLabel": "iNaturalist — community species observation"
+          }
+        }
+      },
+      {
+        "uniqueId": "eco-1",
+        "title": "Cyanobacteria & Harmful Algal Blooms",
+        "subtitle": "Identifying, reporting, and understanding HABs in lakes and ponds",
+        "description": "Harmful algal blooms (HABs) caused by cyanobacteria are appearing earlier, lasting longer, and occurring in waterbodies with no prior bloom history. Cyanobacteria produce cyanotoxins including microcystin (liver toxin), cylindrospermopsin (multi-organ toxin), and anatoxin-a (neurotoxin). This is the video-library companion to the 'Cyanobacteria Watch and Lake Health' program already documented for this platform.",
+        "tags": [
+          "cyanobacteria",
+          "HAB",
+          "harmful algal bloom",
+          "microcystin",
+          "eutrophication",
+          "Secchi disk"
+        ],
+        "context": "Matches Program 2 (Cyanobacteria Watch and Lake Health) in blog-east-coast-citizen-science-units.md — reporting goes to each state's HAB hotline (MA, NY, CT, VT, MD, VA, NJ all have active programs as of that writing).",
+        "materials": [
+          "Secchi disk (~$15 DIY)",
+          "Sample jar for photo documentation",
+          "Access to state HAB reporting portal"
+        ],
+        "processSteps": [
+          "1. Visual bloom identification",
+          "2. Secchi disk transparency reading",
+          "3. Photo + GPS documentation",
+          "4. Report to state HAB hotline",
+          "5. Log to platform site record"
+        ],
+        "videos": [
+          {
+            "title": "Identifying a Cyanobacteria Bloom — What to Look For",
+            "youtubeId": "PENDING",
+            "description": "PLACEHOLDER — Target: visual ID (surface scum, paint-like texture, blue-green or olive colour, odour), what to photograph/document, and pet/human health precautions near a suspected bloom.",
+            "icon_tag_fa": "fas fa-water",
+            "color_tag": "#00695c",
+            "localVideoFilename": "",
+            "authors": "PENDING",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "PENDING",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": [],
+            "tags": [
+              "cyanobacteria",
+              "HAB"
+            ]
+          },
+          {
+            "title": "Using a Secchi Disk to Monitor Water Clarity",
+            "youtubeId": "PENDING",
+            "description": "PLACEHOLDER — Target: how to deploy a Secchi disk, record transparency depth, and what a declining trend indicates about eutrophication risk.",
+            "icon_tag_fa": "fas fa-circle-notch",
+            "color_tag": "#00695c",
+            "localVideoFilename": "",
+            "authors": "PENDING",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "PENDING",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": [],
+            "tags": [
+              "Secchi disk",
+              "eutrophication"
+            ]
+          }
+        ],
+        "videoTagDirectory": {
+          "cyanobacteria": {
+            "tagName": "cyanobacteria",
+            "description": "Photosynthetic bacteria (not true algae) that can bloom under warm, calm, nutrient-rich conditions and produce cyanotoxins (microcystin, cylindrospermopsin, anatoxin-a). Blooms are becoming more frequent and widespread as waters warm.",
+            "link": "https://www.epa.gov/cyanohabs",
+            "linkLabel": "EPA — Cyanobacterial HABs"
+          }
+        }
+      },
+      {
+        "uniqueId": "eco-2",
+        "title": "Climate-Driven Biological Exposure",
+        "subtitle": "Tick and mosquito range expansion, and other climate-linked health risks",
+        "description": "As winters shorten and warm, disease-vector ranges are expanding into areas with no prior exposure history — this subcategory is the video-library companion to the 'Tick Watch Northeast' program already documented for this platform, plus the broader pattern of climate-linked biological hazard shift.",
+        "tags": [
+          "tick-borne disease",
+          "climate change",
+          "vector-borne disease",
+          "range expansion"
+        ],
+        "context": "Matches Program 1 (Tick Watch Northeast) in blog-east-coast-citizen-science-units.md — habitat transect assessment and drag-cloth sampling protocols.",
+        "materials": [
+          "1m x 1m white flannel drag cloth",
+          "Field ID guide for tick species/life stage",
+          "GPS-enabled phone/device"
+        ],
+        "processSteps": [
+          "1. Habitat transect assessment",
+          "2. Drag-cloth sampling (10m transects)",
+          "3. Tick count by life stage/species",
+          "4. Log to platform site map"
+        ],
+        "videos": [
+          {
+            "title": "Tick Drag Sampling Protocol",
+            "youtubeId": "PENDING",
+            "description": "PLACEHOLDER — Target: the standardised drag-cloth method (adapted from TickSpotters/URI protocol) for sampling tick density in a habitat transect, and how to record counts by life stage and species.",
+            "icon_tag_fa": "fas fa-bug",
+            "color_tag": "#00695c",
+            "localVideoFilename": "",
+            "authors": "PENDING",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "PENDING",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": [],
+            "tags": [
+              "tick-borne disease",
+              "field sampling"
+            ]
+          },
+          {
+            "title": "Why Disease-Vector Ranges Are Shifting With a Warming Climate",
+            "youtubeId": "PENDING",
+            "description": "PLACEHOLDER — Target: a general-audience explainer connecting shorter/warmer winters to tick and mosquito range expansion into previously low-risk areas, without overstating any single event as proof of the trend.",
+            "icon_tag_fa": "fas fa-temperature-high",
+            "color_tag": "#00695c",
+            "localVideoFilename": "",
+            "authors": "PENDING",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "PENDING",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": [],
+            "tags": [
+              "climate change",
+              "vector-borne disease"
+            ]
+          }
+        ],
+        "videoTagDirectory": {
+          "tick-borne disease": {
+            "tagName": "tick-borne disease",
+            "description": "Diseases (Lyme, anaplasmosis, babesiosis and others) transmitted by tick species whose range and active season are expanding as winters shorten — tracked here through habitat transect and drag-cloth sampling.",
+            "link": "https://www.cdc.gov/ticks/index.html",
+            "linkLabel": "CDC — Ticks"
+          }
+        }
+      },
+      {
+        "uniqueId": "eco-3",
+        "title": "Pollinator & Ecological Gardening",
+        "subtitle": "Designing gardens that support native pollinators and local ecological function",
+        "description": "Native-plant garden design for pollinator support and general ecological function — distinct from food production. Draws on the same native-species-over-invasive principle already established for rain garden planting in docs/eco-ops-workflow-guide.md, applied to pollinator habitat specifically.",
+        "tags": [
+          "pollinator garden",
+          "native plants",
+          "pollinator corridor",
+          "habitat garden"
+        ],
+        "context": "SPEC_ECOOPS_COMMUNITY_PLATFORM.md already names 'creating pollinator corridors in built environments' and community coordinator watch-lists for declining pollinators — this subcategory is the video-library companion to that.",
+        "materials": [
+          "Native plant plugs or seed (regionally appropriate)",
+          "Mulch",
+          "Community watch-list of declining pollinator species"
+        ],
+        "processSteps": [
+          "1. Site assessment",
+          "2. Native species selection (avoid invasives)",
+          "3. Planting",
+          "4. Establishment watering",
+          "5. Pollinator visitation monitoring"
+        ],
+        "videos": [
+          {
+            "title": "Designing a Pollinator Garden With Native Plants",
+            "youtubeId": "PENDING",
+            "description": "PLACEHOLDER — Target: native plant selection for a pollinator garden, why regionally-native species outperform ornamental cultivars for pollinator support, and how to avoid inadvertently planting an invasive.",
+            "icon_tag_fa": "fas fa-bee",
+            "color_tag": "#00695c",
+            "localVideoFilename": "",
+            "authors": "PENDING",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "PENDING",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": [],
+            "tags": [
+              "pollinator garden",
+              "native plants"
+            ]
+          },
+          {
+            "title": "Building a Pollinator Corridor in a Built Environment",
+            "youtubeId": "PENDING",
+            "description": "PLACEHOLDER — Target: connecting fragmented pollinator habitat across a neighborhood or campus — verge plantings, linked garden beds, and how a corridor differs from an isolated garden.",
+            "icon_tag_fa": "fas fa-road",
+            "color_tag": "#00695c",
+            "localVideoFilename": "",
+            "authors": "PENDING",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "PENDING",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": [],
+            "tags": [
+              "pollinator corridor"
+            ]
+          }
+        ],
+        "videoTagDirectory": {
+          "pollinator corridor": {
+            "tagName": "pollinator corridor",
+            "description": "A connected chain of pollinator-supporting habitat across a landscape, so pollinators can move between patches rather than being stranded in isolated gardens.",
+            "link": "https://www.xerces.org/pollinator-conservation",
+            "linkLabel": "Xerces Society — Pollinator Conservation"
+          }
+        }
+      },
+      {
+        "uniqueId": "eco-4",
+        "title": "Forest Gardening & Food Forestry",
+        "subtitle": "Seven-layer perennial food systems that mimic natural woodland",
+        "description": "Forest gardening (food forestry / permaculture agroforestry) cultivates perennial food-producing systems designed across seven layers — canopy, sub-canopy, shrub, herbaceous, groundcover, root zone, and vine. Once established, a forest garden produces food with dramatically less labour than annual vegetable gardening while providing wildlife habitat, carbon sequestration, and stormwater infiltration.",
+        "tags": [
+          "forest garden",
+          "food forest",
+          "permaculture",
+          "agroforestry",
+          "plant guild"
+        ],
+        "context": "Matches Part 3 (Forest Gardening) in docs/eco-ops-workflow-guide.md, including the seven-layer design and the 'eco:habitat — Community Forest Garden' certificate issued for a documented site.",
+        "materials": [
+          "Canopy layer: large fruit/nut trees",
+          "Sub-canopy: smaller fruit trees, nitrogen-fixers",
+          "Shrub layer: berry shrubs, medicinal plants",
+          "Herbaceous/groundcover/root/vine layer plants"
+        ],
+        "processSteps": [
+          "1. Site selection",
+          "2. Seven-layer guild design",
+          "3. Planting in sequence (canopy first)",
+          "4. Establishment care",
+          "5. Species inventory and photo-transect documentation"
+        ],
+        "videos": [
+          {
+            "title": "Designing a Seven-Layer Forest Garden",
+            "youtubeId": "PENDING",
+            "description": "PLACEHOLDER — Target: a walkthrough of the seven forest-garden layers (canopy through vine) and how they're planned together as one system rather than planted independently.",
+            "icon_tag_fa": "fas fa-tree",
+            "color_tag": "#00695c",
+            "localVideoFilename": "",
+            "authors": "PENDING",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "PENDING",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": [],
+            "tags": [
+              "forest garden",
+              "permaculture"
+            ]
+          },
+          {
+            "title": "Plant Guilds Explained — Companion Planting at Forest Scale",
+            "youtubeId": "PENDING",
+            "description": "PLACEHOLDER — Target: how a 'guild' (a small cluster of mutually-beneficial species, e.g. a fruit tree + nitrogen-fixer + groundcover) works, and how to design one for a specific site.",
+            "icon_tag_fa": "fas fa-leaf",
+            "color_tag": "#00695c",
+            "localVideoFilename": "",
+            "authors": "PENDING",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "PENDING",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": [],
+            "tags": [
+              "plant guild",
+              "forest garden"
+            ]
+          }
+        ],
+        "videoTagDirectory": {
+          "forest garden": {
+            "tagName": "forest garden",
+            "description": "A perennial food-producing system designed across seven vertical layers to mimic the structure of a natural woodland — lower labour than annual gardening once established, with habitat and stormwater benefits as a side effect.",
+            "link": "https://www.google.com/search?q=forest+gardening+permaculture+seven+layers",
+            "linkLabel": "Forest gardening — overview"
+          }
+        }
+      },
+      {
+        "uniqueId": "eco-5",
+        "title": "Expert-Coordinated Ecological Planning",
+        "subtitle": "Conservation biologists, coordinators, and community campaigns working from the same plan",
+        "description": "How a restoration or monitoring campaign actually gets designed and run at watershed or landscape scale: a conservation biologist or coordinator sets the plan and target species, community teams (schools, elders, volunteers) execute the fieldwork, and the resulting data flows back to refine the plan for the next season.",
+        "tags": [
+          "conservation biology",
+          "restoration planning",
+          "watershed campaign",
+          "expert endorsement"
+        ],
+        "context": "Modelled directly on the watershed-campaign and lesson-endorsement examples in blog-costa-rica-biodiversity-platform.md — a SINAC-style coordinator running a multi-school stream-corridor campaign, and a conservation biologist's module being locally annotated by a practitioner before use.",
+        "materials": [
+          "Restoration/monitoring plan template",
+          "Target-species list (scientist-authored)",
+          "Campaign coordination record on the platform"
+        ],
+        "processSteps": [
+          "1. Expert or coordinator designs the campaign and target species list",
+          "2. Local practitioner/elder reviews for real-world feasibility ('community annotation')",
+          "3. Field teams execute across sites",
+          "4. Data aggregates back to the coordinator/expert",
+          "5. Plan is revised for the next season"
+        ],
+        "videos": [
+          {
+            "title": "How a Restoration Campaign Gets Designed and Run",
+            "youtubeId": "PENDING",
+            "description": "PLACEHOLDER — Target: a coordinator or conservation biologist walking through how a multi-site campaign (e.g. a stream-corridor restoration plan spanning several schools/communities) is designed, launched, and adjusted based on incoming field data.",
+            "icon_tag_fa": "fas fa-clipboard-list",
+            "color_tag": "#00695c",
+            "localVideoFilename": "",
+            "authors": "PENDING",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "PENDING",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": [],
+            "tags": [
+              "restoration planning",
+              "conservation biology"
+            ]
+          },
+          {
+            "title": "Riparian Buffer Planting — Species Selection for Flood Resilience",
+            "youtubeId": "PENDING",
+            "description": "PLACEHOLDER — Target: how a conservation biologist chooses native species and spacing for a riparian buffer, and the real tradeoff between fast-establishing exotics and slower-growing natives.",
+            "icon_tag_fa": "fas fa-water",
+            "color_tag": "#00695c",
+            "localVideoFilename": "",
+            "authors": "PENDING",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "PENDING",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": [],
+            "tags": [
+              "riparian buffer",
+              "restoration planning"
+            ]
+          }
+        ],
+        "videoTagDirectory": {
+          "restoration planning": {
+            "tagName": "restoration planning",
+            "description": "The expert-designed plan (target species, site selection, timeline) that a community campaign executes in the field — refined season over season as real field data comes back in.",
+            "link": "https://www.ser.org/",
+            "linkLabel": "Society for Ecological Restoration"
+          }
+        }
+      },
+      {
+        "uniqueId": "eco-6",
+        "title": "Elder Knowledge & Plant Nursery Networks",
+        "subtitle": "Pairing traditional ecological knowledge with the nurseries that can actually supply what a restoration plan needs",
+        "description": "An elder's diachronic knowledge of a site (which species pioneer naturally, which are hardest to establish, what the land looked like decades ago) is only actionable if paired with a real supply chain — a nursery network that knows which native species are actually obtainable versus theoretically correct but impossible to source. This subcategory pairs the elder-knowledge framework from docs/eco-ops-workflow-guide.md Part 7 with the nursery-sourcing role described for a Costa Rica pilot.",
+        "tags": [
+          "elder knowledge",
+          "traditional ecological knowledge",
+          "plant nursery",
+          "native species sourcing",
+          "Knowledge Keeper"
+        ],
+        "context": "A retired nursery worker who has propagated native species for decades qualifies for a Knowledge Keeper credential the same way a long-term site observer does — see the existing Knowledge Keeper reward path (src/data/rewards-catalog.ts, src/pages/KnowledgeKeepersPage.vue) and docs/eco-ops-workflow-guide.md Part 7's 'elder observation is primary data' principle.",
+        "materials": [
+          "Structured interview guide with consent controls",
+          "Local nursery inventory/sourcing record",
+          "Species-availability-corrected planting list"
+        ],
+        "processSteps": [
+          "1. Identify a community elder or long-term nursery practitioner",
+          "2. Structured interview, with the elder controlling what stays public/community-only/private",
+          "3. Cross-reference recommended species against actual local nursery availability",
+          "4. Publish a sourcing-corrected species list",
+          "5. Link the record to the relevant restoration campaign"
+        ],
+        "videos": [
+          {
+            "title": "Interviewing a Knowledge Keeper — Structure and Consent",
+            "youtubeId": "PENDING",
+            "description": "PLACEHOLDER — Target: how to run a respectful, structured elder-knowledge interview — consent framework, what stays community-only vs. public, and how the resulting record links to a specific restoration site.",
+            "icon_tag_fa": "fas fa-comments",
+            "color_tag": "#00695c",
+            "localVideoFilename": "",
+            "authors": "PENDING",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "PENDING",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": [],
+            "tags": [
+              "elder knowledge",
+              "Knowledge Keeper"
+            ]
+          },
+          {
+            "title": "From Nursery to Restoration Site — Sourcing Native Species Locally",
+            "youtubeId": "PENDING",
+            "description": "PLACEHOLDER — Target: a working native-plant nursery, what it actually takes to propagate a locally-appropriate species at scale, and how a restoration plan's 'ideal' species list gets corrected against what a nursery can really supply.",
+            "icon_tag_fa": "fas fa-seedling",
+            "color_tag": "#00695c",
+            "localVideoFilename": "",
+            "authors": "PENDING",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "PENDING",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": [],
+            "tags": [
+              "plant nursery",
+              "native species sourcing"
+            ]
+          }
+        ],
+        "videoTagDirectory": {
+          "Knowledge Keeper": {
+            "tagName": "Knowledge Keeper",
+            "description": "A community elder or long-term practitioner (site observer, nursery propagator, etc.) whose diachronic, place-specific knowledge is recognised with a platform credential — treated as primary data, not anecdote.",
+            "link": "",
+            "linkLabel": ""
+          }
+        }
+      }
+    ]
+  },
+  {
+    "area": "Microplastics",
+    "featherIcon": "microscope",
+    "subcategories": [
+      {
+        "uniqueId": "micro-0",
+        "title": "Microplastics in Water Supply",
+        "subtitle": "Where they come from, and what treatment actually removes them",
+        "description": "Microplastics enter water supplies from textile-fiber shedding in laundry effluent, tire-wear road runoff, and the breakdown of larger plastic debris. They've been found in both bottled and tap water. Conventional (primary/secondary) wastewater treatment misses most microplastics — tertiary/membrane filtration is meaningfully more effective but not universally deployed.",
+        "tags": [
+          "microplastics",
+          "drinking water",
+          "wastewater treatment",
+          "tertiary filtration",
+          "membrane filtration"
+        ],
+        "context": "Membrane filtration (RO/NF) already appears in src/data/pfas-methods-library.ts as a PFAS method — it captures microplastics as a side effect of the same physical rejection mechanism, though that entry's citations are PFAS-specific and shouldn't be reused uncritically here.",
+        "materials": [
+          "Membrane/tertiary filtration unit",
+          "Lab-based particle analysis (field test kits cannot reliably quantify microplastics — no cheap validated method exists, the same honesty caveat as PFAS field testing)"
+        ],
+        "processSteps": [
+          "1. Identify likely source pathways (laundry, stormwater, WWTP outfall)",
+          "2. Lab-based sampling and particle-count analysis",
+          "3. Evaluate treatment stage (does the plant have tertiary filtration?)",
+          "4. Advocate for/install tertiary treatment where feasible"
+        ],
+        "videos": [
+          {
+            "title": "Where Microplastics in Drinking Water Actually Come From",
+            "youtubeId": "PENDING",
+            "description": "PLACEHOLDER — Target: a clear explainer distinguishing textile-fiber, tire-wear, and plastic-fragment sources, and how each reaches a water supply differently.",
+            "icon_tag_fa": "fas fa-tint",
+            "color_tag": "#5c6bc0",
+            "localVideoFilename": "",
+            "authors": "PENDING",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "PENDING",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": [],
+            "tags": [
+              "microplastics",
+              "drinking water"
+            ]
+          },
+          {
+            "title": "How Wastewater Treatment Plants Handle (and Miss) Microplastics",
+            "youtubeId": "PENDING",
+            "description": "PLACEHOLDER — Target: primary/secondary treatment's limited effectiveness versus tertiary/membrane filtration, ideally with a real plant walkthrough.",
+            "icon_tag_fa": "fas fa-industry",
+            "color_tag": "#5c6bc0",
+            "localVideoFilename": "",
+            "authors": "PENDING",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "PENDING",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": [],
+            "tags": [
+              "wastewater treatment",
+              "tertiary filtration"
+            ]
+          }
+        ],
+        "videoTagDirectory": {
+          "microplastics": {
+            "tagName": "microplastics",
+            "description": "Plastic particles smaller than 5mm, from fragmentation of larger debris or direct shedding (textile fibers, tire wear). Unlike PFAS, once dispersed into the environment they cannot practically be concentrated and removed at scale — source reduction is the primary lever.",
+            "link": "https://www.epa.gov/trash-free-waters/microplastics",
+            "linkLabel": "EPA — Microplastics"
+          }
+        }
+      },
+      {
+        "uniqueId": "micro-1",
+        "title": "Microplastics in Food Supply",
+        "subtitle": "Seafood, salt, and agricultural soil",
+        "description": "Filter-feeding seafood (mussels, oysters) and some fish accumulate microplastics directly from water. Sea salt production has documented microplastic contamination. On land, plastic mulch film and biosolids/sewage-sludge fertilizer are documented pathways for microplastics entering agricultural soil and, from there, crops.",
+        "tags": [
+          "microplastics",
+          "seafood",
+          "sea salt",
+          "agricultural soil",
+          "biosolids",
+          "plastic mulch",
+          "food packaging"
+        ],
+        "context": "Biosolids as fertilizer is a genuine tradeoff — it recycles nutrients but is also a documented microplastic (and, separately, PFAS) pathway into soil. Treat 'biosolids are contaminated' and 'biosolids have real agronomic value' as both true rather than picking one.",
+        "materials": [
+          "Lab-based food/soil particle analysis",
+          "Biosolids sourcing/testing record"
+        ],
+        "processSteps": [
+          "1. Identify the pathway of concern (seafood, salt, or soil)",
+          "2. Lab-based sampling where a claim will be made publicly",
+          "3. For soil: check plastic mulch and biosolids sourcing practices",
+          "4. Log findings to the platform record"
+        ],
+        "videos": [
+          {
+            "title": "Microplastics in Seafood and Sea Salt — What's Actually Been Found",
+            "youtubeId": "PENDING",
+            "description": "PLACEHOLDER — Target: a survey of real published findings on microplastics in shellfish, fish, and sea salt, honest about how much variation exists between studies and locations.",
+            "icon_tag_fa": "fas fa-fish",
+            "color_tag": "#5c6bc0",
+            "localVideoFilename": "",
+            "authors": "PENDING",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "PENDING",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": [],
+            "tags": [
+              "microplastics",
+              "seafood"
+            ]
+          },
+          {
+            "title": "Plastic Mulch and Biosolids — How Microplastics Get Into Farm Soil",
+            "youtubeId": "PENDING",
+            "description": "PLACEHOLDER — Target: how plastic mulch film fragments in place and how biosolids fertilizer carries microplastics into soil, presented alongside the real agronomic value biosolids also provide.",
+            "icon_tag_fa": "fas fa-tractor",
+            "color_tag": "#5c6bc0",
+            "localVideoFilename": "",
+            "authors": "PENDING",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "PENDING",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": [],
+            "tags": [
+              "agricultural soil",
+              "biosolids"
+            ]
+          }
+        ],
+        "videoTagDirectory": {
+          "biosolids": {
+            "tagName": "biosolids",
+            "description": "Treated sewage sludge applied to agricultural land as fertilizer — recycles nutrients but is a documented pathway for both microplastics and PFAS into soil. Genuinely a tradeoff, not a simple good/bad.",
+            "link": "https://www.epa.gov/biosolids",
+            "linkLabel": "EPA — Biosolids"
+          }
+        }
+      },
+      {
+        "uniqueId": "micro-2",
+        "title": "Microplastics & Human Health — What's Actually Known",
+        "subtitle": "Detected in the body; health effects are still being studied",
+        "description": "Microplastics have been detected in human blood, lung tissue, and placenta — that part is documented. What those findings mean for actual health outcomes is still an active, unsettled research area. Treat any claim of a specific disease or health effect with the same skepticism this library already applies to PFAS phytoremediation claims: state what's detected plainly, and don't imply a causal health claim the current evidence doesn't support.",
+        "tags": [
+          "microplastics",
+          "human health",
+          "ingestion",
+          "inhalation",
+          "emerging research"
+        ],
+        "context": "This is the microplastics equivalent of the phytoremediation entry in src/data/pfas-methods-library.ts — real detection, unsettled causal science. Any video chosen here should be reviewed for whether it overstates certainty before it's approved.",
+        "materials": [],
+        "processSteps": [],
+        "videos": [
+          {
+            "title": "Microplastics Detected in the Human Body — What We Actually Know (and Don't)",
+            "youtubeId": "PENDING",
+            "description": "PLACEHOLDER — Target: an honest explainer distinguishing 'detected in tissue X' (established) from 'causes health effect Y' (not established) — prefer a source that makes this distinction explicitly rather than one that blurs it for effect.",
+            "icon_tag_fa": "fas fa-user-md",
+            "color_tag": "#5c6bc0",
+            "localVideoFilename": "",
+            "authors": "PENDING",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "PENDING",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": [],
+            "tags": [
+              "human health",
+              "emerging research"
+            ]
+          },
+          {
+            "title": "How People Are Exposed — Ingestion, Inhalation, and Dermal Routes",
+            "youtubeId": "PENDING",
+            "description": "PLACEHOLDER — Target: the three exposure routes (eating/drinking, breathing airborne fibers/dust, skin contact) without overstating relative risk between them, since that's still being studied.",
+            "icon_tag_fa": "fas fa-lungs",
+            "color_tag": "#5c6bc0",
+            "localVideoFilename": "",
+            "authors": "PENDING",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "PENDING",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": [],
+            "tags": [
+              "ingestion",
+              "inhalation"
+            ]
+          }
+        ],
+        "videoTagDirectory": {
+          "emerging research": {
+            "tagName": "emerging research",
+            "description": "Detection of microplastics in human tissue is documented; causal health-effect research is still active and unsettled, the same maturity distinction this library already draws for PFAS phytoremediation.",
+            "link": "https://www.epa.gov/newsreleases/search-term/microplastics",
+            "linkLabel": "EPA — Microplastics research"
+          }
+        }
+      },
+      {
+        "uniqueId": "micro-3",
+        "title": "Reducing Microplastic Pollution at the Source",
+        "subtitle": "Once dispersed, they can't practically be cleaned up — source reduction is the real lever",
+        "description": "Unlike PFAS or heavy metals, dispersed microplastic particles cannot be concentrated and removed from soil or ocean sediment at any meaningful scale. That makes source reduction — not cleanup — the primary practical intervention: washing-machine fiber filters, tire-wear particle capture, reduced single-use plastic that fragments into secondary microplastics, and (already largely achieved in many jurisdictions) microbead bans in personal care products.",
+        "tags": [
+          "source reduction",
+          "textile fiber filter",
+          "tire wear",
+          "microbeads",
+          "single-use plastic"
+        ],
+        "context": "This is the honest limitations section for the whole Microplastics area — pair it with the Water Supply subcategory's treatment content so the two together don't imply cleanup is a solved problem.",
+        "materials": [
+          "Washing-machine microfiber filter (e.g. external filter bag/unit)",
+          "Tire-wear particle capture system (municipal-scale)"
+        ],
+        "processSteps": [
+          "1. Identify the highest-impact source for your context (textile, tire, packaging)",
+          "2. Install or advocate for source-capture technology",
+          "3. Track adoption, not just awareness"
+        ],
+        "videos": [
+          {
+            "title": "Washing Machine Filters — Capturing Textile Microfibers Before They Reach Waterways",
+            "youtubeId": "PENDING",
+            "description": "PLACEHOLDER — Target: how an external or built-in washing-machine microfiber filter works and how much fiber shedding it actually captures.",
+            "icon_tag_fa": "fas fa-tshirt",
+            "color_tag": "#5c6bc0",
+            "localVideoFilename": "",
+            "authors": "PENDING",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "PENDING",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": [],
+            "tags": [
+              "textile fiber filter",
+              "source reduction"
+            ]
+          },
+          {
+            "title": "Tire Wear Particles — The Overlooked Microplastic Source",
+            "youtubeId": "PENDING",
+            "description": "PLACEHOLDER — Target: how tire wear generates microplastic particles at a scale that rivals or exceeds other sources, and what municipal-scale capture (e.g. roadside drain filters) looks like.",
+            "icon_tag_fa": "fas fa-car",
+            "color_tag": "#5c6bc0",
+            "localVideoFilename": "",
+            "authors": "PENDING",
+            "researchReviewItems": [],
+            "contentCreatorArchive": "",
+            "licence": "PENDING",
+            "patreon": "",
+            "socials": {},
+            "fundraiser": "",
+            "sponsorPages": [],
+            "tags": [
+              "tire wear",
+              "source reduction"
+            ]
+          }
+        ],
+        "videoTagDirectory": {
+          "source reduction": {
+            "tagName": "source reduction",
+            "description": "Preventing microplastics from entering the environment in the first place — the only practical lever available, since dispersed particles cannot be cleaned up at scale once released.",
+            "link": "https://www.epa.gov/trash-free-waters/microplastics",
+            "linkLabel": "EPA — Microplastics"
+          }
+        }
       }
     ]
   }
