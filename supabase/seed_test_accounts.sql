@@ -95,6 +95,82 @@ ON CONFLICT (id) DO NOTHING;
 COMMIT;
 
 -- ============================================================================
+-- Interface-testing cohort: 12 simulated participants, 4 teachers,
+-- 2 sysadmins, 1 coder-AI liaison (19 accounts total).
+--
+-- Same mechanism as the Maria/Oskar/Lena block above (fake auth.users +
+-- matching public.members rows, fixed UUIDs, ON CONFLICT DO NOTHING).
+--
+-- "Teacher" here is a bio/display_name LABEL only — public.members has no
+-- role column, and nothing in the schema or RLS treats a teacher
+-- differently from a simulated participant. The only real permission tier
+-- that exists is public.admin_members (see is_admin() in migration 002),
+-- which is why the 2 sysadmin accounts below actually get inserted there —
+-- they'll have real elevated access when signed in (to the extent "signed
+-- in" is even possible for a fake account; see the header note above about
+-- these accounts having no real password/magic-link path).
+-- ============================================================================
+
+BEGIN;
+
+INSERT INTO auth.users (
+  instance_id, id, aud, role, email, encrypted_password,
+  email_confirmed_at, created_at, updated_at,
+  raw_app_meta_data, raw_user_meta_data
+) VALUES
+  ('00000000-0000-0000-0000-000000000000', '11111111-1111-1111-1111-111111111104', 'authenticated', 'authenticated', 'test-student01@seed.exotopia.invalid', '', now(), now(), now(), '{}', '{}'),
+  ('00000000-0000-0000-0000-000000000000', '11111111-1111-1111-1111-111111111105', 'authenticated', 'authenticated', 'test-student02@seed.exotopia.invalid', '', now(), now(), now(), '{}', '{}'),
+  ('00000000-0000-0000-0000-000000000000', '11111111-1111-1111-1111-111111111106', 'authenticated', 'authenticated', 'test-student03@seed.exotopia.invalid', '', now(), now(), now(), '{}', '{}'),
+  ('00000000-0000-0000-0000-000000000000', '11111111-1111-1111-1111-111111111107', 'authenticated', 'authenticated', 'test-student04@seed.exotopia.invalid', '', now(), now(), now(), '{}', '{}'),
+  ('00000000-0000-0000-0000-000000000000', '11111111-1111-1111-1111-111111111108', 'authenticated', 'authenticated', 'test-student05@seed.exotopia.invalid', '', now(), now(), now(), '{}', '{}'),
+  ('00000000-0000-0000-0000-000000000000', '11111111-1111-1111-1111-111111111109', 'authenticated', 'authenticated', 'test-student06@seed.exotopia.invalid', '', now(), now(), now(), '{}', '{}'),
+  ('00000000-0000-0000-0000-000000000000', '11111111-1111-1111-1111-111111111110', 'authenticated', 'authenticated', 'test-student07@seed.exotopia.invalid', '', now(), now(), now(), '{}', '{}'),
+  ('00000000-0000-0000-0000-000000000000', '11111111-1111-1111-1111-111111111111', 'authenticated', 'authenticated', 'test-student08@seed.exotopia.invalid', '', now(), now(), now(), '{}', '{}'),
+  ('00000000-0000-0000-0000-000000000000', '11111111-1111-1111-1111-111111111112', 'authenticated', 'authenticated', 'test-student09@seed.exotopia.invalid', '', now(), now(), now(), '{}', '{}'),
+  ('00000000-0000-0000-0000-000000000000', '11111111-1111-1111-1111-111111111113', 'authenticated', 'authenticated', 'test-student10@seed.exotopia.invalid', '', now(), now(), now(), '{}', '{}'),
+  ('00000000-0000-0000-0000-000000000000', '11111111-1111-1111-1111-111111111114', 'authenticated', 'authenticated', 'test-student11@seed.exotopia.invalid', '', now(), now(), now(), '{}', '{}'),
+  ('00000000-0000-0000-0000-000000000000', '11111111-1111-1111-1111-111111111115', 'authenticated', 'authenticated', 'test-student12@seed.exotopia.invalid', '', now(), now(), now(), '{}', '{}'),
+  ('00000000-0000-0000-0000-000000000000', '11111111-1111-1111-1111-111111111116', 'authenticated', 'authenticated', 'test-teacher01@seed.exotopia.invalid', '', now(), now(), now(), '{}', '{}'),
+  ('00000000-0000-0000-0000-000000000000', '11111111-1111-1111-1111-111111111117', 'authenticated', 'authenticated', 'test-teacher02@seed.exotopia.invalid', '', now(), now(), now(), '{}', '{}'),
+  ('00000000-0000-0000-0000-000000000000', '11111111-1111-1111-1111-111111111118', 'authenticated', 'authenticated', 'test-teacher03@seed.exotopia.invalid', '', now(), now(), now(), '{}', '{}'),
+  ('00000000-0000-0000-0000-000000000000', '11111111-1111-1111-1111-111111111119', 'authenticated', 'authenticated', 'test-teacher04@seed.exotopia.invalid', '', now(), now(), now(), '{}', '{}'),
+  ('00000000-0000-0000-0000-000000000000', '11111111-1111-1111-1111-111111111120', 'authenticated', 'authenticated', 'test-admin01@seed.exotopia.invalid',   '', now(), now(), now(), '{}', '{}'),
+  ('00000000-0000-0000-0000-000000000000', '11111111-1111-1111-1111-111111111121', 'authenticated', 'authenticated', 'test-admin02@seed.exotopia.invalid',   '', now(), now(), now(), '{}', '{}'),
+  ('00000000-0000-0000-0000-000000000000', '11111111-1111-1111-1111-111111111122', 'authenticated', 'authenticated', 'test-coderai@seed.exotopia.invalid',   '', now(), now(), now(), '{}', '{}')
+ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO public.members (id, handle, display_name, avatar_color, bio) VALUES
+  ('11111111-1111-1111-1111-111111111104', 'test_student_01', 'Test Student 01', '#4488ff', 'Interface-testing cohort — simulated participant'),
+  ('11111111-1111-1111-1111-111111111105', 'test_student_02', 'Test Student 02', '#4488ff', 'Interface-testing cohort — simulated participant'),
+  ('11111111-1111-1111-1111-111111111106', 'test_student_03', 'Test Student 03', '#4488ff', 'Interface-testing cohort — simulated participant'),
+  ('11111111-1111-1111-1111-111111111107', 'test_student_04', 'Test Student 04', '#4488ff', 'Interface-testing cohort — simulated participant'),
+  ('11111111-1111-1111-1111-111111111108', 'test_student_05', 'Test Student 05', '#4488ff', 'Interface-testing cohort — simulated participant'),
+  ('11111111-1111-1111-1111-111111111109', 'test_student_06', 'Test Student 06', '#4488ff', 'Interface-testing cohort — simulated participant'),
+  ('11111111-1111-1111-1111-111111111110', 'test_student_07', 'Test Student 07', '#4488ff', 'Interface-testing cohort — simulated participant'),
+  ('11111111-1111-1111-1111-111111111111', 'test_student_08', 'Test Student 08', '#4488ff', 'Interface-testing cohort — simulated participant'),
+  ('11111111-1111-1111-1111-111111111112', 'test_student_09', 'Test Student 09', '#4488ff', 'Interface-testing cohort — simulated participant'),
+  ('11111111-1111-1111-1111-111111111113', 'test_student_10', 'Test Student 10', '#4488ff', 'Interface-testing cohort — simulated participant'),
+  ('11111111-1111-1111-1111-111111111114', 'test_student_11', 'Test Student 11', '#4488ff', 'Interface-testing cohort — simulated participant'),
+  ('11111111-1111-1111-1111-111111111115', 'test_student_12', 'Test Student 12', '#4488ff', 'Interface-testing cohort — simulated participant'),
+  ('11111111-1111-1111-1111-111111111116', 'test_teacher_01', 'Test Teacher 01', '#ffaa33', 'Interface-testing cohort — teacher persona (label only, no distinct permissions yet)'),
+  ('11111111-1111-1111-1111-111111111117', 'test_teacher_02', 'Test Teacher 02', '#ffaa33', 'Interface-testing cohort — teacher persona (label only, no distinct permissions yet)'),
+  ('11111111-1111-1111-1111-111111111118', 'test_teacher_03', 'Test Teacher 03', '#ffaa33', 'Interface-testing cohort — teacher persona (label only, no distinct permissions yet)'),
+  ('11111111-1111-1111-1111-111111111119', 'test_teacher_04', 'Test Teacher 04', '#ffaa33', 'Interface-testing cohort — teacher persona (label only, no distinct permissions yet)'),
+  ('11111111-1111-1111-1111-111111111120', 'test_admin_01',   'Test Admin 01',   '#ff4466', 'Interface-testing cohort — sysadmin, granted real admin_members access below'),
+  ('11111111-1111-1111-1111-111111111121', 'test_admin_02',   'Test Admin 02',   '#ff4466', 'Interface-testing cohort — sysadmin, granted real admin_members access below'),
+  ('11111111-1111-1111-1111-111111111122', 'test_coder_ai',   'Test Coder-AI Liaison', '#aa55ff', 'Interface-testing cohort — coder/AI liaison persona')
+ON CONFLICT (id) DO NOTHING;
+
+-- Real elevated access for the 2 sysadmin test accounts (the one actual
+-- permission tier this schema has — see is_admin() in migration 002).
+INSERT INTO public.admin_members (member_id) VALUES
+  ('11111111-1111-1111-1111-111111111120'),
+  ('11111111-1111-1111-1111-111111111121')
+ON CONFLICT (member_id) DO NOTHING;
+
+COMMIT;
+
+-- ============================================================================
 -- To test the ADMIN moderation view (/admin/community-nodes) as YOURSELF
 -- rather than as a fake seed account — sign in with your real account once
 -- first (so a row exists in public.members for you), find your member id:
