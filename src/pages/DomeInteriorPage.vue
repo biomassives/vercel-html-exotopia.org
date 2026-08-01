@@ -142,6 +142,7 @@ import {
   ZONE_POSITIONS,
   autoPosition,
   buildItemMesh,
+  MAX_ITEM_LIGHTS,
   STARTER_LIGHT_PRESET,
   consumeStarterReveal,
   type ItemAcquisitionType,
@@ -178,6 +179,7 @@ const TYPE_LABELS: Record<ItemAcquisitionType, string> = {
   traded:      'traded',
   generated:   'airdrop',
   'eco-ops':   'eco-ops',
+  reward:      'earned',
 }
 
 // ── UI state ──────────────────────────────────────────────────────────────────
@@ -420,12 +422,12 @@ function buildItems() {
   // Zone slot counters for auto-positioning
   const zoneCount: Record<string, number> = {}
 
-  for (const item of items.value) {
+  for (const [idx, item] of items.value.entries()) {
     const slotIdx = zoneCount[item.zone] ?? 0
     zoneCount[item.zone] = slotIdx + 1
 
     const pos   = autoPosition(item, slotIdx)
-    const group = buildItemMesh(item.meshPreset, item.color)
+    const group = buildItemMesh(item.meshPreset, item.color, idx < MAX_ITEM_LIGHTS)
     group.position.set(pos.x, 0, pos.z)
     group.name = `item:${item.id}`
     if (item.meshPreset === STARTER_LIGHT_PRESET && playReveal) {

@@ -8,6 +8,7 @@
  *   traded      — received from another settlement; carries donor provenance
  *   generated   — awarded via pon.ink airdrop events
  *   eco-ops     — earned through community SHG / field-work milestones
+ *   reward      — unlocked by an Impact Profile certificate (see rewards-catalog.ts)
  *
  * Storage (hybrid model):
  *   localStorage  — source of truth for constructed/placed items
@@ -18,11 +19,11 @@
 import { reactive, computed, watch } from 'vue'
 import type { Ref } from 'vue'
 import * as THREE from 'three'
-import { safeRead, safeWrite, hashStorageKey } from './storage-cipher'
+import { safeRead, safeWrite, hashStorageKey, encryptForStorage, decryptFromStorage } from './storage-cipher'
 
 // ── Core types ────────────────────────────────────────────────────────────────
 
-export type ItemAcquisitionType = 'constructed' | 'traded' | 'generated' | 'eco-ops'
+export type ItemAcquisitionType = 'constructed' | 'traded' | 'generated' | 'eco-ops' | 'reward'
 
 export type ItemZone =
   | 'library'
@@ -47,6 +48,7 @@ export interface SettlementItem {
   // Traded
   donorKey?:       string        // donor settlement key
   donorStarColor?: string        // '#RRGGBB' — trail colour on arrival
+  donorName?:      string        // human-readable design credit (attribution, not a price)
   // Generated
   airdropBundle?:  string        // pon.ink bundle type
   // Eco-ops
@@ -78,35 +80,37 @@ export const ITEM_MESH_PRESETS: Record<string, ItemMeshPreset> = {
   },
   'beacon': {
     label: 'Signal Beacon', defaultColor: 0x00ddff, zoneDefault: 'gateway',
-    acquiredBy: ['constructed', 'generated'],
+    acquiredBy: ['constructed', 'generated', 'reward', 'traded'],
     description: 'Broadcasts settlement presence to the conduit network.',
     buildCost: 40,
   },
   'crystal': {
     label: 'Resonance Crystal', defaultColor: 0xcc88ff, zoneDefault: 'courtyard',
-    acquiredBy: ['generated', 'eco-ops'],
+    acquiredBy: ['generated', 'eco-ops', 'reward', 'traded'],
     description: 'Harmonic receiver that amplifies ambient light.',
   },
   'planter': {
     label: 'Garden Planter', defaultColor: 0x44bb44, zoneDefault: 'garden',
-    acquiredBy: ['constructed', 'eco-ops'],
+    acquiredBy: ['constructed', 'eco-ops', 'traded'],
     description: 'Cultivates alien flora adapted to local conditions.',
     buildCost: 20,
   },
   'solar-array': {
     label: 'Solar Array', defaultColor: 0xffcc44, zoneDefault: 'open-floor',
-    acquiredBy: ['constructed'],
+    acquiredBy: ['constructed', 'traded'],
     description: 'Harvests light from the host star.',
     buildCost: 60,
   },
   'monument': {
     label: 'Community Monument', defaultColor: 0x88aacc, zoneDefault: 'courtyard',
-    acquiredBy: ['eco-ops'],
+    // No 'traded': this attests a real community milestone, so it is not
+    // shareable via a gift code the way decorative presets are.
+    acquiredBy: ['eco-ops', 'reward'],
     description: 'Marks a community milestone or declaration.',
   },
   'archive-node': {
     label: 'Archive Node', defaultColor: 0x4488ff, zoneDefault: 'library',
-    acquiredBy: ['constructed', 'traded'],
+    acquiredBy: ['constructed', 'traded', 'reward'],
     description: 'Extends the settlement knowledge base.',
     buildCost: 35,
   },
@@ -123,18 +127,20 @@ export const ITEM_MESH_PRESETS: Record<string, ItemMeshPreset> = {
   },
   'comms-relay': {
     label: 'Comms Relay', defaultColor: 0x55ffaa, zoneDefault: 'gateway',
-    acquiredBy: ['constructed', 'generated'],
+    acquiredBy: ['constructed', 'generated', 'reward', 'traded'],
     description: 'Strengthens conduit range to neighbouring settlements.',
     buildCost: 45,
   },
   'seed-vault': {
     label: 'Seed Vault', defaultColor: 0xbbcc88, zoneDefault: 'library',
-    acquiredBy: ['eco-ops', 'traded'],
+    acquiredBy: ['eco-ops', 'traded', 'reward'],
     description: 'Stores genetic diversity — a symbol of long-term commitment.',
   },
   'decon-site-marker': {
     label: 'Decontamination Site Marker', defaultColor: 0xffaa33, zoneDefault: 'water-edge',
-    acquiredBy: ['eco-ops'],
+    // No 'traded': this attests real logged citizen-science work, so it is not
+    // shareable via a gift code the way decorative presets are.
+    acquiredBy: ['eco-ops', 'reward'],
     description: 'Marks a PFAS/PFOA decontamination project logged in your citizen-science work. Color reflects project status at the time it was attached (amber = planning/active, cyan = monitoring, green = complete) — set via the color override when the item is added, not live-updating.',
   },
 }
@@ -183,7 +189,14 @@ export function autoPosition(
 
 // ── Item mesh builder (shared by DomeInteriorPage.vue and StationInteriorPage.vue) ──
 
-export function buildItemMesh(presetKey: string, colorHex: string): THREE.Group {
+/**
+ * How many items get their own dynamic point light. Beyond this the meshes still
+ * render in full — they just rely on the scene's existing lighting, since every
+ * additional PointLight costs a real-time shading pass on every lit material.
+ */
+export const MAX_ITEM_LIGHTS = 12
+
+export function buildItemMesh(presetKey: string, colorHex: string, withLight = true): THREE.Group {
   const col   = new THREE.Color(colorHex)
   const group = new THREE.Group()
 
@@ -339,10 +352,13 @@ export function buildItemMesh(presetKey: string, colorHex: string): THREE.Group 
     }
   }
 
-  // Point light per item — keeps the surrounding area lit
-  const pl = new THREE.PointLight(col.getHex(), 0.5, 14)
-  pl.position.y = 2.0
-  group.add(pl)
+  // Point light per item — keeps the surrounding area lit. Callers cap how many
+  // items get one, since every light costs a real-time shading pass.
+  if (withLight) {
+    const pl = new THREE.PointLight(col.getHex(), 0.5, 14)
+    pl.position.y = 2.0
+    group.add(pl)
+  }
 
   return group
 }
@@ -360,6 +376,73 @@ export function starterLightColorHex(sk: string): string {
   const c = new THREE.Color()
   c.setHSL(settlementHue(sk), 0.72, 0.58)
   return '#' + c.getHexString()
+}
+
+/**
+ * Colour for the nth item of an applied theme pack. Hue-shifts off the same
+ * per-settlement base as the starter lantern, so a pack reads as belonging to
+ * this settlement rather than dropping in a stock palette.
+ */
+export function themePackItemColorHex(sk: string, index: number): string {
+  const c = new THREE.Color()
+  c.setHSL((settlementHue(sk) + index * 0.055) % 1, 0.66, 0.52 + (index % 3) * 0.05)
+  return '#' + c.getHexString()
+}
+
+// ── Gift codes (peer-to-peer item sharing) ────────────────────────────────────
+// A design travels between two browsers as an opaque copyable string. Uses the
+// same site-wide storage cipher (its seed is a fixed constant, not per-browser,
+// so a code made in one browser decodes in any other). This is attribution and
+// distribution only — there is no price, ledger, or transfer of ownership.
+
+export interface GiftCodePayload {
+  meshPreset:     string
+  zone:           ItemZone
+  color:          string
+  donorKey:       string
+  donorStarColor: string
+  donorName?:     string
+}
+
+export function exportItemGiftCode(
+  item: SettlementItem,
+  fromSettlementKey: string,
+  designerName?: string,
+): string {
+  const payload: GiftCodePayload = {
+    meshPreset:     item.meshPreset,
+    zone:           item.zone,
+    color:          item.color,
+    donorKey:       fromSettlementKey,
+    donorStarColor: starterLightColorHex(fromSettlementKey),
+    ...(designerName ? { donorName: designerName } : {}),
+  }
+  return encryptForStorage(JSON.stringify(payload))
+}
+
+/** Decode a gift code. Returns null for malformed, foreign, or unknown-preset input. */
+export function importItemGiftCode(code: string): GiftCodePayload | null {
+  try {
+    const d = JSON.parse(decryptFromStorage(code.trim())) as Partial<GiftCodePayload>
+    if (!d || typeof d.meshPreset !== 'string') return null
+    const preset = ITEM_MESH_PRESETS[d.meshPreset]
+    // A gift arrives as a trade, so the preset must be tradeable — this keeps
+    // the starter lantern (acquiredBy: []) from being clonable via a code.
+    if (!preset || !preset.acquiredBy.includes('traded')) return null
+    if (typeof d.zone !== 'string' || !(d.zone in ZONE_POSITIONS)) return null
+    if (typeof d.color !== 'string' || !/^#[0-9a-fA-F]{6}$/.test(d.color)) return null
+    if (typeof d.donorKey !== 'string' || !d.donorKey) return null
+    return {
+      meshPreset:     d.meshPreset,
+      zone:           d.zone as ItemZone,
+      color:          d.color,
+      donorKey:       d.donorKey,
+      donorStarColor: typeof d.donorStarColor === 'string' ? d.donorStarColor : d.color,
+      ...(typeof d.donorName === 'string' && d.donorName ? { donorName: d.donorName } : {}),
+    }
+  } catch {
+    return null
+  }
 }
 
 // ── Storage ───────────────────────────────────────────────────────────────────
@@ -448,10 +531,18 @@ export function useSettlementItems(settlementKey: Ref<string>) {
              Partial<Omit<SettlementItem, 'id' | 'acquiredAt' | 'settlementKey' | 'type' | 'meshPreset' | 'zone'>>
   ): SettlementItem {
     const preset = ITEM_MESH_PRESETS[partial.meshPreset]
-    const colHex = '#' + (preset?.defaultColor ?? 0xffffff).toString(16).padStart(6, '0')
+    // Structural guard, not just a UI filter: the acquire picker already hides
+    // ineligible presets, but nothing stopped a direct call from bypassing it.
+    if (!preset) {
+      throw new Error(`Unknown mesh preset "${partial.meshPreset}"`)
+    }
+    if (!preset.acquiredBy.includes(partial.type)) {
+      throw new Error(`"${partial.meshPreset}" cannot be acquired via "${partial.type}"`)
+    }
+    const colHex = '#' + preset.defaultColor.toString(16).padStart(6, '0')
     const item: SettlementItem = {
-      label:        preset?.label       ?? partial.meshPreset,
-      description:  preset?.description ?? '',
+      label:        preset.label,
+      description:  preset.description,
       color:        colHex,
       ...partial,
       id:           `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
@@ -468,6 +559,14 @@ export function useSettlementItems(settlementKey: Ref<string>) {
     persist()
   }
 
+  function updateItem(
+    id: string,
+    patch: Partial<Pick<SettlementItem, 'color' | 'zone' | 'label'>>,
+  ) {
+    items.value = items.value.map(i => i.id === id ? { ...i, ...patch } : i)
+    persist()
+  }
+
   function placeItem(id: string, posX: number, posZ: number) {
     items.value = items.value.map(i => i.id === id ? { ...i, posX, posZ } : i)
     persist()
@@ -478,7 +577,8 @@ export function useSettlementItems(settlementKey: Ref<string>) {
     'traded':      items.value.filter(i => i.type === 'traded'),
     'generated':   items.value.filter(i => i.type === 'generated'),
     'eco-ops':     items.value.filter(i => i.type === 'eco-ops'),
+    'reward':      items.value.filter(i => i.type === 'reward'),
   }))
 
-  return { items, byType, addItem, removeItem, placeItem }
+  return { items, byType, addItem, removeItem, updateItem, placeItem }
 }
