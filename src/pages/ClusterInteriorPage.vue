@@ -288,13 +288,17 @@ const voidNavMembers = computed<VoidNavMember[]>(() => {
   }))
 })
 
-function selectVoidNavMember(memberId: string) {
+async function selectVoidNavMember(memberId: string) {
   const member = clusterData.value?.members.find(m => m.id === memberId)
   const proxy  = hitProxies.find(p => (p.userData.member as ClusterMember).id === memberId)
   if (!member || !proxy) return
   selected.value = member
   void router.replace({ query: { member: member.id } })
-  flyToMember(proxy.position)
+  // Edge-ring nav is a fast-travel shortcut — unlike a direct sprite click (which
+  // only selects + shows the "Explore Star Systems" button), this goes straight
+  // into the galaxy interior so the ring is actually a one-click descent path
+  // down to star systems / settlements, not a dead end requiring a second click.
+  await exploreGalaxy(member)
 }
 
 // ── LOD / zoom reveal state ───────────────────────────────────────────────────
