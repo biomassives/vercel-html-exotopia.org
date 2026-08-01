@@ -157,7 +157,18 @@
           <p class="pcs-p pcs-p--dim">Verified as of {{ r.asOf }}</p>
         </div>
 
-        <h2 class="pcs-h2" style="margin-top:24px">Legal &amp; Safe Sampling</h2>
+        <h2 class="pcs-h2" style="margin-top:24px">Personal Safety in the Field</h2>
+        <p class="pcs-p">
+          Separate from the legal/evidentiary guidance below: how to avoid exposing or
+          contaminating yourself while you sample. General field-safety practice, not a
+          site-specific risk assessment — see the last item for what that would actually require.
+        </p>
+        <div v-for="g in FIELD_SAFETY_GUIDANCE" :key="g.title" class="pcs-guidance">
+          <div class="pcs-guidance__title">{{ g.title }}</div>
+          <p class="pcs-p">{{ g.body }}</p>
+        </div>
+
+        <h2 class="pcs-h2" style="margin-top:24px">Legal &amp; Chain of Custody</h2>
         <div v-for="g in LEGAL_SAMPLING_GUIDANCE" :key="g.title" class="pcs-guidance">
           <div class="pcs-guidance__title">{{ g.title }}</div>
           <p class="pcs-p">{{ g.body }}</p>
@@ -185,6 +196,9 @@
               inherent physical risk, and that Exotopia does not supervise or
               guarantee the safety of any site — I'm responsible for my own safety
               and compliance with local law while collecting data here.
+              <button type="button" class="pcs-inline-link" style="display:block;margin-top:4px" @click="tab = 'library'">
+                Read Personal Safety in the Field before your first visit →
+              </button>
               <label class="pcs-checkbox" style="margin-top:6px">
                 <input v-model="fieldWaiverAccepted" type="checkbox" /> I accept this
               </label>
@@ -215,7 +229,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useMemberStore } from 'src/stores/member'
 import { usePfasCitizenScienceStore, type DeconProject, type FocusArea } from 'src/stores/pfas-citizen-science'
-import { REMEDIATION_METHODS, LEGAL_SAMPLING_GUIDANCE, SAMPLING_COST_TIERS, POOLED_SAMPLING_NOTE, REGULATORY_CONTEXT } from 'src/data/pfas-methods-library'
+import { REMEDIATION_METHODS, LEGAL_SAMPLING_GUIDANCE, FIELD_SAFETY_GUIDANCE, SAMPLING_COST_TIERS, POOLED_SAMPLING_NOTE, REGULATORY_CONTEXT } from 'src/data/pfas-methods-library'
 import { LOGGING_STREAK_THRESHOLD_WEEKS } from 'src/data/rewards-catalog'
 import { useLoggingStreak } from 'src/composables/useLoggingStreak'
 import { useSettlements } from 'src/lib/settlements'
@@ -371,7 +385,10 @@ async function submitProject() {
 .pcs-badge { font-size: 8.5px; letter-spacing: 0.22em; color: rgba(160,120,255,0.60); margin-bottom: 8px; }
 .pcs-title { font-size: 22px; font-weight: 300; color: rgba(215,238,255,0.94); margin: 0 0 12px; }
 .pcs-sub   { font-size: 11.5px; line-height: 1.7; color: rgba(160,195,220,0.82); margin-bottom: 24px; }
-.pcs-inline-link { color: rgba(0,210,255,0.85); text-decoration: underline; }
+.pcs-inline-link {
+  color: rgba(0,210,255,0.85); text-decoration: underline;
+  background: none; border: none; padding: 0; font: inherit; cursor: pointer; text-align: left;
+}
 
 .pcs-disclaimer {
   font-size: 10px; line-height: 1.6; color: rgba(255,195,120,0.80);

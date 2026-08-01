@@ -241,3 +241,45 @@ export const SAMPLING_COST_TIERS: SamplingCostTier[] = [
 
 export const POOLED_SAMPLING_NOTE =
   'The most reliable way to cut real sampling cost without losing credibility is to pool it: split one certified test\'s cost across a group logging the same site, submit a single composite sample covering a documented set of sub-locations, or partner with a university or NGO lab that offers a community/citizen-science discount off the standard commercial rate. This keeps every result at the accredited-lab tier instead of substituting an unverified cheap test.'
+
+// ── Personal field safety — separate from LEGAL_SAMPLING_GUIDANCE above ─────
+// That list is about the legal/evidentiary side of sampling (permission,
+// chain of custody, notification). This is about not exposing or
+// contaminating yourself while you do it — a real gap: the only safety
+// content that existed before this was a liability waiver ("I'm responsible
+// for my own safety") with no actual guidance behind it. Written the same
+// way as the rest of this file: general, established field-safety practice,
+// not a medical or site-specific risk assessment — the app still isn't
+// qualified to tell you what a specific finding means for your health.
+
+export interface SafetyGuidanceItem {
+  title: string
+  body:  string
+}
+
+export const FIELD_SAFETY_GUIDANCE: SafetyGuidanceItem[] = [
+  {
+    title: 'PFAS is invisible, odorless, and tasteless — assume nothing from how a site looks',
+    body:  'Clear water or unremarkable-looking soil tells you nothing about PFAS concentration. Conversely, a site that looks obviously contaminated (visible foam, industrial runoff, discolored ground) is a reason for more caution, not less. Treat every suspected site the same way regardless of appearance.',
+  },
+  {
+    title: 'Avoid direct skin contact and never ingest anything from the site',
+    body:  'Wear nitrile or other chemical-resistant gloves when handling site water, soil, or sediment. Don\'t eat, drink, chew gum, or smoke while sampling, and don\'t drink untreated water from a suspected site under any circumstance. Wash your hands thoroughly with soap and water before touching your face, food, or phone — even if you were gloved throughout.',
+  },
+  {
+    title: 'Treat visible foam with extra caution',
+    body:  'PFAS is a surfactant, so it concentrates in foam — the same property foam fractionation (see the Methods Library above) deliberately exploits. Former fire-training areas, airports, and some military/industrial sites can have foam or standing water with concentrations far above typical drinking-water contamination. Avoid contact with visible foam entirely rather than assuming it\'s ordinary organic foam.',
+  },
+  {
+    title: 'Don\'t bring the site home with you',
+    body:  'If you had real soil or sediment contact, remove or bag visibly soiled gloves and outer clothing before getting back in your car. Rinse or wipe down boots and sampling equipment before they go back in a bag you\'ll reuse indoors. This matters most after mud/sediment work, less for a quick surface-water grab sample.',
+  },
+  {
+    title: 'Wells, drains, and confined spaces are a separate, non-chemical hazard',
+    body:  'Sampling from a well, storm drain, culvert, or any below-grade or enclosed space carries physical risks — falls, engulfment, oxygen displacement, structural collapse — that have nothing to do with PFAS and are not covered by anything above. Do not enter a confined space to get a sample; take it from an accessible opening or don\'t take it at all. This is standard field-safety practice for any environmental sampling, not specific to this app.',
+  },
+  {
+    title: 'This section is orientation, not training — do your own research before a real visit',
+    body:  'None of the above substitutes for actual field-safety training if you\'re investigating somewhere you have real reason to believe is heavily contaminated (a known former AFFF site, an active industrial discharge, etc.). Read your local health department\'s or ATSDR\'s PFAS exposure guidance for that situation specifically, and if in doubt, treat it as work for an environmental professional rather than a citizen-science visit.',
+  },
+]
