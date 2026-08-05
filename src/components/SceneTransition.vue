@@ -55,7 +55,13 @@ function drawLightningFrame(
   ox: number, oy: number, elapsed: number,
 ) {
   ctx.clearRect(0, 0, W, H)
-  const t = elapsed / 900      // 0 → 1 over full duration
+  const t = elapsed / 1600      // 0 → 1 over full duration — ~1.8x the original
+                                 // 900ms, for paired dimensional space-jumps
+                                 // (system↔surface descents) where the effect
+                                 // should read as slower/weightier, not just
+                                 // longer. Flicker/rotation rates below are
+                                 // scaled by the same ~1.8x so the whole thing
+                                 // dilates uniformly instead of getting busier.
 
   // Background darkens as bolts fly
   ctx.fillStyle = `rgba(0,0,6,${Math.min(1, t * 1.2)})`
@@ -63,13 +69,13 @@ function drawLightningFrame(
 
   if (t > 0.78) return  // hold black
 
-  const flickerT = Math.sin(elapsed / 28) * 0.5 + 0.5
+  const flickerT = Math.sin(elapsed / 50) * 0.5 + 0.5
   const maxR     = Math.hypot(W, H) * 0.55
   const nBolts   = 5
 
   ctx.save()
   for (let i = 0; i < nBolts; i++) {
-    const angle  = (i / nBolts) * Math.PI * 2 + elapsed * 0.004
+    const angle  = (i / nBolts) * Math.PI * 2 + elapsed * 0.0022
     const dist   = maxR * (0.5 + Math.random() * 0.5)
     const tx     = ox + Math.cos(angle) * dist
     const ty     = oy + Math.sin(angle) * dist
@@ -109,8 +115,11 @@ function drawLightningFrame(
   }
   ctx.restore()
 
-  // Comic text bursts — appear when flickering is bright
-  if (flickerT > 0.62 && t < 0.65 && Math.random() < 0.18) {
+  // Comic text bursts — appear when flickering is bright. Probability is
+  // scaled down from the original 0.18 (÷~1.8, matching the duration
+  // stretch) so the longer animation doesn't just pop more words — the
+  // total expected burst count over the full transit stays about the same.
+  if (flickerT > 0.62 && t < 0.65 && Math.random() < 0.10) {
     const nWords = 1 + Math.floor(Math.random() * 2)
     for (let j = 0; j < nWords; j++) {
       const wx    = W * (0.12 + Math.random() * 0.74)
@@ -219,7 +228,7 @@ function runLoop(animType: 'depart-lightning' | 'depart-iris' | 'depart-inversio
     else                                        drawArrivalFrame(ctx, W, H, elapsed)
 
     const running = animType === 'arrive'            ? elapsed < 560 :
-                     animType === 'depart-lightning'  ? elapsed < 910 :
+                     animType === 'depart-lightning'  ? elapsed < 1610 :
                      animType === 'depart-inversion'  ? elapsed < 560 : elapsed < 390
     if (running) rafId = requestAnimationFrame(tick)
   }

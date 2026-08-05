@@ -168,6 +168,14 @@ const routes: RouteRecordRaw[] = [
         meta: { title: 'Orbital Gallery' },
       },
       {
+        // Public settlement page — see supabase/migrations/012_settlement_profiles.sql
+        path: 'settlement/:slug',
+        name: 'settlement-profile',
+        component: () => import('src/pages/SettlementProfilePage.vue'),
+        meta: { title: 'Settlement' },
+        props: true,
+      },
+      {
         // A single published community_nodes row, clicked from a gallery marker
         // in DefenderNav.vue (which already builds this exact path) — was 404ing
         // since this route never existed.
@@ -218,12 +226,6 @@ const routes: RouteRecordRaw[] = [
         name: 'mint-style',
         component: () => import('src/pages/MintStylePage.vue'),
         meta: { title: 'Minting Style Builder' },
-      },
-      {
-        path: 'chains',
-        name: 'chains',
-        component: () => import('src/pages/ChainStatusPage.vue'),
-        meta: { title: 'Networks · Exotopia' },
       },
       {
         path: 'cve_alerts',
@@ -280,6 +282,18 @@ const routes: RouteRecordRaw[] = [
         meta: { title: 'Admin · Community Nodes' },
       },
       {
+        path: 'admin/video-suggestions',
+        name: 'admin-video-suggestions',
+        component: () => import('src/pages/AdminVideoSuggestionsPage.vue'),
+        meta: { title: 'Admin · Video Suggestions' },
+      },
+      {
+        path: 'admin/error-log',
+        name: 'admin-error-log',
+        component: () => import('src/pages/AdminErrorLogPage.vue'),
+        meta: { title: 'Admin · Error Log' },
+      },
+      {
         path: 'learn',
         name: 'learn',
         component: () => import('src/pages/LearnPage.vue'),
@@ -302,6 +316,12 @@ const routes: RouteRecordRaw[] = [
         name: 'pfas-citizen-science',
         component: () => import('src/pages/PfasCitizenSciencePage.vue'),
         meta: { title: 'PFAS/PFOA Citizen Science · Exotopia' },
+      },
+      {
+        path: 'ecology-citizen-science',
+        name: 'ecology-citizen-science',
+        component: () => import('src/pages/EcologyCitizenSciencePage.vue'),
+        meta: { title: 'Ecology & Biodiversity Citizen Science · Exotopia' },
       },
       {
         path: 'method-proposals',

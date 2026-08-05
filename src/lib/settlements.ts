@@ -16,6 +16,7 @@ export interface SettlementRecord {
   clusterSlug?: string
   memberId?: string
   objects?: string[]    // unlocked reward-catalog object keys attached to this settlement
+  focus?: string         // FocusOption id from MintPage's FOCUS_OPTIONS — editable via updateSettlement()
 }
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
@@ -33,6 +34,13 @@ export interface SettlementRecord {
 // count.
 
 function assertBareField(fnName: string, field: string, value: string): void {
+  if (typeof value !== 'string') {
+    // Catches a caller passing a field that was never actually populated
+    // (undefined/null from an incomplete object mapping upstream) — a plain
+    // `.includes(':')` call turns that into an opaque "Cannot read
+    // properties of undefined" several stack frames away from the real bug.
+    throw new Error(`${fnName}: ${field} must be a string (got ${typeof value}: ${String(value)}).`)
+  }
   if (value.includes(':')) {
     throw new Error(
       `${fnName}: ${field} must be a bare designation, not a settlement key (got "${value}"). ` +

@@ -242,6 +242,110 @@ export const SAMPLING_COST_TIERS: SamplingCostTier[] = [
 export const POOLED_SAMPLING_NOTE =
   'The most reliable way to cut real sampling cost without losing credibility is to pool it: split one certified test\'s cost across a group logging the same site, submit a single composite sample covering a documented set of sub-locations, or partner with a university or NGO lab that offers a community/citizen-science discount off the standard commercial rate. This keeps every result at the accredited-lab tier instead of substituting an unverified cheap test.'
 
+// ── Free / low-income testing assistance ────────────────────────────────────
+// Checked before any paid-kit recommendation below on purpose: for someone
+// who genuinely can't afford the accredited-lab tier, the honest first move
+// is finding out whether a state/utility program already covers it, not
+// picking the cheapest paid option. Named programs are a moving target
+// (several states stood these up only after the 2024 EPA MCL rule) — each
+// carries the date it was checked; re-verify rather than assume still open.
+
+export interface TestingAssistanceProgram {
+  region: string
+  title:  string
+  body:   string
+  url?:   string
+  asOf:   string
+}
+
+export const LOW_INCOME_TESTING_ASSISTANCE: TestingAssistanceProgram[] = [
+  {
+    region: 'New York',
+    title:  'Private Well PFAS Testing and Mitigation Rebate Pilot',
+    body:   'Free testing plus rebates up to $5,000 for a treatment system (or $10,000 for a public water connection), currently running in six pilot counties.',
+    url:    'https://www.governor.ny.gov/news/new-york-state-launches-private-well-pfas-testing-and-mitigation-rebate-pilot-program-six',
+    asOf:   '2026-08',
+  },
+  {
+    region: 'California',
+    title:  'State Water Board free well testing',
+    body:   'Free PFAS testing for roughly 3,600 drinking-water wells in disadvantaged communities, running 2024 through 2026.',
+    url:    'https://www.waterboards.ca.gov/pfas/drinking_water.html',
+    asOf:   '2026-08',
+  },
+  {
+    region: 'Colorado',
+    title:  'PFAS Testing and Assistance Program (PFAS TAP)',
+    body:   'Any private well owner in Colorado can apply for free PFAS testing; eligible participants can also receive a free NSF-rated PFAS filter.',
+    url:    'https://cdphe.colorado.gov/pfas/pfas-health/pfas-testing',
+    asOf:   '2026-08',
+  },
+  {
+    region: 'North Carolina',
+    title:  'Bernard Allen Memorial Emergency Drinking Water Fund / PFAS Treatment System Assistance',
+    body:   'Assistance for low-income households whose water supply well is contaminated, including PFAS.',
+    url:    'https://www.deq.nc.gov/pfas-treatment-system-assistance-program',
+    asOf:   '2026-08',
+  },
+  {
+    region: 'Massachusetts',
+    title:  'MassDEP free PFAS laboratory analyses',
+    body:   'Free PFAS lab analysis for eligible public water suppliers and private wells.',
+    url:    'https://www.mass.gov/doc/letter-to-boards-of-health-massdep-pfas-free-laboratory-analyses-program-for-public-water-suppliers-and-private-wells/download',
+    asOf:   '2026-08',
+  },
+  {
+    region: 'Any state without a program listed above',
+    title:  'Ask before paying full price',
+    body:   'More states are standing up well-testing assistance for rural, low-income, or near-known-contamination households than this list can stay current with. Contact your state drinking-water program or county health department and ask specifically about PFAS testing assistance before ordering a paid kit — a program may exist that isn\'t nationally publicized yet.',
+    asOf:   '2026-08',
+  },
+]
+
+// ── Specific orderable kits — accredited-lab tier, named vendors ───────────
+// "Best quality for the price" only makes sense with real options to compare,
+// not just the abstract cost-tier framework above. Both below are the same
+// EPA 537.1 method and compound count — the price difference is turnaround
+// polish/support, not accuracy — so the honest recommendation is: the
+// cheaper one first, unless the extra cost of the second buys you something
+// you specifically need (clearer report, faster support response).
+// Prices/links checked at asOf — vendors change pricing; verify before
+// recommending to someone on a tight budget rather than assuming current.
+
+export interface OrderableTestKit {
+  vendor:        string
+  productUrl:    string
+  price:         string
+  method:        string
+  compoundCount: number
+  turnaround:    string
+  bestFor:       string
+  asOf:          string
+}
+
+export const ORDERABLE_PFAS_TEST_KITS: OrderableTestKit[] = [
+  {
+    vendor:        'National Testing Laboratories (Watercheck)',
+    productUrl:    'https://www.watercheck.com',
+    price:         '~$130 (verify current price before ordering)',
+    method:        'EPA 537.1',
+    compoundCount: 18,
+    turnaround:    '10–14 business days',
+    bestFor:       'Lowest-cost verified-accredited single-sample option found — ISO/IEC 17025 and multi-state certified, in business since 1977. Start here on a tight budget, after checking the assistance programs above.',
+    asOf:          '2026-08',
+  },
+  {
+    vendor:        'Tap Score (SimpleLab)',
+    productUrl:    'https://mytapscore.com/products/pfas-water-test',
+    price:         '$335',
+    method:        'EPA 537.1',
+    compoundCount: 18,
+    turnaround:    '~10 business days at lab; most results in 3–5 days after the lab receives the sample',
+    bestFor:       'Same method and compound count as the option above, at a higher price — pays for a clearer plain-language report and more responsive support, useful if this is your first time ordering a water test. Not the pick for cost-constrained sampling.',
+    asOf:          '2026-08',
+  },
+]
+
 // ── Personal field safety — separate from LEGAL_SAMPLING_GUIDANCE above ─────
 // That list is about the legal/evidentiary side of sampling (permission,
 // chain of custody, notification). This is about not exposing or

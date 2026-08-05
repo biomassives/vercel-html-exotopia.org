@@ -187,13 +187,45 @@ let targetOffset = 0
 let viewOffsetX  = 0
 let viewOffsetZ  = 0
 
+// System-mode strip angle is otherwise an arbitrary orbital-plane origin —
+// this reanchors screen-X=0° to the system's real galactic longitude (see
+// galacticLongitudeDeg() below), so the tick row reads as a genuine compass
+// toward the galactic center rather than an arbitrary zero. Zero in
+// surface/cosmic mode: surface azimuth is already a real local compass and
+// shouldn't be re-anchored, and cosmic mode has no single system to anchor to.
+let galacticOffsetDeg = 0
+
 let isDragging          = false
 let dragStartX          = 0
 let dragStartOffset     = 0
 let autoFollowSuppressed = false
 let suppressTimer       = 0
 
+// ── Drag-release momentum + "slosh" settle physics ─────────────────────────
+// Model: on release, a flicked drag keeps coasting (exponential velocity
+// decay = friction), then hands its small residual velocity off to a light
+// underdamped spring that overshoots the settle point slightly and wobbles
+// down — reads as "weighted dial with give" rather than a hard stop.
+const PAN_FRICTION          = 3.2   // 1/s — velocity decay rate during coast
+const MIN_FLICK_VELOCITY    = 15    // deg/s — below this, no momentum at all (plain stop)
+const MAX_PAN_VELOCITY      = 900   // deg/s — clamp so a huge mouse jump can't spin wildly
+const SLOSH_ENTRY_VELOCITY  = 6     // deg/s — coast hands off to the spring below this speed
+const SLOSH_STIFFNESS       = 300   // spring k (rad/s^2 per deg) — sets wobble period (~0.36s)
+const SLOSH_DAMPING         = 11    // spring c — zeta ≈ 0.32 (underdamped, quick decay)
+const SLOSH_SETTLE_EPS_POS  = 0.05  // deg — below this + velocity eps, spring is considered settled
+const SLOSH_SETTLE_EPS_VEL  = 0.5   // deg/s
+
+let velocityEMA    = 0     // deg/s — smoothed pointer velocity, sampled during drag
+let lastMoveT       = 0     // performance.now()/1000 at last onMouseMove sample
+let panVelocity     = 0     // deg/s — active coast velocity
+let momentumActive  = false
+let sloshActive     = false
+let sloshOffset     = 0     // deg — spring displacement from settlePoint
+let sloshVelocity   = 0     // deg/s — spring velocity
+let settlePoint     = 0     // deg — center the spring oscillates around
+
 let drawT = 0
+let lastFrameT = 0
 
 // ── Strip zoom-into-dot portal animation (spec §6) ────────────────────────────
 // When the user clicks a cross-level destination, the strip zooms in toward the
@@ -293,9 +325,37 @@ const GALLERY_COLORS: Record<GalleryType, string> = {
 
 // ── Coordinate helpers ────────────────────────────────────────────────────────
 
+// J2000 north galactic pole (IAU 1958 definition, as used throughout this
+// app's other RA/Dec math — see drawContextInset below).
+const NGP_RA_DEG  = 192.85948
+const NGP_DEC_DEG = 27.12825
+const L_NCP_DEG   = 122.93192
+
+/**
+ * Real galactic longitude (0-360°, l=0 toward the galactic center) for a
+ * J2000 RA/Dec position — standard equatorial→galactic conversion. This is
+ * the one honest piece of real geometry available for "compass toward the
+ * galaxy": the underlying orbital-plane orientation of a generated system
+ * relative to the sky isn't modeled in 3D, so this offset anchors the strip
+ * to something real (the system's actual sky position) without claiming the
+ * orbital plane itself is physically pointed that way — see
+ * SPEC_DEFENDERNAV.md §1.7 for the caveat spelled out in full.
+ */
+function galacticLongitudeDeg(raDeg: number, decDeg: number): number {
+  const ra  = raDeg  * Math.PI / 180
+  const dec = decDeg * Math.PI / 180
+  const raNgp  = NGP_RA_DEG  * Math.PI / 180
+  const decNgp = NGP_DEC_DEG * Math.PI / 180
+
+  const y = Math.cos(dec) * Math.sin(ra - raNgp)
+  const x = Math.cos(decNgp) * Math.sin(dec) - Math.sin(decNgp) * Math.cos(dec) * Math.cos(ra - raNgp)
+  const l = L_NCP_DEG - Math.atan2(y, x) * 180 / Math.PI
+  return ((l % 360) + 360) % 360
+}
+
 function angleToX(deg: number): number {
   const range = 360 / zoomCurrent
-  return ((deg - viewOffset + 3600) % 360) / range * W
+  return (((deg - galacticOffsetDeg) - viewOffset + 3600) % 360) / range * W
 }
 
 function auToY(au: number, maxAU: number): number {
@@ -404,6 +464,44 @@ function drawScaleRuler(ctx: CanvasRenderingContext2D, maxAU: number) {
   }
 }
 
+// ── Angle ticks (system/surface X-axis: orbital angle or azimuth, 0-360°) ─────
+// Major ticks land on multiples of 90° and are always labelled ("0°"/"90°"/
+// "180°"/"270°"); as zoom tightens the visible range, finer unlabelled minor
+// ticks (45°/30°/15°) fill in between so the band still reads as a ruler
+// rather than going bare between two widely-spaced 90° marks.
+const ANGLE_TICK_INTERVALS = [90, 45, 30, 15]
+
+function drawAngleTicks(ctx: CanvasRenderingContext2D) {
+  const range = 360 / zoomCurrent
+  let interval = 90
+  for (const iv of ANGLE_TICK_INTERVALS) {
+    if (range / iv >= 3) { interval = iv; break }
+  }
+
+  ctx.font = '7px "Courier New", monospace'
+  ctx.textAlign = 'center'
+  // `deg` here is the COMPASS angle (0° = galactic center in system mode,
+  // real local azimuth in surface mode — see angleToX/galacticOffsetDeg).
+  // Feeding angleToX(deg + galacticOffsetDeg) converts back to the raw scene
+  // angle it expects, so the ticks stay at fixed, evenly-spaced screen
+  // positions with correct labels while the actual scene content (which
+  // passes raw angles into angleToX directly) shifts relative to them.
+  for (let deg = 0; deg < 360; deg += interval) {
+    const major = deg % 90 === 0
+    for (const off of [-360, 0, 360]) {
+      const x = angleToX(deg + off + galacticOffsetDeg)
+      if (x < -10 || x > W + 10) continue
+      ctx.fillStyle = major ? 'rgba(120,190,220,0.55)' : 'rgba(60,120,160,0.30)'
+      ctx.fillRect(x - 0.5, 0, 1, major ? 4 : 2)
+      if (major) {
+        ctx.fillStyle = 'rgba(120,190,220,0.65)'
+        const label = (deg === 0 && galacticOffsetDeg !== 0) ? '0°GC' : `${deg}°`
+        ctx.fillText(label, x, 11)
+      }
+    }
+  }
+}
+
 // ── System mode drawing ───────────────────────────────────────────────────────
 
 function drawSystem(ctx: CanvasRenderingContext2D, data: NonNullable<DefenderNavData['systemData']>) {
@@ -465,7 +563,10 @@ function drawSystem(ctx: CanvasRenderingContext2D, data: NonNullable<DefenderNav
   }
 
   // Stars
-  const baryX = W / 2 + ((0 - viewOffset + 3600) % 360) / range * W - W / 2
+  // (was an inlined duplicate of angleToX(0)'s formula — switched to calling
+  // it directly so the barycentre picks up the galactic-offset shift too,
+  // same as every planet/gallery/camera-cursor position on this strip.)
+  const baryX = angleToX(0)
 
   const drawStarGlow = (x: number, y: number, teff: number | null | undefined, r: number) => {
     drawGlow(ctx, x, y, teffToHex(teff), r * 3, r)
@@ -672,6 +773,7 @@ function drawSystem(ctx: CanvasRenderingContext2D, data: NonNullable<DefenderNav
   hitRegions.push({ x: camX, y: camY, r: 10, target: { type: 'star', id: 'cam' }, tip: { name: 'Camera', stat: `${cameraRadius.toFixed(2)} AU, ${cameraAngle.toFixed(1)}°` } })
 
   drawScaleRuler(ctx, maxAU)
+  drawAngleTicks(ctx)
 }
 
 // ── Surface mode drawing ──────────────────────────────────────────────────────
@@ -848,6 +950,8 @@ function drawSurface(ctx: CanvasRenderingContext2D, data: NonNullable<DefenderNa
   ctx.moveTo(lx, hy - 8); ctx.lineTo(lx, hy); ctx.lineTo(lx + 8, hy)
   ctx.moveTo(rx, hy - 8); ctx.lineTo(rx, hy); ctx.lineTo(rx - 8, hy)
   ctx.stroke()
+
+  drawAngleTicks(ctx)
 }
 
 // ── Cosmic mode drawing ───────────────────────────────────────────────────────
@@ -939,11 +1043,43 @@ function redraw(data: DefenderNavData): void {
   if (!ctx) return
 
   drawT = performance.now() / 1000
+  const dt = lastFrameT > 0 ? Math.min(0.1, Math.max(0, drawT - lastFrameT)) : 0
+  lastFrameT = drawT
 
   // Zoom smooth follow
   zoomCurrent += (zoomTarget.value - zoomCurrent) * 0.18
   if (zoomCurrent < 0.5) zoomCurrent = 0.5
   if (zoomCurrent > 8)   zoomCurrent = 8
+
+  // Drag-release momentum + slosh settle (skipped while actively dragging —
+  // onMouseMove tracks viewOffset 1:1 during that phase)
+  if (!isDragging && momentumActive) {
+    if (dt > 0) {
+      viewOffset   = (viewOffset + panVelocity * dt + 3600) % 360
+      panVelocity *= Math.exp(-PAN_FRICTION * dt)
+    }
+    if (Math.abs(panVelocity) < SLOSH_ENTRY_VELOCITY) {
+      // Hand off remaining velocity to a light underdamped spring for the
+      // final "weighted give" wobble instead of just stopping dead.
+      momentumActive = false
+      sloshActive    = true
+      settlePoint    = viewOffset
+      sloshOffset    = 0
+      sloshVelocity  = panVelocity
+      panVelocity    = 0
+    }
+  } else if (!isDragging && sloshActive) {
+    if (dt > 0) {
+      const accel   = -SLOSH_STIFFNESS * sloshOffset - SLOSH_DAMPING * sloshVelocity
+      sloshVelocity += accel * dt
+      sloshOffset   += sloshVelocity * dt
+      viewOffset     = (settlePoint + sloshOffset + 3600) % 360
+    }
+    if (Math.abs(sloshOffset) < SLOSH_SETTLE_EPS_POS && Math.abs(sloshVelocity) < SLOSH_SETTLE_EPS_VEL) {
+      sloshActive = false
+      autoFollowSuppressed = false
+    }
+  }
 
   // Auto-follow
   if (!autoFollowSuppressed) {
@@ -962,6 +1098,12 @@ function redraw(data: DefenderNavData): void {
 
   // Store system ref for use in onClick (planet surface transit routing)
   lastCurrentSystemRef = data.currentSystemRef
+
+  // Re-anchor the strip to a real compass in system mode only — see
+  // galacticLongitudeDeg() above for what this is and isn't claiming.
+  galacticOffsetDeg = (props.mode === 'system' && data.currentSystemRef)
+    ? galacticLongitudeDeg(data.currentSystemRef.ra, data.currentSystemRef.dec)
+    : 0
 
   ctx.save()
   ctx.scale(DPR, DPR)
@@ -1330,13 +1472,42 @@ function onMouseDown(e: MouseEvent) {
   isDragging    = true
   dragStartX    = e.clientX
   dragStartOffset = viewOffset
+
+  // A fresh grab always wins over any in-flight coast/wobble.
+  momentumActive = false
+  sloshActive    = false
+  velocityEMA    = 0
+  lastMoveT      = performance.now() / 1000
 }
 
 function onMouseMove(e: MouseEvent) {
   if (isDragging) {
     const dx = e.clientX - dragStartX
     const range = 360 / zoomCurrent
-    viewOffset = ((dragStartOffset - dx / W * range) + 3600) % 360
+    const newOffset = ((dragStartOffset - dx / W * range) + 3600) % 360
+
+    // Sample instantaneous angular velocity between move events and fold it
+    // into an EMA — smooths pointer jitter while still tracking a deliberate
+    // flick closely enough to feel responsive at release.
+    const now = performance.now() / 1000
+    const dtMove = now - lastMoveT
+    // Upper bound protects against using a stale pre-pause sample; it must
+    // stay generous because DefenderNav sits on top of pages doing continuous
+    // WebGL rendering, and mousemove delivery gets bursty under that main-
+    // thread load — gaps well past 200ms are routine, not exceptional
+    // (measured 185ms+ for nominal ~20ms waits under load), and a tight gate
+    // here was silently dropping most/all velocity samples, leaving
+    // velocityEMA near 0 by release and momentum never triggering.
+    if (dtMove > 0.001 && dtMove < 1.0) {
+      let delta = newOffset - viewOffset
+      if (delta > 180) delta -= 360
+      else if (delta < -180) delta += 360
+      const instVel = delta / dtMove
+      velocityEMA += (instVel - velocityEMA) * 0.5
+    }
+    lastMoveT = now
+
+    viewOffset = newOffset
     return
   }
 
@@ -1362,23 +1533,43 @@ function onMouseMove(e: MouseEvent) {
   }
 }
 
-function onMouseUp() {
-  if (isDragging) {
-    isDragging = false
+// Shared release path for both a clean mouseup and a drag that exits the
+// canvas bounds — either way the drag is over and should hand off the same
+// way: a real flick keeps coasting under momentum, anything smaller just
+// falls back to the plain suppress-then-resume-autofollow timer.
+function endDrag() {
+  isDragging = false
+
+  if (Math.abs(velocityEMA) >= MIN_FLICK_VELOCITY) {
+    panVelocity    = Math.max(-MAX_PAN_VELOCITY, Math.min(MAX_PAN_VELOCITY, velocityEMA))
+    momentumActive = true
+    sloshActive    = false
+    autoFollowSuppressed = true
+    clearTimeout(suppressTimer)
+    // No fixed timer here — auto-follow resumes once the momentum/slosh
+    // phases finish settling (see redraw()), not on a clock that might cut
+    // off mid-coast.
+  } else {
     autoFollowSuppressed = true
     clearTimeout(suppressTimer)
     suppressTimer = window.setTimeout(() => { autoFollowSuppressed = false }, 3000)
   }
 }
 
+function onMouseUp() {
+  if (isDragging) endDrag()
+}
+
 function onMouseLeave() {
-  isDragging = false
+  if (isDragging) endDrag()
   tooltip.visible = false
 }
 
 function fireZoomPortal(angle: number, dest: { label: string; route: string }) {
   autoFollowSuppressed = true
   clearTimeout(suppressTimer)
+  momentumActive = false
+  sloshActive    = false
   zoomPortalAnim = { startT: drawT, angle, dest }
 }
 

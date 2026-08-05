@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import type { ModuleType } from 'src/lib/solana/station-metadata'
+import type { ModuleType } from 'src/lib/station-modules'
 
 export interface InstalledModule {
   moduleType:  ModuleType

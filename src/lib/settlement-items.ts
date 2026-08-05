@@ -20,6 +20,9 @@ import { reactive, computed, watch } from 'vue'
 import type { Ref } from 'vue'
 import * as THREE from 'three'
 import { safeRead, safeWrite, hashStorageKey, encryptForStorage, decryptFromStorage } from './storage-cipher'
+import { tryLoadGLTF, ASSET_PATHS } from './asset-loader'
+import { disposeScene } from './three-utils'
+import { REMEDIATION_METHODS } from 'src/data/pfas-methods-library'
 
 // ── Core types ────────────────────────────────────────────────────────────────
 
@@ -143,6 +146,23 @@ export const ITEM_MESH_PRESETS: Record<string, ItemMeshPreset> = {
     acquiredBy: ['eco-ops', 'reward'],
     description: 'Marks a PFAS/PFOA decontamination project logged in your citizen-science work. Color reflects project status at the time it was attached (amber = planning/active, cyan = monitoring, green = complete) — set via the color override when the item is added, not live-updating.',
   },
+
+  // ── Technologies grouping (SPEC_AUTHORED_ART_LIBRARY.md §3–5) ──────────────
+  // One entry per REMEDIATION_METHODS[].key (pfas-methods-library.ts) — never
+  // hand-duplicated here, so the key can't drift out of sync with the source
+  // catalogue. Renders as the generic-orb placeholder (buildItemMesh()'s
+  // default case, since no case below matches these keys) until a real .glb
+  // exists at ASSET_PATHS.technology(key) — see enhanceTechnologyMesh().
+  ...Object.fromEntries(REMEDIATION_METHODS.map((m): [string, ItemMeshPreset] => [m.key, {
+    label: m.name,
+    defaultColor: m.media === 'water' ? 0x2288cc : m.media === 'soil' ? 0x996633 : 0x55aa88,
+    zoneDefault: m.media === 'soil' ? 'garden' : 'water-edge',
+    // Self-selected by the settlement owner to feature on their public page
+    // (see settlement_profiles.technology_keys) — not a certificate/effort
+    // gate like the reward-only presets above.
+    acquiredBy: ['eco-ops'],
+    description: m.mechanism,
+  }])),
 }
 
 // ── Zone world positions (relative to dome centre at ground level) ────────────
@@ -361,6 +381,60 @@ export function buildItemMesh(presetKey: string, colorHex: string, withLight = t
   }
 
   return group
+}
+
+/**
+ * After buildItemMesh() has already built and (typically) been added to the
+ * scene, try to swap its procedural placeholder children for an authored
+ * .glb — see ASSET_PATHS.settlementItem in asset-loader.ts for the exact
+ * drop-in path per preset key. No-op (resolves false, group left untouched)
+ * until that file actually exists, so this is safe to call unconditionally
+ * for every item.
+ *
+ * Keeps the group's own PointLight child (if buildItemMesh added one) since
+ * an authored model isn't expected to carry its own light — the point light
+ * still lands at y=2.0 regardless of the swapped-in model's proportions.
+ *
+ * Callers that registered this group's meshes for hover/raycasting (e.g.
+ * DomeInteriorPage.vue's itemMeshArr) need to re-run that registration when
+ * this resolves true, since the previously-registered procedural meshes are
+ * disposed and no longer in the scene graph.
+ */
+export async function enhanceItemMeshWithAsset(group: THREE.Group, presetKey: string): Promise<boolean> {
+  const gltf = await tryLoadGLTF(ASSET_PATHS.settlementItem(presetKey))
+  if (!gltf) return false
+
+  const keptLight = group.children.find(c => (c as THREE.PointLight).isPointLight)
+  for (const child of [...group.children]) {
+    group.remove(child)
+    if (child !== keptLight) disposeScene(child)
+  }
+
+  group.add(gltf.scene)
+  if (keptLight) group.add(keptLight)
+  return true
+}
+
+/**
+ * Same swap-in as enhanceItemMeshWithAsset(), but for the Technologies
+ * grouping specifically (SPEC_AUTHORED_ART_LIBRARY.md) — a distinct asset
+ * folder (ASSET_PATHS.technology, not settlementItem) since these represent
+ * real, named remediation equipment rather than abstract settlement decor
+ * and get their own art direction. methodKey matches REMEDIATION_METHODS[].key.
+ */
+export async function enhanceTechnologyMesh(group: THREE.Group, methodKey: string): Promise<boolean> {
+  const gltf = await tryLoadGLTF(ASSET_PATHS.technology(methodKey))
+  if (!gltf) return false
+
+  const keptLight = group.children.find(c => (c as THREE.PointLight).isPointLight)
+  for (const child of [...group.children]) {
+    group.remove(child)
+    if (child !== keptLight) disposeScene(child)
+  }
+
+  group.add(gltf.scene)
+  if (keptLight) group.add(keptLight)
+  return true
 }
 
 // ── Per-settlement colour ─────────────────────────────────────────────────────

@@ -3,6 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <title>Exotopia / SCD Hub — Boulder County Zine</title>
+<script>
+/* Two-version zine standard: append ?mode=print-eco to render the
+   ink-economizing variant of this same HTML file. See scripts/generate-zine-pdf.mjs. */
+(function () {
+  if (new URLSearchParams(location.search).get('mode') === 'print-eco') {
+    document.documentElement.classList.add('print-eco');
+  }
+})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
@@ -525,6 +534,22 @@ em { font-style: italic; }
 .p5-pfas-body { font-size: 9.5px; color: #b89060; line-height: 1.6; }
 .p5-pfas-body strong { color: var(--gold); font-weight: 500; }
 
+.p5-sub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px; }
+.p5-sub { padding: 7px 8px; background: rgba(0,0,0,0.28); border-radius: 3px; }
+.p5-sub.gold-top { border-top: 1.5px solid rgba(240,180,41,0.45); }
+.p5-sub.green-top { border-top: 1.5px solid rgba(58,224,122,0.45); }
+.p5-sub-label { font-family: 'Space Grotesk', sans-serif; font-size: 7px; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 3px; }
+.p5-sub-label.gold { color: var(--gold); }
+.p5-sub-label.green { color: var(--green); }
+
+.p5-danger-box { padding: 6px 8px; background: rgba(200,30,30,0.12); border: 1px solid rgba(255,80,80,0.3); border-radius: 3px; margin-bottom: 5px; }
+.p5-danger-label { font-family: 'Space Grotesk', sans-serif; font-size: 7px; letter-spacing: 0.1em; text-transform: uppercase; color: #ff7070; margin-bottom: 4px; }
+.p5-danger-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 10px; }
+
+.p5-mitigation-box { padding: 6px 8px; background: rgba(0,0,0,0.2); border-radius: 3px; }
+.p5-mitigation-label { font-family: 'Space Grotesk', sans-serif; font-size: 7px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(58,224,122,0.7); margin-bottom: 4px; }
+.p5-mitigation-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 10px; }
+
 /* ── Page 6 — The Science ────────────────────────────────────── */
 #p6 {
   padding: 0.42in 0.45in 0.4in;
@@ -593,17 +618,44 @@ em { font-style: italic; }
 .p6-open-box {
   margin-top: auto;
   display: flex;
-  gap: 14px;
-  align-items: center;
-  padding: 10px 13px;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 13px 10px;
   background: #fff;
-  border: 1px solid #ddd;
+  border: 1px dashed #b0b0b0;
   border-radius: 6px;
+  position: relative;
 }
 
+.p6-roadmap-badge {
+  position: absolute;
+  top: -8px;
+  left: 12px;
+  background: var(--paper);
+  border: 1px dashed #999;
+  border-radius: 10px;
+  padding: 1.5px 7px;
+  font-family: var(--display);
+  font-size: 6.5px;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: #888;
+}
+
+.p6-open-row { display: flex; gap: 14px; align-items: center; }
 .p6-open-icon { font-size: 22px; flex-shrink: 0; }
 .p6-open-text { font-size: 9.5px; color: #555; line-height: 1.6; }
 .p6-open-text strong { color: var(--ink); }
+
+.p6-live-line {
+  font-size: 8.5px;
+  color: #2a7a4a;
+  line-height: 1.55;
+  padding-top: 7px;
+  border-top: 1px solid #eee;
+}
+.p6-live-line strong { color: #1a5a34; }
 
 /* ── Page 7 — Get Involved ───────────────────────────────────── */
 #p7 {
@@ -989,13 +1041,13 @@ em { font-style: italic; }
       <div class="feat f1">
         <div class="feat-icon">🌱</div>
         <div class="feat-title">Eco:Certificates</div>
-        <div class="feat-body">Verifiable digital records of real field work. Each certificate is an open badge anchored on Algorand. No wallet required to earn one.</div>
+        <div class="feat-body">Verifiable digital records of real field work, issued and checkable today — no wallet required. <em style="opacity:0.65;font-style:italic;">On-chain anchoring (Algorand) is roadmap, not yet live.</em></div>
       </div>
 
       <div class="feat f2">
         <div class="feat-icon">🏆</div>
         <div class="feat-title">Bounty System</div>
-        <div class="feat-body">Specific monitoring tasks, posted publicly, claimed by community members. Payment via M-Pesa, bank transfer, or Algorand. Groups can post their own bounties.</div>
+        <div class="feat-body">Specific monitoring tasks, posted publicly, claimed by community members. Payment is arranged manually today. <em style="opacity:0.65;font-style:italic;">Planned: pluggable, third-party-maintained connectors — M-Pesa, Algorand, Celo, Hbar, and others — so groups run their own payment infra on terms that fit their country and context.</em></div>
       </div>
 
       <div class="feat f3">
@@ -1073,23 +1125,23 @@ em { font-style: italic; }
     <div class="p5-pfas-box">
       <div class="p5-pfas-label" style="margin-bottom:6px;">⚠ PFAS / PFOS — Two active fronts in Boulder County</div>
 
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px;">
+      <div class="p5-sub-grid">
 
-        <div style="padding:7px 8px;background:rgba(0,0,0,0.28);border-radius:3px;border-top:1.5px solid rgba(240,180,41,0.45);">
-          <div style="font-family:'Space Grotesk',sans-serif;font-size:7px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);margin-bottom:3px;">Rocky Flats Legacy Site</div>
+        <div class="p5-sub gold-top">
+          <div class="p5-sub-label gold">Rocky Flats Legacy Site</div>
           <div class="p5-pfas-body" style="font-size:8px;">Groundwater contamination persists for Louisville, Superior &amp; N. Jefferson County. <strong>EPA Method 533</strong> chain-of-custody guides and ECHO submission pathways are in the bounty system — free to use.</div>
         </div>
 
-        <div style="padding:7px 8px;background:rgba(0,0,0,0.28);border-radius:3px;border-top:1.5px solid rgba(58,224,122,0.45);">
-          <div style="font-family:'Space Grotesk',sans-serif;font-size:7px;letter-spacing:0.1em;text-transform:uppercase;color:var(--green);margin-bottom:3px;">Nederland · Active collaboration</div>
+        <div class="p5-sub green-top">
+          <div class="p5-sub-label green">Nederland · Active collaboration</div>
           <div class="p5-pfas-body" style="font-size:8px;">Working with <strong>Cat</strong> (Town of Nederland sustainability manager) on zero waste education + a PFAS testing regime for the waste transfer site's <strong>Greener Mountain EarthFlow</strong> 20-yd in-vessel composter.</div>
         </div>
 
       </div>
 
-      <div style="padding:6px 8px;background:rgba(200,30,30,0.12);border:1px solid rgba(255,80,80,0.3);border-radius:3px;margin-bottom:5px;">
-        <div style="font-family:'Space Grotesk',sans-serif;font-size:7px;letter-spacing:0.1em;text-transform:uppercase;color:#ff7070;margin-bottom:4px;">⚠ Garden contamination pathway — direct human exposure risk</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px 10px;">
+      <div class="p5-danger-box">
+        <div class="p5-danger-label">⚠ Garden contamination pathway — direct human exposure risk</div>
+        <div class="p5-danger-grid">
           <div class="p5-pfas-body" style="font-size:7.8px;">• PFAS moves from amended soil into plant tissue. <strong>Leafy greens accumulate highest:</strong> lettuce, spinach, kale, chard. Root vegetables (carrots, beets) and fruiting crops (tomatoes, squash) take up less — but still measurable.</div>
           <div class="p5-pfas-body" style="font-size:7.8px;">• Short-chain PFAS (PFBS, PFHxA) are most mobile in soil and most readily taken up by roots. Long-chain PFOS/PFOA bind to soil organic matter — but still transfer. <strong>No chain length is safe to ignore in a food garden.</strong></div>
           <div class="p5-pfas-body" style="font-size:7.8px;">• In-vessel systems run at 55–70°C. <strong>PFAS are thermally stable — composting does not destroy them.</strong> It concentrates them: less leaching during processing means more retained in finished product.</div>
@@ -1097,12 +1149,12 @@ em { font-style: italic; }
         </div>
       </div>
 
-      <div style="padding:6px 8px;background:rgba(0,0,0,0.2);border-radius:3px;">
-        <div style="font-family:'Space Grotesk',sans-serif;font-size:7px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(58,224,122,0.7);margin-bottom:4px;">Testing + mitigation steps for Nederland</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px 10px;">
+      <div class="p5-mitigation-box">
+        <div class="p5-mitigation-label">Testing + mitigation steps for Nederland</div>
+        <div class="p5-mitigation-grid">
           <div class="p5-pfas-body" style="font-size:7.8px;"><strong>1. Test finished compost</strong> before any distribution to food gardens — <strong>ASTM D8421</strong> solid matrix or Maine DEP PFAS-40 panel (Eurofins, ALS, TestAmerica all offer this). Bear Creek → South Boulder Creek watershed downstream.</div>
           <div class="p5-pfas-body" style="font-size:7.8px;"><strong>2. Establish hold threshold:</strong> Maine's agricultural trigger is 2.5 ppb total PFAS. If exceeded, hold compost for non-food uses (roads, revegetation, ornamentals) only until source streams are cleaned up.</div>
-          <div class="p5-pfas-body" style="font-size:7.8px;"><strong>3. Audit inputs upstream:</strong> identify which restaurants, food vendors, and retailers are providing PFAS-heavy packaging. Work with them on HB 23-1034 compliance. "BPI-certified compostable" is not a PFAS-free guarantee.</div>
+          <div class="p5-pfas-body" style="font-size:7.8px;"><strong>3. Upstream Producer Data Mapping:</strong> Trace food packaging and compostable supply chains back to regional distributors and manufacturers. Leverage Colorado's EPR framework (HB 22-1355) and PFAS restrictions (HB 23-1034) to track non-compliant feedstocks before they hit local digesters.</div>
           <div class="p5-pfas-body" style="font-size:7.8px;"><strong>4. Interim mitigation</strong> if contamination found: activated carbon soil amendment sorbs PFAS before root uptake; avoid growing leafy greens in affected plots; increase soil organic matter to compete with PFAS for root absorption sites.</div>
         </div>
       </div>
@@ -1149,9 +1201,15 @@ em { font-style: italic; }
     </div>
 
     <div class="p6-open-box">
-      <div class="p6-open-icon">🔐</div>
-      <div class="p6-open-text">
-        Field work certificates use <strong>PLONK/halo2 zero-knowledge proofs</strong> — the same cryptographic infrastructure used in Ethereum's rollup ecosystem. No trusted setup. Certificates are verifiable by anyone with the public inputs, without revealing the field worker's identity. E8 root vectors serve as tamper-resistant identity slots.
+      <span class="p6-roadmap-badge">◦ Roadmap — not yet built</span>
+      <div class="p6-open-row">
+        <div class="p6-open-icon">🔐</div>
+        <div class="p6-open-text">
+          Field work certificates are <strong>planned</strong> to use <strong>PLONK/halo2 zero-knowledge proofs</strong> — the same cryptographic infrastructure used in Ethereum's rollup ecosystem. The goal: certificates verifiable by anyone with the public inputs, without revealing the field worker's identity, with E8 root vectors as tamper-resistant identity slots. The spec is written; the circuit isn't built yet.
+        </div>
+      </div>
+      <div class="p6-live-line">
+        <strong>Live today:</strong> certificates are issued and verifiable in our database now — no wallet or cryptography knowledge required to earn one.
       </div>
     </div>
 

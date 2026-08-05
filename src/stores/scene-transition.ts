@@ -26,7 +26,10 @@ export const useSceneTransitionStore = defineStore('scene-transition', () => {
     mode.value    = m
     bearing.value = b
     phase.value   = 'departing'
-    const dur = m === 'lightning' ? 900 : m === 'inversion' ? 550 : 380
+    // 'lightning' duration must track SceneTransition.vue's drawLightningFrame
+    // (t = elapsed / 1600) and its runLoop cutoff (elapsed < 1610) — kept in
+    // sync manually here, same as the existing iris/inversion pairs below.
+    const dur = m === 'lightning' ? 1600 : m === 'inversion' ? 550 : 380
     return new Promise(resolve => {
       setTimeout(() => { phase.value = 'black'; resolve() }, dur)
     })

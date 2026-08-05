@@ -81,23 +81,6 @@
           </div>
         </div>
 
-        <q-btn
-          v-if="wallet.connected"
-          flat dense rounded color="positive"
-          icon="account_balance_wallet"
-          :label="wallet.shortAddress || ''"
-          size="xs"
-          @click="navTo('/mint')"
-        />
-        <q-btn
-          v-else
-          flat dense rounded color="blue-grey-5"
-          icon="account_balance_wallet"
-          label=""
-          size="xs"
-          @click="connectDialog = true"
-        />
-        <span v-if="wallet.connected" class="bar-wallet-dot" />
         <button
           class="bar-mob-burger"
           @click="mobileMenuOpen = !mobileMenuOpen"
@@ -730,6 +713,13 @@
                 <span class="mob-nav-sub">Citizen science · Method proposals</span>
               </span>
             </button>
+            <button class="mob-nav-item" @click="navTo('/ecology-citizen-science')">
+              <span class="mob-nav-icon">🌲</span>
+              <span class="mob-nav-text">
+                <span class="mob-nav-label">Ecology &amp; Biodiversity</span>
+                <span class="mob-nav-sub">Site research · Field logging</span>
+              </span>
+            </button>
             <button class="mob-nav-item" @click="navTo('/knowledge-keepers')">
               <span class="mob-nav-icon">🌾</span>
               <span class="mob-nav-text">
@@ -752,24 +742,6 @@
               </span>
             </button>
           </nav>
-          <div class="mob-menu-footer">
-            <q-btn
-              v-if="wallet.connected"
-              flat rounded color="positive"
-              icon="account_balance_wallet"
-              :label="wallet.shortAddress || ''"
-              class="full-width"
-              @click="navTo('/mint')"
-            />
-            <q-btn
-              v-else
-              flat rounded color="blue-grey-5"
-              icon="account_balance_wallet"
-              label="Connect wallet"
-              class="full-width"
-              @click="connectDialog = true; mobileMenuOpen = false"
-            />
-          </div>
         </div>
       </div>
     </Transition>
@@ -796,26 +768,6 @@
     <!-- ── Persistent contact/report + legal links — see RISK_REDUCTION_RECOMMENDATIONS.md §7 -->
     <SiteFooter />
 
-    <!-- ── Connect wallet dialog ─────────────────────────────────────────── -->
-    <q-dialog v-model="connectDialog">
-      <q-card class="glass-card" style="min-width:300px">
-        <q-card-section>
-          <div class="text-h6 text-blue-grey-2">Connect Via Chain</div>
-        </q-card-section>
-        <q-card-section class="q-gutter-sm">
-          <q-btn outline color="cyan" label="Phantom (Solana / EVM)"
-            icon="mdi-currency-eth" class="full-width"
-            @click="connectDialog = false" />
-          <q-btn outline color="blue-4" label="Pera (Algorand)"
-            icon="mdi-wallet" class="full-width"
-            @click="connectDialog = false" />
-        </q-card-section>
-        <q-card-actions align="right">
-          <q-btn flat label="Cancel" color="blue-grey-4" v-close-popup />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-
   </q-layout>
 </template>
 
@@ -823,7 +775,6 @@
 import { ref, reactive, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import RecordWidget            from 'src/components/RecordWidget.vue'
-import { useWalletStore }      from 'src/stores/wallet'
 import { useGalaxyStore }      from 'src/stores/galaxy'
 import { usePortalStore }      from 'src/stores/portal'
 import WormholePortal          from 'src/components/WormholePortal.vue'
@@ -838,7 +789,6 @@ import { recordVisit }        from 'src/composables/useRecentLocations'
 
 const router      = useRouter()
 const route       = useRoute()
-const wallet      = useWalletStore()
 const galaxyStore = useGalaxyStore()
 const portalStore = usePortalStore()
 
@@ -1283,11 +1233,10 @@ const ITEM_PANELS: Record<string, ItemPanel> = {
     actions: [{ label: 'View coverage', route: '/data-coverage', primary: true }],
   },
   'Start a Settlement': {
-    style: 'deed', headline: 'Mint a free exolocation deed',
-    subline: '40 virtual acres on a confirmed exoplanet — permanently on-chain.',
+    style: 'deed', headline: 'Claim a free exolocation deed',
+    subline: '40 virtual acres on a confirmed exoplanet — pin it to IPFS to keep it durable.',
     field:   { placeholder: 'Planet name or coordinates…', key: 'mintPlanet' },
-    actions: [{ label: 'Mint free deed →', route: '/mint', primary: true }],
-    sessionKey: 'exo_wallet', sessionLabel: 'Wallet',
+    actions: [{ label: 'Claim free deed →', route: '/mint', primary: true }],
   },
   'Design Gallery': {
     style: 'gallery', headline: 'Collector card gallery',
@@ -1350,17 +1299,6 @@ const ITEM_PANELS: Record<string, ItemPanel> = {
     field:   { placeholder: 'Search terms…', key: 'glossarySearch' },
     actions: [{ label: 'Open glossary', route: '/glossary', primary: true }],
   },
-  'Networks & Chains': {
-    style: 'chain', headline: 'Active blockchain networks',
-    subline: 'Polygon Amoy, Celo Alfajores, Algorand — status and NFT roles.',
-    actions: [{ label: 'View chains', route: '/chains', primary: true }],
-    sessionKey: 'exo_wallet', sessionLabel: 'Connected wallet',
-  },
-  'Minting Guide': {
-    style: 'docs', headline: 'Step-by-step minting guide',
-    subline: 'Wallet · IPFS metadata · safeMint · Polygonscan confirmation.',
-    actions: [{ label: 'Read guide', route: '/docs#minting', primary: true }],
-  },
   'Data Sources': {
     style: 'data', headline: 'Catalog sources & sky coverage',
     subline: 'NASA archive, XMM-Newton, HYG stars — scope and gaps.',
@@ -1383,7 +1321,6 @@ const PARTICIPATE_PANEL: Record<string, ParticipatePanelData> = {
   'Start a Settlement': {
     vb: '12 12 54 28', filter: 'sepia(0.22) saturate(1.7) brightness(1.08)',
     caption: '40 ACRES · START A SETTLEMENT', cta: 'Begin settlement →', route: '/mint',
-    sessionKey: 'exo_wallet',
   },
   'Design Gallery': {
     vb: '30 4 36 34', filter: 'saturate(1.9) hue-rotate(256deg) brightness(1.1)',
@@ -1458,7 +1395,6 @@ const session = reactive<Record<string, string | null>>({
   exo_quiz_score:        null,
   exo_onboard_step:      null,
   exo_last_gallery_card: null,
-  exo_wallet:            null,
 })
 if (typeof window !== 'undefined') {
   Object.keys(session).forEach(k => { session[k] = localStorage.getItem(k) })
@@ -1466,14 +1402,12 @@ if (typeof window !== 'undefined') {
 
 function sessionValue(key?: string): string | null {
   if (!key) return null
-  if (key === 'exo_wallet') return wallet.shortAddress || session.exo_wallet
   return session[key] ?? null
 }
 
 // ── Open/close ─────────────────────────────────────────────────────────────────
 
 const openSection    = ref<string | null>(null)
-const connectDialog  = ref(false)
 const mobileMenuOpen = ref(false)
 
 function toggleSection(id: string) {

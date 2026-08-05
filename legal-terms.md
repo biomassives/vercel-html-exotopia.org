@@ -6,8 +6,11 @@ accurate facts about your actual entity and operations, and it should be
 reviewed by a lawyer licensed in your country of incorporation before you rely
 on it — and ideally spot-checked by local counsel (or one multi-jurisdiction
 firm) for your highest-risk markets before you actively solicit users there.
-See the companion `JURISDICTIONAL_PLANNING_NOTES.md` for why each region below
-needs attention.
+See `compliance/INDEX.md` and `compliance/RESEARCH_PROMPT.md` for the
+jurisdiction-by-jurisdiction legal-research plan behind why each region below
+needs attention — several `[BRACKETED]` items in this document (arbitration,
+indemnification, sweepstakes law) don't yet have a dedicated writeup and are
+flagged inline instead.
 
 *Last updated: [DATE]*
 
@@ -37,10 +40,10 @@ received.)*
 These Terms of Service ("**Terms**") govern your access to and use of
 Exotopia's website, apps, and related services (collectively, the
 "**Service**"), including cosmic navigation and settlement visualization,
-minting virtual-property/NFT records, eco-ops or citizen-science
+settlement records and optional IPFS pinning, eco-ops or citizen-science
 participation, blog/community features, reward programs, and any payment
-flows routed through pon.ink. By creating an account, connecting a wallet,
-or otherwise using the Service, you agree to these Terms.
+flows routed through pon.ink. By creating an account or otherwise using the
+Service, you agree to these Terms.
 
 **Payments and third-party services.** Some features (e.g. minting fees,
 event tickets, or other purchases) may be processed through pon.ink using
@@ -54,8 +57,7 @@ directly by the processor.
 **Open-source notice.** The Service's software is developed under the
 **GNU GPL v3** license; source is available at **[REPOSITORY URL]**. This
 license governs the *software*, and is separate from — and does not grant
-any rights to — the content, virtual-property records, or NFT items
-described in § 4 below.
+any rights to — the content or settlement records described in § 4 below.
 
 If you are using the Service on behalf of an organization, you represent that
 you have authority to bind that organization, and "you" refers to both you
@@ -71,49 +73,37 @@ obtained appropriate consent (see the Privacy Policy for details on
 citizen-science program participation by minors).
 
 You represent that your use of the Service complies with all laws applicable
-to you, including any local restrictions on cryptocurrency, virtual assets,
-or NFTs in your country of residence. **It is your responsibility to know
-whether participating is lawful where you live** — we do not screen users by
-jurisdiction, and some countries restrict or prohibit resident participation
-in crypto-asset transactions.
+to you.
 
-## 3. Accounts and wallets
+## 3. Accounts
 
-- You are responsible for safeguarding any wallet, private key, seed phrase,
-  or account credential used with the Service. **We never ask for your
-  private keys or seed phrase, and we cannot recover them if lost.**
-- You are responsible for all activity that occurs through your connected
-  wallet or account.
+- You are responsible for safeguarding your account credentials.
+- You are responsible for all activity that occurs through your account.
 - We may suspend or terminate access for violation of these Terms, suspected
   fraud, or where required by law.
 
-## 4. Virtual property, minting, and NFTs — nature of what you're getting
-
-**This is the section most likely to determine your regulatory exposure —
-review the planning notes before finalizing it.**
+## 4. Settlement records and IPFS pinning — nature of what you're getting
 
 - Items referred to as "settlements," "deeds," "stations," or similar on the
-  Service are **digital collectibles / records of a symbolic virtual-property
-  claim**, recorded on one of several supported networks — currently
-  **Solana** (including compressed NFTs), **Algorand**, or an
-  **EVM-compatible network such as Polygon or Celo** — depending on the item
-  and mint flow you use. They do **not** confer any real-world property
-  right, title, or legal claim to any actual celestial body, land, or
-  physical asset.
+  Service are **locally-computed address records**, optionally made durable
+  by pinning their content to IPFS (see § "Support the network" copy on the
+  Service itself). They do **not** confer any real-world property right,
+  title, or legal claim to any actual celestial body, land, or physical
+  asset.
+- **There is no collision-proof claim registry.** Unlike a blockchain-backed
+  record, nothing server-side stops two different users from independently
+  computing and using the same address. Durability comes from someone
+  keeping the content pinned, not from exclusivity of ownership.
 - **These items are not an investment.** We make no representation that any
   item will retain or increase in value, and nothing on the Service should be
   construed as an offer or solicitation to buy a security or financial
   instrument. You should not acquire any item with an expectation of profit
   from the efforts of others.
-- Minting/transaction fees, where applicable, cover network ("gas") costs and
-  are non-refundable once a transaction is confirmed on-chain.
-- **Blockchain transactions are irreversible.** We cannot reverse, refund, or
-  recover a transaction once broadcast, including transactions sent to an
-  incorrect address.
-- Because blockchain records are immutable, **do not submit personal
-  information as part of any on-chain metadata** beyond what the Service
-  itself requires; see the Privacy Policy for what we store on-chain versus
-  off-chain.
+- If you use a third-party IPFS pinning service through the Service, that
+  service's own terms also apply, and its availability and pricing are
+  outside our control. If content is not kept pinned by you or a pinning
+  service, it may become unavailable — we do not guarantee permanent
+  availability of pinned content.
 
 ## 5. Eco-ops / citizen-science participation
 
@@ -154,16 +144,24 @@ We may moderate, remove, or restrict content or accounts at our discretion,
 particularly where required to comply with local law (e.g. content-takedown
 or lawful-access requests from a data protection or consumer authority).
 
+**Design commitment:** Exotopia is built to minimize surfaces where one member
+could locate, track, or harass another. We do not build features that reveal
+another member's live location or movement to you, and social or coordination
+features are opt-in and mutual-consent based rather than proactively
+monitored — see Community Guidelines § 3 and § 4, and
+`RISK_REDUCTION_RECOMMENDATIONS.md` § 4 for the reasoning behind this.
+
 ## 7. Rewards program
 
 Any point, badge, or reward system offered through the Service:
 
 - Has no cash value, cannot be purchased, and is not redeemable, exchangeable,
-  or convertible for currency, cryptocurrency, or M-Pesa/Stripe balance under
-  any circumstance.
+  or convertible for currency or M-Pesa/Stripe balance under any circumstance.
 - May be modified, paused, or discontinued at our discretion.
 - Is void where prohibited by local law (e.g. jurisdictions with restrictions
-  on promotional sweepstakes/lottery-like mechanics — see planning notes).
+  on promotional sweepstakes/lottery-like mechanics — **[CONFIRM: no
+  jurisdiction on our active list treats the rewards program as a regulated
+  sweepstakes/lottery; not yet researched]**).
 
 ## 8. Fundraising, donations, and tax-deductibility
 
@@ -179,14 +177,13 @@ donor-privacy preference you tell us about).
   keep their own donation records; for any single contribution of $250 or
   more we will provide a written acknowledgment as required by IRC § 170(f).
 - **Quid pro quo contributions.** If you receive something of value in
-  exchange for a payment — for example, a minted collectible, event
-  admission, or merchandise — only the portion of your payment that exceeds
-  the fair market value of what you received is tax-deductible, and where
-  required by IRC § 6115 we will disclose that fair market value to you at
-  the time of the transaction. **Unless we specifically label a transaction
-  as a donation and disclose the associated goods-or-services value, minting
-  or purchase transactions on the Service are not represented as tax-deductible
-  contributions** — see § 4 on the nature of minted items.
+  exchange for a payment — for example, event admission or merchandise —
+  only the portion of your payment that exceeds the fair market value of
+  what you received is tax-deductible, and where required by IRC § 6115 we
+  will disclose that fair market value to you at the time of the
+  transaction. **Unless we specifically label a transaction as a donation
+  and disclose the associated goods-or-services value, purchase transactions
+  on the Service are not represented as tax-deductible contributions.**
 - Contributions are non-refundable except where required by law or where we
   determine, in our discretion, that a refund is appropriate (e.g. a
   processing error).
@@ -212,8 +209,8 @@ To the maximum extent permitted by law, SCD Hub's aggregate liability
 arising out of or relating to the Service will not exceed **[the greater of
 USD $100 / the amount you paid us in the preceding 12 months]**. We are not
 liable for indirect, incidental, consequential, or punitive damages, or for
-loss of data, cryptocurrency, or digital assets due to blockchain network
-failure, third-party wallet compromise, or user error.
+loss of data or settlement content due to unavailability of a pinning
+service, content no longer being pinned by any party, or user error.
 
 **Volunteers.** To the fullest extent provided by the federal Volunteer
 Protection Act of 1997 (42 U.S.C. § 14501 et seq.) and Colorado's
@@ -234,14 +231,17 @@ volunteers acting within the scope of their duties, harmless from claims
 arising from your violation of these Terms or misuse of the Service, to the
 extent permitted by applicable law (note: some consumer-protection regimes
 restrict one-sided indemnification clauses against individual consumers —
-see planning notes).
+**[CONFIRM: whether this clause needs a consumer-facing carve-out for
+EU/UK/other regimes on our active list before this ships to users there; not
+yet researched]**).
 
 ## 12. Dispute resolution, governing law, and venue
 
 These Terms are governed by the laws of the **State of Colorado, USA**,
-without regard to conflict-of-law principles. [Optional: arbitration clause
-— see planning notes on why this is risky/unenforceable in several of your
-target markets.]
+without regard to conflict-of-law principles. **[Optional: an arbitration
+clause could go here, but it's risky/unenforceable against consumers in
+several of the jurisdictions in § 14 (notably EU/UK) — omitted rather than
+included-and-wrong; add only after jurisdiction-specific confirmation.]**
 
 **Nothing in this section limits any right you have to bring a claim before a
 court or regulator in your home country where local consumer-protection or
@@ -344,3 +344,5 @@ answer "what did I agree to on date X" — see § 13.
 | [DATE] | Initial draft template. |
 | 2026-07-22 | Published the Community Guidelines document referenced in § 6, and this changelog. The product itself was also changed the same day to remove a secondary-marketplace/resale feature that existed in the app but was never described in these Terms — see `RISK_REDUCTION_RECOMMENDATIONS.md` §1 and `blog-risk-reduction-pass.md`. |
 | 2026-07-23 | Identified SCD Hub (Sustainable Community Development Hub) as the operating entity — a Colorado nonprofit corporation with a confirmed IRS 501(c)(3) determination — and Exotopia as its project, replacing the prior `[LEGAL ENTITY NAME]` placeholder throughout. Added § 8 (Fundraising, donations, and tax-deductibility, including IRC § 6115 quid-pro-quo disclosure for minted items received in exchange for a contribution), a Volunteer Protection Act / Colorado charitable-immunity clause in § 10, director/officer/volunteer indemnification in § 11, Colorado as the governing-law jurisdiction in § 12, a photo/media-release clause for in-person events in § 5, and a "United States" regional notice in § 14 (previously missing despite being the home jurisdiction). |
+| 2026-08-01 | Removed blockchain/NFT minting from the settlement journey — replaced with optional IPFS pinning (no wallet, no chain, no gas fee, no collision-proof claim registry by design). Rewrote § 3 (was "Accounts and wallets") and § 4 (was "Virtual property, minting, and NFTs") accordingly, dropped the crypto-asset jurisdiction disclaimer from § 2 (nothing crypto-related left to restrict), removed "cryptocurrency" from the non-redeemable rewards list in § 7, removed the "minted collectible" quid-pro-quo example in § 8, and replaced the blockchain/wallet-compromise liability carve-out in § 10 with one for pinning-service/content unavailability. |
+| 2026-08-04 | Added a "Design commitment" paragraph to § 6 stating we do not build features that reveal another member's live location or movement, and that social/coordination features are opt-in and mutual-consent based. Companion changes: a new Community Guidelines § 3 ("Location, presence, and finding other members"), a new `SPEC_DEFENDERNAV.md` § 1.6 ("No individual user tracking") making the constraint explicit for the map component itself, and a note in `legal-privacy.md` § 2 distinguishing submitted citizen-science site geolocation from any tracking of a member's own position. |

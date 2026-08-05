@@ -80,14 +80,29 @@
           </div>
 
           <div :id="'new-user'" class="dp-sub">
-            <h2 class="dp-h2">New user quickstart</h2>
+            <h2 class="dp-h2">Run your own instance — three steps, no blockchain</h2>
+            <p class="dp-p">Exotopia is a client-side SPA with an optional Supabase backend. Standing up your own copy — on a home network or as a public deployment — takes three services, none of them locked to a vendor:</p>
             <ol class="dp-ol">
-              <li>Open <router-link to="/onboard" class="dp-link">Get Started</router-link> and follow the 5-step wizard</li>
-              <li>Choose a blockchain: <strong>Polygon</strong> (most wallets) or <strong>Celo</strong> (mobile-first, East Africa)</li>
-              <li>Create or connect a wallet — browser wallet option requires no extension</li>
-              <li>Get free testnet tokens from the faucet (30 seconds)</li>
-              <li>Browse the <router-link to="/galaxy" class="dp-link">galaxy view</router-link>, find a planet, click it, and claim 40 acres</li>
+              <li><strong>Supabase</strong> — create a free project, then run the migrations already in <code class="dp-code">supabase/migrations/</code> against it to get the schema (rewards, citizen-science, community nodes, and more).</li>
+              <li><strong>Git</strong> — fork or clone the repo to whichever host you prefer: <strong>GitLab</strong>, <strong>Gitea</strong>, or <strong>GitHub</strong> all work, nothing here depends on GitHub specifically.</li>
+              <li><strong>Vercel</strong> — connect the repo, set <code class="dp-code">VITE_SUPABASE_URL</code> and <code class="dp-code">VITE_SUPABASE_ANON</code> from your Supabase project's API settings (see <code class="dp-code">.env.example</code>), and deploy. Build config lives in <code class="dp-code">vercel.json</code> — nothing to configure by hand.</li>
             </ol>
+            <p class="dp-p">For local development instead of a deploy, the whole app runs with no environment variables at all:</p>
+            <div class="dp-code-block">npm install
+npx quasar dev          # dev server at http://localhost:9000
+npx quasar build        # production build to dist/spa/</div>
+            <p class="dp-p">Once it's running, browse the <router-link to="/galaxy" class="dp-link">galaxy view</router-link>, find a planet, click it, and claim 40 acres.</p>
+          </div>
+
+          <div :id="'refinements'" class="dp-sub">
+            <h2 class="dp-h2">Refinements — scaling past the baseline stack</h2>
+            <p class="dp-p">The three-step baseline above is enough to run a full instance. These are optional layers for scaling it up, hardening it, or dropping the SaaS dependencies entirely for a fully autonomous stand-up:</p>
+            <ul class="dp-ul">
+              <li><strong>Cloudflare</strong> — CDN/edge caching, DNS, and additional security headers in front of the deploy. <code class="dp-code">vercel.json</code> already ships a baseline CSP and cache-control policy; Cloudflare sits in front of that, it doesn't replace it.</li>
+              <li><strong>Redis</strong> — caching, rate limiting, and queues for an instance that's outgrown the default Supabase-only setup, e.g. a node serving a large federated citizen-science community.</li>
+              <li><strong>Appwrite (standalone)</strong> — a self-contained alternative to the Supabase + Vercel pairing, for a fully offline-capable home-network deployment with no external SaaS dependency at all.</li>
+            </ul>
+            <p class="dp-p">The pitch behind all of this — running an independent instance that still shares data and collaborative improvements back to the wider visualization / citizen-science / humanitarian-engineering / biodiversity work — is written up in <code class="dp-code">SPEC_SELF_HOSTED_NETWORK.md</code> and the accompanying blog post.</p>
           </div>
 
           <div :id="'free-platform'" class="dp-sub">
@@ -270,43 +285,6 @@
           </div>
         </section>
 
-        <section :id="'chains-section'" class="dp-section">
-          <h1 class="dp-h1">Networks</h1>
-          <p class="dp-p">Two EVM testnet chains are active. Mainnet addresses are TBD. Standard Resonance Split for fee-carrying mints: <strong>99 / 0.75 / 0.25</strong> on all chains; settlement deeds 100 / 0 / 0.</p>
-
-          <div :id="'polygon'" class="dp-sub">
-            <h2 class="dp-h2">Polygon Amoy Testnet</h2>
-            <table class="dp-table">
-              <tbody>
-                <tr><td>Chain ID</td><td>80002 (0x13882)</td></tr>
-                <tr><td>RPC</td><td>https://rpc-amoy.polygon.technology</td></tr>
-                <tr><td>Explorer</td><td>https://amoy.polygonscan.com</td></tr>
-                <tr><td>Faucet</td><td>https://faucet.polygon.technology</td></tr>
-                <tr><td>NFT types</td><td>$SUNLIGHT · Water Quality Certs · Exolocation Deeds</td></tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div :id="'celo'" class="dp-sub">
-            <h2 class="dp-h2">Celo Alfajores Testnet</h2>
-            <p class="dp-p">Mobile-first, EVM-compatible. Strong adoption in East Africa — cUSD stablecoin maps directly to M-Pesa payment flows. Recommended for community workers using Valora mobile wallet.</p>
-            <table class="dp-table">
-              <tbody>
-                <tr><td>Chain ID</td><td>44787 (0xAEF3)</td></tr>
-                <tr><td>RPC</td><td>https://alfajores-forno.celo-testnet.org</td></tr>
-                <tr><td>Explorer</td><td>https://alfajores.celoscan.io</td></tr>
-                <tr><td>Faucet</td><td>https://faucet.celo.org/alfajores</td></tr>
-                <tr><td>NFT types</td><td>Community Badges · Eco-ops Tokens</td></tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div :id="'algorand'" class="dp-sub">
-            <h2 class="dp-h2">Algorand (planned)</h2>
-            <p class="dp-p">ARC-3 / ARC-69 dual standard for Exolocation Deeds. ARC-3 stores full JSON metadata on IPFS; ARC-69 stores the tamper-evident fingerprint on-chain (≤1 KB). Integration pending.</p>
-          </div>
-        </section>
-
         <section :id="'data-section'" class="dp-section">
           <h1 class="dp-h1">Data Sources</h1>
           <router-link to="/data-coverage" class="dp-link dp-link--btn">Full data coverage page →</router-link>
@@ -454,22 +432,6 @@ Stage 3 — STAR SYSTEM &amp; PLANET GENERATION
             <p class="dp-p">Neither DRK-E nor QNT-P are purchasable or deducted from creator payouts. They are exploration and engagement signals only.</p>
           </div>
 
-          <div :id="'security-model'" class="dp-sub">
-            <h2 class="dp-h2">Browser wallet security model</h2>
-            <p class="dp-p">When using the built-in browser wallet (no extension required):</p>
-            <ul class="dp-ul">
-              <li>Key generation uses <code class="dp-code">crypto.getRandomValues()</code> — never Math.random()</li>
-              <li>Encryption: ethers v6 <code class="dp-code">encryptKeystoreJson</code> with scrypt N=131072 (~128 MB RAM per brute-force attempt)</li>
-              <li>Storage: IndexedDB <code class="dp-code">'exo_wallet'</code> — not localStorage, not cookies</li>
-              <li>Session: 30-minute inactivity lock, private key nulled on lock</li>
-              <li>Anti-phishing word: user-set word shown on every unlock screen</li>
-              <li>Mnemonic: displayed once, quiz-verified, then cleared from JS memory</li>
-            </ul>
-            <div class="dp-callout dp-callout--warn">
-              Browser wallets are suitable for testnet and small amounts. For real funds, use a hardware wallet. The platform never asks for your seed phrase.
-            </div>
-          </div>
-
           <div :id="'settlement-hashmark'" class="dp-sub">
             <h2 class="dp-h2">Settlement Hashmark</h2>
             <p class="dp-p">Each settlement produces a SHA-256 hashmark encoding all design parameters: dome type/radius/segments, stone circle heights and azimuths, ecosystem biome, item placement coordinates, and Mule corpus seed. The hash is displayed as an 8×8 ASCII quilt (64 nibbles → coloured block glyphs). Four XOR-parity rows extend it to 12×8 for error-correction verification.</p>
@@ -495,7 +457,7 @@ Scene units: 1 Mpc = 1/15 scene units (MPC_SCALE)</div>
 
         <section :id="'security-section'" class="dp-section">
           <h1 class="dp-h1">Security</h1>
-          <p class="dp-p">Exotopia tracks security vulnerabilities filtered for NFT creators, wallet holders, and settlement operators — translating technical CVE disclosures into plain-language action items for the communities we serve.</p>
+          <p class="dp-p">Exotopia tracks security vulnerabilities relevant to NFT creators and settlement operators — translating technical CVE disclosures into plain-language action items for the communities we serve — and is building that tracking out into a standalone tooling portal (below).</p>
 
           <div :id="'cve-bulletin'" class="dp-sub">
             <h2 class="dp-h2">Exotopia Security Bulletin</h2>
@@ -514,30 +476,26 @@ Scene units: 1 Mpc = 1/15 scene units (MPC_SCALE)</div>
             <p class="dp-p"><strong>CVE sources we monitor:</strong> NVD, OpenZeppelin advisories, ethers.js releases, Ethereum Foundation blog, Trail of Bits, Immunefi (post-patch), Rekt News. Full source list and contribution process: <code class="dp-code">SPEC_SECURITY_BULLETIN.md</code></p>
           </div>
 
-          <div :id="'smart-contract-risks'" class="dp-sub">
-            <h2 class="dp-h2">Smart Contract Risk Reference</h2>
-            <p class="dp-p">Common vulnerability types affecting NFT contracts and wallets:</p>
+          <div :id="'cve-tooling'" class="dp-sub">
+            <h2 class="dp-h2">CVE tracking prototype</h2>
+            <p class="dp-p">A prototype library is already live and in motion at <router-link to="/cve_alerts" class="dp-link">/cve_alerts</router-link> ("CVEs · ALERTS RELAY") — the seed of Exotopia's own programming, desec &amp; opsec educational/professional web-tooling portal:</p>
             <ul class="dp-ul">
-              <li><strong>Reentrancy</strong> — malicious contract calls back into victim before state updates. Prevention: checks-effects-interactions pattern; <code class="dp-code">nonReentrant</code> modifier on all value-transferring functions. Origin: 2016 TheDAO hack. → [55]</li>
-              <li><strong>Front-running / MEV</strong> — bots reorder mempool transactions to extract value. NFT-specific: mint sniping, reveal reordering. Prevention: commitment-reveal for randomness; fixed-price minting. → [56]</li>
-              <li><strong>Honeypot contracts</strong> — appear mintable/tradeable but trap funds via hidden transfer restrictions. Detection: verify contract source; check for asymmetric buy/sell history. → [57]</li>
-              <li><strong>Rug pull</strong> — liquidity withdrawn or project abandoned by design. Prevention: time-locked liquidity, multisig treasury, DAO-governed contract ownership. → [58]</li>
-              <li><strong>Phishing / address poisoning</strong> — fake sites harvesting seed phrases; fake addresses in transaction history. Prevention: bookmark URLs; anti-phishing word on wallet unlock; verify full address before every signing. → [59]</li>
+              <li>Pulls CISA's Known Exploited Vulnerabilities (KEV) feed directly — the same catalog federal agencies are required to remediate against</li>
+              <li>Caches the catalog locally in IndexedDB so the table works offline between syncs and doesn't re-fetch the full feed on every visit</li>
+              <li>Sorted and searchable by <strong>vendor/product</strong> — in effect, by device (e.g. "Cisco / IOS XE," "Microsoft / Windows") — alongside CVE ID and remediation due date, with a ransomware-campaign badge surfaced per entry</li>
             </ul>
-            <div class="dp-callout dp-callout--warn">
-              Exotopia contracts use <code class="dp-code">nonReentrant</code> on all value transfers, fixed-price minting (no MEV surface), and the Ecommunity DAO governs contract ownership. The platform never asks for your seed phrase.
+            <div class="dp-callout dp-callout--info">
+              This is an in-motion prototype, not a finished feature — the device/vendor grouping and the catalog sync both work today, but the surrounding portal (desec/opsec learning material tied to each entry) is still being built out.
             </div>
           </div>
 
           <div :id="'api-security'" class="dp-sub">
             <h2 class="dp-h2">API &amp; mule-bot Security</h2>
-            <p class="dp-p">The mule-bot API runs locally (localhost:8888) and authenticates via wallet signature:</p>
-            <div class="dp-code-block">Header: X-Settlement-Auth: {wallet_address}.{timestamp}.{signature}
-Signature = sign(wallet, "{exoloc_address}:{timestamp}")</div>
+            <p class="dp-p">The mule-bot API runs locally (localhost:8888). Its auth scheme is account-based rather than wallet-signature-based — the exact mechanism is being finalized alongside the wider move off wallet-based identity (the previous wallet-signature scheme is preserved as a reference pattern in <code class="dp-code">archive/lib/SECURITY_MODEL_NOTES.md</code>). What's unchanged:</p>
             <ul class="dp-ul">
               <li><strong>Local-network native</strong> — the node never contacts an external cloud service; corpus data stays sovereign on the settlement owner's hardware</li>
               <li><strong>CORS</strong> — the node emits <code class="dp-code">Access-Control-Allow-Origin</code> for the app origin only; not wildcard in production → [49]</li>
-              <li><strong>Rate limiting</strong> — eco-ops submissions capped at 10/hour per wallet to prevent corpus spam and on-chain queue flooding; HTTP 429 with <code class="dp-code">Retry-After</code> → [50]</li>
+              <li><strong>Rate limiting</strong> — eco-ops submissions capped at 10/hour per account to prevent corpus spam and queue flooding; HTTP 429 with <code class="dp-code">Retry-After</code> → [50]</li>
               <li><strong>Path encoding</strong> — exolocation addresses use percent-encoding (commas → %2C) to prevent path traversal; segments are validated against known coordinate-system prefixes → [48]</li>
             </ul>
             <p class="dp-p">Federation (Phase 3) will add per-node pubkey pinning and cross-settlement corpus queries with privacy-preserving aggregation — no raw corpus data crosses node boundaries.</p>
@@ -574,7 +532,8 @@ const NAV = [
   { id: 'getting-started', icon: '🚀', label: 'Getting Started', items: [
     { id: 'getting-started', label: 'Overview'              },
     { id: 'what-is',         label: 'What is Exotopia?'     },
-    { id: 'new-user',        label: 'Quickstart'            },
+    { id: 'new-user',        label: 'Run Your Own Instance' },
+    { id: 'refinements',     label: 'Refinements'           },
     { id: 'free-platform',   label: '99/0.75/0.25 Model'         },
   ]},
   { id: 'visualization', icon: '🌌', label: 'Visualization', items: [
@@ -602,12 +561,6 @@ const NAV = [
   { id: 'glossary-section', icon: '📖', label: 'Glossary', items: [
     { id: 'glossary-section', label: 'Key Terms (47)' },
   ]},
-  { id: 'chains-section', icon: '🔗', label: 'Networks', items: [
-    { id: 'chains-section', label: 'Overview'             },
-    { id: 'polygon',        label: 'Polygon Amoy'        },
-    { id: 'celo',           label: 'Celo Alfajores'      },
-    { id: 'algorand',       label: 'Algorand (planned)'  },
-  ]},
   { id: 'data-section', icon: '📊', label: 'Data & Coverage', items: [
     { id: 'data-section',        label: 'Overview'              },
     { id: 'catalogs',            label: 'Input Catalog Sources' },
@@ -625,7 +578,6 @@ const NAV = [
   { id: 'specs-section', icon: '⚙', label: 'Technical Specs', items: [
     { id: 'specs-section',      label: 'Overview'              },
     { id: 'game-theory',        label: 'Game Theory (DRK-E/QNT-P)' },
-    { id: 'security-model',     label: 'Wallet Security'       },
     { id: 'settlement-hashmark',label: 'Settlement Hashmark'   },
     { id: 'field-recording',    label: 'Field Recording'       },
     { id: 'coordinate-math',    label: 'Coordinate Maths'      },
@@ -633,7 +585,7 @@ const NAV = [
   { id: 'security-section', icon: '🔐', label: 'Security', items: [
     { id: 'security-section',      label: 'Overview'              },
     { id: 'cve-bulletin',          label: 'Security Bulletin'     },
-    { id: 'smart-contract-risks',  label: 'Smart Contract Risks'  },
+    { id: 'cve-tooling',           label: 'CVE Tracking Prototype'},
     { id: 'api-security',          label: 'API Security'          },
   ]},
   { id: 'contributing', icon: '🌍', label: 'Community', items: [
@@ -685,7 +637,8 @@ interface DocHint { id: string; section: string; title: string; text: string }
 // Flat searchable index
 const DOC_INDEX: DocHint[] = [
   { id: 'what-is',         section: 'Getting Started', title: 'What is Exotopia?',     text: 'exoplanet virtual land nft community eco-ops field work nasa catalog' },
-  { id: 'new-user',        section: 'Getting Started', title: 'Quickstart',             text: 'new user wallet onboard first mint testnet polygon celo' },
+  { id: 'new-user',        section: 'Getting Started', title: 'Run Your Own Instance', text: 'self host supabase git gitlab gitea github vercel deploy no blockchain three steps' },
+  { id: 'refinements',     section: 'Getting Started', title: 'Refinements',           text: 'cloudflare redis appwrite standalone autonomous home network public stand up federation' },
   { id: 'free-platform',   section: 'Getting Started', title: '99/0.75/0.25 Model',          text: 'fee model resonance split creator platform free zero percent' },
   { id: 'cosmic-view',     section: 'Visualization',   title: 'Cosmic Web & Voids',     text: 'laniakea void bootes local sculptor supercluster filament dark energy blob timular' },
   { id: 'galaxy-clusters', section: 'Visualization',   title: 'Galaxy Clusters & LOD', text: 'lod level detail cluster virgo coma norma xray morphology elliptical spiral' },
@@ -702,9 +655,6 @@ const DOC_INDEX: DocHint[] = [
   { id: 'art-tokens',      section: 'Protocol',        title: 'ART Tokens',            text: 'activity reward eco-ops sponsor water farm field work token contribution record' },
   { id: 'robot-mule',      section: 'Protocol',        title: 'mule-bot',         text: 'mule ai local corpus sovereign knowledge assistant settlement specialist domain' },
   { id: 'glossary-section',section: 'Glossary',        title: 'Key Terms',             text: 'glossary definitions terms protocol trophic astronomy settlement nft' },
-  { id: 'polygon',         section: 'Networks',        title: 'Polygon Amoy',          text: 'polygon matic amoy testnet chainid 80002 metamask rpc faucet evm' },
-  { id: 'celo',            section: 'Networks',        title: 'Celo Alfajores',        text: 'celo alfajores testnet chainid 44787 valora mpesa east africa mobile wallet' },
-  { id: 'algorand',        section: 'Networks',        title: 'Algorand',              text: 'algorand arc3 arc69 arc nft metadata ipfs on-chain' },
   { id: 'catalogs',            section: 'Data',     title: 'Input Catalog Sources',    text: 'nasa exoplanet archive xmm newton takey hyg virgo vcc fcc rc3 laniakea' },
   { id: 'generated-inventory',section: 'Data',     title: 'Generated Data Inventory', text: 'star systems cluster members galaxy oracle generated json pipeline public' },
   { id: 'data-gaps',           section: 'Data',     title: 'Known Gaps',               text: 'missing distance sy_dist null coverage gap southern hemisphere moon data' },
@@ -715,14 +665,13 @@ const DOC_INDEX: DocHint[] = [
   { id: 'planet-bias',         section: 'Pipeline', title: 'Planet Bias Profiles',     text: 'planet bias jovian rocky short-period ancient cold chaotic infall metallicity icm' },
   { id: 'observatory-context', section: 'Pipeline', title: 'Observatory Provenance',   text: 'observatory context jwst hst chandra anchor telescope cluster dist metallicity tx kev nft metadata provenance' },
   { id: 'game-theory',     section: 'Specs',           title: 'Game Theory',           text: 'drk-e qnt-p dark energy positron timular blob quantum void cluster' },
-  { id: 'security-model',  section: 'Specs',           title: 'Wallet Security',       text: 'scrypt encryption indexeddb browser wallet mnemonic seed phrase anti-phishing' },
   { id: 'settlement-hashmark', section: 'Specs',       title: 'Settlement Hashmark',   text: 'sha256 hash quilt design signature dome stone circle reconstruction' },
   { id: 'field-recording', section: 'Specs',           title: 'Field Recording',       text: 'audio microphone record mediarecorder indexeddb local storage voice' },
   { id: 'coordinate-math', section: 'Specs',           title: 'Coordinate Maths',      text: 'ra dec parsec mpc scene units l4 companion orbit tangent normal' },
-  { id: 'security-section',     section: 'Security', title: 'Security Overview',          text: 'security nft wallet smart contract vulnerability cve bulletin disclosure' },
+  { id: 'security-section',     section: 'Security', title: 'Security Overview',          text: 'security nft cve vulnerability bulletin disclosure tooling portal' },
   { id: 'cve-bulletin',         section: 'Security', title: 'Security Bulletin',          text: 'cve bulletin community art token disbursement contributors verifier curator submitter' },
-  { id: 'smart-contract-risks', section: 'Security', title: 'Smart Contract Risks',       text: 'reentrancy front-running mev sandwich attack honeypot rug pull phishing address poisoning cwe' },
-  { id: 'api-security',         section: 'Security', title: 'API & mule-bot Security',    text: 'cors rate limiting jwt signature settlement auth mule-bot local node' },
+  { id: 'cve-tooling',          section: 'Security', title: 'CVE Tracking Prototype',     text: 'cve alerts relay cisa kev known exploited vulnerabilities device vendor product indexeddb desec opsec tooling portal' },
+  { id: 'api-security',         section: 'Security', title: 'API & mule-bot Security',    text: 'cors rate limiting account auth mule-bot local node' },
   { id: 'contributing',    section: 'Community',       title: 'Community',             text: 'citizen science arts education international community ot kulcha fana ka gpl' },
 ]
 

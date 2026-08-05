@@ -135,6 +135,7 @@ import { useRoute, useRouter } from 'vue-router'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { surfacePaletteFor, disposeScene } from 'src/lib/three-utils'
+import { tryLoadGLTF, ASSET_PATHS } from 'src/lib/asset-loader'
 import { useGalaxyStore } from 'src/stores/galaxy'
 import {
   useSettlementItems,
@@ -142,6 +143,7 @@ import {
   ZONE_POSITIONS,
   autoPosition,
   buildItemMesh,
+  enhanceItemMeshWithAsset,
   MAX_ITEM_LIGHTS,
   STARTER_LIGHT_PRESET,
   consumeStarterReveal,
@@ -360,24 +362,46 @@ function buildGround(palette: ReturnType<typeof surfacePaletteFor>) {
 }
 
 function buildStructures(palette: ReturnType<typeof surfacePaletteFor>, eqt: number) {
-  // Library (simplified)
+  // Library (simplified) — previously read as a flat black rectangle from the
+  // default camera position: its only light was a PointLight sitting above
+  // the roof (y=22, box top at y=18), so the front face visitors actually
+  // see got almost no direct light, just dim ambient/hemisphere fill plus a
+  // weak emissiveIntensity (0.35). Fixed with a front-facing light and a
+  // brighter emissive so the structure reads clearly without needing an
+  // authored model — see enhanceDomeStructure() below for the real fix once
+  // one exists (public/assets/dome-structures/library.glb).
   const lib = new THREE.Group()
-  const libBox = new THREE.Mesh(new THREE.BoxGeometry(14, 18, 14),
-    new THREE.MeshPhongMaterial({ color: 0x1a2a3a, emissive: 0x001a2a, emissiveIntensity: 0.35 }))
+  const libMat = new THREE.MeshPhongMaterial({ color: 0x24405a, emissive: 0x0a2a44, emissiveIntensity: 0.75, shininess: 12 })
+  const libBox = new THREE.Mesh(new THREE.BoxGeometry(14, 18, 14), libMat)
   libBox.position.set(0, 9, -15)
   lib.add(libBox)
-  // windows
-  const winMat = new THREE.MeshBasicMaterial({ color: 0x44aaff, transparent: true, opacity: 0.75 })
+  // windows — DoubleSide because the previous rotation.y = a formula had the
+  // plane's facing direction inverted on 2 of the 4 sides (including the one
+  // facing the default camera): a plane's default normal after `rotation.y = a`
+  // points toward (sin a, 0, cos a), but the outward direction from the box
+  // at that position is (sin a, 0, -cos a) — only equal when cos(a) = 0. The
+  // other two windows were being back-face-culled, invisible from outside,
+  // which was most of why the library read as a flat unlit rectangle.
+  const winMat = new THREE.MeshBasicMaterial({ color: 0x66ccff, transparent: true, opacity: 0.9, side: THREE.DoubleSide })
   for (let s = 0; s < 4; s++) {
     const a = s * Math.PI / 2
     const w = new THREE.Mesh(new THREE.PlaneGeometry(4.5, 6.5), winMat)
-    w.position.set(Math.sin(a) * 7.1, 9, -15 - Math.cos(a) * 7.1)
+    w.position.set(Math.sin(a) * 7.05, 9, -15 - Math.cos(a) * 7.05)
     w.rotation.y = a
     lib.add(w)
   }
-  lib.add(new THREE.PointLight(0x44aaff, 0.8, 70))
-  lib.children[lib.children.length - 1]!.position.set(0, 22, -15)
+  // Roof light (kept) plus a front-facing fill light — the box's south face
+  // (toward the dome entrance / default camera) is the one visitors actually
+  // see first, and previously had no direct light of its own.
+  const roofLight = new THREE.PointLight(0x44aaff, 0.8, 70)
+  roofLight.position.set(0, 22, -15)
+  lib.add(roofLight)
+  const frontLight = new THREE.PointLight(0x66ccff, 1.1, 40)
+  frontLight.position.set(0, 10, 4)
+  lib.add(frontLight)
   scene!.add(lib)
+
+  void enhanceDomeStructure(lib, 'library')
 
   // Water feature (animated in tick)
   const wGeo = new THREE.PlaneGeometry(30, 60, 12, 20)
@@ -407,6 +431,26 @@ function buildStructures(palette: ReturnType<typeof surfacePaletteFor>, eqt: num
     plant.position.set(Math.cos(angle) * dist * 0.4 + 4, ht / 2, Math.sin(angle) * dist - 50)
     scene!.add(plant)
   }
+}
+
+/**
+ * Swap a fixed dome structure's procedural placeholder for an authored .glb
+ * if one exists at ASSET_PATHS.domeStructure(name) — see
+ * public/assets/dome-structures/README.md for the drop-in convention.
+ * No-op until that file exists; the procedural fallback (with the lighting
+ * fix above) keeps rendering. Keeps `group`'s PointLight children since an
+ * authored model isn't expected to carry its own lights.
+ */
+async function enhanceDomeStructure(group: THREE.Group, name: string) {
+  const gltf = await tryLoadGLTF(ASSET_PATHS.domeStructure(name))
+  if (!gltf) return
+  const lights = group.children.filter(c => (c as THREE.PointLight).isPointLight)
+  for (const child of [...group.children]) {
+    if (lights.includes(child)) continue
+    group.remove(child)
+    disposeScene(child)   // disposes geometry + material(s) for that child
+  }
+  group.add(gltf.scene)
 }
 
 function buildItems() {
@@ -440,6 +484,18 @@ function buildItems() {
     // Register all child meshes for hover detection
     group.traverse(obj => {
       if ((obj as THREE.Mesh).isMesh) itemMeshArr.push({ mesh: obj, id: item.id })
+    })
+
+    // Swap in an authored model if one exists at its preset's asset path —
+    // no-ops until that file is actually dropped in (see asset-loader.ts).
+    // Hover-detection entries for this item are re-registered on swap since
+    // the procedural meshes just registered above get disposed.
+    void enhanceItemMeshWithAsset(group, item.meshPreset).then(swapped => {
+      if (!swapped) return
+      itemMeshArr = itemMeshArr.filter(m => m.id !== item.id)
+      group.traverse(obj => {
+        if ((obj as THREE.Mesh).isMesh) itemMeshArr.push({ mesh: obj, id: item.id })
+      })
     })
   }
 }

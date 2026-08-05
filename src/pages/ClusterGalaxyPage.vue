@@ -145,6 +145,7 @@ const { loading, error, doc, load: loadGalaxyData } = useClusterGalaxyData(clust
 const hoveringSystem = ref(false)
 
 interface StarSystem {
+  id:         string     // stable machine id (e.g. "ngc0224-s01") — used for settlement keys; never the display name
   idx:        number
   name:       string
   spectral:   string
@@ -259,7 +260,7 @@ function mapDocToSystems(galaxyDoc: ClusterGalaxyDoc): StarSystem[] {
     const label      = bestTier === 'candidate' ? `★ ${s.label}` : s.label
 
     return {
-      idx: i, name: label, spectral: spec, specColor,
+      id: s.id, idx: i, name: label, spectral: spec, specColor,
       planetCount: s.planets.length,
       eqtRange: `${eqtLo}–${eqtHi} K`, distKly, eqtK,
       orbitR, theta, phi,

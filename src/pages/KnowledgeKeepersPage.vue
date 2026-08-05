@@ -10,6 +10,10 @@
           sampling program can replicate. This is where that memory joins the technical
           record — place, plant, animal, season, practice, memory, story.
         </p>
+        <router-link to="/galaxy?suggestedFocus=leadership" class="kk-cta"
+          @click="setSuggestedFocus('leadership')">
+          Coordinating this work? Start a settlement focused on community leadership →
+        </router-link>
       </div>
 
       <div class="kk-notice">
@@ -130,6 +134,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useMemberStore } from 'src/stores/member'
 import { useKnowledgeKeepersStore, DOMAIN_TAGS, type SubmitterRelationship } from 'src/stores/knowledge-keepers'
+import { setSuggestedFocus } from 'src/lib/settlement-focus-intent'
 import MemberSignIn from 'src/components/MemberSignIn.vue'
 
 const member = useMemberStore()
@@ -205,6 +210,8 @@ async function submit() {
 .kk-badge { font-size: 8.5px; letter-spacing: 0.22em; color: rgba(220,175,90,0.65); margin-bottom: 8px; }
 .kk-title { font-size: 22px; font-weight: 300; color: rgba(215,238,255,0.94); margin: 0 0 12px; }
 .kk-sub   { font-size: 11.5px; line-height: 1.7; color: rgba(160,195,220,0.82); margin-bottom: 20px; }
+.kk-cta   { display: inline-block; font-size: 11px; color: rgba(0,210,255,0.85); text-decoration: none; margin-bottom: 20px; }
+.kk-cta:hover { color: rgba(80,230,255,0.95); }
 
 .kk-notice {
   font-size: 10px; line-height: 1.6; color: rgba(255,195,120,0.80);

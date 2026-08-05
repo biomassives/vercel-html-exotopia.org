@@ -139,6 +139,7 @@ import {
   CYLINDER_ZONE_POSITIONS,
   autoPosition,
   buildItemMesh,
+  enhanceItemMeshWithAsset,
   MAX_ITEM_LIGHTS,
   STARTER_LIGHT_PRESET,
   consumeStarterReveal,
@@ -415,6 +416,16 @@ function buildItems() {
 
     group.traverse(obj => {
       if ((obj as THREE.Mesh).isMesh) itemMeshArr.push({ mesh: obj, id: item.id })
+    })
+
+    // Swap in an authored model if one exists at its preset's asset path —
+    // no-ops until that file is actually dropped in (see asset-loader.ts).
+    void enhanceItemMeshWithAsset(group, item.meshPreset).then(swapped => {
+      if (!swapped) return
+      itemMeshArr = itemMeshArr.filter(m => m.id !== item.id)
+      group.traverse(obj => {
+        if ((obj as THREE.Mesh).isMesh) itemMeshArr.push({ mesh: obj, id: item.id })
+      })
     })
   }
 }

@@ -2008,21 +2008,6 @@ function focusPlanet(pMesh: THREE.Mesh) {
     },
   })
 
-  // Equatorial ring — colour-coded by physical class (not a rarity tier)
-  const rar = planetClass(pMesh.userData.planet as Planet)
-  const eqTorus = new THREE.Mesh(
-    new THREE.TorusGeometry(pR * 1.40, pR * 0.038, 8, 80),
-    new THREE.MeshBasicMaterial({
-      color: new THREE.Color(rar.color),
-      transparent: true, opacity: 0.55,
-      depthWrite: false, blending: THREE.AdditiveBlending,
-    })
-  )
-  eqTorus.position.copy(P)
-  eqTorus.rotation.x = Math.PI / 2
-  scene.add(eqTorus)
-  focusMoonObjects.push(eqTorus)
-
   // Moons: use system total, max 5
   const moonCount = Math.min(5, Math.max(1, currentSystem.value?.sy_mnum ?? 1))
   spawnFocusMoons(pMesh, moonCount, pR)
@@ -2202,17 +2187,31 @@ function galaxyTick(_t: number) {
           lookTarget = _fs.lookTgt.copy(S).lerp(P, 0.35)
         }
 
-        // Spring-damped follow. The coefficient scales with distance to planet
-        // so the camera feels tighter (more responsive) at close range — the
-        // "perspective slows" effect: far out = lazy drift, close = crisp lock.
+        // Spring-damped follow for camera *position* only. The coefficient
+        // scales with distance to planet so the camera feels tighter (more
+        // responsive) at close range — the "perspective slows" effect: far
+        // out = lazy drift, close = crisp lock.
+        //
+        // The look-at target is NOT lerped in orbit mode (below) — lerping
+        // toward a continuously-moving point never actually catches up, it
+        // settles into a persistent steady-state lag instead (basic pursuit
+        // dynamics: closing a fixed *fraction* of the gap each frame against
+        // a target that keeps moving leaves a residual offset proportional
+        // to the planet's angular speed ÷ the lerp rate). That's exactly
+        // "the camera comes close but doesn't move with the planet" — the
+        // fix is a rigid look-at lock, not a tighter spring.
         const distToPlanet = camera.position.distanceTo(P)
         const pRad         = (focusedPlanetMesh!.geometry as THREE.SphereGeometry).parameters?.radius ?? 2
         const closeness    = Math.max(0, Math.min(1, 1 - (distToPlanet - pRad * 8) / (pRad * 40)))
         const lerpK        = planetCamMode.value === 'orbit'
-          ? 0.032 + closeness * 0.038   // 0.032 (far drift) → 0.070 (near crisp)
+          ? 0.12 + closeness * 0.16     // 0.12 (far) → 0.28 (near) — tight enough position-wise
           : 0.020                        // DK.MAT: very slow, majestic
         camera.position.lerp(camTarget, lerpK)
-        controls.target.lerp(lookTarget, lerpK * 1.5)
+        if (planetCamMode.value === 'orbit') {
+          controls.target.copy(lookTarget)   // rigid — always exactly on the planet, true co-orbit
+        } else {
+          controls.target.lerp(lookTarget, lerpK * 1.5)   // DK.MAT: still soft, target isn't the bare planet anyway
+        }
         controls.update()
       }
     }

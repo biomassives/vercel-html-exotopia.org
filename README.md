@@ -22,6 +22,25 @@ Real-world eco-ops field work, community development activities, and cultural pr
 
 ---
 
+## Community and safety design
+
+Exotopia is built to support real community, but deliberately avoids building the
+surveillance and location-tracking infrastructure that make stalking and harassment
+possible on many platforms. Two commitments follow from that, and apply across the
+product, not just one feature:
+
+- **No individual location/presence tracking.** Nothing in the app shows another user's
+  live position or movement to you — see `SPEC_DEFENDERNAV.md` §1.6. Where presence is
+  shown at all (e.g. a gallery headcount), it's an aggregate number, never an identity or
+  a location.
+- **Social features are mutual-consent and low-surveillance by design, not proactively
+  monitored** — see `legal-community-guidelines.md` and `RISK_REDUCTION_RECOMMENDATIONS.md`
+  §4. Where users want richer social coordination, we'd rather point them at services they
+  already trust and manage themselves (Discord, Signal, etc.) than build that
+  infrastructure into the platform.
+
+---
+
 ## Navigation hierarchy
 
 ```
@@ -211,7 +230,7 @@ No environment variables required for local development. The app runs entirely c
 
 ## Related documents
 
-**[DOCS.md](DOCS.md) — Complete document index (37 files across all categories)**
+**[DOCS.md](DOCS.md) — Complete document index (45 files across all categories)**
 
 ### Ownership and access philosophy
 

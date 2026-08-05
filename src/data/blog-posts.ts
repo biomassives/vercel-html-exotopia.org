@@ -118,6 +118,42 @@ export const BLOG_POSTS: BlogPostMeta[] = [
     editorialNote: 'Verify catalog coverage numbers and status flags before publishing.',
   },
   {
+    slug:     'counting-the-universe',
+    title:    'Counting the Universe',
+    subtitle: 'How many galaxies, stars, planets, and moons are real in Exotopia — and how many did we generate — and is any of this a realistic way to build a cosmic visualization?',
+    date:     'August 2026',
+    audience: ['dev', 'community'],
+    series:   'science',
+    status:   'draft',
+    description:
+      'A full whole-app tally of real vs. procedurally generated content — 345 real X-ray clusters, 26,225 generated cluster galaxies, 35,896 real exoplanet records, 10,900 generated planets, 0 bulk-generated moons — and an honest evaluation of whether the generation approach is scientifically defensible.',
+    editorialNote: 'Companion to data-sources-unified-viz; verify counts against live data files before publishing.',
+  },
+  {
+    slug:     'how-many-stars',
+    title:    'How Many Stars?',
+    subtitle: "An audit of Exotopia's 61,817-star field — where it sits among real catalogs, and whether the sky it draws has any gaps",
+    date:     'August 2026',
+    audience: ['dev', 'community'],
+    series:   'science',
+    status:   'draft',
+    description:
+      "A depth-and-coverage audit of Exotopia's star field: how 61,817 compares to naked-eye, HYG, Hipparcos, Tycho-2, 2MASS, and Gaia DR3, plus a galactic-coordinate density analysis showing no artificial sky gaps — the one real pattern (plane vs. pole density) is physical, not a catalog defect. Companion interactive chart published separately.",
+    editorialNote: 'Companion to counting-the-universe and data-sources-unified-viz; verify counts against live data files before publishing.',
+  },
+  {
+    slug:     'dark-matter-in-exotopia',
+    title:    'What Dark Matter Actually Looks Like',
+    subtitle: 'The DK.MAT button recolors a wormhole purple. Here\'s what the clusters we already have data for would show if it didn\'t.',
+    date:     'August 2026',
+    audience: ['dev', 'community'],
+    series:   'science',
+    status:   'draft',
+    description:
+      "The real evidence for dark matter (Zwicky's 1933 Coma discovery, the Bullet Cluster's direct lensing/gas offset, NGC 1407's overmassive halo) laid out using this project's own cluster calibration research, as the case for SPEC_DARK_MATTER_VIEW.md — replacing the cosmic view's non-functional X-RAY toggle with a halo-extent overlay built from real M200/r_vir data this app already ships.",
+    editorialNote: 'Companion to SPEC_DARK_MATTER_VIEW.md; verify cluster mass figures match generate_cluster_catalog.py once the calibration corrections from SPEC_XCLUSTER_STARSYSTEMS.md §5 are applied.',
+  },
+  {
     slug:     'first-flag-remote-worlds',
     title:    'First Flag on a Remote World',
     subtitle: 'The preponderance of exoplanets in galaxy clusters — modelling, citizen science, and why a hypothesized world still deserves a name',
@@ -270,6 +306,30 @@ export const BLOG_POSTS: BlogPostMeta[] = [
     description:
       'A practical guide for volunteer advocates working to remove PFAS-contaminated packaging from municipal compost input streams. Covers: the garden contamination pathway (compost → soil → plant uptake → food); the water drop test for field screening; high-priority packaging categories (pizza boxes, "compostable" cups, deli paper, fast-food wrappers); the Colorado HB 23-1034 compliance timeline (2025 prohibition on PFAS in food packaging); PFAS-free alternatives list (World Centric, Vegware, Eco-Products, plain bagasse); the business engagement playbook (friendly audit, alternatives, Clean Compost Partner recognition); a 5-step community compost testing cycle; and the compost distribution gate for protecting gardens while testing is underway. Nederland/Cat case study; Bear Creek → South Boulder Creek watershed context.',
     editorialNote: 'Verify HB 23-1034 implementation dates against current Colorado DEQ guidance. Confirm third-party test documentation availability for named brands before publishing.',
+  },
+  {
+    slug:     'municipal-compost-campaign-strategy',
+    title:    'Designing a Municipal Compost Producer-Responsibility Campaign',
+    subtitle: 'A strategy framework for testing municipal compost and building an upstream producer-responsibility campaign — for any community, not just one town',
+    date:     'August 2026',
+    audience: ['community', 'field', 'ecosystem'],
+    series:   'field',
+    status:   'public-draft',
+    description:
+      'Companion strategy document to "Clean Compost from Source" — that post is the field-execution toolkit for one town\'s food-scrap composter; this one is the planning layer underneath it. Distinguishes two genuinely different PFAS-in-compost pathways (packaging-derived in food-scrap compost vs. biosolids-derived in land-applied sludge compost) and gives each its own strategy. Situates both inside the wider, decade-plus state movement phasing out toxic chemicals (bisphenols, phthalates, flame retardants) in consumer products and increasingly reframing plastics as a health issue rather than a waste issue — drawing on and directly attributing Safer States\' "Beyond PFAS: class-based approach for toxic chemicals and plastics" analysis, including Washington\'s stronger producer-responsibility template of identifying safer alternatives as part of the regulatory process, not just banning the harmful chemical, and the list of 18+ states expected to consider toxics/plastics policy this year. Covers the current 2026 regulatory moment (12+ states restricting PFAS food packaging, several effective in 2026 itself; EPA\'s July 2026 draft PFOA/PFOS biosolids risk-reduction guidance with a public-comment deadline of September 4, 2026) as concrete, dated hooks for advocacy rather than an abstract someday-issue. Lays out a five-phase framework — map your pathway, build the evidence base, run dual-audience public education (residents vs. businesses), turn evidence into producer-responsibility advocacy, institutionalize and share — plus a regulatory-landscape reference table and a first-30-days checklist that routes into Exotopia\'s PFAS/Ecology citizen-science tools and method-proposal system.',
+    editorialNote: 'Every state-law effective date and the EPA comment-period deadline (Sept 4, 2026) must be re-verified against current agency guidance before publishing — PFAS policy at both state and federal level is moving quickly in 2026. The "bigger picture" section is directly attributed to Safer States\' "Beyond PFAS: class-based approach for toxic chemicals and plastics" (linked inline at that section) — verify the 18-state list and Washington framing against that page\'s current version before publishing, since it may be updated.',
+  },
+  {
+    slug:     'regional-ecological-priorities-snapshot',
+    title:    'Five Places, Five Priorities',
+    subtitle: 'What locals in each of Exotopia\'s outreach regions actually see as urgent right now — checked before designing any biodiversity action plan, not after',
+    date:     'August 2026',
+    audience: ['community', 'field', 'ecosystem'],
+    series:   'field',
+    status:   'public-draft',
+    description:
+      'Companion research pass to SPEC_BIODIVERSITY_ACTION_PLANS.md — before designing a pollinator-stepping-stone planting plan for any region in Exotopia\'s outreach pipeline, this checks what the people who actually live there say is urgent, sourced from 2025-2026 reporting rather than assumed. Covers five regions with a colorized OpenStreetMap-based map for each: Boulder & Douglas Counties, Colorado (drought/wildfire, and how native low-water planting rides alongside that conversation instead of competing with it); Costa Rica (pesticide exposure from the pineapple export industry, a much bigger fight than a garden program); Seoul, South Korea (air quality and urban heat island, where the city\'s own green-space policy is close to a ready-made mandate); Lamu & Mpeketoni, Kenya (mangrove loss and the LAPSSET/Lamu Port development pressure on it, where stepping-stone habitat restoration translates almost directly to existing community-centered mangrove work); and Nairobi, Kenya (sanitation/water/air pollution in informal settlements as the priority baseline biodiversity work must acknowledge first, with Nairobi National Park\'s direct city-edge border as the one place a corridor frame is immediately locally legible). Closes with a synthesis: none of the five regions support a generic "just plant pollinator gardens" campaign as-is — each needs its own sequencing.',
+    editorialNote: 'Every regional claim is dated to 2025-2026 sourcing (drought status, air quality rankings, project timelines) and should be re-verified before use in real outreach material — these conditions shift faster than this post will be updated. Map images are recolored OpenStreetMap data (© OpenStreetMap contributors, ODbL) generated via scripts/generate-region-maps.mjs — regenerate rather than hand-edit if a different region/extent is needed.',
   },
   {
     slug:     'letters-patent-deed-format',
@@ -438,6 +498,18 @@ export const BLOG_POSTS: BlogPostMeta[] = [
     description:
       'Traces what actually happens when a settlement address gets "placed" — from the NASA Exoplanet Archive reference data, through the pure string-building functions in settlements.ts/moon-settlement.ts, into a client-only localStorage record, and out through three independent chain-specific metadata writers (EVM, Solana, Algorand) to a pon.ink mint. Confirms two real gaps found while writing this: the `GET /api/v1/exoloc` endpoint named in SPEC_EXOLOC_ADDRESS.md\'s header does not exist anywhere in the codebase (the /api folder holds one static gallery JSON file), and there is no settlements table in any Supabase migration — the blockchain itself is the only durable, shared record once a settlement is minted. Frames this as the deliberate "tool, not custodian" architecture already stated in compliance/INDEX.md rather than an oversight, and lays out what a read-only lookup API versus a write-side address-reservation ledger would each actually require.',
     editorialNote: 'Companion to the new SETTLEMENT_ADDRESS_API.md reference doc. Describes current implementation status, not a roadmap commitment — the read/write API gap is an open design question, not yet scheduled work.',
+  },
+  {
+    slug:     'self-hosted-exotopia',
+    title:    'Run Your Own Exotopia',
+    subtitle: 'A three-step, blockchain-free path to standing up an independent instance — and why we want you to',
+    date:     'August 2026',
+    audience: ['dev', 'community', 'ecosystem'],
+    series:   'ecosystem',
+    status:   'public-draft',
+    description:
+      'Exotopia no longer needs a wallet or a blockchain to run: a fresh instance is Supabase (for the schema), a git host of your choice (GitLab, Gitea, or GitHub — no vendor lock-in), and Vercel (to deploy). Walks through why that baseline stack was chosen, the optional refinements layer (Cloudflare, Redis, or a fully standalone Appwrite deployment for a home-network setup with zero external SaaS dependency), and the actual pitch behind making self-hosting this easy: independent instances doing their own visualization and citizen-science work in the humanitarian-engineering and biodiversity space, while staying part of the same collaborative effort rather than a fork nobody talks to again. Companion to SPEC_SELF_HOSTED_NETWORK.md, which has the open engineering questions this post deliberately doesn\'t pretend are settled.',
+    editorialNote: 'The instance-to-instance data-sharing mechanism is not yet designed — see the spec\'s Open Questions section. This post describes the deploy path, which is real and working today, not the federation layer, which isn\'t.',
   },
 ]
 

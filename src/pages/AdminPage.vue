@@ -41,19 +41,6 @@
         <div class="adm-card__arrow">→</div>
       </div>
 
-      <div class="adm-card" @click="$router.push('/chains')">
-        <div class="adm-card__icon">🔗</div>
-        <div class="adm-card__body">
-          <div class="adm-card__title">Chain Support Matrix</div>
-          <div class="adm-card__desc">
-            Live status of all supported chains — ALGO, MATIC, SOL, TEZ, HBAR, CELO.
-            Testnet endpoints, contract addresses, gas estimates, and faucet links.
-          </div>
-          <div class="adm-card__meta">ALGO · MATIC · SOL · TEZ · HBAR · CELO</div>
-        </div>
-        <div class="adm-card__arrow">→</div>
-      </div>
-
       <div class="adm-card" @click="$router.push('/eco-ops')">
         <div class="adm-card__icon">🌱</div>
         <div class="adm-card__body">
@@ -83,17 +70,34 @@
         <div class="adm-card__arrow">→</div>
       </div>
 
-    </div>
-
-    <div class="adm-env">
-      <div class="adm-env__label">DEPLOYMENT ENV CONFIG</div>
-      <div class="adm-env__grid">
-        <div class="adm-env__row" v-for="v in envRows" :key="v.key">
-          <code class="adm-env__key">{{ v.key }}</code>
-          <code class="adm-env__val">{{ v.val }}</code>
-          <span class="adm-env__note">{{ v.note }}</span>
+      <div class="adm-card" @click="$router.push('/admin/video-suggestions')">
+        <div class="adm-card__icon">🎞️</div>
+        <div class="adm-card__body">
+          <div class="adm-card__title">Video Suggestions — Review</div>
+          <div class="adm-card__desc">
+            Community-submitted additions to the Eco Ops library, queued for approval instead of a
+            direct write. Approved rows merge into the library live for every visitor. Also
+            reachable in-context from the library page itself (EcoLibrary.vue's Suggestions panel).
+          </div>
+          <div class="adm-card__meta">video_suggestions · migration 010</div>
         </div>
+        <div class="adm-card__arrow">→</div>
       </div>
+
+      <div class="adm-card" @click="$router.push('/admin/error-log')">
+        <div class="adm-card__icon">🐛</div>
+        <div class="adm-card__body">
+          <div class="adm-card__title">App Error Log</div>
+          <div class="adm-card__desc">
+            Client-side Vue/window errors captured automatically (src/boot/error-reporting.ts).
+            Repeats within a browser session bump one row's occurrence count instead of flooding
+            the table.
+          </div>
+          <div class="adm-card__meta">app_error_logs · migration 011</div>
+        </div>
+        <div class="adm-card__arrow">→</div>
+      </div>
+
     </div>
 
     <!-- Grant Reward — manual credit for things the automated ledger can't see
@@ -130,14 +134,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { FREE_MINT, DEFAULT_CHAIN, ENABLED_PATHWAY_IDS } from 'src/lib/mint-config'
 import { useRewardsStore, type RewardTrack } from 'src/stores/rewards'
-
-const envRows = [
-  { key: 'VITE_FREE_MINT',            val: String(FREE_MINT),                   note: 'No cost to mint primary deed' },
-  { key: 'VITE_DEFAULT_CHAIN',        val: DEFAULT_CHAIN,                        note: 'Pre-selected chain in mint form' },
-  { key: 'VITE_ENABLED_PATHWAYS',     val: ENABLED_PATHWAY_IDS.join(', '),       note: 'Visible pathway cards' },
-]
 
 // ── Grant Reward ──────────────────────────────────────────────────────────────
 

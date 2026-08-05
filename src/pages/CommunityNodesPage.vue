@@ -44,6 +44,8 @@
             <p v-if="n.description" class="cn-p">{{ n.description }}</p>
             <div class="cn-node__actions">
               <button class="cn-link-btn" @click="startEdit(n)">Edit</button>
+              <button v-if="n.status === 'draft'" class="cn-link-btn" @click="setStatus(n, 'published')">Publish</button>
+              <button v-if="n.status === 'published'" class="cn-link-btn" @click="setStatus(n, 'draft')">Unpublish (save as draft)</button>
               <button v-if="n.status !== 'archived'" class="cn-link-btn cn-link-btn--danger" @click="archive(n.id)">Archive</button>
             </div>
           </div>
@@ -122,11 +124,64 @@
                 <label class="cn-label">pon.ink link (optional)</label>
                 <input v-model="metaPonInkUrl" class="cn-input" placeholder="https://pon.ink/..." />
               </div>
-              <div class="cn-field">
-                <label class="cn-label">Media links (comma-separated)</label>
-                <input v-model="metaMediaLinks" class="cn-input" placeholder="Links to tracks, videos, or galleries" />
-              </div>
             </template>
+
+            <!-- Media gallery — a real add/remove list instead of one comma-separated field.
+                 Generic across node types (OrbitalGalleryEntry.mediaLinks isn't type-restricted). -->
+            <div class="cn-field">
+              <label class="cn-label">Media gallery (image/video/track links)</label>
+              <div v-for="(link, i) in mediaLinkList" :key="i" class="cn-media-row">
+                <input v-model="mediaLinkList[i]" class="cn-input" placeholder="https://…" />
+                <button type="button" class="cn-link-btn cn-link-btn--danger" @click="removeMediaLink(i)">Remove</button>
+              </div>
+              <button type="button" class="cn-link-btn" @click="addMediaLink">+ Add media link</button>
+            </div>
+
+            <!-- Orbit anchor — where this node renders in its system's gallery view.
+                 Previously unset by any UI; every node silently defaulted to {}. -->
+            <div class="cn-field">
+              <label class="cn-label">Gallery placement</label>
+              <div class="cn-type-picker">
+                <label class="cn-type-option" :class="{ 'cn-type-option--selected': orbitType === 'free' }">
+                  <input type="radio" value="free" v-model="orbitType" />
+                  <div>
+                    <div class="cn-type-title">Free orbit</div>
+                    <div class="cn-type-desc">Your own orbit at a radius/angle you set — the default for most listings.</div>
+                  </div>
+                </label>
+                <label class="cn-type-option" :class="{ 'cn-type-option--selected': orbitType === 'lagrange' }">
+                  <input type="radio" value="lagrange" v-model="orbitType" />
+                  <div>
+                    <div class="cn-type-title">Lagrange point</div>
+                    <div class="cn-type-desc">Anchored to a named planet's L4/L5 point — for a listing tied closely to one world.</div>
+                  </div>
+                </label>
+                <label class="cn-type-option" :class="{ 'cn-type-option--selected': orbitType === 'circumbinary' }">
+                  <input type="radio" value="circumbinary" v-model="orbitType" />
+                  <div>
+                    <div class="cn-type-title">Circumbinary</div>
+                    <div class="cn-type-desc">A wide orbit around the whole system, at a radius you set.</div>
+                  </div>
+                </label>
+              </div>
+              <template v-if="orbitType === 'free' || orbitType === 'circumbinary'">
+                <label class="cn-label">Orbit radius (AU)</label>
+                <input v-model.number="orbitRadiusAU" type="number" step="0.1" min="0.1" class="cn-input" style="max-width:160px" />
+              </template>
+              <template v-if="orbitType === 'free'">
+                <label class="cn-label">Initial angle (degrees)</label>
+                <input v-model.number="orbitAngleDeg" type="number" step="1" min="0" max="359" class="cn-input" style="max-width:160px" />
+              </template>
+              <template v-if="orbitType === 'lagrange'">
+                <label class="cn-label">Planet name</label>
+                <input v-model="orbitPlanetName" class="cn-input" placeholder="Must match a planet name in this system" />
+                <label class="cn-label">Point</label>
+                <select v-model="orbitLagrangePoint" class="cn-input" style="max-width:100px">
+                  <option value="L4">L4</option>
+                  <option value="L5">L5</option>
+                </select>
+              </template>
+            </div>
 
             <button type="submit" class="cn-btn" :disabled="!canSubmit || submitting">
               {{ submitting ? 'Saving…' : (editingId ? 'Save changes' : 'Publish listing') }}
@@ -145,7 +200,8 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useMemberStore } from 'src/stores/member'
-import { useCommunityNodesStore, type CommunityNode, type CommunityNodeType } from 'src/stores/community-nodes'
+import { useCommunityNodesStore, type CommunityNode, type CommunityNodeType, type CommunityNodeStatus } from 'src/stores/community-nodes'
+import type { GalleryOrbitAnchor } from 'src/lib/defender-nav.types'
 import { useSettlements } from 'src/lib/settlements'
 import MemberSignIn from 'src/components/MemberSignIn.vue'
 
@@ -180,9 +236,50 @@ const metaContact     = ref('')
 const metaAddress     = ref('')
 const metaHours       = ref('')
 const metaPonInkUrl   = ref('')
-const metaMediaLinks  = ref('')
+const mediaLinkList   = ref<string[]>([])
 const submitting    = ref(false)
 const justSubmitted = ref(false)
+
+function addMediaLink() { mediaLinkList.value.push('') }
+function removeMediaLink(i: number) { mediaLinkList.value.splice(i, 1) }
+
+// ── Orbit anchor — where this node renders in its system's gallery view ────
+const orbitType          = ref<GalleryOrbitAnchor['type']>('free')
+const orbitRadiusAU      = ref(2.5)
+const orbitAngleDeg      = ref(0)
+const orbitPlanetName    = ref('')
+const orbitLagrangePoint = ref<'L4' | 'L5'>('L4')
+
+function buildOrbitAnchor(): GalleryOrbitAnchor {
+  if (orbitType.value === 'lagrange') {
+    return { type: 'lagrange', planetName: orbitPlanetName.value.trim(), point: orbitLagrangePoint.value }
+  }
+  if (orbitType.value === 'circumbinary') {
+    return { type: 'circumbinary', radiusAU: orbitRadiusAU.value || 2.5 }
+  }
+  return { type: 'free', radiusAU: orbitRadiusAU.value || 2.5, initialAngleDeg: orbitAngleDeg.value || 0 }
+}
+
+function applyOrbitAnchor(anchor: CommunityNode['orbit_anchor']) {
+  const a = anchor as Partial<GalleryOrbitAnchor> & { type?: string }
+  if (a?.type === 'lagrange') {
+    orbitType.value = 'lagrange'
+    orbitPlanetName.value = a.planetName ?? ''
+    orbitLagrangePoint.value = (a as { point?: 'L4' | 'L5' }).point ?? 'L4'
+  } else if (a?.type === 'circumbinary') {
+    orbitType.value = 'circumbinary'
+    orbitRadiusAU.value = a.radiusAU ?? 2.5
+  } else if (a?.type === 'free') {
+    orbitType.value = 'free'
+    orbitRadiusAU.value = a.radiusAU ?? 2.5
+    orbitAngleDeg.value = (a as { initialAngleDeg?: number }).initialAngleDeg ?? 0
+  } else {
+    // No anchor set yet (existing nodes created before this feature) — default to free.
+    orbitType.value = 'free'
+    orbitRadiusAU.value = 2.5
+    orbitAngleDeg.value = 0
+  }
+}
 
 const canSubmit = computed(() => title.value.trim().length > 0)
 
@@ -212,7 +309,8 @@ function startEdit(n: CommunityNode) {
   metaAddress.value    = typeof md.address === 'string' ? md.address : ''
   metaHours.value      = typeof md.hours === 'string' ? md.hours : ''
   metaPonInkUrl.value  = typeof md.ponInkUrl === 'string' ? md.ponInkUrl : ''
-  metaMediaLinks.value = Array.isArray(md.mediaLinks) ? md.mediaLinks.join(', ') : ''
+  mediaLinkList.value  = Array.isArray(md.mediaLinks) ? [...(md.mediaLinks as string[])] : []
+  applyOrbitAnchor(n.orbit_anchor)
   tab.value = 'create'
 }
 
@@ -222,22 +320,28 @@ function resetForm() {
   title.value = ''; description.value = ''; hostname.value = ''; exolocAddress.value = ''
   metaItems.value = ''; metaContact.value = ''
   metaAddress.value = ''; metaHours.value = ''
-  metaPonInkUrl.value = ''; metaMediaLinks.value = ''
+  metaPonInkUrl.value = ''; mediaLinkList.value = []
+  orbitType.value = 'free'; orbitRadiusAU.value = 2.5; orbitAngleDeg.value = 0
+  orbitPlanetName.value = ''; orbitLagrangePoint.value = 'L4'
 }
 
+// mediaLinks is generic across node types (OrbitalGalleryEntry.mediaLinks
+// isn't type-restricted) — merged into whichever type-specific shape below.
 function buildMetadata(): Record<string, unknown> {
+  const mediaLinks = mediaLinkList.value.map(s => s.trim()).filter(Boolean)
   switch (nodeType.value) {
     case 'business_listing':
       return {
         items:   metaItems.value.split(',').map(s => s.trim()).filter(Boolean),
         contact: metaContact.value.trim(),
+        mediaLinks,
       }
     case 'business_location':
-      return { address: metaAddress.value.trim(), hours: metaHours.value.trim() }
+      return { address: metaAddress.value.trim(), hours: metaHours.value.trim(), mediaLinks }
     case 'creative_page':
       return {
         ponInkUrl:   metaPonInkUrl.value.trim() || undefined,
-        mediaLinks:  metaMediaLinks.value.split(',').map(s => s.trim()).filter(Boolean),
+        mediaLinks,
       }
   }
 }
@@ -253,7 +357,12 @@ async function submit() {
       hostname:    hostname.value.trim() || null,
       exoloc_address: exolocAddress.value || null,
       metadata:    buildMetadata(),
-      status:      'published' as const,
+      orbit_anchor: buildOrbitAnchor(),
+      // Editing an existing node keeps its current status (draft stays draft,
+      // published stays published) — only the Publish/Unpublish buttons in
+      // the browse list change status. New nodes still publish immediately,
+      // matching the self-publish model migration 008 documents.
+      ...(editingId.value ? {} : { status: 'published' as const }),
     }
     if (editingId.value) {
       await store.updateNode(editingId.value, payload)
@@ -271,6 +380,11 @@ async function submit() {
 
 async function archive(id: string) {
   await store.archiveNode(id)
+}
+
+/** Owner-side draft<->published toggle — never 'archived', which requires admin (migration 008). */
+async function setStatus(n: CommunityNode, status: CommunityNodeStatus) {
+  await store.updateNode(n.id, { status })
 }
 
 async function retryAll() {
@@ -345,6 +459,9 @@ function exportData() {
   color: rgba(200,230,255,0.85); font-family: inherit; font-size: 10.5px; padding: 8px 10px;
 }
 .cn-textarea { resize: vertical; }
+
+.cn-media-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.cn-media-row .cn-input { flex: 1; }
 
 .cn-type-picker { display: flex; flex-direction: column; gap: 6px; }
 .cn-type-option {

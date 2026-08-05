@@ -424,7 +424,7 @@ import { ref, computed, reactive, watch } from 'vue'
 import { useRouter }        from 'vue-router'
 import { useStationStore }  from 'src/stores/station'
 import { useGalaxyStore }   from 'src/stores/galaxy'
-import type { ModuleType }  from 'src/lib/solana/station-metadata'
+import type { ModuleType }  from 'src/lib/station-modules'
 
 const stationStore = useStationStore()
 const galaxyStore  = useGalaxyStore()

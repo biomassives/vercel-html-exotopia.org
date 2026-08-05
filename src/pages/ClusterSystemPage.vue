@@ -94,7 +94,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onBeforeUnmount, shallowRef } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, shallowRef } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import * as THREE from 'three'
 import type { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
@@ -105,8 +105,6 @@ import type { ClusterPlanet, ClusterStarSystem } from 'src/composables/useCluste
 import { useSceneTransitionStore }               from 'src/stores/scene-transition'
 import { disposeScene }                          from 'src/lib/three-utils'
 import { clusterPlanetHasNoSolidGround }          from 'src/lib/surface-classify'
-import { LocalStepPortal, type PortalPlanetData } from 'src/lib/local-step-portal'
-import { isLowBandwidth, isMediumBandwidth }      from 'src/lib/security'
 
 // ── Route ──────────────────────────────────────────────────────────────────────
 const route      = useRoute()
@@ -154,20 +152,40 @@ const starColor = computed(() => {
 // ── Selected planet ────────────────────────────────────────────────────────────
 const selectedPlanet = ref<ClusterPlanet | null>(null)
 
+// Vantage offset for the selected planet, captured once at selection time and
+// expressed in the planet's own rotating orbital frame (radial / tangential /
+// vertical, relative to the star at the origin) rather than as a fixed world
+// vector. tick() reconstructs the world-space vantage from this every frame
+// as orbitAngle advances, so the camera smoothly zooms in AND then keeps
+// pace with the planet's orbit instead of settling into a static shot that
+// the planet immediately orbits away from.
+let followRadial     = 0
+let followTangential = 0
+let followVertical    = 0
+
 function selectPlanet(p: ClusterPlanet) {
   selectedPlanet.value = selectedPlanet.value?.id === p.id ? null : p
+  if (controls) controls.autoRotate = !selectedPlanet.value
+  if (!selectedPlanet.value) return
   const mesh = planetMeshes.value.find(m => m.userData.planetId === p.id)
   if (mesh && camera && controls) {
+    gsap.killTweensOf(camera.position); gsap.killTweensOf(controls.target)
     const target = mesh.position.clone()
-    const fromCam = camera.position.clone().sub(target).normalize()
-    const dist    = Math.max(0.6, target.length() * 0.5)
-    gsap.to(controls.target, { x: target.x, y: target.y, z: target.z, duration: 0.6, ease: 'power2.out', onUpdate: () => controls!.update() })
-    gsap.to(camera.position, {
-      x: target.x + fromCam.x * dist,
-      y: target.y + fromCam.y * dist + 0.3,
-      z: target.z + fromCam.z * dist,
-      duration: 1.2, ease: 'power3.out', onUpdate: () => controls!.update(),
-    })
+    const angle  = mesh.userData.orbitAngle as number
+    const rHat   = new THREE.Vector3(Math.cos(angle), 0, Math.sin(angle))
+    const tHat   = new THREE.Vector3(-Math.sin(angle), 0, Math.cos(angle))
+    // Vantage distance scales off the planet's own radius (a "near orbit"
+    // shot), not its distance from the star — the orbit-radius-based
+    // distance previously here left the camera many planet-widths away,
+    // which read as barely zooming in at all for these sub-0.1-unit spheres.
+    const pRadius = mesh.geometry instanceof THREE.SphereGeometry
+      ? (mesh.geometry.parameters.radius as number) : 0.03
+    const dist    = Math.max(0.10, pRadius * 9)
+    const rawOff  = camera.position.clone().sub(target)
+    const dir     = rawOff.lengthSq() > 1e-6 ? rawOff.normalize() : rHat.clone()
+    followRadial     = dir.dot(rHat) * dist
+    followTangential = dir.dot(tHat) * dist
+    followVertical   = dir.y * dist + pRadius * 4
   }
 }
 
@@ -180,29 +198,6 @@ const PLANET_COLORS: Record<string, string> = {
 
 function planetColor(type: string): string {
   return PLANET_COLORS[type] ?? '#607d8b'
-}
-
-// ── Local Step Portal — physics-driven "landing" waypoint ─────────────────────
-// Fast connections only (see canUsePortal below): on slow/medium, descendToPlanet()
-// keeps the plain wipe untouched — no portal geometry/shader is ever constructed,
-// not a lower-fidelity version of one. See SPEC.md §25 / SPEC_NFT_VALUE_FRAMING.md
-// sibling doc SPEC_ZOOM_DESCENT.md for the design this implements.
-const canUsePortal = !isLowBandwidth() && !isMediumBandwidth()
-
-// ClusterPlanet carries no direct gravity/pressure fields — derive reasonable
-// values the same way other pages already infer physical properties from what
-// IS on the record (mass/radius/atmosphere string), rather than adding new
-// required data.
-function toPortalPlanetData(p: ClusterPlanet, starHex: string): PortalPlanetData {
-  const gravityMs2 = p.mass_earth > 0 && p.radius_earth > 0
-    ? 9.8 * (p.mass_earth / (p.radius_earth * p.radius_earth))
-    : null
-  const atmPressure =
-    p.atmosphere === 'thick'  ? 3.0 :
-    p.atmosphere === 'dense'  ? 2.2 :
-    p.atmosphere === 'thin'   ? 0.3 :
-    p.atmosphere === 'none'   ? 0.0 : 1.0
-  return { eqTempK: p.eq_temp_k ?? null, gravityMs2, atmPressure, starHex }
 }
 
 function planetTypeLabel(type: string): string {
@@ -240,34 +235,22 @@ async function descendToPlanet(p: ClusterPlanet) {
   }
 
   const mesh = planetMeshes.value.find(m => m.userData.planetId === p.id)
-  const usePortal = !!(portal && portalPlanet?.id === p.id)
 
   // Final in-page approach before the route change — ClusterSystemPage and
-  // ClusterSurfacePage now share the same renderer/camera. With a portal
-  // available, approach it instead of the planet, ramping setEntering() as
-  // the camera closes in so the crossing reads as passing through something,
-  // not just arriving near it.
+  // ClusterSurfacePage now share the same renderer/camera.
   if (mesh && camera && controls) {
-    const target    = usePortal ? portal!.getWorldPosition() : mesh.position.clone()
-    const fromCam   = camera.position.clone().sub(target).normalize()
-    const dest      = target.clone().addScaledVector(fromCam, usePortal ? 0.05 : 0.15)
-    const startDist = camera.position.distanceTo(dest)
+    const target  = mesh.position.clone()
+    const fromCam = camera.position.clone().sub(target).normalize()
+    const dest    = target.clone().addScaledVector(fromCam, 0.15)
     gsap.killTweensOf(camera.position); gsap.killTweensOf(controls.target)
     await new Promise<void>(resolve => {
       gsap.to(controls!.target, { x: target.x, y: target.y, z: target.z, duration: 0.4, ease: 'power2.out', onUpdate: () => controls?.update() })
       gsap.to(camera!.position, {
         x: dest.x, y: dest.y, z: dest.z, duration: 0.7, ease: 'power2.out',
-        onUpdate: () => {
-          controls?.update()
-          if (usePortal) {
-            const remaining = camera!.position.distanceTo(dest)
-            portal!.setEntering(1 - Math.min(1, remaining / Math.max(0.0001, startDist)))
-          }
-        },
+        onUpdate: () => controls?.update(),
         onComplete: resolve,
       })
     })
-    if (usePortal) portal!.setEntering(1)
   }
 
   // Project selected planet mesh to screen for the wipe origin
@@ -278,7 +261,7 @@ async function descendToPlanet(p: ClusterPlanet) {
     oy = (1 - sc.y) / 2 * 100
   }
   const bearing = Math.atan2(oy/100 - 0.5, ox/100 - 0.5)
-  await transition.depart(ox, oy, usePortal ? 'inversion' : 'lightning', usePortal ? Math.PI : bearing)
+  await transition.depart(ox, oy, 'lightning', bearing)
   void router.push({
     name: 'cluster-surface',
     params: { clusterSlug: clusterSlug.value, memberId: memberId.value, systemIdx: systemIdx.value },
@@ -311,45 +294,6 @@ let hoveredPlanetId: string | null = null
 
 // Root group for all page-level scene objects — added/removed on mount/unmount
 const pageGroup = new THREE.Group()
-
-// Local Step Portal — one at a time, tied to the currently-selected planet
-let portal:        LocalStepPortal | null = null
-let portalPlanet:  ClusterPlanet   | null = null   // which planet `portal` belongs to
-const portalClock  = new THREE.Clock(false)
-let portalElapsed  = 0   // manual accumulator — Clock.getElapsedTime() itself calls
-                          // getDelta() internally, so calling both per frame would
-                          // double-consume the delta; track elapsed ourselves instead
-
-function destroyPortal() {
-  portal?.dispose()
-  portal = null
-  portalPlanet = null
-}
-
-function buildPortalFor(p: ClusterPlanet) {
-  destroyPortal()
-  if (!canUsePortal || !scene || !camera) return
-  if (clusterPlanetHasNoSolidGround(p.type)) return   // no-ground planets route to station-interior, not a landing portal
-  const mesh = planetMeshes.value.find(m => m.userData.planetId === p.id)
-  if (!mesh) return
-
-  const planetRadius = mesh.geometry instanceof THREE.SphereGeometry
-    ? (mesh.geometry.parameters.radius as number) : 0.03
-  const data = toPortalPlanetData(p, starColor.value)
-  // Constructor sizes the portal at a fixed ~14-unit frame regardless of scene
-  // scale — this system view compresses planets to ~0.02-0.065 units, so the
-  // portal group is scaled down after construction to read as a waypoint a
-  // few times the planet's own size, not a scene-dominating object.
-  portal = new LocalStepPortal(scene, camera, data, Math.max(0.10, planetRadius * 4.5), 68, mesh.userData.planetId?.length ?? 0)
-  portal.group.scale.setScalar(Math.max(0.012, planetRadius * 0.55))
-  if (!portalClock.running) portalClock.start()
-  portalPlanet = p
-}
-
-watch(selectedPlanet, (p) => {
-  if (p) buildPortalFor(p)
-  else   destroyPortal()
-})
 
 const ORBIT_SCALE = 4.5   // AU → scene units; compressed for visibility
 
@@ -436,7 +380,7 @@ function buildScene() {
 
   // Configure controls for system navigation
   controls.dampingFactor  = 0.06
-  controls.minDistance    = 0.3;  controls.maxDistance   = 18
+  controls.minDistance    = 0.05; controls.maxDistance   = 18
   controls.autoRotate     = true; controls.autoRotateSpeed = 0.15
 
   scene.add(pageGroup)
@@ -521,8 +465,6 @@ function onCanvasMove(e: MouseEvent) {
   mouseVec.y = -((e.clientY - VIZ_BAR_H) / h) * 2 + 1
   raycasterSys.setFromCamera(mouseVec, camera)
 
-  if (portal) portal.checkHover(raycasterSys)
-
   const hits = raycasterSys.intersectObjects(planetMeshes.value, false)
   const newId = hits.length ? (hits[0]!.object.userData.planetId as string) : null
 
@@ -579,18 +521,31 @@ function tick() {
     if (gsp) gsp.position.copy(mesh.position)
   }
 
-  // Portal orbits the planet it's tied to — needs that planet's live position
-  if (portal && portalPlanet) {
-    const dt = portalClock.getDelta()
-    portalElapsed += dt
-    const mesh = planetMeshes.value.find(m => m.userData.planetId === portalPlanet!.id)
-    if (mesh) portal.update(portalElapsed, dt, mesh.position)
+  // Camera follow — reconstruct the selected planet's vantage from the
+  // offset captured in selectPlanet() so the camera stays in a near-orbit
+  // vantage as the planet moves, rather than the fixed-shot the old one-off
+  // tween left behind. controls.target is a rigid copy (not lerped) so the
+  // look-at point never lags the planet — only the camera's own position
+  // eases toward its rotating vantage, which is what reads as "smooth."
+  if (selectedPlanet.value && camera && controls) {
+    const mesh = planetMeshes.value.find(m => m.userData.planetId === selectedPlanet.value!.id)
+    if (mesh) {
+      const angle = mesh.userData.orbitAngle as number
+      const rHat  = new THREE.Vector3(Math.cos(angle), 0, Math.sin(angle))
+      const tHat  = new THREE.Vector3(-Math.sin(angle), 0, Math.cos(angle))
+      const desired = mesh.position.clone()
+        .addScaledVector(rHat, followRadial)
+        .addScaledVector(tHat, followTangential)
+        .add(new THREE.Vector3(0, followVertical, 0))
+      camera.position.lerp(desired, 0.15)
+      controls.target.copy(mesh.position)
+      controls.update()
+    }
   }
 }
 
 function teardown() {
   _stopTick?.(); _stopTick = null
-  destroyPortal()
 
   disposeScene(pageGroup)
   scene?.remove(pageGroup)
