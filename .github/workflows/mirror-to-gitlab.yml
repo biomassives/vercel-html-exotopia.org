@@ -25,6 +25,15 @@ jobs:
           GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
           GITLAB_REPO:  ${{ secrets.GITLAB_REPO }}
         run: |
+          if [ -z "$GITLAB_TOKEN" ] || [ -z "$GITLAB_REPO" ]; then
+            echo "::error::GITLAB_TOKEN and/or GITLAB_REPO repo secrets are not set — see docs/git-collaboration-guide.md"
+            exit 1
+          fi
           git remote add gitlab "https://oauth2:${GITLAB_TOKEN}@gitlab.com/${GITLAB_REPO}.git"
-          git push gitlab main --force-with-lease
+          # Plain --force, not --force-with-lease: this is a one-way mirror where
+          # GitHub main is always authoritative. --force-with-lease compares against
+          # a local remote-tracking ref for gitlab/main that this job never fetches
+          # (the gitlab remote is added fresh every run), so it has no baseline to
+          # compare against and was failing this exact way even with valid secrets.
+          git push gitlab main --force
           echo "Mirrored to gitlab.com/${GITLAB_REPO} ✓"

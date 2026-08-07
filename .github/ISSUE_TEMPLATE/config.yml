@@ -1,5 +1,8 @@
 blank_issues_enabled: false
 contact_links:
+  - name: 🔒 Report a security vulnerability
+    url: https://github.com/biomassives/vercel-html-exotopia.org/security/advisories/new
+    about: Private disclosure — do not open a public issue for security issues. See SECURITY.md.
   - name: Protocol guides & workflow docs
     url: https://github.com/biomassives/vercel-html-exotopia.org/blob/main/docs/eco-ops-workflow-guide.md
     about: Field protocols, chain of custody, site securing, FPIC guidance

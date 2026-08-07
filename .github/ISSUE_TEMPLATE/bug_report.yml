@@ -1,0 +1,67 @@
+name: "Bug report"
+description: "Something in the app is broken or behaving unexpectedly"
+title: "[BUG] "
+labels: ["bug"]
+assignees: []
+body:
+
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report this. This is a live, evolving
+        demo — features, wording, and behavior may change, so if something
+        looks unfinished on purpose, it might already be tracked elsewhere.
+        Search open issues first if you can.
+
+  - type: textarea
+    id: what_happened
+    attributes:
+      label: What happened?
+      placeholder: A clear description of the bug.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect to happen instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Go to '...'
+        2. Click on '...'
+        3. See error
+    validations:
+      required: true
+
+  - type: input
+    id: url
+    attributes:
+      label: Page URL (if applicable)
+      placeholder: "https://exotopia.org/..."
+
+  - type: input
+    id: browser
+    attributes:
+      label: Browser / device
+      placeholder: "e.g. Chrome 128 on macOS, Safari on iOS 18"
+
+  - type: textarea
+    id: console
+    attributes:
+      label: Console errors (if any)
+      description: "Open devtools (F12) → Console tab, paste anything relevant."
+      render: text
+
+  - type: checkboxes
+    id: security
+    attributes:
+      label: Before you submit
+      options:
+        - label: "This is NOT a security vulnerability (those should be reported privately — see SECURITY.md)"
+          required: true

@@ -5,14 +5,20 @@
       <router-link to="/privacy">Privacy</router-link>
       <router-link to="/community-guidelines">Community Guidelines</router-link>
       <router-link to="/account">Your Data</router-link>
-      <a :href="`${REPO_URL}/issues`" target="_blank" rel="noopener" class="sf-report">Report a problem</a>
+      <button type="button" class="sf-about sf-report" @click="reportOpen = true">Report a problem</button>
       <a :href="REPO_URL" target="_blank" rel="noopener">Source</a>
     </div>
   </div>
+
+  <ReportIssueModal v-model="reportOpen" />
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
+import ReportIssueModal from 'src/components/ReportIssueModal.vue'
+
 const REPO_URL = 'https://github.com/biomassives/vercel-html-exotopia.org'
+const reportOpen = ref(false)
 </script>
 
 <style scoped>

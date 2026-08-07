@@ -1,0 +1,50 @@
+name: "Feature request"
+description: "Suggest an idea, improvement, or new capability"
+title: "[FEATURE] "
+labels: ["enhancement"]
+assignees: []
+body:
+
+  - type: markdown
+    attributes:
+      value: |
+        Ideas welcome — including ones that need real product/design
+        decisions, not just code. It's fine if this is rough; a maintainer
+        will help scope it.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      placeholder: "What are you trying to do that's currently hard, missing, or clunky?"
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What would you like to see?
+      placeholder: "Describe the feature or change. Sketches, links, or examples from elsewhere are welcome."
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you've considered
+      placeholder: "Any workarounds you're using today, or other approaches you thought about."
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Which area does this touch?
+      options:
+        - "Cosmic/galaxy/cluster navigation"
+        - "Settlements (claiming, items, publishing)"
+        - "Citizen science / eco-ops"
+        - "Rewards, quizzes, certificates"
+        - "Community nodes / gallery"
+        - "Legal, privacy, or account settings"
+        - "Something else"
+    validations:
+      required: true
