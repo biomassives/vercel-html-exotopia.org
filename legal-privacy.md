@@ -34,6 +34,7 @@ contributors.
 | Citizen-science / eco-ops data | Field observations, geolocation of submitted sites, photos, project status notes | You, directly, when you choose to submit |
 | Recorded/staged entries | Audio or written entries you stage locally before submitting (e.g. via the Record widget) | You, directly — stored locally on your device until you choose to submit |
 | Community content | Blog comments, community posts, profile info you choose to add. Comments are visible only to mutual, green-lit connections (max. seven per thread) — not to the general public or, outside a valid legal request or a recipient-initiated report (see § 4), to us | You, directly |
+| Third-party details you submit | A Knowledge Keeper's name and any consent/context notes when you submit their wisdom to the Knowledge Keepers library; a landowner's, site contact's, or co-owner's name/details you optionally add to a community node listing or an ecology field site's access notes | You, directly — about someone else, not the third party themselves; see note below |
 | Communications | Support requests, emails to us | You, directly |
 
 ### A note on location and presence
@@ -55,6 +56,30 @@ than tied to your account, and unpinning it removes it from that service.
 into pinned settlement content** beyond what you choose to enter into the
 title/description fields yourself; anything else you add to your profile is
 stored in our database, where it can be corrected or deleted per § 8.
+
+### A note on data about someone other than you
+
+A few features let you submit information that names or describes a **third
+party** — someone who isn't the one using our Service and hasn't consented to
+us directly:
+
+- **Knowledge Keeper records**: if you submit an Elder's or Knowledge
+  Keeper's wisdom to the library, the record includes their name and, where
+  you provide it, a note about the consent/context under which they shared
+  it. That consent is between you and them — we rely on your attestation
+  that it was given; we do not independently verify it. These records are
+  held back from public view until reviewed.
+- **Community node contact details**: if you list a business or creative
+  page, the optional contact field may include a third party's name or
+  contact information (e.g. a co-owner or site manager) rather than only
+  your own.
+- **Ecology field site notes**: if you submit a field site, the optional
+  access/contact note may name a landowner or site contact who isn't a
+  Service user.
+
+If you are the third party named in one of these records — not the person
+who submitted it — and want it corrected or removed, contact us (§ 12); we
+don't require you to have an account with us to make that request.
 
 ## 3. Why we process your data (legal bases, where applicable)
 
@@ -167,7 +192,7 @@ file of everything tied to your account immediately; a deletion request is
 logged with a timestamp and processed by a team member, since actually
 deleting an account needs elevated access we don't expose to your browser.
 For correction, objection, or anything `/account` doesn't yet cover, contact
-**[PRIVACY CONTACT EMAIL]**. We will respond within the time limit required
+**ecocommunity@protonmail.com**. We will respond within the time limit required
 by the law that applies to you (see § 10 for jurisdiction-specific
 timelines) — for a self-service deletion request, that's the same day it's
 processed, not the statutory maximum.
@@ -196,7 +221,7 @@ we will delete it.
   deletion rights above still apply.
 
 ### European Union / EEA (incl. Netherlands/Amsterdam) — GDPR
-- **Controller**: Sustainable Community Development Hub, **[ADDRESS]**.
+- **Controller**: Sustainable Community Development Hub, **350 East St. #911, Nederland, CO 80466, USA**.
 - **EU representative** (if you are not established in the EU but process EU
   residents' data at scale): **[NAME/ADDRESS — required under GDPR Art. 27;
   not yet appointed/researched]**.
@@ -253,6 +278,25 @@ we will delete it.
   Law 25, and disclose automated decision-making that produces legal or
   similarly significant effects, if any.
 
+### Zimbabwe — Cyber and Data Protection Act [Chapter 12:07] (CDPA)
+- Supervisory authority: **POTRAZ (Postal and Telecommunications Regulatory
+  Authority of Zimbabwe)**.
+- If our processing of Zimbabwean residents' data meets SI 155's
+  data-controller licensing threshold, our registration with POTRAZ is:
+  **[REGISTRATION NUMBER, once registered]** — see
+  `compliance/INDEX.md` § Zimbabwe for the underlying analysis, which
+  currently distinguishes the main account-based Service (in scope) from a
+  static, no-account eco-library deployment (out of scope by design).
+- Any data compromise affecting Zimbabwean residents' data is reportable to
+  POTRAZ within **24 hours** of discovery.
+- Cross-border transfer of Zimbabwean residents' data (e.g. to our
+  US-hosted Supabase project) requires notice to POTRAZ and confirmation
+  that the receiving country meets Zimbabwe's data-privacy adequacy
+  standard under CDPA § 25 — **not yet assessed**.
+- Processing data from a participant under 18 requires verifiable, explicit
+  consent from a parent or legal guardian — relevant to school- or
+  youth-group-based eco-ops participation specifically; see § 9.
+
 ### African Union member states generally
 - Where your country of residence has a comprehensive data protection law
   (e.g. **Nigeria** — Data Protection Act 2023, enforced by the Nigeria Data
@@ -260,7 +304,7 @@ we will delete it.
   Information Regulator; or similar frameworks in other countries), you have
   the rights that law grants, in addition to those listed in § 8.
 - Because legal frameworks vary significantly across the continent and are
-  evolving rapidly, contact **[PRIVACY CONTACT EMAIL]** for country-specific
+  evolving rapidly, contact **ecocommunity@protonmail.com** for country-specific
   questions — we will confirm what applies to your country of residence.
 
 ## 11. Changes to this policy
@@ -270,7 +314,7 @@ take effect.
 
 ## 12. Contact
 
-**[PRIVACY CONTACT EMAIL — same recommendation as Terms of Service § 15]**
+**ecocommunity@protonmail.com**
 — for all data protection questions and rights requests.
 
 ## 13. Changelog
@@ -283,4 +327,7 @@ Material changes to this policy are logged here — see § 11.
 | 2026-07-22 | Added the private-comments privacy-model explanation in § 4 (visibility, report path, lawful-request policy pointer) and this changelog. |
 | 2026-07-23 | Identified SCD Hub (Sustainable Community Development Hub) as the operating entity — Colorado nonprofit corporation, confirmed IRS 501(c)(3) — and Exotopia as its project, replacing the `[LEGAL ENTITY NAME]` placeholder in § 1 and the EU controller line in § 10. Added a "United States" regional notice in § 10 (previously missing) covering the Colorado Privacy Act. Updated the Terms of Service cross-reference in § 12 to match that document's renumbering. |
 | 2026-08-01 | Removed blockchain/wallet data collection — replaced the "Wallet data" row in § 2 with "Settlement/pinning data," rewrote the on-chain/off-chain distinction in § 2 as pinned-vs-account data, dropped the mint-transaction legal basis in § 3, replaced "Blockchain networks" with "IPFS pinning services" in § 4's sharing categories, updated retention language in § 7, and — a genuine improvement, not just a rewording — the erasure right in § 8 no longer has the blockchain carve-out, since content we pin through our own service can now actually be unpinned on request. |
+| 2026-08-06 | Filled in `[PRIVACY CONTACT EMAIL]` (§ 8, § 10 African Union section, § 12) with **ecocommunity@protonmail.com** and `[ADDRESS]` (§ 10 EU/EEA Controller line) with the actual mailing address, replacing the remaining placeholders. |
 | 2026-08-04 | Added "A note on location and presence" to § 2, distinguishing user-submitted citizen-science site geolocation from any tracking of a member's own device location or position, and clarifying that presence indicators (e.g. gallery headcounts) are aggregate-only. Companion changes: `legal-terms.md` § 6, Community Guidelines § 3, and `SPEC_DEFENDERNAV.md` § 1.6. |
+| 2026-08-05 | Added a Zimbabwe regional notice to § 10 (CDPA [Chapter 12:07] / SI 155 / POTRAZ: 24-hour breach notification, cross-border transfer notice under § 25, minor-consent requirement). Companion change: `legal-terms.md` § 14 and a new Zimbabwe entry in `compliance/INDEX.md`, which explains why the main Supabase-backed Service and a proposed static/no-account eco-library node get different SI 155 treatment. |
+| 2026-08-05 | Added a "Third-party details you submit" row to § 2's data table and a new "A note on data about someone other than you" subsection, disclosing three previously-undocumented fields where a user can enter another person's name/contact details: Knowledge Keeper records (`keeper_name`/`consent_note`, consent attested by the submitter, not verified by us), community node listings' optional contact field, and ecology field sites' optional access/contact note. Closes a gap identified while reviewing the app's Supabase schema for pluggable-backend planning — these fields existed in the data model without a corresponding disclosure here. |

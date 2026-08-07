@@ -186,6 +186,54 @@ Key questions:
 
 ---
 
+### 🇿🇼 Zimbabwe
+
+**Classification risk:** Split — low for the static eco-library node, unassessed for the main platform  
+**Primary concern:** Cyber and Data Protection Act [Chapter 12:07] (CDPA) and its licensing regulations (SI 155), enforced by POTRAZ (Postal and Telecommunications Regulatory Authority of Zimbabwe)  
+**Strategy:** Treat this as two separate questions rather than one — see below  
+**Status:** Research needed — see [zimbabwe/overview.md](zimbabwe/overview.md) *(pending)*
+
+This jurisdiction surfaced a strategy note arguing Exotopia can bypass POTRAZ data-controller
+licensing entirely via a "zero-storage" architecture (ephemeral in-browser auth, no PII
+database, on-chain-only action verification). **That argument does not hold for the main
+Exotopia platform as it exists today** — the account system (Supabase-backed, storing email
+and settlement/citizen-science data per `legal-privacy.md` § 2) makes us a data controller
+under SI 155's definition regardless of the blockchain framing, and the on-chain-ledger
+component the note describes was removed from the product on 2026-08-01 (see
+`legal-terms.md` changelog). Two distinct deployments need separate analysis:
+
+- **Main Exotopia platform (accounts, eco-ops submissions, settlement records):** ordinary
+  data-controller analysis applies. Likely requires POTRAZ registration/licensing under SI
+  155 if Zimbabwean residents create accounts or submit citizen-science data, notification to
+  POTRAZ before any cross-border transfer to our (US-hosted) Supabase project under CDPA
+  § 25, and verifiable parental consent for any under-18 participant per the CDPA's children's
+  data provisions — relevant for school- or youth-group-based eco-ops drives specifically.
+  24-hour breach notification to POTRAZ applies once we are a registered controller.
+- **Static offline eco-library node** (`hub.approvideo.org`-style static media/video library,
+  served from a local Raspberry Pi or Wi-Fi mesh box in a community center or school, no
+  backend, no accounts, no data collection): this deployment genuinely does not process
+  personal data and is the strongest candidate for falling outside SI 155's licensing trigger
+  entirely — matches the "static, no external SaaS dependency" deployment path already
+  described in `SPEC_SELF_HOSTED_NETWORK.md` § 3. This is the piece worth building first for
+  Zimbabwe specifically, given mobile data costs (among the highest in SADC) and intermittent
+  connectivity in areas like Epworth and Chitungwiza.
+
+Key questions:
+- Does an offline, zero-account static node avoid SI 155's data-controller licensing trigger
+  entirely, or does POTRAZ's definition reach any entity "determining the purpose of
+  collecting personal data" even without a backend (e.g. via device/usage analytics we'd need
+  to explicitly not collect)?
+- If Zimbabwean users are directed from the static node to the main Exotopia platform (to
+  claim a settlement, join eco-ops program tracking, etc.), does that hand-off itself trigger
+  CDPA obligations at the point of referral, or only once an account is actually created?
+- What does "community verification via on-device, workshop-lead-signed QR codes" (the note's
+  proposed pattern for anonymous youth-safe action rewards) actually require technically, and
+  does it avoid children's-data consent requirements only if no name/age/biometric data is
+  captured anywhere in the flow, including analytics?
+- POTRAZ licensing fee schedule and registration timeline under SI 155 — not yet researched.
+
+---
+
 ### 🇨🇷 Costa Rica
 
 **Classification risk:** Low-medium (no NFT-specific law; open fintech posture)  
@@ -321,6 +369,7 @@ Regardless of local legal requirements, we commit to:
 | [brazil/overview.md](brazil/overview.md) | Brazil | 1 | Pending |
 | [india/overview.md](india/overview.md) | India | 1 | Pending |
 | [uae/overview.md](uae/overview.md) | UAE | 1 | Pending |
+| [zimbabwe/overview.md](zimbabwe/overview.md) | Zimbabwe | 2 | Pending |
 | [uk/overview.md](uk/overview.md) | United Kingdom | 2 | Pending |
 | [singapore/overview.md](singapore/overview.md) | Singapore | 2 | Pending |
 | [south-korea/overview.md](south-korea/overview.md) | South Korea | 2 | Pending |

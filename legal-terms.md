@@ -29,13 +29,7 @@ virtual-real-estate layer of the SCD Hub ecosystem — alongside **pon.ink**
 furtherance of SCD Hub's charitable and educational mission. Exotopia itself
 is a project, not a separate legal entity — "we," "us," and "the Company" in
 these Terms all mean SCD Hub. SCD Hub's registered address is
-**[ADDRESS]**.
-
-*(The one remaining gap here is the street address — not something to guess
-at. Fill in SCD Hub's actual registered agent/principal address before this
-ships; everything else in this section reflects the entity's actual,
-confirmed status: Colorado nonprofit corporation, IRS 501(c)(3) determination
-received.)*
+**350 East St. #911, Nederland, CO 80466**.
 
 These Terms of Service ("**Terms**") govern your access to and use of
 Exotopia's website, apps, and related services (collectively, the
@@ -55,7 +49,8 @@ not store your full payment card number or M-Pesa PIN — that data is handled
 directly by the processor.
 
 **Open-source notice.** The Service's software is developed under the
-**GNU GPL v3** license; source is available at **[REPOSITORY URL]**. This
+**GNU GPL v3** license; source is available at
+**https://github.com/biomassives/vercel-html-exotopia.org**. This
 license governs the *software*, and is separate from — and does not grant
 any rights to — the content or settlement records described in § 4 below.
 
@@ -139,6 +134,15 @@ content that is unlawful, infringing, harassing, or that violates a third
 party's privacy or data protection rights. Our full conduct expectations are
 set out in the **Community Guidelines** (`/community-guidelines`), which this
 section incorporates by reference.
+
+**Submitting information about someone else.** If you submit a Knowledge
+Keeper record, a community node's contact details, an ecology field site's
+access/contact note, or any other content that names or describes a person
+other than yourself, you represent that you have that person's consent to
+share their name and details for this purpose, or another lawful basis to do
+so. See the Privacy Policy § 2 for what we do with this information and how
+a named third party — even one without an account of their own — can
+request it be corrected or removed.
 
 We may moderate, remove, or restrict content or accounts at our discretion,
 particularly where required to comply with local law (e.g. content-takedown
@@ -317,22 +321,38 @@ region.**
   private sector* (Law 25). Commercial electronic messages are sent only
   with consent as required by Canada's Anti-Spam Legislation (CASL).
 
+### Zimbabwe — Cyber and Data Protection Act [Chapter 12:07] (CDPA)
+- Nothing here limits your rights under the CDPA, or your right to lodge a
+  complaint with **POTRAZ (Postal and Telecommunications Regulatory
+  Authority of Zimbabwe)**, our supervisory authority for this jurisdiction.
+- If you create an account, connect a settlement, or submit citizen-science/
+  eco-ops data from Zimbabwe, that processing may require SCD Hub to
+  register as a data controller with POTRAZ under **SI 155**'s licensing
+  regulations — see `compliance/INDEX.md` § Zimbabwe. **[REGISTRATION
+  STATUS/NUMBER, once confirmed]**.
+- A static, offline, no-account version of our eco-library content (served
+  from a local node with no backend and no data collection) may be offered
+  separately in Zimbabwe specifically to reduce connectivity cost and stay
+  outside SI 155's licensing trigger — see `compliance/INDEX.md` § Zimbabwe
+  for why that deployment is treated differently from the main Service.
+- Where a program is directed at or knowingly collects data from a
+  participant under 18 (e.g. a school- or youth-group-based eco-ops drive),
+  verifiable consent from a parent or legal guardian is required under the
+  CDPA — see § 5.
+
 ### African Union member states generally
 - Where a country of residence has an applicable comprehensive data
   protection law (e.g. Nigeria's Data Protection Act 2023, South Africa's
   POPIA, or similar), nothing here limits your rights under that law. If you
   believe no such notice applies to your country and you have concerns,
-  contact us at `[LEGAL/PRIVACY CONTACT]`.
+  contact us at `ecocommunity@protonmail.com`.
 
 ## 15. Contact
 
 Questions about these Terms, or to make a donor-privacy or photo-use request
-under § 5/§ 8: **[LEGAL/PRIVACY CONTACT EMAIL — recommend a dedicated
-address like legal@exotopia.org rather than a personal inbox, both for
-professionalism and because several of the regimes in § 14 expect a stable,
-monitored contact channel]**
+under § 5/§ 8: **ecocommunity@protonmail.com**
 
-Mail: Sustainable Community Development Hub, **[PO BOX / MAILING ADDRESS]**.
+Mail: Sustainable Community Development Hub, **350 East St. #911, Nederland, CO 80466**.
 
 ## 16. Changelog
 
@@ -345,4 +365,8 @@ answer "what did I agree to on date X" — see § 13.
 | 2026-07-22 | Published the Community Guidelines document referenced in § 6, and this changelog. The product itself was also changed the same day to remove a secondary-marketplace/resale feature that existed in the app but was never described in these Terms — see `RISK_REDUCTION_RECOMMENDATIONS.md` §1 and `blog-risk-reduction-pass.md`. |
 | 2026-07-23 | Identified SCD Hub (Sustainable Community Development Hub) as the operating entity — a Colorado nonprofit corporation with a confirmed IRS 501(c)(3) determination — and Exotopia as its project, replacing the prior `[LEGAL ENTITY NAME]` placeholder throughout. Added § 8 (Fundraising, donations, and tax-deductibility, including IRC § 6115 quid-pro-quo disclosure for minted items received in exchange for a contribution), a Volunteer Protection Act / Colorado charitable-immunity clause in § 10, director/officer/volunteer indemnification in § 11, Colorado as the governing-law jurisdiction in § 12, a photo/media-release clause for in-person events in § 5, and a "United States" regional notice in § 14 (previously missing despite being the home jurisdiction). |
 | 2026-08-01 | Removed blockchain/NFT minting from the settlement journey — replaced with optional IPFS pinning (no wallet, no chain, no gas fee, no collision-proof claim registry by design). Rewrote § 3 (was "Accounts and wallets") and § 4 (was "Virtual property, minting, and NFTs") accordingly, dropped the crypto-asset jurisdiction disclaimer from § 2 (nothing crypto-related left to restrict), removed "cryptocurrency" from the non-redeemable rewards list in § 7, removed the "minted collectible" quid-pro-quo example in § 8, and replaced the blockchain/wallet-compromise liability carve-out in § 10 with one for pinning-service/content unavailability. |
+| 2026-08-05 | Added a Zimbabwe regional notice to § 14 (CDPA [Chapter 12:07] / SI 155 / POTRAZ), replacing the incoming strategy note's "zero-storage bypasses licensing" framing — which assumed an on-chain, no-database architecture removed from the product on 2026-08-01 — with a split analysis: the main account-based Service is treated as an ordinary data controller under SI 155, while a separate static/no-account eco-library node is the piece that can credibly avoid the licensing trigger. See `compliance/INDEX.md` § Zimbabwe for the full reasoning. |
+| 2026-08-05 | Added a "Submitting information about someone else" clause to § 6 — an affirmative representation that the submitter has consent (or another lawful basis) to name a third party in a Knowledge Keeper record, community node contact field, or ecology site note. Companion to the same-day `legal-privacy.md` § 2 change disclosing those three fields; this is the Terms-side obligation matching that Privacy-side disclosure. |
+| 2026-08-06 | Filled in `[REPOSITORY URL]` in § 1 with the actual repo (`github.com/biomassives/vercel-html-exotopia.org`) — verifiable from the codebase itself (bounty-system GitHub Actions, git-collaboration docs), not a fact requiring external input. Everything else still bracketed (address, contact email, retention/notice periods, regulator registration numbers) needs real input — see the status review this entry accompanies. |
 | 2026-08-04 | Added a "Design commitment" paragraph to § 6 stating we do not build features that reveal another member's live location or movement, and that social/coordination features are opt-in and mutual-consent based. Companion changes: a new Community Guidelines § 3 ("Location, presence, and finding other members"), a new `SPEC_DEFENDERNAV.md` § 1.6 ("No individual user tracking") making the constraint explicit for the map component itself, and a note in `legal-privacy.md` § 2 distinguishing submitted citizen-science site geolocation from any tracking of a member's own position. |
+| 2026-08-06 | Filled in `[ADDRESS]` (§ 1, removing the now-obsolete explanatory parenthetical) and `[PO BOX / MAILING ADDRESS]` (§ 15) with the actual mailing address, and `[LEGAL/PRIVACY CONTACT]` (§ 14, § 15) with **ecocommunity@protonmail.com**, replacing the remaining placeholders identified in the prior status review. |
