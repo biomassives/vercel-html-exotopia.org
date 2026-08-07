@@ -191,7 +191,7 @@ Key questions:
 **Classification risk:** Split — low for the static eco-library node, unassessed for the main platform  
 **Primary concern:** Cyber and Data Protection Act [Chapter 12:07] (CDPA) and its licensing regulations (SI 155), enforced by POTRAZ (Postal and Telecommunications Regulatory Authority of Zimbabwe)  
 **Strategy:** Treat this as two separate questions rather than one — see below  
-**Status:** Research needed — see [zimbabwe/overview.md](zimbabwe/overview.md) *(pending)*
+**Status:** Internal draft complete — see [zimbabwe/overview.md](zimbabwe/overview.md); Zimbabwean counsel review still needed
 
 This jurisdiction surfaced a strategy note arguing Exotopia can bypass POTRAZ data-controller
 licensing entirely via a "zero-storage" architecture (ephemeral in-browser auth, no PII
@@ -369,7 +369,7 @@ Regardless of local legal requirements, we commit to:
 | [brazil/overview.md](brazil/overview.md) | Brazil | 1 | Pending |
 | [india/overview.md](india/overview.md) | India | 1 | Pending |
 | [uae/overview.md](uae/overview.md) | UAE | 1 | Pending |
-| [zimbabwe/overview.md](zimbabwe/overview.md) | Zimbabwe | 2 | Pending |
+| [zimbabwe/overview.md](zimbabwe/overview.md) | Zimbabwe | 2 | Draft — internal synthesis, not counsel-reviewed |
 | [uk/overview.md](uk/overview.md) | United Kingdom | 2 | Pending |
 | [singapore/overview.md](singapore/overview.md) | Singapore | 2 | Pending |
 | [south-korea/overview.md](south-korea/overview.md) | South Korea | 2 | Pending |

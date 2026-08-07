@@ -226,7 +226,9 @@ const BG_NAV_COUNT: Record<string, number> = {
 export function buildBackgroundField(doc: ClusterGalaxyDoc, diskRadius = 2.5): BackgroundField {
   const morph    = doc.galaxy_hubble
   const navCount = doc.population?.nav_count ?? BG_NAV_COUNT[morph] ?? 1000
-  const bgCount  = Math.max(0, navCount - doc.star_systems.length)
+  // Lightweight generated docs (SPEC_XCLUSTER_STARSYSTEMS.md §4's non-anchor X-ray
+  // members) may omit star_systems entirely — coalesce rather than crash.
+  const bgCount  = Math.max(0, navCount - (doc.star_systems ?? []).length)
 
   // Use population.seed when available (written by Python script), else derive
   const seed     = doc.population?.seed ?? strSeed(`${doc.cluster_slug}-${doc.galaxy_id}-bg`)
@@ -303,7 +305,55 @@ export function buildBackgroundField(doc: ClusterGalaxyDoc, diskRadius = 2.5): B
 
 const _cache = new Map<string, Promise<ClusterGalaxyDoc>>()
 
-async function _fetchGalaxyDoc(clusterSlug: string, galaxyId: string): Promise<ClusterGalaxyDoc> {
+/**
+ * Caller-supplied fallback values, used only when Stage 1/2 have nothing better.
+ * The X-ray cluster chain (XClusterPage → ClusterGalaxyPage) is the case this
+ * exists for: those 345 clusters have no `/clusters/{slug}-members.json`, so
+ * Stage 2 always misses and Stage 3 previously hardcoded morph 'E' / 65 Mpc
+ * regardless of the real oracle morphology or cluster distance — silently
+ * wrong for every X-ray-cluster galaxy, not just an edge case.
+ */
+export interface GalaxyDocHints {
+  morph?:   string
+  distMpc?: number
+}
+
+// xid → real cluster name (from galaxy-oracle/index.json's id_map) and
+// cluster name → dist_mpc (from clusters-xray.json) — both small, fetched
+// once per session and cached, used only as a last-resort distance source
+// for xc-* cluster slugs when no explicit distMpc hint was supplied.
+let _xrayIdMap:    Promise<Record<string, string>> | null = null
+let _xrayDistByName: Promise<Record<string, number>> | null = null
+
+async function _xrayClusterDistMpc(clusterSlug: string): Promise<number | undefined> {
+  if (!clusterSlug.startsWith('xc-')) return undefined
+  const xid = clusterSlug.slice(3)
+  try {
+    _xrayIdMap ??= fetch('/galaxy-oracle/index.json')
+      .then(r => r.json())
+      .then((d: { id_map: Record<string, string> }) => {
+        const byXid: Record<string, string> = {}
+        for (const [name, id] of Object.entries(d.id_map)) byXid[id] = name
+        return byXid
+      })
+    _xrayDistByName ??= fetch('/clusters-xray.json')
+      .then(r => r.json())
+      .then((rows: Array<{ name: string; dist_mpc: number }>) => {
+        const byName: Record<string, number> = {}
+        for (const row of rows) byName[row.name] = row.dist_mpc
+        return byName
+      })
+    const [idMap, distByName] = await Promise.all([_xrayIdMap, _xrayDistByName])
+    const name = idMap[xid]
+    return name ? distByName[name] : undefined
+  } catch {
+    return undefined
+  }
+}
+
+async function _fetchGalaxyDoc(
+  clusterSlug: string, galaxyId: string, hints?: GalaxyDocHints,
+): Promise<ClusterGalaxyDoc> {
   const normalId = galaxyId.replace(/\s+/g, '')
 
   // Stage 1: Generated star-system JSON
@@ -329,7 +379,7 @@ async function _fetchGalaxyDoc(clusterSlug: string, galaxyId: string): Promise<C
         const count = member.star_system_count ?? PROC_SYSTEM_COUNT[member.hubble] ?? 40
         const doc = buildProceduralDoc(
           normalId, member.hubble, clusterSlug,
-          data.cluster, data.dist_mpc ?? 65, count,
+          data.cluster, data.dist_mpc ?? hints?.distMpc ?? 65, count,
         )
         doc._source = 'procedural-catalog'
         return doc
@@ -337,13 +387,22 @@ async function _fetchGalaxyDoc(clusterSlug: string, galaxyId: string): Promise<C
     }
   } catch { /* fall through */ }
 
-  // Stage 3: Pure procedural fallback (no network data at all)
-  return buildProceduralDoc(normalId, 'E', clusterSlug, clusterSlug.replace(/-/g, ' '), 65, 40)
+  // Stage 3: Pure procedural fallback (no network data at all) — prefer the
+  // real morph/distance passed down from the click that got us here (see
+  // GalaxyDocHints) over the previous hardcoded 'E' / 65 Mpc.
+  const morph   = hints?.morph || 'E'
+  const distMpc = hints?.distMpc ?? await _xrayClusterDistMpc(clusterSlug) ?? 65
+  return buildProceduralDoc(
+    normalId, morph, clusterSlug, clusterSlug.replace(/-/g, ' '),
+    distMpc, PROC_SYSTEM_COUNT[morph] ?? 40,
+  )
 }
 
-export function fetchGalaxyDoc(clusterSlug: string, galaxyId: string): Promise<ClusterGalaxyDoc> {
-  const key = `${clusterSlug}/${galaxyId}`
-  if (!_cache.has(key)) _cache.set(key, _fetchGalaxyDoc(clusterSlug, galaxyId))
+export function fetchGalaxyDoc(
+  clusterSlug: string, galaxyId: string, hints?: GalaxyDocHints,
+): Promise<ClusterGalaxyDoc> {
+  const key = `${clusterSlug}/${galaxyId}/${hints?.morph ?? ''}/${hints?.distMpc ?? ''}`
+  if (!_cache.has(key)) _cache.set(key, _fetchGalaxyDoc(clusterSlug, galaxyId, hints))
   return _cache.get(key)!
 }
 
@@ -368,6 +427,7 @@ export interface UseClusterGalaxyDataReturn {
 export function useClusterGalaxyData(
   clusterSlug: string | Ref<string>,
   galaxyId:    string | Ref<string>,
+  hints?:      GalaxyDocHints,
 ): UseClusterGalaxyDataReturn {
   const loading     = ref(false)
   const error       = ref('')
@@ -380,9 +440,9 @@ export function useClusterGalaxyData(
   async function load() {
     loading.value = true; error.value = ''
     try {
-      const result  = await fetchGalaxyDoc(slug, id)
+      const result  = await fetchGalaxyDoc(slug, id, hints)
       doc.value         = result
-      systemCount.value = result.star_systems.length
+      systemCount.value = (result.star_systems ?? []).length
     } catch (e) {
       error.value = String(e)
     } finally {
@@ -412,7 +472,7 @@ export async function getGalaxySummary(clusterSlug: string, galaxyId: string) {
     galaxy_hubble:    doc.galaxy_hubble,
     cluster:          doc.cluster,
     cluster_dist_mpc: doc.cluster_dist_mpc,
-    system_count:     doc.star_systems.length,
+    system_count:     (doc.star_systems ?? []).length,
     source:           doc._source,
     observatory_report: doc.provenance?.observatory_report,
   }

@@ -48,6 +48,7 @@
       </div>
 
       <div class="spp-repo-links">
+        <router-link to="/settlements">Browse all published settlements</router-link>
         <a :href="REPO_URL" target="_blank" rel="noopener">View source on GitHub</a>
       </div>
     </div>
@@ -213,6 +214,7 @@ onBeforeUnmount(() => {
 .spp-fade-enter-active, .spp-fade-leave-active { transition: opacity 0.18s; }
 .spp-fade-enter-from, .spp-fade-leave-to { opacity: 0; }
 
-.spp-repo-links { margin-top: 32px; font-size: 11px; }
+.spp-repo-links { margin-top: 32px; font-size: 11px; display: flex; gap: 18px; flex-wrap: wrap; }
 .spp-repo-links a { color: #4488cc; text-decoration: none; }
+.spp-repo-links a:hover { color: #66aaee; }
 </style>

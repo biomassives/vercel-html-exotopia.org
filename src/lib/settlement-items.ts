@@ -23,6 +23,7 @@ import { safeRead, safeWrite, hashStorageKey, encryptForStorage, decryptFromStor
 import { tryLoadGLTF, ASSET_PATHS } from './asset-loader'
 import { disposeScene } from './three-utils'
 import { REMEDIATION_METHODS } from 'src/data/pfas-methods-library'
+import { supabase } from './supabase'
 
 // ── Core types ────────────────────────────────────────────────────────────────
 
@@ -587,6 +588,54 @@ function ensureLoaded(sk: string) {
   itemsStore[sk] = items
 }
 
+// ── Server sync (016_settlement_items.sql) — signed-in members only ────────
+//
+// Fast-follow to settlements.ts's own sync: same hybrid model (localStorage
+// stays the source of truth read on every page load; a signed-in member's
+// writes are ALSO upserted server-side so items survive a cleared cache or
+// show up on a second device). One row per (owner, settlement), holding the
+// whole item list as JSONB — matching persist()'s own always-rewrite-the-
+// full-array model, so there's no per-item diffing to get wrong.
+
+async function currentUserId(): Promise<string | null> {
+  if (!supabase) return null
+  const { data } = await supabase.auth.getSession()
+  return data.session?.user?.id ?? null
+}
+
+async function syncItemsUpsert(sk: string, items: SettlementItem[]) {
+  const uid = await currentUserId()
+  if (!uid || !supabase) return
+  await supabase.from('settlement_items')
+    .upsert({ owner_id: uid, settlement_key: sk, items }, { onConflict: 'owner_id,settlement_key' })
+}
+
+/**
+ * Called once when a member's session becomes available (see member.ts) —
+ * same integration point as settlements.ts's loadMySettlements(), and called
+ * right after it. Pulls down every settlement's items this member has on the
+ * server; a server-known settlement replaces the local cache for that
+ * settlement (it's the durable copy), and local-only settlements (not yet
+ * synced) are pushed up as-is.
+ */
+export async function loadMySettlementItems(): Promise<void> {
+  const uid = await currentUserId()
+  if (!uid || !supabase) return
+  const { data } = await supabase.from('settlement_items').select('settlement_key, items').eq('owner_id', uid)
+  const rows = (data ?? []) as { settlement_key: string; items: SettlementItem[] }[]
+  const serverKeys = new Set<string>()
+  for (const row of rows) {
+    serverKeys.add(row.settlement_key)
+    itemsStore[row.settlement_key] = row.items
+    saveItems(row.settlement_key, row.items)
+  }
+  // Push up anything already loaded locally this session that the server
+  // doesn't have yet (mirrors settlements.ts's local-only migration path).
+  for (const sk of Object.keys(itemsStore)) {
+    if (!serverKeys.has(sk)) void syncItemsUpsert(sk, itemsStore[sk]!)
+  }
+}
+
 // ── Composable ────────────────────────────────────────────────────────────────
 
 export function useSettlementItems(settlementKey: Ref<string>) {
@@ -598,7 +647,10 @@ export function useSettlementItems(settlementKey: Ref<string>) {
     set: (val: SettlementItem[]) => { itemsStore[settlementKey.value] = val },
   })
 
-  function persist() { saveItems(settlementKey.value, items.value) }
+  function persist() {
+    saveItems(settlementKey.value, items.value)
+    void syncItemsUpsert(settlementKey.value, items.value)
+  }
 
   function addItem(
     partial: Pick<SettlementItem, 'type' | 'meshPreset' | 'zone'> &

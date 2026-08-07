@@ -838,6 +838,7 @@ import {
 } from 'src/lib/star-sprites'
 import { VOID_VERT, VOID_FRAG } from 'src/lib/void-shader'
 import { disposeScene }                          from 'src/lib/three-utils'
+import { computeHandoffOrigin }                  from 'src/lib/scene-handoff'
 import { loadOracleCluster, prewarmOracleIndex } from 'src/lib/galaxy-oracle'
 import { tryLoadTexture, ASSET_PATHS }           from 'src/lib/asset-loader'
 import type { OracleGalaxy } from 'src/data/galaxy-oracle.types'
@@ -1089,6 +1090,18 @@ function onCosmicViewModeChange(mode: 'natural' | 'xray' | 'dark_matter') {
   for (const mesh of conduitLowerMeshes) {
     mesh.scale.setScalar(cfg.scale)
   }
+
+  // Dark-matter halo spheres: faint ambient dressing (0.028) in natural/xray,
+  // boosted to read as an intentional overlay in dark_matter mode. This is
+  // the actual real-data halo-extent view SPEC_DARK_MATTER_VIEW.md proposed —
+  // the mesh itself is already sized from cited M200/r_vir data where
+  // available (see the build site above); this is just what makes that
+  // sizing visible rather than a constant near-invisible 0.028 regardless
+  // of mode.
+  const dmOpacity = mode === 'dark_matter' ? 0.16 : 0.028
+  for (const mesh of dmHaloMeshes) {
+    (mesh.material as THREE.MeshBasicMaterial).opacity = dmOpacity
+  }
 }
 
 // Countdown display for timed events (updated each second)
@@ -1259,6 +1272,11 @@ let hitTargets: HitTarget[] = []
 let conduitMeshes: THREE.Mesh[] = []
 // conduit lower pyramids — share material with upper; synced in animation tick
 let conduitLowerMeshes: THREE.Mesh[] = []
+// dark-matter halo spheres — faint ambient dressing in natural/xray mode,
+// boosted to a real, sized-from-data overlay in dark_matter mode (see
+// onCosmicViewModeChange); SPEC_DARK_MATTER_VIEW.md's proposed fix, applied
+// to the halo mesh that already existed rather than a new one.
+let dmHaloMeshes: THREE.Mesh[] = []
 
 // BH ring meshes — slow rotation animation (one ring per SMBH/ULSMBH galaxy)
 let bhRingMeshes: THREE.Mesh[] = []
@@ -2012,8 +2030,17 @@ function buildClusters() {
       sprite.position.copy(pos)
       pageGroup.add(sprite)
 
-      // Dark matter halo — faint additive purple sphere at 4.5× physical radius
-      const dmR   = physR * 4.5
+      // Dark matter halo — faint additive purple sphere, ambient dressing in
+      // natural/xray mode. Sized from this cluster's real dmHaloRadiusMpc
+      // (cosmic-structures.ts, reconciled against clusters/*-members.json's
+      // rvir_mpc — see SPEC_XCLUSTER_STARSYSTEMS.md §5) when available,
+      // rather than the generic physR × 4.5 placeholder — falls back to that
+      // placeholder only for the clusters this dataset doesn't cover.
+      // Opacity is boosted reactively in dark_matter mode; see
+      // onCosmicViewModeChange, which is what actually makes the DK.MAT
+      // toggle show real per-cluster halo extent instead of just recoloring
+      // the wormhole conduits.
+      const dmR   = c.dmHaloRadiusMpc ? c.dmHaloRadiusMpc * MPC_SCALE : physR * 4.5
       const dmMat = new THREE.MeshBasicMaterial({
         color:       0x4422aa,
         transparent: true,
@@ -2025,6 +2052,7 @@ function buildClusters() {
       const dmMesh = new THREE.Mesh(new THREE.SphereGeometry(dmR, 14, 10), dmMat)
       dmMesh.position.copy(pos)
       pageGroup.add(dmMesh)
+      dmHaloMeshes.push(dmMesh)
 
       // Invisible hit sphere — slightly larger than sprite for comfortable clicking
       const hitR   = Math.max(0.10, spriteSize * 0.55)
@@ -3306,7 +3334,7 @@ async function navigateToVoid() {
 
   // Continuous in-page camera zoom toward the void before the route change
   // (mirrors navigateToClusterInterior) — VoidInteriorPage now shares the renderer.
-  let ox = 50, oy = 50
+  let origin = { ox: 50, oy: 50, bearing: 0 }
   if (camera && controls) {
     const targetPos = voidScenePos(v)
     const distNow   = camera.position.distanceTo(targetPos)
@@ -3319,12 +3347,12 @@ async function navigateToVoid() {
         gsap.to(camera!.position, { x: dest.x, y: dest.y, z: dest.z, duration: 1.4, ease: 'power2.inOut', onUpdate: () => controls?.update(), onComplete: resolve })
       })
     }
-    const sc = targetPos.clone().project(camera)
-    ox = (sc.x + 1) / 2 * 100
-    oy = (1 - sc.y) / 2 * 100
+    // Handoff origin: VoidInteriorPage places its arrival camera (orbit.theta
+    // driven, not free position) to reproduce this composition — see
+    // SPEC_DISSOLVE_HANDOFF.md §4 Phase 3.
+    origin = computeHandoffOrigin(camera, targetPos)
   }
-  const bearing = Math.atan2(oy / 100 - 0.5, ox / 100 - 0.5)
-  await transition.depart(ox, oy, 'iris', bearing)
+  await transition.depart(origin.ox, origin.oy, 'dissolve', origin.bearing)
   void router.push({
     path:  `/void/${voidSlug(v.name)}`,
     query: {
@@ -3341,9 +3369,25 @@ function xrayClusterSlug(name: string): string {
   return name.toLowerCase().replace(/\./g, '-').replace(/\+/g, '-')
 }
 
-function navigateToXCluster() {
+async function navigateToXCluster() {
   const c = selected.value?.xrayCluster
   if (!c) return
+
+  // Handoff origin, same idea as navigateToVoid()/navigateToClusterInterior()
+  // — but XClusterPage still owns a private WebGLRenderer (SPEC_ZOOM_DESCENT.md
+  // §14 Q1's audit), not the shared canvas 'dissolve' mode snapshots. Depart
+  // with 'iris' instead: an opaque wipe doesn't care which canvas is
+  // underneath, so it's the correct choice for this one remaining
+  // private-renderer boundary rather than a broken snapshot of the wrong
+  // canvas. The bearing is still carried through as a query param (this page
+  // doesn't share the transition store's camera/scene the way shared-renderer
+  // arrivals do) so XClusterPage can at least rotate its entry angle to match.
+  let origin = { ox: 50, oy: 50, bearing: 0 }
+  const entry = xrayLodEntries.find(e => e.cluster === c)
+  if (camera && entry) {
+    origin = computeHandoffOrigin(camera, entry.pos)
+  }
+  await transition.depart(origin.ox, origin.oy, 'iris', origin.bearing)
   void router.push({
     path:  `/xcluster/${xrayClusterSlug(c.name)}`,
     query: {
@@ -3351,6 +3395,7 @@ function navigateToXCluster() {
       kev:  String(c.tapKev),
       z:    String(c.z),
       dist: String(Math.round(c.distMpc)),
+      bearing: origin.bearing.toFixed(3),
     },
   })
 }
@@ -3405,16 +3450,15 @@ async function navigateToClusterInterior() {
     }
   }
 
-  // Project cluster scene position to screen for the iris origin
-  let ox = 50, oy = 50
+  // Handoff origin: ClusterInteriorPage places its arrival camera to
+  // reproduce this composition around the cluster's real centroid (see
+  // SPEC_DISSOLVE_HANDOFF.md §2) — 'dissolve' crossfades this page's actual
+  // last frame into that placement instead of wiping through black.
+  let origin = { ox: 50, oy: 50, bearing: 0 }
   if (c && camera) {
-    const pos3d = clusterScenePos(c)
-    const sc    = pos3d.clone().project(camera)
-    ox = (sc.x + 1) / 2 * 100
-    oy = (1 - sc.y) / 2 * 100
+    origin = computeHandoffOrigin(camera, clusterScenePos(c))
   }
-  const bearing = Math.atan2(oy / 100 - 0.5, ox / 100 - 0.5)
-  await transition.depart(ox, oy, 'iris', bearing)
+  await transition.depart(origin.ox, origin.oy, 'dissolve', origin.bearing)
   void router.push(`/cluster-interior/${clusterSlug(name)}`)
 }
 
@@ -3601,6 +3645,17 @@ function onCanvasWheel(e: WheelEvent) {
 
 function onClick(e: MouseEvent) {
   if (enteringMW.value || !camera) return
+  // onClick is bound on the page root (<q-page class="viz-overlay-page">), so
+  // every click inside the page bubbles up here — including clicks on the
+  // side panel's own buttons (Browse Cluster Galaxies, Fly in, Settle, etc.).
+  // Without this guard, a button click that happens to land over a 3D hit
+  // target's screen projection also fires this raycast, which can select a
+  // *different* object and call router.replace — racing the button's own
+  // handler's later router.push and silently breaking navigation. Same
+  // target-class convention useVizRenderer.ts's pointer relay already uses
+  // to distinguish "empty scene" clicks from UI: only the plain overlay page
+  // itself (not a descendant panel/button) should ever be the real target.
+  if (!(e.target as HTMLElement)?.classList?.contains('viz-overlay-page')) return
   const w = window.innerWidth, h = window.innerHeight - 44
   mouseNDC.x =  (e.clientX / w) * 2 - 1
   mouseNDC.y = -((e.clientY - 44) / h) * 2 + 1
@@ -4503,6 +4558,7 @@ onUnmounted(() => {
   voidUniforms     = []
   conduitMeshes      = []
   conduitLowerMeshes = []
+  dmHaloMeshes       = []
   bhRingMeshes       = []
   gaRingMeshes       = []
   hitTargets       = []

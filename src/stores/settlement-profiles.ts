@@ -49,6 +49,27 @@ export const useSettlementProfilesStore = defineStore('settlement-profiles', () 
     return currentProfile.value
   }
 
+  /**
+   * Public — no sign-in required. Used by SettlementDirectoryPage.vue.
+   * RLS (migration 012) already allows anyone to read status = 'published'
+   * rows, so this is a plain filtered select — no new policy needed.
+   */
+  async function listPublishedProfiles(opts: {
+    limit?:  number
+    offset?: number
+    focus?:  string | null
+  } = {}): Promise<SettlementProfile[]> {
+    if (!supabase) return []
+    const { limit = 24, offset = 0, focus = null } = opts
+    let q = supabase.from('settlement_profiles').select('*')
+      .eq('status', 'published')
+      .order('created_at', { ascending: false })
+      .range(offset, offset + limit - 1)
+    if (focus) q = q.eq('focus', focus)
+    const { data } = await q
+    return (data as SettlementProfile[]) ?? []
+  }
+
   async function createProfile(input: {
     exolocation:     string
     displayName:     string
@@ -86,6 +107,6 @@ export const useSettlementProfilesStore = defineStore('settlement-profiles', () 
 
   return {
     myProfiles, currentProfile, loading,
-    loadMyProfiles, getProfileBySlug, createProfile, updateProfile,
+    loadMyProfiles, getProfileBySlug, listPublishedProfiles, createProfile, updateProfile,
   }
 })

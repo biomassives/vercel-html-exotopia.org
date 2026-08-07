@@ -63,6 +63,16 @@
           <router-link to="/community-guidelines">Community Guidelines</router-link>
         </p>
 
+        <div class="am-actions-block">
+          <div class="am-chart-eyebrow">What to do here</div>
+          <div class="am-actions-grid">
+            <router-link v-for="a in ACTIONS" :key="a.to" :to="a.to" class="am-action" @click="close">
+              <div class="am-action__label">{{ a.label }}</div>
+              <div class="am-action__desc">{{ a.desc }}</div>
+            </router-link>
+          </div>
+        </div>
+
         <div class="am-footlinks">
           <router-link to="/terms">Terms</router-link>
           <router-link to="/privacy">Privacy</router-link>
@@ -81,6 +91,21 @@ const emit = defineEmits<{ 'update:modelValue': [value: boolean] }>()
 function close() {
   emit('update:modelValue', false)
 }
+
+// Curated, not exhaustive — real working features across the "constellation
+// of use cases" (exploration, settling, citizen science, learning/mentoring,
+// library upkeep), not a full site map. Each links to a page that actually
+// does something today.
+const ACTIONS: { to: string; label: string; desc: string }[] = [
+  { to: '/cosmic', label: 'Explore the universe', desc: 'Descend from cosmic structure down to a single exoplanet' },
+  { to: '/planet-systems', label: 'Claim a settlement', desc: 'Pick a confirmed exoplanet and establish an address there' },
+  { to: '/settlements', label: 'Browse published settlements', desc: 'See what other settlers have built and published' },
+  { to: '/pfas-citizen-science', label: 'Do citizen science', desc: 'Log real PFAS/PFOA decontamination progress, or propose a method' },
+  { to: '/learn', label: 'Learn & earn a certificate', desc: 'Financial-literacy and other quizzes that pay real settlement points' },
+  { to: '/rewards', label: 'Volunteer, mentor, track points', desc: 'Log field work, confirm a mentor session, see your reward tracks' },
+  { to: '/eco-library', label: 'Browse the eco-ops library', desc: 'Field-tested methods for water, soil, and habitat work' },
+  { to: '/gallery', label: 'Visit the community gallery', desc: 'Businesses, creative pages, and places other members have listed' },
+]
 
 // Same comparison set as the published "How Many Stars?" artifact/blog post —
 // keep these three in sync if the shipped star count or catalog figures change.
@@ -197,6 +222,24 @@ function formatNum(n: number): string {
 .am-chart-links { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 11px; }
 .am-chart-links a { color: #4fb8e8; text-decoration: none; }
 .am-chart-links a:hover { color: #7ad0ff; }
+
+.am-actions-block { margin: 20px 0 4px; }
+.am-actions-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+  margin-top: 10px;
+}
+.am-action {
+  display: block; text-decoration: none;
+  background: rgba(0,0,0,0.28); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px;
+  padding: 10px 12px; transition: border-color 0.15s;
+}
+.am-action:hover { border-color: rgba(0,212,180,0.35); }
+.am-action__label { font-size: 11.5px; font-weight: 600; color: rgba(210,230,250,0.94); margin-bottom: 2px; }
+.am-action__desc  { font-size: 9.5px; line-height: 1.4; color: rgba(130,165,190,0.65); }
+
+@media (max-width: 480px) {
+  .am-actions-grid { grid-template-columns: 1fr; }
+}
 
 .am-footlinks {
   display: flex; flex-wrap: wrap; gap: 6px 14px;

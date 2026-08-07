@@ -190,7 +190,26 @@ Node 18+ required. Quasar v2 / Vite v2 / Vue 3 / TypeScript.
 
 ### Environment
 
-No environment variables required for local development. The app runs entirely client-side (SPA). Galaxy data loads from `public/exoapril2_2024.json` (~17 MB). X-ray cluster data loads from `public/clusters-xray.json` (~250 KB).
+The app is a client-side SPA with an **optional** Supabase backend — it boots and the
+cosmic navigation/visualization works with no environment variables at all. Galaxy data
+loads from `public/exoapril2_2024.json` (~17 MB). X-ray cluster data loads from
+`public/clusters-xray.json` (~250 KB).
+
+Without `VITE_SUPABASE_URL`/`VITE_SUPABASE_ANON` set, every feature backed by Supabase is
+silently disabled rather than erroring (`src/lib/supabase.ts` exports a typed `null` client
+when the env vars are absent, and every call site null-guards) — that includes accounts,
+blog/comment threads, the rewards ledger, PFAS and ecology citizen-science submissions,
+community nodes, settlement profiles, and error logging.
+
+To run with those features:
+
+1. Either point at a hosted Supabase project (see `.env.example` for the two vars, copied
+   from Project Settings → API), or run the local CLI stack: `npx supabase start` (uses
+   `supabase/config.toml`; `.env.local` already points `VITE_SUPABASE_URL`/`VITE_SUPABASE_ANON`
+   at `http://127.0.0.1:54321` for this).
+2. Apply the migrations in `supabase/migrations/` against whichever project you're using.
+
+See `SPEC_SELF_HOSTED_NETWORK.md` § 2 for the full self-hosting path (Supabase + Git + Vercel).
 
 ---
 
@@ -259,6 +278,7 @@ No environment variables required for local development. The app runs entirely c
 |---|---|
 | [SPEC.md](SPEC.md) | Full platform specification |
 | [SPEC_ZOOM_DESCENT.md](SPEC_ZOOM_DESCENT.md) | Smooth zoom descent chain from home → cluster → system → planet → Local Step Portal → surface; water portal physics; light inversion |
+| [SPEC_DISSOLVE_HANDOFF.md](SPEC_DISSOLVE_HANDOFF.md) | Planning phase — extending the shipped 'dissolve' crossfade + matched camera-placement handoff (currently live on galaxy-interior → star-system) to the cluster → galaxy-interior boundary |
 | [SPEC_COSMOS_ENTRY.md](SPEC_COSMOS_ENTRY.md) | CosmosPage rename + WelcomeOverlay design |
 | [SPEC_CELESTIAL_REVEAL.md](SPEC_CELESTIAL_REVEAL.md) | LOD image reveal + telescope archive integration |
 | [SPEC_DEFENDERNAV.md](SPEC_DEFENDERNAV.md) | Defender arcade-style navigator |

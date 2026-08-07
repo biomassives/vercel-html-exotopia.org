@@ -106,6 +106,7 @@ import { useRoute, useRouter } from 'vue-router'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import gsap from 'gsap'
+import { useSceneTransitionStore } from 'src/stores/scene-transition'
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -133,6 +134,14 @@ interface OracleCluster {
 const route  = useRoute()
 const router = useRouter()
 const xid    = computed(() => String(route.params.xid ?? ''))
+const transition = useSceneTransitionStore()
+
+// Captured at click time, reused when the panel's "Explore" button fires
+// navigateToGalaxy — mirrors ClusterInteriorPage.vue/ClusterGalaxyPage.vue so
+// the X-ray-cluster descent gets the same lightning/iris transition as every
+// other cross-page jump instead of a hard cut.
+const clickPct     = { x: 50, y: 50 }
+const clickBearing = ref(0)
 
 // Cluster metadata passed as query params from CosmicPage
 const displayName = computed(() => String(route.query.name ?? xid.value).toUpperCase())
@@ -225,7 +234,14 @@ function buildScene(galaxies: OracleGalaxy[]) {
 
   scene  = new THREE.Scene()
   camera = new THREE.PerspectiveCamera(50, canvasEl.value.clientWidth / canvasEl.value.clientHeight, 0.001, 200)
-  camera.position.set(0, 0, 2.2)
+  // Bearing-rotated entry — CosmicPage's navigateToXCluster() carries the
+  // handoff bearing as a query param (this page owns a private renderer, so
+  // it can't read the transition store's camera directly the way
+  // shared-renderer arrivals do; see SPEC_DISSOLVE_HANDOFF.md §4 Phase 3).
+  // Same fixed 2.2 su distance as before, just no longer always approaching
+  // from the same fixed direction regardless of where the user clicked from.
+  const entryBearing = parseFloat(String(route.query.bearing ?? '0')) || 0
+  camera.position.set(Math.sin(entryBearing) * 2.2, 0, Math.cos(entryBearing) * 2.2)
 
   controls = new OrbitControls(camera, canvasEl.value)
   controls.enableDamping   = true
@@ -287,7 +303,12 @@ function onClick(e: MouseEvent) {
   const hits = raycaster.intersectObjects(proxies, false)
   if (hits.length) {
     const g = proxyMap.get(hits[0]!.object.uuid)
-    if (g) selected.value = g
+    if (g) {
+      selected.value = g
+      clickPct.x      = e.clientX / window.innerWidth  * 100
+      clickPct.y      = e.clientY / window.innerHeight * 100
+      clickBearing.value = Math.atan2(clickPct.y / 100 - 0.5, clickPct.x / 100 - 0.5)
+    }
   } else {
     selected.value = null
   }
@@ -313,13 +334,22 @@ function onMouseMove(e: MouseEvent) {
 
 function onMouseLeave() { hoverLabel.value = '' }
 
-function navigateToGalaxy(settle = false) {
+async function navigateToGalaxy(settle = false) {
   if (!selected.value) return
-  const g    = selected.value
+  const g = selected.value
+
+  await transition.depart(clickPct.x, clickPct.y, 'iris', clickBearing.value)
+
   const base = `/cluster-galaxy/xc-${xid.value}/${encodeURIComponent(g.gid)}`
-  const q    = settle
-    ? `?morph=${g.morph}&action=claim`
-    : `?morph=${g.morph}`
+  // dist passes the real cluster distance (from clusters-xray.json, via
+  // route.query.dist already received from CosmicPage) through to
+  // ClusterGalaxyPage/useClusterGalaxyData as a Stage-3 fallback hint — this
+  // cluster has no /clusters/{slug}-members.json, so without it every galaxy
+  // here silently rendered at a hardcoded 65 Mpc instead of its real distance.
+  const distQ = route.query.dist ? `&dist=${route.query.dist}` : ''
+  const q     = settle
+    ? `?morph=${g.morph}&action=claim${distQ}`
+    : `?morph=${g.morph}${distQ}`
   void router.push(base + q)
 }
 

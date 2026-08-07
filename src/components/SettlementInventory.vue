@@ -153,6 +153,21 @@
               {{ ACQ_TYPES.find(a=>a.key===acquireType)?.label.toUpperCase() }} · SELECT ITEM
             </span>
           </div>
+
+          <div v-if="acquireType === 'constructed' && member.isSignedIn" class="si-balance"
+            :class="{ 'si-balance--debt': financeBalance < 0 }">
+            <q-icon :name="financeBalance < 0 ? 'trending_down' : 'savings'" size="13px" class="q-mr-xxs" />
+            <span>{{ financeBalance }} finance-literacy pts</span>
+            <span v-if="financeBalance < 0" class="si-balance-hint">
+              — in debt. Points have no real-world value; a
+              <router-link to="/learn" class="si-balance-link">P-Fin 8 quiz</router-link>
+              pays real points back in.
+            </span>
+          </div>
+          <div v-else-if="acquireType === 'constructed'" class="si-balance">
+            Sign in to track a real balance — building is untracked (and free) until then.
+          </div>
+
           <div class="si-preset-list">
             <button
               v-for="[key, preset] in eligiblePresets"
@@ -185,11 +200,13 @@
           </div>
         </q-card-section>
 
+        <div v-if="acquireError" class="si-acquire-error">{{ acquireError }}</div>
+
         <q-card-actions align="right">
-          <q-btn flat label="Cancel" color="blue-grey-5" @click="resetAcquire" />
+          <q-btn flat label="Cancel" color="blue-grey-5" :disable="acquireBusy" @click="resetAcquire" />
           <q-btn v-if="acquireStep === 2 && acquirePreset"
-            unelevated label="Add to settlement" color="cyan-8"
-            @click="doAcquire" />
+            unelevated :label="acquireBusy ? 'Building…' : 'Add to settlement'" color="cyan-8"
+            :disable="acquireBusy" @click="doAcquire" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -209,6 +226,10 @@
           <div class="si-theme-intro">
             A theme adds several items at once, coloured from your settlement's own hue.
           </div>
+          <div v-if="member.isSignedIn" class="si-balance" :class="{ 'si-balance--debt': financeBalance < 0 }">
+            <q-icon :name="financeBalance < 0 ? 'trending_down' : 'savings'" size="13px" class="q-mr-xxs" />
+            <span>{{ financeBalance }} finance-literacy pts</span>
+          </div>
           <div class="si-preset-list">
             <button v-for="pack in THEME_PACK_LIST" :key="pack.key"
               class="si-preset-btn"
@@ -227,9 +248,12 @@
           </div>
         </q-card-section>
 
+        <div v-if="acquireError" class="si-acquire-error">{{ acquireError }}</div>
+
         <q-card-actions align="right">
-          <q-btn flat label="Cancel" color="blue-grey-5" @click="closeTheme" />
-          <q-btn v-if="themePack" unelevated label="Apply theme" color="purple-8" @click="doApplyTheme" />
+          <q-btn flat label="Cancel" color="blue-grey-5" :disable="themeBusy" @click="closeTheme" />
+          <q-btn v-if="themePack" unelevated :label="themeBusy ? 'Building…' : 'Apply theme'" color="purple-8"
+            :disable="themeBusy" @click="doApplyTheme" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -289,7 +313,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import {
   useSettlementItems,
   ITEM_MESH_PRESETS,
@@ -301,11 +325,19 @@ import {
   type SettlementItem,
 } from 'src/lib/settlement-items'
 import { THEME_PACKS } from 'src/data/theme-packs'
+import { useRewardsStore } from 'src/stores/rewards'
+import { useMemberStore } from 'src/stores/member'
 
 const props = defineProps<{ settlementKey: string }>()
 
 const skRef  = computed(() => props.settlementKey)
 const { items, byType, addItem, removeItem, updateItem } = useSettlementItems(skRef)
+
+const rewards = useRewardsStore()
+const member  = useMemberStore()
+const financeBalance = computed(() => rewards.pointsByTrack.finance_literacy)
+
+onMounted(() => { if (member.isSignedIn) void rewards.loadMyRewards() })
 
 // ── UI state ──────────────────────────────────────────────────────────────────
 
@@ -363,16 +395,24 @@ const ZONES: ItemZone[] = ['library', 'water-edge', 'garden', 'gateway', 'courty
 // No 'reward' entry: reward objects are unlocked by an Impact Profile
 // certificate and attached from /rewards. Letting them be picked here would
 // make an earned object self-serve.
+//
+// No 'generated' entry: the pon.ink airdrop this acquisition type describes
+// has no live event source yet — offering it here would let someone "acquire"
+// an item from an event that never happened. Existing generated items (from
+// before this change, or seeded test data) still show up under the Airdrop
+// tab; this only hides it from new acquisitions until a real source exists.
 const ACQ_TYPES: { key: ItemAcquisitionType; label: string; icon: string; color: string; desc: string }[] = [
-  { key: 'constructed', label: 'Construct',  icon: 'build',       color: 'amber-5',  desc: 'Build with eco-ops points' },
+  { key: 'constructed', label: 'Construct',  icon: 'build',       color: 'amber-5',  desc: 'Build for real eco-ops points — see your balance below' },
   { key: 'traded',      label: 'Trade',      icon: 'swap_horiz',  color: 'cyan-5',   desc: 'Receive from another settlement' },
-  { key: 'generated',   label: 'Airdrop',    icon: 'bolt',        color: 'purple-4', desc: 'Generated by pon.ink event' },
-  { key: 'eco-ops',     label: 'Eco-ops',    icon: 'eco',         color: 'green-5',  desc: 'Earned via community activity' },
+  { key: 'eco-ops',     label: 'Eco-ops',    icon: 'eco',         color: 'green-5',  desc: 'Self-reported community activity (not independently verified)' },
 ]
 
 const eligiblePresets = computed(() =>
   Object.entries(ITEM_MESH_PRESETS).filter(([, p]) => p.acquiredBy.includes(acquireType.value))
 )
+
+const acquireBusy  = ref(false)
+const acquireError = ref('')
 
 function resetAcquire() {
   acquireOpen.value  = false
@@ -380,18 +420,40 @@ function resetAcquire() {
   acquirePreset.value = ''
   redeemCode.value   = ''
   redeemError.value  = ''
+  acquireError.value = ''
 }
 
-function doAcquire() {
-  if (!acquirePreset.value) return
-  const preset = ITEM_MESH_PRESETS[acquirePreset.value]!
-  addItem({
-    type:     acquireType.value,
-    meshPreset: acquirePreset.value,
-    zone:     acquireZone.value || preset.zoneDefault,
-    buildCost: preset.buildCost,
-  })
-  resetAcquire()
+/**
+ * Charges a real construction cost when signed in (see rewards.ts's
+ * debitConstruction — debt-permissive by design, never blocks the build).
+ * Anonymous settlers keep today's untracked-cost behavior, matching every
+ * other rewards.ts action, which also no-ops without a signed-in member —
+ * there's no ledger to charge against without one.
+ */
+async function chargeConstruction(meshPreset: string): Promise<boolean> {
+  if (!member.isSignedIn) return true
+  const ok = await rewards.debitConstruction(meshPreset)
+  if (!ok) acquireError.value = rewards.error || 'Could not charge this build — try again.'
+  return ok
+}
+
+async function doAcquire() {
+  if (!acquirePreset.value || acquireBusy.value) return
+  acquireBusy.value = true
+  acquireError.value = ''
+  try {
+    const preset = ITEM_MESH_PRESETS[acquirePreset.value]!
+    if (acquireType.value === 'constructed' && !(await chargeConstruction(acquirePreset.value))) return
+    addItem({
+      type:     acquireType.value,
+      meshPreset: acquirePreset.value,
+      zone:     acquireZone.value || preset.zoneDefault,
+      buildCost: preset.buildCost,
+    })
+    resetAcquire()
+  } finally {
+    acquireBusy.value = false
+  }
 }
 
 // ── Design controls (recolour / re-zone) ──────────────────────────────────────
@@ -418,18 +480,32 @@ function closeTheme() {
   themePack.value = ''
 }
 
-function doApplyTheme() {
+const themeBusy = ref(false)
+
+/** Charges each item in the pack in turn — one settlement can afford a
+ *  cheap pack while going into debt on an expensive one, same as picking
+ *  items individually would. Stops (and keeps whatever was already added)
+ *  if a charge fails partway through, rather than silently free-ing the rest. */
+async function doApplyTheme() {
   const pack = THEME_PACKS[themePack.value]
-  if (!pack) return
-  pack.items.forEach((entry, i) => {
-    addItem({
-      type:       'constructed',
-      meshPreset: entry.meshPreset,
-      zone:       entry.zone,
-      color:      themePackItemColorHex(props.settlementKey, i),
-    })
-  })
-  closeTheme()
+  if (!pack || themeBusy.value) return
+  themeBusy.value = true
+  acquireError.value = ''
+  try {
+    for (let i = 0; i < pack.items.length; i++) {
+      const entry = pack.items[i]!
+      if (!(await chargeConstruction(entry.meshPreset))) return
+      addItem({
+        type:       'constructed',
+        meshPreset: entry.meshPreset,
+        zone:       entry.zone,
+        color:      themePackItemColorHex(props.settlementKey, i),
+      })
+    }
+    closeTheme()
+  } finally {
+    themeBusy.value = false
+  }
 }
 
 // ── Share / redeem a design ───────────────────────────────────────────────────
@@ -705,6 +781,18 @@ function doRemove() {
 .si-redeem-input:focus { outline: none; border-color: rgba(0, 160, 210, 0.55); }
 .si-code-out { color: rgba(120, 200, 235, 0.75); }
 .si-redeem-error { font-size: 8.5px; color: rgba(255, 120, 120, 0.85); margin-top: 4px; }
+
+/* Construction balance / debt indicator */
+.si-balance {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 3px;
+  font-size: 9px; color: rgba(150, 200, 230, 0.75);
+  background: rgba(0, 30, 60, 0.45); border: 1px solid rgba(0, 90, 140, 0.25);
+  border-radius: 4px; padding: 6px 8px; margin-bottom: 8px;
+}
+.si-balance--debt { color: rgba(255, 190, 130, 0.90); border-color: rgba(255, 150, 60, 0.30); background: rgba(60, 30, 0, 0.35); }
+.si-balance-hint { color: inherit; opacity: 0.85; }
+.si-balance-link { color: #00ccee; }
+.si-acquire-error { font-size: 9px; color: rgba(255, 120, 120, 0.90); padding: 0 16px 8px; }
 
 /* Slide transition */
 .si-slide-enter-active, .si-slide-leave-active { transition: transform 0.22s ease, opacity 0.22s ease; }

@@ -82,6 +82,8 @@
               <span class="pcs-log-date">{{ new Date(entry.logged_at).toLocaleDateString() }}</span>
               <span class="pcs-log-notes">{{ entry.notes }}</span>
               <span v-if="entry.metrics.concentration_ppt != null" class="pcs-log-metric">{{ entry.metrics.concentration_ppt }} ppt</span>
+              <RecordFingerprintBadge :hex="entry.fingerprint_sha256"
+                hint="Server-computed at submission, over notes+metrics only — this table has no edit path (append-only), so this fingerprint's real guarantee is the database policy, not the number itself. See SPEC_E8_RECORD_FINGERPRINT.md." />
             </div>
             <p v-if="!entriesFor(selectedProject.id).length" class="pcs-p pcs-p--dim">No progress logged yet.</p>
           </div>
@@ -277,6 +279,7 @@ import { useSettlements } from 'src/lib/settlements'
 import { useSettlementItems } from 'src/lib/settlement-items'
 import { setSuggestedFocus } from 'src/lib/settlement-focus-intent'
 import MemberSignIn from 'src/components/MemberSignIn.vue'
+import RecordFingerprintBadge from 'src/components/RecordFingerprintBadge.vue'
 
 const member = useMemberStore()
 const store  = usePfasCitizenScienceStore()

@@ -355,6 +355,12 @@ function onTouchDragMove(e: TouchEvent) {
 
 function onClick(e: MouseEvent) {
   if (dragMoved > 6 || !camera) return
+  // onClick is bound on the page root, so panel-button clicks bubble up
+  // here too. Harmless today (this branch only sets local selGalaxy state,
+  // never touches the router), but guarded for consistency with the other
+  // pages in this chain — see CosmicPage.vue's onClick for the actual bug
+  // this pattern caused there.
+  if (!(e.target as HTMLElement)?.classList?.contains('viz-overlay-page')) return
   const w = window.innerWidth, h = window.innerHeight - VIZ_BAR_H
   const rc = new THREE.Raycaster()
   rc.params.Points = { threshold: 2.6 }
@@ -605,6 +611,17 @@ async function buildScene() {
   camera.fov  = 65
   camera.near = 0.1
   camera.far  = 400
+  if (transition.phase !== 'idle') {
+    // Arrived via a transition (CosmicPage's navigateToVoid) — this page
+    // drives its camera by orbit angle + radius rather than a free position,
+    // so the handoff is applied to that state instead of calling
+    // placeCameraForHandoff() directly (which would just be overwritten by
+    // the next tick()'s updateCamera() call). camR=45 is a paper estimate
+    // (default is 115) — same "needs a visual check" caveat as the other
+    // DIST constants in SPEC_DISSOLVE_HANDOFF.md.
+    orbit.theta = transition.bearing
+    camR.value  = 45
+  }
   updateCamera()
   camera.updateProjectionMatrix()
 

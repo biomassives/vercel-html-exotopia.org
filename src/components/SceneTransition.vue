@@ -9,9 +9,11 @@
 import { ref, watch, onUnmounted } from 'vue'
 import { useRoute }                 from 'vue-router'
 import { useSceneTransitionStore }  from 'src/stores/scene-transition'
+import { useVizRenderer }           from 'src/composables/useVizRenderer'
 
 const st    = useSceneTransitionStore()
 const route = useRoute()
+const viz   = useVizRenderer()
 const cv    = ref<HTMLCanvasElement | null>(null)
 
 let rafId = 0
@@ -207,9 +209,50 @@ function drawInversionFrame(ctx: CanvasRenderingContext2D, W: number, H: number,
   ctx.fillRect(0, 0, W, H)
 }
 
+// ── Dissolve crossfade (handoff-placed camera cuts) ─────────────────────────
+// Unlike lightning/iris/inversion, which cover the route change with an
+// opaque effect and let the arriving page fade up from black, 'dissolve'
+// freezes the departing page's actual last frame (grabbed straight off the
+// shared WebGL canvas — see useVizRenderer) and crossfades that frame away
+// to reveal the arriving page's live canvas underneath. Combined with
+// src/lib/scene-handoff.ts placing the arriving camera to match the
+// departing composition, this is what makes the cut read as one view
+// resolving into another rather than a reload.
+
+let snapshot: HTMLCanvasElement | null = null
+
+function captureSnapshot() {
+  const src = viz.canvas
+  if (!src || !src.width || !src.height) { snapshot = null; return }
+  if (!snapshot) snapshot = document.createElement('canvas')
+  snapshot.width  = src.width
+  snapshot.height = src.height
+  snapshot.getContext('2d')?.drawImage(src, 0, 0)
+}
+
+function drawDissolveFrame(
+  ctx: CanvasRenderingContext2D, W: number, H: number, elapsed: number, arriving: boolean,
+) {
+  ctx.clearRect(0, 0, W, H)
+  if (!snapshot) {
+    // No frame to hold (e.g. WebGL unavailable) — fall back to a quick plain fade
+    // rather than leaving the cut fully uncovered.
+    const alpha = arriving ? Math.max(0, 1 - elapsed / 450) : Math.min(1, elapsed / 100)
+    ctx.fillStyle = `rgba(0,0,6,${alpha.toFixed(3)})`
+    ctx.fillRect(0, 0, W, H)
+    return
+  }
+  const alpha = arriving ? Math.max(0, 1 - elapsed / 450) : Math.min(1, elapsed / 100)
+  ctx.globalAlpha = alpha
+  ctx.drawImage(snapshot, 0, 0, W, H)
+  ctx.globalAlpha = 1
+}
+
 // ── Main animation runner ────────────────────────────────────────────────────
 
-function runLoop(animType: 'depart-lightning' | 'depart-iris' | 'depart-inversion' | 'arrive') {
+function runLoop(
+  animType: 'depart-lightning' | 'depart-iris' | 'depart-inversion' | 'depart-dissolve' | 'arrive',
+) {
   cancelAnimationFrame(rafId)
   const start = performance.now()
 
@@ -225,11 +268,14 @@ function runLoop(animType: 'depart-lightning' | 'depart-iris' | 'depart-inversio
     if      (animType === 'depart-lightning')  drawLightningFrame(ctx, W, H, origX, origY, elapsed)
     else if (animType === 'depart-iris')       drawIrisFrame(ctx, W, H, origX, origY, elapsed, true)
     else if (animType === 'depart-inversion')  drawInversionFrame(ctx, W, H, elapsed)
+    else if (animType === 'depart-dissolve')   drawDissolveFrame(ctx, W, H, elapsed, false)
+    else if (st.mode === 'dissolve')            drawDissolveFrame(ctx, W, H, elapsed, true)
     else                                        drawArrivalFrame(ctx, W, H, elapsed)
 
-    const running = animType === 'arrive'            ? elapsed < 560 :
+    const running = animType === 'arrive'            ? (st.mode === 'dissolve' ? elapsed < 460 : elapsed < 560) :
                      animType === 'depart-lightning'  ? elapsed < 1610 :
-                     animType === 'depart-inversion'  ? elapsed < 560 : elapsed < 390
+                     animType === 'depart-inversion'  ? elapsed < 560 :
+                     animType === 'depart-dissolve'   ? elapsed < 110 : elapsed < 390
     if (running) rafId = requestAnimationFrame(tick)
   }
   rafId = requestAnimationFrame(tick)
@@ -240,16 +286,19 @@ function runLoop(animType: 'depart-lightning' | 'depart-iris' | 'depart-inversio
 watch(() => st.phase, (phase) => {
   if (phase === 'departing') {
     resize()
+    if (st.mode === 'dissolve') captureSnapshot()
     const animType = st.mode === 'lightning'  ? 'depart-lightning'
                     : st.mode === 'inversion' ? 'depart-inversion'
+                    : st.mode === 'dissolve'  ? 'depart-dissolve'
                     : 'depart-iris'
     runLoop(animType)
   } else if (phase === 'arriving') {
     resize()
     runLoop('arrive')
-    setTimeout(() => st.clear(), 570)
+    setTimeout(() => st.clear(), st.mode === 'dissolve' ? 470 : 570)
   } else if (phase === 'idle') {
     cancelAnimationFrame(rafId)
+    snapshot = null
     const canvas = cv.value
     if (canvas) canvas.getContext('2d')?.clearRect(0, 0, canvas.width, canvas.height)
   }

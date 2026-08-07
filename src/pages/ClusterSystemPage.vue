@@ -104,6 +104,7 @@ import { useClusterGalaxyData } from 'src/composables/useClusterGalaxyData'
 import type { ClusterPlanet, ClusterStarSystem } from 'src/composables/useClusterGalaxyData'
 import { useSceneTransitionStore }               from 'src/stores/scene-transition'
 import { disposeScene }                          from 'src/lib/three-utils'
+import { placeCameraForHandoff }                 from 'src/lib/scene-handoff'
 import { clusterPlanetHasNoSolidGround }          from 'src/lib/surface-classify'
 
 // ── Route ──────────────────────────────────────────────────────────────────────
@@ -116,7 +117,15 @@ const memberId    = computed(() => String(route.params.memberId    ?? ''))
 const systemIdx   = computed(() => parseInt(String(route.params.systemIdx ?? '0'), 10))
 
 // ── Data ───────────────────────────────────────────────────────────────────────
-const { loading, doc, load } = useClusterGalaxyData(clusterSlug, memberId)
+// morph/dist: carried forward by ClusterGalaxyPage's descendToSurface() so this
+// page's fetchGalaxyDoc call lands on the same cache entry (and, on a miss, the
+// same Stage-3 fallback values) the previous page already resolved — see
+// useClusterGalaxyData.ts's GalaxyDocHints doc comment.
+const galaxyDocHints = {
+  morph:   typeof route.query.morph === 'string' ? route.query.morph : undefined,
+  distMpc: route.query.dist ? Number(route.query.dist) : undefined,
+}
+const { loading, doc, load } = useClusterGalaxyData(clusterSlug, memberId, galaxyDocHints)
 
 const starSystem = computed((): ClusterStarSystem | null => {
   const systems = doc.value?.star_systems
@@ -373,10 +382,27 @@ function buildScene() {
   camera.near = 0.001
   camera.far  = 120
 
-  const b       = parseFloat(String(route.query.bearing ?? '0')) || 0
-  const entryD  = 18
-  camera.position.set(Math.sin(b) * entryD, 6.5, Math.cos(b) * entryD)
-  camera.updateProjectionMatrix()
+  const b = parseFloat(String(route.query.bearing ?? '0')) || 0
+  if (transition.phase !== 'idle') {
+    // Arrived via a transition (the common case — descendToSurface from
+    // either ClusterInteriorPage or ClusterGalaxyPage) — place the camera to
+    // reproduce the departing frame's composition around the host star,
+    // which always sits at this page's local origin. This is what the
+    // 'dissolve' crossfade in SceneTransition.vue is dissolving *into*, so
+    // it needs to already be correct before that crossfade starts revealing
+    // it, not animated into place afterward.
+    placeCameraForHandoff(
+      camera, controls, new THREE.Vector3(0, 0, 0),
+      { ox: transition.ox, oy: transition.oy, bearing: transition.bearing },
+      4.5,
+    )
+  } else {
+    // Direct navigation (bookmark, refresh) — no departing frame to match,
+    // fall back to the previous generic bearing-only entry.
+    const entryD = 18
+    camera.position.set(Math.sin(b) * entryD, 6.5, Math.cos(b) * entryD)
+    camera.updateProjectionMatrix()
+  }
 
   // Configure controls for system navigation
   controls.dampingFactor  = 0.06
@@ -567,8 +593,16 @@ onMounted(async () => {
       ` using ${doc.value?._source ?? 'no-data'} — generated JSON not found`
     )
   }
+  // Whether buildScene() placed the camera via the transition handoff or the
+  // direct-nav fallback, decided before buildScene() runs — the tween below
+  // only fires for the fallback case (see buildScene()'s branch): a handoff
+  // arrival is already the frame the 'dissolve' crossfade is revealing, and
+  // re-tweening it to a fixed (0,3.5,7) position would undo the match and
+  // reintroduce the same "arrives, then pans elsewhere" artifact this whole
+  // handoff mechanism exists to remove.
+  const arrivedViaHandoff = transition.phase !== 'idle'
   buildScene()
-  if (camera && controls) {
+  if (!arrivedViaHandoff && camera && controls) {
     gsap.to(camera.position, {
       x: 0, y: 3.5, z: 7.0,
       duration: 1.4, ease: 'power3.out',

@@ -371,7 +371,7 @@
           placeholder="e.g. Fana Ka Community, your pon.ink handle" />
         <div class="cw-form__pathway-note">
           Selected focus: <strong class="text-amber-5">{{ selectedFocusLabel }}</strong>
-          — pre-loads the Mule knowledge corpus for this domain.
+          — a self-declared badge shown on this settlement, here and on its public page if you publish it.
         </div>
         <div class="row q-gutter-sm q-mt-sm">
           <q-btn unelevated

@@ -122,8 +122,8 @@ type ViewMode = 'natural' | 'xray' | 'dark_matter'
 
 const VIEW_MODES: { key: ViewMode; label: string; desc: string }[] = [
   { key: 'natural',     label: 'NAT',    desc: 'Natural light — standard visualization' },
-  { key: 'xray',        label: 'X-RAY',  desc: 'X-ray overlay — highlights hot gas, clusters, and AGN' },
-  { key: 'dark_matter', label: 'DK.MAT', desc: 'Dark matter view — filament density prototype' },
+  { key: 'xray',        label: 'X-RAY',  desc: 'Conduit accent — orange wormhole tint' },
+  { key: 'dark_matter', label: 'DK.MAT', desc: 'Halo extent — per-cluster mass/radius from cited literature' },
 ]
 
 const emit = defineEmits<{

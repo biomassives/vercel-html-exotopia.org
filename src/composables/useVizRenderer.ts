@@ -46,7 +46,13 @@ export function useVizRenderer() {
     _canvas = canvas
 
     try {
-      _renderer = new THREE.WebGLRenderer({ canvas, antialias: true })
+      // preserveDrawingBuffer: the 'dissolve' scene-transition mode (see
+      // SceneTransition.vue) does a plain 2D-canvas drawImage(vizCanvas, ...)
+      // to snapshot the last live frame for its crossfade. Without this flag
+      // the browser is free to clear/invalidate the drawing buffer right
+      // after compositing, which can make that snapshot come back blank
+      // depending on exactly when it's captured relative to the render loop.
+      _renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true })
     } catch (err) {
       _initError = err instanceof Error ? err.message : 'WebGL context could not be created.'
       console.warn('[useVizRenderer] WebGL unavailable — 3D visualization disabled:', _initError)

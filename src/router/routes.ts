@@ -176,6 +176,15 @@ const routes: RouteRecordRaw[] = [
         props: true,
       },
       {
+        // Public directory of all published settlement profiles — no sign-in
+        // required, same RLS-permitted read as settlement/:slug above, just
+        // unfiltered by a known slug.
+        path: 'settlements',
+        name: 'settlement-directory',
+        component: () => import('src/pages/SettlementDirectoryPage.vue'),
+        meta: { title: 'Settlement Directory' },
+      },
+      {
         // A single published community_nodes row, clicked from a gallery marker
         // in DefenderNav.vue (which already builds this exact path) — was 404ing
         // since this route never existed.

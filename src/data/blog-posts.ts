@@ -118,6 +118,18 @@ export const BLOG_POSTS: BlogPostMeta[] = [
     editorialNote: 'Verify catalog coverage numbers and status flags before publishing.',
   },
   {
+    slug:     'cluster-transition-quality-pass',
+    title:    'Fixing the Descent, Not Just the Click',
+    subtitle: 'A review of every click-to-descend path across our 15 named clusters and 345 X-ray clusters found one dead-end already patched, one silent accuracy bug, and one crash waiting for our own generation pipeline to ship.',
+    date:     'August 2026',
+    audience: ['dev', 'community'],
+    series:   'navigation',
+    status:   'draft',
+    description:
+      'A quality pass on the galaxy-cluster descent chain (XClusterPage/ClusterInteriorPage → ClusterGalaxyPage → ClusterSystemPage): a silently-dropped morphology/distance query parameter that hardcoded every one of the 345 X-ray-cluster galaxies to a generic elliptical at 65 Mpc, five unguarded star_systems accesses that would crash on the lightweight documents SPEC_XCLUSTER_STARSYSTEMS.md proposes, a missing scene-transition on the X-ray descent path, and a void-classification check broadened from the first cluster member to all of them.',
+    editorialNote: 'Fixes landed on fix/exotopia-liability-and-integrity; verify in a running build (X-ray cluster → galaxy descent showing real morph/distance, void ring still working) before publishing.',
+  },
+  {
     slug:     'counting-the-universe',
     title:    'Counting the Universe',
     subtitle: 'How many galaxies, stars, planets, and moons are real in Exotopia — and how many did we generate — and is any of this a realistic way to build a cosmic visualization?',
@@ -368,16 +380,27 @@ export const BLOG_POSTS: BlogPostMeta[] = [
     editorialNote: 'Companion to the e8-art-hash-zkp post. Mathematical claims (E8, Λ₂₄, Monster group, monstrous moonshine) are accurate; application to settlement architecture is design speculation. The eight-axis E8 capability mapping is proposed, not decided.',
   },
   {
+    slug:     'how-we-actually-test-and-ship',
+    title:    'How We Actually Test and Ship Exotopia',
+    subtitle: 'Playwright, Vite, Vercel, Cloudflare, Supabase-local, localStorage — and what "E8" in your browser really is',
+    date:     'August 2026',
+    audience: ['dev'],
+    series:   'protocol',
+    status:   'draft',
+    description:
+      'A walkthrough of the real toolchain behind a settlement-features testing pass — local Supabase vs. production, the GitHub->GitLab mirror we found completely broken (failing silently since creation), Playwright techniques for testing a WebGL-heavy app behind Supabase auth without real magic-link emails, and a direct, unhedged clarification: the "e8" localStorage key prefix used for settlement data is a codename for a basic XOR obfuscation utility, not the real E8 lattice / zero-knowledge-proof system described in the separate e8-art-hash-zkp post (which is itself clearly labeled as a not-yet-built specification, not a shipped feature).',
+    editorialNote: 'Written the same day as the settlement-persistence Playwright pass it describes. Explicitly cross-checked against e8-art-hash-zkp to avoid contradicting or restating its claims out of context — that post\'s own "what we are building now" section already says the ZK system isn\'t built; this post should not be read as walking that back or as newly confirming it. Verify the exotopia.org/blog/e8-art-hash-zkp link resolves before publishing.',
+  },
+  {
     slug:     'black-hole-observatory-expansion',
     title:    'Ten Black Holes, Four Shapes',
     subtitle: 'Expanding the Galactic Center scene into a real observatory — the research, the architecture, and the honesty tradeoffs',
     date:     'July 2026',
     audience: ['dev', 'community'],
     series:   'science',
-    status:   'public-draft',
+    status:   'published',
     description:
       'The /bh/:bhId route existed since early on but only ever rendered Sagittarius A*. This post covers the research pass across every category of "how do we know this is a black hole" (EHT imaging, megamaser Keplerian dynamics, Gaia astrometric orbit-fitting, X-ray binary monitoring, HST hypervelocity-star evidence), the resulting ten-object catalog (M87*, NGC 4258, Omega Centauri\'s IMBH, Gaia BH1/BH2/BH3, Cygnus X-1, V404 Cygni, GRO J1655-40, A0620-00), the shared event-horizon/photon-ring/ISCO/disk rendering core extracted from the existing Sgr A* work, the four scene-dressing types built because a galactic nucleus, an X-ray binary, a jetted AGN, and a megamaser disk are genuinely different environments, and a real scale bug found and fixed where a fixed-size compact-object bubble tuned for Cygnus X-1 turned out to be larger than the entire orbit for the tightest binaries.',
-    editorialNote: 'Verify the /black-holes index page and Explore-menu link are live before publishing.',
   },
   {
     slug:     'anticipated-objects-methodology',
@@ -410,7 +433,7 @@ export const BLOG_POSTS: BlogPostMeta[] = [
     date:     'July 2026',
     audience: ['dev', 'community'],
     series:   'science',
-    status:   'public-draft',
+    status:   'published',
     description:
       'A fact-check turned into the post: "string of pearls" is a real term, but for young star clusters around a black hole in NGC 2110 (Swinburne, 2014), not for black holes at Sagittarius A*. The real, well-documented phenomenon is the 2018 Chandra "black hole swarm" finding (Hailey et al., Nature) — about a dozen detected stellar-mass black hole X-ray binaries within roughly a parsec of Sgr A*, implying a population of 10,000-20,000 black holes accumulated via dynamical friction over the galaxy\'s history. Covers the mechanism (mass segregation/dynamical friction), the eventual fate (extreme mass ratio inspirals, LISA-detectable), and ties it to the site\'s own IRS 13E object.',
     editorialNote: 'Companion to the black-hole-observatory-expansion post.',
