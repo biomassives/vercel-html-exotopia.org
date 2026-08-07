@@ -1,0 +1,21 @@
+# Local dev secrets for `wrangler dev` — copy to .dev.vars (gitignored) and fill in.
+# Production secrets are set separately via `wrangler secret put`, per README.md.
+
+SUPABASE_URL=https://YOUR_PROJECT.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your-local-service-role-key
+RESEND_API_KEY=your-resend-api-key
+RESEND_FROM_EMAIL=Exotopia Support <support@exotopia.org>
+SUPPORT_REPLY_TO=support@exotopia.org
+ADMIN_ALERT_EMAIL=you@example.com
+
+# Cloudflare Turnstile — use the TEST secret key below for local/CI dev so
+# automated test runners (Playwright etc.) aren't treated as bots and blocked
+# by a real challenge. Pair it with the matching TEST sitekey in the
+# frontend's own .env (VITE_TURNSTILE_SITE_KEY) — see root .env.example.
+# Never use a test key/sitekey pair in production.
+#
+#   Test secret key                        | Behavior
+#   1x0000000000000000000000000000000AA    | Always passes
+#   2x0000000000000000000000000000000AA    | Always fails
+#   3x0000000000000000000000000000000AA    | Always passes, but token is reported "already spent" on reuse
+TURNSTILE_SECRET_KEY=1x0000000000000000000000000000000AA

@@ -21,8 +21,24 @@ wrangler secret put TURNSTILE_SECRET_KEY
 wrangler secret put ADMIN_ALERT_EMAIL
 ```
 
-Also set `TURNSTILE_SITE_KEY` (the public counterpart) and this worker's deployed
-URL in the frontend's `.env` as `VITE_TURNSTILE_SITE_KEY` / `VITE_SUPPORT_WORKER_URL`.
+Also set the Turnstile *site* key (the public counterpart of the secret above)
+and this worker's deployed URL in the frontend's `.env` as
+`VITE_TURNSTILE_SITE_KEY` / `VITE_SUPPORT_WORKER_URL`.
+
+## Testing (dummy Turnstile keys)
+
+Don't point local dev or CI at a real Turnstile site — automated browsers
+(Playwright, Cypress, Selenium) get flagged as bots and the challenge blocks
+the run. Use Cloudflare's documented test key pairs instead, which return
+predictable results with no real challenge:
+
+Copy `.dev.vars.example` to `.dev.vars` (gitignored) — it already defaults
+`TURNSTILE_SECRET_KEY` to the "always passes" test secret
+(`1x0000000000000000000000000000000AA`). Pair it with the matching test
+sitekey `1x00000000000000000000AA` as `VITE_TURNSTILE_SITE_KEY` in the
+frontend's `.env` for the same "always passes" flow end-to-end. Swap in the
+`2x...` variants to exercise the form's error-handling path instead. See
+`.dev.vars.example` and the root `.env.example` for the full key table.
 
 ## Dev
 

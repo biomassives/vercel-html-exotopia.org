@@ -79,6 +79,9 @@ typings/
 .env.development
 .env*.local
 
+# Wrangler local secrets (workers/support-inbox) — real values only, never committed.
+.dev.vars
+
 # Quasar build output (was previously committed)
 .quasar/
 /dist/
