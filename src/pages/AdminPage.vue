@@ -98,6 +98,21 @@
         <div class="adm-card__arrow">→</div>
       </div>
 
+      <div class="adm-card" @click="$router.push('/admin/support-messages')">
+        <div class="adm-card__icon">📬</div>
+        <div class="adm-card__body">
+          <div class="adm-card__title">Support Messages</div>
+          <div class="adm-card__desc">
+            Contact-form submissions (/contact), written by the workers/support-inbox Cloudflare
+            Worker after Turnstile + rate-limit checks. Submitters already got an auto-reply with
+            routing wording — bug reports also trigger an immediate email alert. This queue is
+            for the real human follow-up.
+          </div>
+          <div class="adm-card__meta">support_messages · migration 015</div>
+        </div>
+        <div class="adm-card__arrow">→</div>
+      </div>
+
     </div>
 
     <!-- Grant Reward — manual credit for things the automated ledger can't see

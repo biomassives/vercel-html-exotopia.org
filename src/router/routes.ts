@@ -303,6 +303,12 @@ const routes: RouteRecordRaw[] = [
         meta: { title: 'Admin · Error Log' },
       },
       {
+        path: 'admin/support-messages',
+        name: 'admin-support-messages',
+        component: () => import('src/pages/AdminSupportMessagesPage.vue'),
+        meta: { title: 'Admin · Support Messages' },
+      },
+      {
         path: 'learn',
         name: 'learn',
         component: () => import('src/pages/LearnPage.vue'),
@@ -337,6 +343,12 @@ const routes: RouteRecordRaw[] = [
         name: 'method-proposals',
         component: () => import('src/pages/MethodProposalsPage.vue'),
         meta: { title: 'Method Proposals · Exotopia' },
+      },
+      {
+        path: 'contact',
+        name: 'contact',
+        component: () => import('src/pages/SiteContactPage.vue'),
+        meta: { title: 'Contact & Support · Exotopia' },
       },
       {
         path: 'knowledge-keepers',

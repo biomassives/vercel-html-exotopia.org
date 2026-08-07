@@ -6,6 +6,7 @@
       <router-link to="/privacy">Privacy</router-link>
       <router-link to="/community-guidelines">Community Guidelines</router-link>
       <router-link to="/account">Your Data</router-link>
+      <router-link to="/contact">Contact</router-link>
       <button type="button" class="sf-about sf-report" @click="reportOpen = true">Report a problem</button>
       <a :href="REPO_URL" target="_blank" rel="noopener">Source</a>
     </div>
