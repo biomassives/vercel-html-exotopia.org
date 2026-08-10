@@ -69,6 +69,7 @@ Specs for the broader SCD Hub platform and inter-platform protocols.
 | [SPEC_EXOTOPIA_ECOSYSTEM.md](SPEC_EXOTOPIA_ECOSYSTEM.md) | Ecosystem technical overview + Jupyter notebook program for junior developers; Astropy, Plotly, NASA ExA | Reference |
 | [SPEC_FEE_ISOLATION.md](SPEC_FEE_ISOLATION.md) | Ledger separation for protocol fees vs community payouts; auditability; inverse verification principle; Rust pseudocode | Active |
 | [SPEC_GAMETHEORY.md](SPEC_GAMETHEORY.md) | Game theory mechanics — settlement competition, cooperation incentives, DAO voting strategies | Specced |
+| [SPEC_LIFECYCLE_TRACKER.md](SPEC_LIFECYCLE_TRACKER.md) | Unified status-lifecycle object model (support messages, video suggestions, bounties, security bulletins) replacing per-object bespoke tables/admin pages; extends the same model to npm dependency provenance and Dependabot coverage gaps | Draft |
 | [SPEC_MULEBOT_API.md](SPEC_MULEBOT_API.md) | mule-bot settlement query API; endpoint spec for corpus-driven AI companion | Draft |
 | [SPEC_PON_INK.md](SPEC_PON_INK.md) | pon.ink platform — sound tools, events, M-Pesa/Stripe payments, NFT minting, user dashboard | Specced |
 | [SPEC_PRIVACY_TIMESCALES.md](SPEC_PRIVACY_TIMESCALES.md) | Privacy architecture, vulnerability lifecycle, active defense, cross-scale anonymization | Specced |

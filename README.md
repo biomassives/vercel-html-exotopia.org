@@ -252,6 +252,7 @@ No environment variables required for local development. The app runs entirely c
 | [blog-e8-art-hash-zkp.md](blog-e8-art-hash-zkp.md) | Press release / blog — the art-hash concept explained for general audiences; E8 and Leech lattice primer; real-world application to Lamu coastal cleanup and Mpeketoni table banking |
 | [SPEC_WORLDBRIDGER_ONE.md](SPEC_WORLDBRIDGER_ONE.md) | Collaborative attribution protocol — multi-author asset fracturing, DAO resource return loops, KES yield splits |
 | [SPEC_PRIVACY_TIMESCALES.md](SPEC_PRIVACY_TIMESCALES.md) | Multi-timescale privacy — real-time E8 projection, 48h operational cache, archival ZK roots, CVE lifecycle |
+| [SPEC_LIFECYCLE_TRACKER.md](SPEC_LIFECYCLE_TRACKER.md) | Unified status-lifecycle model for support/review-queue objects, generalized to npm dependency provenance and supply-chain exposure tracking |
 
 ### Technical specs
 

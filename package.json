@@ -12,8 +12,8 @@
     "fetch-bootes-void": "node scripts/fetch-bootes-void.mjs"
   },
   "dependencies": {
-    "@metaplex-foundation/mpl-bubblegum": "^0.7.0",
-    "@metaplex-foundation/mpl-token-metadata": "^2.13.0",
+    "@metaplex-foundation/mpl-bubblegum": "^5.0.2",
+    "@metaplex-foundation/mpl-token-metadata": "^3.4.0",
     "@quasar/extras": "^1.16.12",
     "@solana/spl-account-compression": "^0.2.0",
     "@solana/web3.js": "^1.91.8",
