@@ -486,8 +486,15 @@ function buildScene(sysList: VoidStarSystem[], morph: string, colHex: string) {
   const baseColor = new THREE.Color(`#${colHex}`)
   const rng       = sceneRng(nameHash(gid.value + 'scene'))
 
-  // ── Deep background: very sparse — you are deep in the void ────────────────
-  const BG_N  = 75
+  // ── Deep background: sparse — you are deep in the void — but still visible.
+  // Point count stays low on purpose (this is the point: a void galaxy has
+  // genuinely few neighbors). The previous size/sizeAttenuation/opacity combo
+  // (0.28, true, 0.35) rendered these as near-invisible sub-pixel specks —
+  // not "sparse," just not there. sizeAttenuation:false keeps them a
+  // consistent, visible size regardless of camera distance, matching the
+  // fix applied to StationInteriorPage.vue / ClusterSurfacePage.vue's
+  // starfields this same pass.
+  const BG_N  = 160
   const bgPos = new Float32Array(BG_N * 3)
   const bgCol = new Float32Array(BG_N * 3)
   for (let i = 0; i < BG_N; i++) {
@@ -504,8 +511,8 @@ function buildScene(sysList: VoidStarSystem[], morph: string, colHex: string) {
   bgGeo.setAttribute('position', new THREE.BufferAttribute(bgPos, 3))
   bgGeo.setAttribute('color',    new THREE.BufferAttribute(bgCol, 3))
   pageGroup.add(new THREE.Points(bgGeo, new THREE.PointsMaterial({
-    size: 0.28, sizeAttenuation: true, vertexColors: true,
-    transparent: true, opacity: 0.35, depthWrite: false,
+    size: 1.1, sizeAttenuation: false, vertexColors: true,
+    transparent: true, opacity: 0.7, depthWrite: false, fog: false,
   })))
 
   // ── Galaxy disk particle field ──────────────────────────────────────────────

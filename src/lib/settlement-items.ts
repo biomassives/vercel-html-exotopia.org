@@ -35,6 +35,7 @@ export type ItemZone =
   | 'gateway'
   | 'courtyard'
   | 'open-floor'
+  | 'dining'
 
 export interface SettlementItem {
   id:              string
@@ -146,6 +147,24 @@ export const ITEM_MESH_PRESETS: Record<string, ItemMeshPreset> = {
     acquiredBy: ['eco-ops', 'reward'],
     description: 'Marks a PFAS/PFOA decontamination project logged in your citizen-science work. Color reflects project status at the time it was attached (amber = planning/active, cyan = monitoring, green = complete) — set via the color override when the item is added, not live-updating.',
   },
+  'dining-table': {
+    label: 'Dining Table', defaultColor: 0x8a5a30, zoneDefault: 'dining',
+    acquiredBy: ['constructed', 'eco-ops'],
+    description: 'A shared table for settlers to gather around.',
+    buildCost: 25,
+  },
+  'fruit-bowl': {
+    label: 'Fruit Bowl', defaultColor: 0xff8844, zoneDefault: 'dining',
+    acquiredBy: ['constructed', 'traded', 'generated'],
+    description: 'Virtual fruit, grown or gifted — a small comfort of home.',
+    buildCost: 10,
+  },
+  'drink-dispenser': {
+    label: 'Drink Dispenser', defaultColor: 0x44ccbb, zoneDefault: 'dining',
+    acquiredBy: ['constructed', 'traded'],
+    description: 'Cold drinks on tap for settlers and visitors alike.',
+    buildCost: 15,
+  },
 
   // ── Technologies grouping (SPEC_AUTHORED_ART_LIBRARY.md §3–5) ──────────────
   // One entry per REMEDIATION_METHODS[].key (pfas-methods-library.ts) — never
@@ -176,6 +195,7 @@ export const ZONE_POSITIONS: Record<ItemZone, { cx: number; cz: number; radius: 
   'gateway':    { cx:  0,  cz:  42, radius:  7 },
   'courtyard':  { cx:  8,  cz:  -4, radius:  9 },
   'open-floor': { cx: -18, cz: -28, radius: 13 },
+  'dining':     { cx: 16,  cz:   4, radius:  8 },
 }
 
 // Same ItemZone keys, laid out for a long narrow cylinder deck instead of a
@@ -187,6 +207,7 @@ export const CYLINDER_ZONE_POSITIONS: Record<ItemZone, { cx: number; cz: number;
   'gateway':    { cx:   0, cz: -55, radius: 10 },
   'courtyard':  { cx:   0, cz:   0, radius: 12 },
   'open-floor': { cx: -50, cz:  30, radius: 14 },
+  'dining':     { cx:  20, cz:   0, radius: 12 },
 }
 
 /** Deterministic zone position for an item (no explicit posX/Z set). */
@@ -362,6 +383,40 @@ export function buildItemMesh(presetKey: string, colorHex: string, withLight = t
       ring3.position.y = 0.05
       const g = glow(1.0, 0.05, 0.14)
       group.add(post, pennant, ring3, g)
+      break
+    }
+    case 'dining-table': {
+      const top = new THREE.Mesh(new THREE.CylinderGeometry(1.8, 1.8, 0.18, 16), new THREE.MeshPhongMaterial({ color: 0x8a5a30, shininess: 18 }))
+      top.position.y = 1.5
+      const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.32, 1.5, 8), new THREE.MeshPhongMaterial({ color: 0x4a3018 }))
+      leg.position.y = 0.75
+      group.add(top, leg)
+      break
+    }
+    case 'fruit-bowl': {
+      const bowl = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.35, 0.32, 12), new THREE.MeshPhongMaterial({ color: 0xccccdd, shininess: 40 }))
+      bowl.position.y = 1.68
+      group.add(bowl)
+      const fruitColors = [col.getHex(), 0xffcc33, 0xdd3333, 0x66aa44]
+      for (let i = 0; i < 4; i++) {
+        const a = (i / 4) * Math.PI * 2
+        const fruit = new THREE.Mesh(
+          new THREE.SphereGeometry(0.16 + (i % 2) * 0.03, 8, 8),
+          new THREE.MeshPhongMaterial({ color: fruitColors[i], shininess: 35 }),
+        )
+        fruit.position.set(Math.cos(a) * 0.22, 1.88, Math.sin(a) * 0.22)
+        group.add(fruit)
+      }
+      break
+    }
+    case 'drink-dispenser': {
+      const body = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 0.7, 2.0, 10), new THREE.MeshPhongMaterial({ color: 0x334455, shininess: 30 }))
+      body.position.y = 1.6
+      const spigot = new THREE.Mesh(new THREE.TorusGeometry(0.5, 0.07, 6, 16), new THREE.MeshBasicMaterial({ color: col }))
+      spigot.position.y = 0.75
+      spigot.rotation.x = Math.PI / 2
+      const g = glow(0.7, 0.75, 0.22)
+      group.add(body, spigot, g)
       break
     }
     default: {

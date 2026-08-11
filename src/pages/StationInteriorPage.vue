@@ -147,6 +147,7 @@ import {
   type SettlementItem,
 } from 'src/lib/settlement-items'
 import { orbitalKey } from 'src/lib/settlements'
+import type { SurfaceType } from 'src/lib/surface-classify'
 import SettlementInventory from 'src/components/SettlementInventory.vue'
 
 // ── Route ──────────────────────────────────────────────────────────────────────
@@ -158,6 +159,11 @@ const hostname    = computed(() => String(route.params.hostname ?? ''))
 const refName     = computed(() => String(route.params.refName  ?? ''))
 const coordSystem = computed(() => String(route.query.coordSystem ?? 'exo-orbital-v1'))
 const isBlackHole = computed(() => hostname.value === 'Sgr-A*' || !!route.query.zone)
+// Passed by GalaxyPage.vue when routing here for a no-solid-crust planet
+// (see src/lib/surface-classify.ts::NO_GROUND_SURFACE_TYPES) — used only to
+// tint the host planet visible through the windows; absent for bodyless
+// coordinate systems, which just fall back to HOST_PLANET_COLORS.unknown.
+const surfaceType  = computed(() => (route.query.surfaceType ? String(route.query.surfaceType) : 'unknown') as SurfaceType)
 
 // ── Store ──────────────────────────────────────────────────────────────────────
 
@@ -186,6 +192,30 @@ const CYL_LEN = 200
 const CYL_GAP = 60
 const CYL_SEP = CYL_R * 2 + CYL_GAP
 
+// Hull is built as bands along its length so a few of them can become window
+// rings instead of solid plate — see buildHullPair() / buildWindows().
+const HULL_BAND_LEN        = 20
+const HULL_BANDS           = Math.round(CYL_LEN / HULL_BAND_LEN)
+const WINDOW_BAND_INDICES  = [1, 4, 7]
+
+/** Host-planet tint visible through the windows, keyed by surface-classify.ts's SurfaceType. */
+const HOST_PLANET_COLORS: Record<SurfaceType, number> = {
+  gas_giant:     0xd8a860,
+  hot_gas_giant: 0xff6a2a,
+  magma_ocean:   0xff3300,
+  lava:          0xff4400,
+  hycean:        0x2288cc,
+  basalt:        0x554444,
+  desert:        0xc8935a,
+  frozen_rocky:  0xaad0ee,
+  iron_rocky:    0x996655,
+  ocean:         0x2266aa,
+  rocky:         0x998877,
+  sub_neptune:   0x77aacc,
+  super_earth:   0x77aa77,
+  unknown:       0x8899aa,
+}
+
 // ── UI state ──────────────────────────────────────────────────────────────────
 
 const sceneReady = ref(false)
@@ -203,8 +233,10 @@ let controls: OrbitControls           | null = null
 let rafId:    number | null = null
 let clock:    THREE.Clock
 
-let hullA: THREE.Mesh | null = null
-let hullB: THREE.Mesh | null = null
+// Groups (not single meshes) so the spin animation in tick() rotates the
+// whole segmented hull — opaque bands and window bands alike — together.
+let hullA: THREE.Group | null = null
+let hullB: THREE.Group | null = null
 let deckY = 0
 
 const itemMeshes = new Map<string, THREE.Group>()
@@ -272,10 +304,13 @@ function buildScene() {
     : starColorFromTeff(system.value?.st_teff)
 
   buildLights(starColor)
+  buildExteriorView()
   buildHullPair()
+  buildWindows()
   buildEndCaps()
   buildConnectingTruss()
   deckY = buildInteriorGround(palette)
+  buildInteriorLights()
   camera.position.set(0, deckY + 6, 40)
   controls.target.set(0, deckY + 4, 0)
   controls.update()
@@ -307,34 +342,180 @@ function buildLights(starColor: THREE.Color) {
   scene!.add(sun)
 }
 
+/**
+ * Builds each hull as a Group of band-length plate segments along its length,
+ * skipping WINDOW_BAND_INDICES so buildWindows() can fill those gaps with
+ * real see-through geometry instead of solid plate. Grouping (rather than one
+ * continuous mesh, as before) is what lets the whole segmented shell still
+ * spin as a single rigid body in tick().
+ */
 function buildHullPair() {
-  const geo = new THREE.CylinderGeometry(CYL_R, CYL_R, CYL_LEN, 32, 1, true)
-
-  hullA = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
-    color: 0x0c1626, transparent: true, opacity: 0.5, side: THREE.BackSide, depthWrite: false,
-  }))
+  hullA = new THREE.Group()
   hullA.rotation.x = Math.PI / 2
   scene!.add(hullA)
 
-  const wireA = new THREE.Mesh(geo.clone(), new THREE.MeshBasicMaterial({
+  hullB = new THREE.Group()
+  hullB.rotation.x = Math.PI / 2
+  hullB.position.x = CYL_SEP
+  scene!.add(hullB)
+
+  // Raised from the original 0.5/0.4 (which matched the old fully-opaque-
+  // looking single-mesh hull) — now that window bands sit right next to these
+  // at opacity 0.14, the plates need more contrast or the two read as the
+  // same translucent haze against the starfield.
+  const matA = new THREE.MeshBasicMaterial({ color: 0x0c1626, transparent: true, opacity: 0.78, side: THREE.BackSide, depthWrite: false })
+  const matB = new THREE.MeshBasicMaterial({ color: 0x0c1626, transparent: true, opacity: 0.68, side: THREE.DoubleSide, depthWrite: false })
+
+  for (let i = 0; i < HULL_BANDS; i++) {
+    if (WINDOW_BAND_INDICES.includes(i)) continue
+    const bandY = -CYL_LEN / 2 + (i + 0.5) * HULL_BAND_LEN
+    const geo   = new THREE.CylinderGeometry(CYL_R, CYL_R, HULL_BAND_LEN, 32, 1, true)
+
+    const plateA = new THREE.Mesh(geo, matA)
+    plateA.position.y = bandY
+    hullA.add(plateA)
+
+    const plateB = new THREE.Mesh(geo, matB)
+    plateB.position.y = bandY
+    hullB.add(plateB)
+  }
+
+  const wireGeo = new THREE.CylinderGeometry(CYL_R, CYL_R, CYL_LEN, 32, 1, true)
+  const wireA = new THREE.Mesh(wireGeo, new THREE.MeshBasicMaterial({
     color: 0x2288bb, wireframe: true, transparent: true, opacity: 0.08, side: THREE.BackSide, depthWrite: false,
   }))
   wireA.rotation.x = Math.PI / 2
   scene!.add(wireA)
 
-  hullB = new THREE.Mesh(geo.clone(), new THREE.MeshBasicMaterial({
-    color: 0x0c1626, transparent: true, opacity: 0.4, side: THREE.DoubleSide, depthWrite: false,
-  }))
-  hullB.rotation.x = Math.PI / 2
-  hullB.position.x = CYL_SEP
-  scene!.add(hullB)
-
-  const wireB = new THREE.Mesh(geo.clone(), new THREE.MeshBasicMaterial({
+  const wireB = new THREE.Mesh(wireGeo.clone(), new THREE.MeshBasicMaterial({
     color: 0x2288bb, wireframe: true, transparent: true, opacity: 0.10, side: THREE.DoubleSide, depthWrite: false,
   }))
   wireB.rotation.x = Math.PI / 2
   wireB.position.x = CYL_SEP
   scene!.add(wireB)
+}
+
+/**
+ * Fills the WINDOW_BAND_INDICES gaps buildHullPair() leaves in each hull with
+ * a ring of alternating glass panes and structural mullions — real see-through
+ * geometry, not a glowing decorative plane (see DomeInteriorPage.vue for that
+ * older pattern, which reads as a lit wall rather than an actual window).
+ * Added to the same hullA/hullB groups so the windows spin with the hull.
+ */
+function buildWindows() {
+  // Camera sits inside the cylinder looking at its inward-facing surface, so
+  // both materials need DoubleSide/BackSide — a plain FrontSide default here
+  // gets back-face-culled from inside, same trap DomeInteriorPage.vue's
+  // window-plane comments (around its buildStructures()) document.
+  const glassMat  = new THREE.MeshBasicMaterial({ color: 0x336688, transparent: true, opacity: 0.14, side: THREE.DoubleSide, depthWrite: false, fog: false })
+  const strutMat  = new THREE.MeshPhongMaterial({ color: 0x1a2838, shininess: 25, side: THREE.DoubleSide })
+  const nPanes    = 10
+  const paneAngle = (Math.PI * 2) / nPanes
+  const glassWidth = paneAngle * 0.72
+  const strutWidth = paneAngle - glassWidth
+
+  for (const group of [hullA, hullB]) {
+    if (!group) continue
+    for (const i of WINDOW_BAND_INDICES) {
+      const bandY = -CYL_LEN / 2 + (i + 0.5) * HULL_BAND_LEN
+      for (let p = 0; p < nPanes; p++) {
+        const thetaStart = p * paneAngle
+
+        const glassSeg = Math.max(3, Math.round(32 * (glassWidth / (Math.PI * 2))))
+        const glass = new THREE.Mesh(
+          new THREE.CylinderGeometry(CYL_R, CYL_R, HULL_BAND_LEN * 0.86, glassSeg, 1, true, thetaStart, glassWidth),
+          glassMat,
+        )
+        glass.position.y = bandY
+        group.add(glass)
+
+        const strutSeg = Math.max(2, Math.round(32 * (strutWidth / (Math.PI * 2))))
+        const strut = new THREE.Mesh(
+          new THREE.CylinderGeometry(CYL_R, CYL_R, HULL_BAND_LEN, strutSeg, 1, true, thetaStart + glassWidth, strutWidth),
+          strutMat,
+        )
+        strut.position.y = bandY
+        group.add(strut)
+      }
+    }
+  }
+}
+
+/** Warm fixed-position deck lighting — the deck itself only exists around the
+ * hullA cylinder (buildInteriorGround()), so fixtures are scoped there; the
+ * camera's maxDistance (120) never reaches close enough into hullB for its
+ * interior lighting to be visible anyway. */
+function buildInteriorLights() {
+  for (const z of [-70, -35, 0, 35, 70]) {
+    const light = new THREE.PointLight(0xffd8a0, 2.2, 55)
+    light.position.set(0, deckY + 10, z)
+    scene!.add(light)
+  }
+}
+
+function mulberry32(seed: number) {
+  return function () {
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0
+    let t = Math.imul(seed ^ seed >>> 15, 1 | seed)
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t
+    return ((t ^ t >>> 14) >>> 0) / 4294967296
+  }
+}
+
+/**
+ * What the new windows actually show: a cheap procedural starfield (same
+ * technique as SurfaceViewPage.vue's addStarField() Layer 1, seeded by
+ * hostname — its real-catalog parallax Layer 2 is unnecessary weight for a
+ * secondary view glimpsed through window gaps) plus the host planet itself,
+ * tinted via HOST_PLANET_COLORS from the surfaceType GalaxyPage.vue passes
+ * when routing here for a no-solid-crust planet.
+ */
+function buildExteriorView() {
+  const seed = hostname.value.split('').reduce((a, c) => a * 31 + c.charCodeAt(0), 42)
+  const rng  = mulberry32(seed)
+
+  const pos: number[] = [], col: number[] = []
+  for (let i = 0; i < 3000; i++) {
+    const u = rng(), v = rng()
+    const theta = 2 * Math.PI * u
+    const phi   = Math.acos(2 * v - 1)
+    pos.push(600 * Math.sin(phi) * Math.cos(theta), 600 * Math.sin(phi) * Math.sin(theta), 600 * Math.cos(phi))
+
+    const roll = rng()
+    let teff: number
+    if      (roll < 0.52) teff = 2700 + rng() * 1300
+    else if (roll < 0.74) teff = 4000 + rng() * 1500
+    else if (roll < 0.88) teff = 5400 + rng() * 1000
+    else if (roll < 0.96) teff = 6200 + rng() * 1800
+    else                   teff = 7500 + rng() * 22500
+
+    const c  = starColorFromTeff(teff)
+    const br = 0.4 + rng() * 0.5
+    col.push(c.r * br, c.g * br, c.b * br)
+  }
+
+  const geo = new THREE.BufferGeometry()
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3))
+  geo.setAttribute('color',    new THREE.Float32BufferAttribute(col, 3))
+  scene!.add(new THREE.Points(geo, new THREE.PointsMaterial({
+    size: 1.4, vertexColors: true, sizeAttenuation: false,
+    transparent: true, opacity: 0.85, depthWrite: false, fog: false,
+  })))
+
+  const planetColor = HOST_PLANET_COLORS[surfaceType.value] ?? HOST_PLANET_COLORS.unknown
+  const planet = new THREE.Mesh(
+    new THREE.SphereGeometry(90, 24, 24),
+    new THREE.MeshBasicMaterial({ color: planetColor, fog: false }),
+  )
+  planet.position.set(-260, 40, -340)
+  scene!.add(planet)
+
+  const glow = new THREE.Mesh(
+    new THREE.SphereGeometry(120, 20, 20),
+    new THREE.MeshBasicMaterial({ color: planetColor, transparent: true, opacity: 0.18, depthWrite: false, blending: THREE.AdditiveBlending, fog: false }),
+  )
+  glow.position.copy(planet.position)
+  scene!.add(glow)
 }
 
 function buildEndCaps() {

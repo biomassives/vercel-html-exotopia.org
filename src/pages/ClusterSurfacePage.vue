@@ -96,6 +96,7 @@ import gsap from 'gsap'
 import { useVizRenderer } from 'src/composables/useVizRenderer'
 import { surfacePaletteFor, disposeScene, type SurfacePalette } from 'src/lib/three-utils'
 import { useSettlements, clusterKey }               from 'src/lib/settlements'
+import { generateLocalSky, type GeneratedSky } from 'src/lib/generated-sky'
 
 // ── UI state ───────────────────────────────────────────────────────────────────
 const genOverlayOpen = ref(false)
@@ -308,6 +309,32 @@ function buildDome(): THREE.Group {
   return group
 }
 
+function buildStarField(sky: GeneratedSky) {
+  const positions = new Float32Array(sky.stars.length * 3)
+  const colors    = new Float32Array(sky.stars.length * 3)
+  sky.stars.forEach((s, i) => {
+    positions[i * 3] = s.position.x; positions[i * 3 + 1] = s.position.y; positions[i * 3 + 2] = s.position.z
+    colors[i * 3]    = s.color.r;    colors[i * 3 + 1]    = s.color.g;    colors[i * 3 + 2]    = s.color.b
+  })
+
+  const geo = new THREE.BufferGeometry()
+  geo.setAttribute('position', new THREE.BufferAttribute(positions, 3))
+  geo.setAttribute('color',    new THREE.BufferAttribute(colors, 3))
+  pageGroup.add(new THREE.Points(geo, new THREE.PointsMaterial({
+    size: 1.6, vertexColors: true, sizeAttenuation: false,
+    transparent: true, opacity: 0.85, depthWrite: false, fog: false,
+  })))
+}
+
+/** Named line-figures — invented, not real astronomy (see generated-sky.ts). */
+function buildConstellationLines(sky: GeneratedSky) {
+  const mat = new THREE.LineBasicMaterial({ color: 0x88ccee, transparent: true, opacity: 0.6, depthWrite: false, fog: false })
+  for (const c of sky.constellations) {
+    const pts = c.starIdx.map(i => sky.stars[i]!.position)
+    pageGroup.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), mat))
+  }
+}
+
 function buildScene() {
   // Grab shared renderer refs
   renderer = viz.renderer
@@ -379,6 +406,14 @@ function buildScene() {
     haze.position.set((rng() - 0.5) * 40, (rng() - 0.2) * 8, -20 - rng() * 20)
     pageGroup.add(haze)
   }
+
+  // Sky — synthetic starfield + invented constellations (see generated-sky.ts).
+  // Independently seeded (a '-sky' suffix on the same seed string) so drawing
+  // from it doesn't shift the terrain/dome/star RNG sequence above.
+  const skySeed = makeSeed(`${clusterSlug.value}-${memberId.value}-${systemIdx.value}-sky`)
+  const localSky = generateLocalSky(skySeed)
+  buildStarField(localSky)
+  buildConstellationLines(localSky)
 
   // Wormhole pyramid (settlement marker)
   const pyrGeo = new THREE.ConeGeometry(0.18, 0.5, 4)

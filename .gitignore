@@ -82,6 +82,9 @@ typings/
 # Wrangler local secrets (workers/support-inbox) — real values only, never committed.
 .dev.vars
 
+# Hipparcos catalog cache (scripts/generate_sky_data.py) — ~20MB regenerable download.
+data/hipparcos.csv
+
 # Quasar build output (was previously committed)
 .quasar/
 /dist/

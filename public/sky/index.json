@@ -1,0 +1,32 @@
+{
+  "barnard-s-star": {
+    "hostname": "Barnard's star",
+    "pl_name": "Barnard b",
+    "star_count": 8626
+  },
+  "eps-eri": {
+    "hostname": "eps Eri",
+    "pl_name": "eps Eri b",
+    "star_count": 8597
+  },
+  "gj-887": {
+    "hostname": "GJ 887",
+    "pl_name": "GJ 887 b",
+    "star_count": 8603
+  },
+  "ross-128": {
+    "hostname": "Ross 128",
+    "pl_name": "Ross 128 b",
+    "star_count": 8616
+  },
+  "tau-cet": {
+    "hostname": "tau Cet",
+    "pl_name": "tau Cet f",
+    "star_count": 8588
+  },
+  "gj-1061": {
+    "hostname": "GJ 1061",
+    "pl_name": "GJ 1061 b",
+    "star_count": 8608
+  }
+}

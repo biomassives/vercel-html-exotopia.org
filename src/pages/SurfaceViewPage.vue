@@ -90,6 +90,14 @@
       </div>
     </Transition>
 
+    <!-- ── Sky accuracy indicator (SPEC.md §14.6.1) ─────────────── -->
+    <Transition name="xray-fade">
+      <div v-if="sceneReady" class="sky-accuracy-hud" :class="{ 'sky-accuracy-hud--accurate': skyAccurate }">
+        <span class="sah-icon">✦</span>
+        <span class="sah-label">{{ skyAccurate ? 'Sky: accurate from exo-surface' : 'Sky: Earth-apparent (no data)' }}</span>
+      </div>
+    </Transition>
+
     <!-- ── Property header ─────────────────────────────────────── -->
     <!-- ── Planet info panel (top-left, collapsible) ─────────────── -->
     <div v-show="!entryAnimating" class="planet-info-panel">
@@ -873,6 +881,38 @@ const communityNodesStore = useCommunityNodesStore()
 // Populated once in onMounted, read synchronously by buildSkyDefenderData()
 // (called every render-loop tick) — same reasoning as GalaxyPage.vue.
 const galleriesForCurrentSystem = ref<OrbitalGalleryEntry[]>([])
+
+// Real parallax-accurate sky (SPEC.md §14 / scripts/generate_sky_data.py) —
+// populated by loadSkyData() before initScene() so addStarField() can read it
+// synchronously. null (no file for this hostname, the common case until the
+// first-run batch covers more systems) falls back to the existing
+// galaxyStore-derived approximation unchanged.
+interface RealSkyStar { app_ra: number; app_dec: number; app_mag: number; color_hex: string }
+let realSkyStars: RealSkyStar[] | null = null
+const skyAccurate = ref(false)
+
+function slugifyHostname(name: string): string {
+  return name.toLowerCase().replace(/\*/g, '').replace(/\+/g, '')
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
+}
+
+async function loadSkyData(): Promise<void> {
+  realSkyStars = null
+  skyAccurate.value = false
+  if (!hostname.value) return
+  try {
+    const res = await fetch(`/sky/${slugifyHostname(hostname.value)}.json`)
+    if (!res.ok) return
+    const data = await res.json() as { meta?: { sky_complete?: boolean }; stars?: RealSkyStar[] }
+    if (!data.stars?.length) return
+    realSkyStars = data.stars
+    skyAccurate.value = data.meta?.sky_complete !== false
+  } catch {
+    // Network/parse failure — same as a 404, fall back silently.
+    realSkyStars = null
+    skyAccurate.value = false
+  }
+}
 const { hasSettlement, addSettlement: recordSettlement } = useSettlements()
 
 const system      = computed(() => galaxyStore.getSystem(hostname.value) ?? null)
@@ -1561,7 +1601,32 @@ function addStarField() {
     })))
   }
 
-  // ── Layer 2: Catalog stars from NASA Exoplanet Archive — with parallax ────
+  // ── Layer 2: real Hipparcos sky (SPEC.md §14 / scripts/generate_sky_data.py)
+  // when a sky file exists for this hostname — genuinely accurate positions,
+  // not an approximation. Falls back to the NASA-archive-host-star
+  // approximation below when no sky file has been generated for this system
+  // yet (the common case until the first-run batch covers more systems).
+  if (realSkyStars) {
+    const positions: number[] = [], colors: number[] = [], sizes: number[] = []
+    for (const s of realSkyStars) {
+      const skyPos = raDecToVec3(s.app_ra, s.app_dec, 900)
+      positions.push(skyPos.x, skyPos.y, skyPos.z)
+      const col = new THREE.Color(s.color_hex)
+      colors.push(col.r, col.g, col.b)
+      sizes.push(Math.max(0.6, 3.2 - s.app_mag * 0.35))   // brighter (lower mag) → larger
+    }
+    const geo = new THREE.BufferGeometry()
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3))
+    geo.setAttribute('color',    new THREE.Float32BufferAttribute(colors,    3))
+    geo.setAttribute('size',     new THREE.Float32BufferAttribute(sizes,     1))
+    scene.add(new THREE.Points(geo, new THREE.PointsMaterial({
+      size: 1.8, vertexColors: true, sizeAttenuation: false,
+      transparent: true, opacity: 0.92, depthWrite: false,
+    })))
+    return
+  }
+
+  // ── Layer 2 (fallback): Catalog stars from NASA Exoplanet Archive — with parallax ────
   // Stars are placed in their actual 3D galactic positions (parsec space)
   // relative to the observer's exoplanet, so every settlement sees a genuinely
   // different sky: nearby stars shift dramatically, distant stars are fixed.
@@ -2933,6 +2998,7 @@ onMounted(async () => {
     isMoon:      isMoonView.value,
   })
 
+  await loadSkyData()
   initScene()
   // Skip entry animation if a spatial URL is present (direct deep-link) or planet is gaseous
   const eqt = planet.value?.pl_eqt ?? null
@@ -2984,6 +3050,7 @@ watch([hostname, planetName], async () => {
     sceneReady.value = false
   }
   await galaxyStore.loadData()
+  await loadSkyData()
   initScene()
   spatial.restoreFromUrl()
   _stopTick = viz.addTick(surfaceTick)
@@ -3789,6 +3856,41 @@ watch([hostname, planetName], async () => {
   color:        rgba(255, 180, 90, 0.80);
   letter-spacing: 0.06em;
 }
+
+/* ── Sky accuracy indicator (SPEC.md §14.6.1) ─────────────────── */
+
+.sky-accuracy-hud {
+  position:        fixed;
+  bottom:          12px;
+  right:           12px;
+  display:         flex;
+  align-items:     center;
+  gap:             5px;
+  background:      rgba(20, 24, 34, 0.58);
+  border:          1px solid rgba(120, 140, 160, 0.28);
+  border-radius:   4px;
+  padding:         3px 9px;
+  pointer-events:  none;
+  z-index:         20;
+  backdrop-filter: blur(4px);
+}
+.sky-accuracy-hud--accurate {
+  background: rgba(0, 60, 70, 0.55);
+  border-color: rgba(0, 200, 220, 0.35);
+}
+.sah-icon {
+  font-size: 10px;
+  color: rgba(150, 170, 190, 0.65);
+  line-height: 1;
+}
+.sky-accuracy-hud--accurate .sah-icon { color: #00d8ee; }
+.sah-label {
+  font-family: 'Courier New', monospace;
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  color: rgba(160, 180, 200, 0.75);
+}
+.sky-accuracy-hud--accurate .sah-label { color: rgba(140, 235, 250, 0.90); }
 
 /* ── Mule / soul orb interaction panel ────────────────────────── */
 
