@@ -1,0 +1,12 @@
+{
+  "proxima-cen": {
+    "hostname": "Proxima Cen",
+    "pl_name": "Proxima Cen b",
+    "star_count": 8831
+  },
+  "trappist-1": {
+    "hostname": "TRAPPIST-1",
+    "pl_name": "TRAPPIST-1 b",
+    "star_count": 8804
+  }
+}

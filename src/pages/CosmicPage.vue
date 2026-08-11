@@ -1032,10 +1032,16 @@ type ContextLevel = 'overview' | 'nearby' | 'milkyway' | 'conduit' | 'xray' | 'v
 const contextLevel = computed((): ContextLevel => {
   if (selected.value?.isMilkyWay || camDistToOrigin.value < 0.7) return 'milkyway'
   if (camDistToOrigin.value < 3.5)                                return 'nearby'
-  if (activeCluster.value)                                        return 'cluster_interior'
+  // An explicit click always outranks activeCluster's ambient camera-proximity
+  // state — otherwise merely being near a real cluster while clicking a void/
+  // conduit/X-ray-cluster object swallows that click into the cluster-interior
+  // panel, whose "Browse Cluster Galaxies" button then falls through to the
+  // X-ray route with the wrong (non-cluster) name — e.g. clicking a void near
+  // a cluster produced a 404 for /galaxy-oracle/local void.json.
   if (selected.value?.isConduit)                                  return 'conduit'
   if (selected.value?.xrayCluster)                                return 'xray'
   if (selected.value?.isVoid)                                     return 'void'
+  if (activeCluster.value)                                        return 'cluster_interior'
   if (selected.value && !selected.value.isBrightGalaxy)           return 'selected'
   return 'overview'
 })
@@ -3408,6 +3414,16 @@ async function navigateToClusterInterior() {
     : activeCluster.value?.name
   if (!name) return
   const c = CLUSTERS.find(cl => cl.name === name)
+
+  // Defense in depth against the same misrouting the contextLevel reorder
+  // above fixes at its usual source (a click): activeCluster.value is set
+  // purely by camera proximity (updateActiveClusterState()), and if a void
+  // ever ends up feeding that same LOD-entry system, `name` here would be a
+  // void's name, not a cluster's — send it to the void page, not /xcluster/.
+  if (VOIDS.some(v => v.name === name)) {
+    void router.push({ path: `/void/${voidSlug(name)}`, query: { name } })
+    return
+  }
 
   // X-ray-catalog clusters (Takey2013 J-designations, e.g. "J111805.7+440935")
   // have no curated /clusters/{slug}-members.json file — only the ~15

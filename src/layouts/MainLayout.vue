@@ -780,7 +780,7 @@ import { usePortalStore }      from 'src/stores/portal'
 import WormholePortal          from 'src/components/WormholePortal.vue'
 import SceneTransition         from 'src/components/SceneTransition.vue'
 import OfflineStatusBar        from 'src/components/eco/OfflineStatusBar.vue'
-import InstallPrompt           from 'src/components/eco/InstallPrompt.vue'
+import InstallPrompt           from 'src/components/InstallPrompt.vue'
 import LocalDataPanel          from 'src/components/eco/LocalDataPanel.vue'
 import DemoConsentOverlay      from 'src/components/DemoConsentOverlay.vue'
 import SiteFooter              from 'src/components/SiteFooter.vue'
@@ -2330,7 +2330,7 @@ const settlementBreadcrumb = computed((): BreadcrumbNode[] => {
   top: 0;
   left: 0;
   bottom: 0;
-  width: 212px;
+  width: 240px;
   background: rgba(1, 4, 20, 0.72);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
@@ -2339,6 +2339,9 @@ const settlementBreadcrumb = computed((): BreadcrumbNode[] => {
   flex-direction: column;
   padding: 14px 0 10px;
   z-index: 2;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 150, 200, 0.25) transparent;
 }
 
 .mecin-nav-eyebrow {
@@ -2353,7 +2356,7 @@ const settlementBreadcrumb = computed((): BreadcrumbNode[] => {
 
 .mecin-item {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
   padding: 10px 12px 10px 16px;
   background: none;
@@ -2363,6 +2366,7 @@ const settlementBreadcrumb = computed((): BreadcrumbNode[] => {
   text-align: left;
   transition: background 0.22s, border-color 0.22s;
   min-width: 0;
+  flex-shrink: 0;
 }
 
 .mecin-item:hover,
@@ -2401,9 +2405,7 @@ const settlementBreadcrumb = computed((): BreadcrumbNode[] => {
   font-size: 8px;
   color: rgba(100, 148, 188, 0.38);
   line-height: 1.5;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
   transition: color 0.22s;
 }
 

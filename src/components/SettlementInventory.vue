@@ -74,6 +74,9 @@
                     <option v-for="zone in ZONES" :key="zone" :value="zone">{{ zone }}</option>
                   </select>
                 </div>
+                <button v-if="requiresBuilder(item)" class="si-share-btn" @click="openVoxelBuilderForEdit(item)">
+                  <q-icon name="view_in_ar" size="11px" class="q-mr-xxs" />Edit sculpture
+                </button>
                 <button v-if="canShare(item)" class="si-share-btn" @click="openShare(item)">
                   <q-icon name="ios_share" size="11px" class="q-mr-xxs" />Share this design
                 </button>
@@ -309,6 +312,14 @@
       </q-card>
     </q-dialog>
 
+    <!-- Voxel sculpture builder — acquiring a new requiresBuilder item, or editing an existing one -->
+    <VoxelBuilderDialog
+      v-model="voxelBuilderOpen"
+      :initial="voxelBuilderInitial"
+      :settlement-key="props.settlementKey"
+      @save="onVoxelBuilderSave"
+    />
+
   </div>
 </template>
 
@@ -323,10 +334,12 @@ import {
   type ItemAcquisitionType,
   type ItemZone,
   type SettlementItem,
+  type VoxelPayload,
 } from 'src/lib/settlement-items'
 import { THEME_PACKS } from 'src/data/theme-packs'
 import { useRewardsStore } from 'src/stores/rewards'
 import { useMemberStore } from 'src/stores/member'
+import VoxelBuilderDialog from 'src/components/VoxelBuilderDialog.vue'
 
 const props = defineProps<{ settlementKey: string }>()
 
@@ -439,16 +452,76 @@ async function chargeConstruction(meshPreset: string): Promise<boolean> {
 
 async function doAcquire() {
   if (!acquirePreset.value || acquireBusy.value) return
+  const preset = ITEM_MESH_PRESETS[acquirePreset.value]!
+  // Creative presets (e.g. Art Sphere) design their content in the voxel builder
+  // instead of getting added instantly — the charge (if any) happens on save there.
+  if (preset.requiresBuilder) {
+    openVoxelBuilderForAcquire()
+    return
+  }
   acquireBusy.value = true
   acquireError.value = ''
   try {
-    const preset = ITEM_MESH_PRESETS[acquirePreset.value]!
     if (acquireType.value === 'constructed' && !(await chargeConstruction(acquirePreset.value))) return
     addItem({
       type:     acquireType.value,
       meshPreset: acquirePreset.value,
       zone:     acquireZone.value || preset.zoneDefault,
       buildCost: preset.buildCost,
+    })
+    resetAcquire()
+  } finally {
+    acquireBusy.value = false
+  }
+}
+
+// ── Voxel sculpture builder ────────────────────────────────────────────────────
+// Handles both "acquiring a new requiresBuilder item" (target id null, uses the
+// acquire dialog's already-chosen type/preset/zone) and "editing an existing
+// item's sculpture" (target id set, just patches item.voxels).
+
+const voxelBuilderOpen    = ref(false)
+const voxelBuilderInitial = ref<VoxelPayload | undefined>(undefined)
+const voxelBuilderTarget  = ref<string | null>(null)
+
+function requiresBuilder(item: SettlementItem): boolean {
+  return !!ITEM_MESH_PRESETS[item.meshPreset]?.requiresBuilder
+}
+
+function openVoxelBuilderForAcquire() {
+  voxelBuilderTarget.value  = null
+  voxelBuilderInitial.value = undefined
+  acquireOpen.value         = false
+  voxelBuilderOpen.value    = true
+}
+
+function openVoxelBuilderForEdit(item: SettlementItem) {
+  voxelBuilderTarget.value  = item.id
+  voxelBuilderInitial.value = item.voxels
+  voxelBuilderOpen.value    = true
+}
+
+async function onVoxelBuilderSave(payload: VoxelPayload) {
+  if (voxelBuilderTarget.value) {
+    updateItem(voxelBuilderTarget.value, { voxels: payload })
+    voxelBuilderTarget.value = null
+    return
+  }
+  if (!acquirePreset.value) return
+  acquireBusy.value = true
+  acquireError.value = ''
+  try {
+    const preset = ITEM_MESH_PRESETS[acquirePreset.value]!
+    if (acquireType.value === 'constructed' && !(await chargeConstruction(acquirePreset.value))) {
+      acquireOpen.value = true   // surface the charge failure back on the acquire dialog
+      return
+    }
+    addItem({
+      type:       acquireType.value,
+      meshPreset: acquirePreset.value,
+      zone:       acquireZone.value || preset.zoneDefault,
+      buildCost:  preset.buildCost,
+      voxels:     payload,
     })
     resetAcquire()
   } finally {
@@ -565,6 +638,7 @@ function doRedeem() {
     donorKey:       decoded.donorKey,
     donorStarColor: decoded.donorStarColor,
     ...(decoded.donorName ? { donorName: decoded.donorName } : {}),
+    ...(decoded.voxels ? { voxels: decoded.voxels } : {}),
   })
   resetAcquire()
 }

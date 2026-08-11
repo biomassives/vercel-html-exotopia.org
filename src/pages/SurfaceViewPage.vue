@@ -853,6 +853,7 @@ import * as THREE                                        from 'three'
 import { OrbitControls }                                from 'three/examples/jsm/controls/OrbitControls.js'
 import { useGalaxyStore }                               from 'src/stores/galaxy'
 import { usePortalStore }                               from 'src/stores/portal'
+import { BRIGHT_STARS }                                 from 'src/data/bright-stars'
 import {
   starColorFromTeff,
   planetColor,
@@ -1562,6 +1563,7 @@ function initScene() {
 
   addAmbientLight()
   addStarField()
+  addBrightStars()
   addHostStar()
   if (isMoonView.value) addParentPlanet()
   addSystemPlanets()
@@ -1584,6 +1586,16 @@ function addAmbientLight() {
   } else {
     pageGroup.add(new THREE.AmbientLight(0x334466, 1.2))
   }
+
+  // Soft sky/ground fill, independent of day/night and whatever large body is in
+  // the background (e.g. an uncapped moon-view parent planet) — same fix already
+  // proven inside the dome (DomeInteriorPage.vue's buildLights()). Without this,
+  // temperate/cold planets drop to zero directional light at night
+  // (applyLocalTime()'s nightFloor is 0 for eqt <= 600), leaving the dome and
+  // placed items unreadable regardless of what's lighting the sky behind them.
+  const e = eqt ?? 285
+  const skyColor = e > 800 ? new THREE.Color(0x1a0808) : e < 200 ? new THREE.Color(0x080818) : new THREE.Color(0x060e18)
+  pageGroup.add(new THREE.HemisphereLight(skyColor, new THREE.Color(0x020408), 0.6))
 }
 
 function addStarField() {
@@ -1694,6 +1706,71 @@ function addStarField() {
       size: 1.8, vertexColors: true, sizeAttenuation: false,
       transparent: true, opacity: 0.88, depthWrite: false,
     })))
+  }
+}
+
+/**
+ * The ~45 real, named naked-eye stars from bright-stars.ts — same parallax
+ * technique as addStarField()'s Layer 2 (recompute each star's true 3D
+ * position, take the direction from the observer's exoplanet), but rendered
+ * as individual clickable meshes with a glow halo rather than a Points cloud,
+ * since these are meant to be identifiable landmarks in the sky, not
+ * background texture. Sized/brightened by apparent magnitude *from here*
+ * (via the star's real absolute magnitude), not just raw distance, so
+ * intrinsically luminous stars (supergiants etc.) correctly stay prominent
+ * from further away.
+ */
+function addBrightStars() {
+  const obsRA   = system.value?.ra  ?? 0
+  const obsDec  = system.value?.dec ?? 0
+  const obsDist = system.value?.sy_dist ?? 0
+  const obsPc   = raDecToVec3(obsRA, obsDec, obsDist)
+
+  for (const s of BRIGHT_STARS) {
+    const starPc  = raDecToVec3(s.ra, s.dec, s.dist_pc)
+    const relVec  = new THREE.Vector3().subVectors(starPc, obsPc)
+    const distToStar = relVec.length()
+    if (distToStar < 0.05) continue   // this bright star is the observer's own host star
+    relVec.normalize()
+    const skyPos = relVec.multiplyScalar(900)
+
+    const absMag = s.mag - 5 * Math.log10(Math.max(s.dist_pc, 0.01) / 10)
+    const appMagFromHere = absMag + 5 * Math.log10(Math.max(distToStar, 0.01) / 10)
+
+    const col        = starColorFromTeff(s.teff)
+    const brightness = Math.max(0, Math.min(1, (6 - appMagFromHere) / 8))
+    const r           = 1.1 + brightness * 2.2
+
+    const mesh = new THREE.Mesh(
+      new THREE.SphereGeometry(r, 10, 10),
+      new THREE.MeshBasicMaterial({ color: col, fog: false })
+    )
+    mesh.position.copy(skyPos)
+    mesh.renderOrder = -1
+    pageGroup.add(mesh)
+
+    const glow = new THREE.Mesh(
+      new THREE.SphereGeometry(r * 3.2, 10, 10),
+      new THREE.MeshBasicMaterial({
+        color: col, transparent: true, opacity: 0.16 + brightness * 0.22,
+        depthWrite: false, blending: THREE.AdditiveBlending, fog: false,
+      })
+    )
+    glow.position.copy(skyPos)
+    glow.renderOrder = -1
+    pageGroup.add(glow)
+
+    hitTargets.push({ mesh, hit: {
+      name:  s.name,
+      type:  `${s.spectral} star`,
+      color: '#' + col.getHexString(),
+      details: {
+        'Dist. from here':   `${distToStar.toFixed(distToStar < 10 ? 2 : 0)} pc`,
+        'Dist. from Earth':  `${s.dist_pc} pc`,
+        'App. mag. here':    appMagFromHere.toFixed(2),
+        'App. mag. (Earth)': s.mag.toFixed(2),
+      },
+    }})
   }
 }
 
@@ -1876,11 +1953,86 @@ function addSettlement() {
   addDome()
   addLibrary()
   addWater()
+  addGallery()
   addVegetation()
   addSoulOrbs()
   addStoneCircle()   // visible by default — organic cultural landmark
   addPyramid()       // hidden by default — revealed in DK.MAT mode only
   addPlacedItems()
+}
+
+/**
+ * A small geodesic-sphere gallery structure, bioluminescent-lit so it's
+ * findable in the dark — mirrors addWater()'s site on the opposite side of
+ * the dome for a symmetric footprint. Approaching it (see galleryTick logic
+ * in surfaceTick()) reveals a geodesic-biodome-styled interior
+ * (GalleryInteriorPage.vue) — deliberately not the boxy library shape, since
+ * the whole point is "enter the sphere."
+ *
+ * Lattice technique mirrors DomeInteriorPage.vue's buildDomeShell() (wireframe
+ * shell + soft inner fill + ground ring) at a much smaller scale, recolored
+ * warm instead of that function's cool blue.
+ */
+const GALLERY_POS    = new THREE.Vector3(-40, 0, -25)
+const GALLERY_RADIUS = 15
+let galleryEnterT = 0   // approach progress toward the gallery, 0 (far) → 1 (entering) — see surfaceTick()
+
+function addGallery() {
+  const sg = settlementGroup!
+  const geo = new THREE.SphereGeometry(GALLERY_RADIUS, 24, 16)
+
+  const wireMesh = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
+    color: 0xffaa55, wireframe: true, transparent: true, opacity: 0.30, depthWrite: false,
+  }))
+  wireMesh.position.copy(GALLERY_POS)
+  sg.add(wireMesh)
+
+  const innerMesh = new THREE.Mesh(geo.clone(), new THREE.MeshBasicMaterial({
+    color: 0x2a1a08, transparent: true, opacity: 0.22, depthWrite: false,
+  }))
+  innerMesh.position.copy(GALLERY_POS)
+  sg.add(innerMesh)
+
+  const ring = new THREE.Mesh(
+    new THREE.RingGeometry(GALLERY_RADIUS - 1, GALLERY_RADIUS + 3, 48),
+    new THREE.MeshBasicMaterial({
+      color: 0xffcc66, side: THREE.DoubleSide, transparent: true, opacity: 0.30,
+      depthWrite: false, blending: THREE.AdditiveBlending,
+    })
+  )
+  ring.rotation.x = -Math.PI / 2
+  ring.position.set(GALLERY_POS.x, 0.15, GALLERY_POS.z)
+  sg.add(ring)
+
+  // Bioluminescent glow — additive sphere, same idiom used throughout this
+  // codebase for "living light" (e.g. settlement-items.ts's glow() helper).
+  const galleryGlow = (r: number, x: number, y: number, z: number, color: number, opacity: number): THREE.Mesh => {
+    const m = new THREE.Mesh(
+      new THREE.SphereGeometry(r, 10, 10),
+      new THREE.MeshBasicMaterial({ color, transparent: true, opacity, depthWrite: false, blending: THREE.AdditiveBlending })
+    )
+    m.position.set(x, y, z)
+    return m
+  }
+
+  // Ring of alternating warm-gold / living-green point lights + glow halos around
+  // the gallery's base — the "several lights near it that give the area a warm
+  // lit hue" the entrance is meant to read by.
+  const GALLERY_LIGHT_COLORS = [0xffaa44, 0x55ffaa, 0xffaa44, 0x55ffaa]
+  for (let i = 0; i < GALLERY_LIGHT_COLORS.length; i++) {
+    const angle = (i / GALLERY_LIGHT_COLORS.length) * Math.PI * 2
+    const lx = GALLERY_POS.x + Math.cos(angle) * (GALLERY_RADIUS + 4)
+    const lz = GALLERY_POS.z + Math.sin(angle) * (GALLERY_RADIUS + 4)
+    const col = GALLERY_LIGHT_COLORS[i]!
+
+    const light = new THREE.PointLight(col, 1.1, 45)
+    light.position.set(lx, 3, lz)
+    sg.add(light)
+    sg.add(galleryGlow(3.2, lx, 3, lz, col, 0.22))
+  }
+
+  // Apex + base glow so the sphere itself reads as luminous, not just its perimeter lights
+  sg.add(galleryGlow(GALLERY_RADIUS * 0.55, GALLERY_POS.x, GALLERY_RADIUS * 0.7, GALLERY_POS.z, 0xffbb66, 0.10))
 }
 
 /**
@@ -1910,7 +2062,7 @@ function addDome() {
   // Wireframe lattice — outer shell only; no filled sphere so there is no
   // "inner blue ball" artefact when viewed from outside the dome.
   const wireMesh = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
-    color: 0x0099dd, wireframe: true, transparent: true, opacity: 0.07, depthWrite: false,
+    color: 0x0099dd, wireframe: true, transparent: true, opacity: 0.12, depthWrite: false,
   }))
   wireMesh.position.set(0, 0, 0)
   sg.add(wireMesh)
@@ -1927,7 +2079,7 @@ function addDome() {
   // Ground ring where dome meets terrain
   const ringGeo = new THREE.RingGeometry(68, 72, 64)
   const ringMat = new THREE.MeshBasicMaterial({
-    color: 0x00aaff, side: THREE.DoubleSide, transparent: true, opacity: 0.25,
+    color: 0x00aaff, side: THREE.DoubleSide, transparent: true, opacity: 0.32,
     depthWrite: false, blending: THREE.AdditiveBlending,
   })
   const groundRing = new THREE.Mesh(ringGeo, ringMat)
@@ -2447,6 +2599,22 @@ function surfaceTick(t: number) {
       if (d.pointLight) (d.pointLight as THREE.PointLight).position.copy(orb.position)
     }
 
+    // Gallery proximity — walk the camera close enough and it opens on its own.
+    // Ramp 0→1 over the approach range, edge-detect the 0.95 crossing exactly
+    // once (same hysteresis idiom as LocalStepPortal.setEntering(), inlined here
+    // since that class is a fully specialized orbiting water-portal, not a fit
+    // for a stationary building entrance).
+    if (camera) {
+      const galleryWorldPos = new THREE.Vector3(GALLERY_POS.x, terrainBaseY + GALLERY_POS.y, GALLERY_POS.z)
+      const dist = camera.position.distanceTo(galleryWorldPos)
+      const GALLERY_APPROACH_FAR  = 30
+      const GALLERY_APPROACH_NEAR = 8
+      const targetT = 1 - Math.max(0, Math.min(1, (dist - GALLERY_APPROACH_NEAR) / (GALLERY_APPROACH_FAR - GALLERY_APPROACH_NEAR)))
+      const prevT = galleryEnterT
+      galleryEnterT = targetT
+      if (prevT < 0.95 && galleryEnterT >= 0.95) enterGallery()
+    }
+
     // Moon sky positions — each moon traces an arc across the horizon
     for (const { mesh, glow, info } of moonMeshes) {
       // How far the moon has moved in its orbit at this planet-day fraction
@@ -2750,6 +2918,15 @@ function goBackToGalaxy() {
 function enterDome() {
   void router.push({
     name: 'dome-interior',
+    params: { hostname: hostname.value, planetName: planetName.value },
+    query: { eqt: String(planet.value?.pl_eqt ?? 285) },
+  })
+}
+
+/** Navigate into the gallery interior page — see galleryEnterT in surfaceTick(). */
+function enterGallery() {
+  void router.push({
+    name: 'gallery-interior',
     params: { hostname: hostname.value, planetName: planetName.value },
     query: { eqt: String(planet.value?.pl_eqt ?? 285) },
   })

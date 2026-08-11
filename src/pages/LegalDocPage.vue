@@ -9,9 +9,14 @@
         <router-link to="/community-guidelines" class="ldg-tab" :class="{ 'ldg-tab--active': docKey === 'community-guidelines' }">Community Guidelines</router-link>
       </div>
 
+      <div v-if="hasChangelog" class="ldg-changelog-link">
+        <router-link v-if="!isChangelog" :to="`/${docKey}/changelog`">View full changelog →</router-link>
+        <router-link v-else :to="`/${docKey}`">← Back to {{ LEGAL_DOC_LABEL[docKey] }}</router-link>
+      </div>
+
       <article v-if="hasDoc" class="ldg-content" v-html="html" />
       <div v-else class="ldg-missing">
-        <p>{{ LEGAL_DOC_LABEL[docKey] }} hasn't been published yet.</p>
+        <p>{{ LEGAL_DOC_LABEL[docKey] }}{{ isChangelog ? ' changelog' : '' }} hasn't been published yet.</p>
         <p class="ldg-missing-sub">Expected at <code>{{ expectedFile }}</code> (repo root, rendered as Markdown).</p>
       </div>
 
@@ -27,18 +32,24 @@
 <script setup lang="ts">
 import { computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { hasLegalDoc, renderLegalDoc, LEGAL_DOC_LABEL, type LegalDocKey } from 'src/data/legal-docs'
+import {
+  hasLegalDoc, renderLegalDoc,
+  hasLegalChangelog, renderLegalChangelog,
+  LEGAL_DOC_LABEL, type LegalDocKey,
+} from 'src/data/legal-docs'
 
 const REPO_URL = 'https://github.com/biomassives/vercel-html-exotopia.org'
 
-const route  = useRoute()
-const docKey = computed(() => route.meta.docKey as LegalDocKey)
-const hasDoc = computed(() => hasLegalDoc(docKey.value))
-const html   = computed(() => renderLegalDoc(docKey.value))
-const expectedFile = computed(() => `legal-${docKey.value}.md`)
+const route       = useRoute()
+const docKey      = computed(() => route.meta.docKey as LegalDocKey)
+const isChangelog = computed(() => !!route.meta.changelog)
+const hasChangelog = computed(() => hasLegalChangelog(docKey.value))
+const hasDoc = computed(() => isChangelog.value ? hasLegalChangelog(docKey.value) : hasLegalDoc(docKey.value))
+const html   = computed(() => isChangelog.value ? renderLegalChangelog(docKey.value) : renderLegalDoc(docKey.value))
+const expectedFile = computed(() => `legal-${docKey.value}${isChangelog.value ? '-changelog' : ''}.md`)
 
-watch(docKey, (key) => {
-  document.title = `${LEGAL_DOC_LABEL[key]} — Exotopia`
+watch([docKey, isChangelog], ([key, changelog]) => {
+  document.title = `${LEGAL_DOC_LABEL[key]}${changelog ? ' — Changelog' : ''} — Exotopia`
 }, { immediate: true })
 </script>
 
@@ -56,6 +67,10 @@ watch(docKey, (key) => {
 }
 .ldg-tab:hover { color: #c8d4e8; }
 .ldg-tab--active { color: #00e5ff; border-bottom-color: #00e5ff; }
+
+.ldg-changelog-link { margin: -12px 0 20px; font-size: 12.5px; }
+.ldg-changelog-link a { color: #4488cc; text-decoration: none; }
+.ldg-changelog-link a:hover { color: #66aaee; }
 
 .ldg-missing { padding: 32px 0; color: #7888aa; font-size: 14px; line-height: 1.7; }
 .ldg-missing-sub { font-size: 12px; color: #5a6a8a; }

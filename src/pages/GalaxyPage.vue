@@ -1638,8 +1638,15 @@ function buildSystemScene(sys: StarSystem, starPos: THREE.Vector3) {
 
     scene.add(pMesh); systemObjects.push(pMesh); animObjects.push(pMesh)
 
-    const l4geo = new THREE.ConeGeometry(1.2, 3.5, 3)
-    const l4mat = new THREE.MeshBasicMaterial({ color: 0x3cdc64, transparent: true, opacity: 0.7 })
+    // Lagrange markers: kept subtle by default (small + low opacity) so 7 planets
+    // don't become 21 competing shapes — full size/opacity only while their own
+    // planet is focused (focusT ramped in galaxyTick's 'lagrange' branch below).
+    const LAGRANGE_BASE_OPACITY  = 0.18
+    const LAGRANGE_FOCUS_OPACITY = 0.72
+    const LAGRANGE_FOCUS_SCALE   = 1.7
+
+    const l4geo = new THREE.ConeGeometry(0.7, 2.0, 3)
+    const l4mat = new THREE.MeshBasicMaterial({ color: 0x3cdc64, transparent: true, opacity: LAGRANGE_BASE_OPACITY })
     const l4mesh = new THREE.Mesh(l4geo, l4mat)
     const l4initAngle = initAngle + Math.PI / 3
     l4mesh.position.set(
@@ -1651,13 +1658,15 @@ function buildSystemScene(sys: StarSystem, starPos: THREE.Vector3) {
       type: 'lagrange', point: 'L4', planet: pl,
       starPos, orbR, orbAngle: l4initAngle, angSpeed, incl,
       label: `L4 — ${pl.pl_name} Lagrange point (+60°)`,
+      baseOpacity: LAGRANGE_BASE_OPACITY, focusOpacity: LAGRANGE_FOCUS_OPACITY, focusScale: LAGRANGE_FOCUS_SCALE,
+      focusT: 0,
     }
     scene.add(l4mesh)
     systemObjects.push(l4mesh)
     animObjects.push(l4mesh)
 
-    const l5geo = new THREE.ConeGeometry(1.2, 3.5, 3)
-    const l5mat = new THREE.MeshBasicMaterial({ color: 0xffb41e, transparent: true, opacity: 0.7 })
+    const l5geo = new THREE.ConeGeometry(0.7, 2.0, 3)
+    const l5mat = new THREE.MeshBasicMaterial({ color: 0xffb41e, transparent: true, opacity: LAGRANGE_BASE_OPACITY })
     const l5mesh = new THREE.Mesh(l5geo, l5mat)
     const l5initAngle = initAngle - Math.PI / 3
     l5mesh.position.set(
@@ -1669,6 +1678,8 @@ function buildSystemScene(sys: StarSystem, starPos: THREE.Vector3) {
       type: 'lagrange', point: 'L5', planet: pl,
       starPos, orbR, orbAngle: l5initAngle, angSpeed, incl,
       label: `L5 — ${pl.pl_name} Lagrange zone (−60°)`,
+      baseOpacity: LAGRANGE_BASE_OPACITY, focusOpacity: LAGRANGE_FOCUS_OPACITY, focusScale: LAGRANGE_FOCUS_SCALE,
+      focusT: 0,
     }
     scene.add(l5mesh)
     systemObjects.push(l5mesh)
@@ -2122,6 +2133,15 @@ function galaxyTick(_t: number) {
             d.starPos.y  + d.orbR * Math.sin(d.orbAngle) * Math.sin(incl),
             d.starPos.z  + d.orbR * Math.sin(d.orbAngle) * Math.cos(incl),
           )
+
+          // Ramp toward full prominence only while this marker's own planet is
+          // focused — keeps the default view uncluttered (see creation above).
+          const isFocused = !!focusedPlanetMesh && d.planet === focusedPlanetMesh.userData.planet
+          d.focusT += ((isFocused ? 1 : 0) - d.focusT) * 0.1
+          const mat = (obj as THREE.Mesh).material as THREE.MeshBasicMaterial
+          mat.opacity = d.baseOpacity + (d.focusOpacity - d.baseOpacity) * d.focusT
+          const s = 1 + (d.focusScale - 1) * d.focusT
+          obj.scale.setScalar(s)
         }
       }
 

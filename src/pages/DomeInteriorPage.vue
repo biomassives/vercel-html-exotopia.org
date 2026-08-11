@@ -471,7 +471,7 @@ function buildItems() {
     zoneCount[item.zone] = slotIdx + 1
 
     const pos   = autoPosition(item, slotIdx)
-    const group = buildItemMesh(item.meshPreset, item.color, idx < MAX_ITEM_LIGHTS)
+    const group = buildItemMesh(item.meshPreset, item.color, idx < MAX_ITEM_LIGHTS, item.voxels)
     group.position.set(pos.x, 0, pos.z)
     group.name = `item:${item.id}`
     if (item.meshPreset === STARTER_LIGHT_PRESET && playReveal) {

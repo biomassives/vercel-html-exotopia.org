@@ -319,15 +319,5 @@ take effect.
 
 ## 13. Changelog
 
-Material changes to this policy are logged here — see § 11.
-
-| Date | Change |
-|---|---|
-| [DATE] | Initial draft template. |
-| 2026-07-22 | Added the private-comments privacy-model explanation in § 4 (visibility, report path, lawful-request policy pointer) and this changelog. |
-| 2026-07-23 | Identified SCD Hub (Sustainable Community Development Hub) as the operating entity — Colorado nonprofit corporation, confirmed IRS 501(c)(3) — and Exotopia as its project, replacing the `[LEGAL ENTITY NAME]` placeholder in § 1 and the EU controller line in § 10. Added a "United States" regional notice in § 10 (previously missing) covering the Colorado Privacy Act. Updated the Terms of Service cross-reference in § 12 to match that document's renumbering. |
-| 2026-08-01 | Removed blockchain/wallet data collection — replaced the "Wallet data" row in § 2 with "Settlement/pinning data," rewrote the on-chain/off-chain distinction in § 2 as pinned-vs-account data, dropped the mint-transaction legal basis in § 3, replaced "Blockchain networks" with "IPFS pinning services" in § 4's sharing categories, updated retention language in § 7, and — a genuine improvement, not just a rewording — the erasure right in § 8 no longer has the blockchain carve-out, since content we pin through our own service can now actually be unpinned on request. |
-| 2026-08-06 | Filled in `[PRIVACY CONTACT EMAIL]` (§ 8, § 10 African Union section, § 12) with **ecocommunity@protonmail.com** and `[ADDRESS]` (§ 10 EU/EEA Controller line) with the actual mailing address, replacing the remaining placeholders. |
-| 2026-08-04 | Added "A note on location and presence" to § 2, distinguishing user-submitted citizen-science site geolocation from any tracking of a member's own device location or position, and clarifying that presence indicators (e.g. gallery headcounts) are aggregate-only. Companion changes: `legal-terms.md` § 6, Community Guidelines § 3, and `SPEC_DEFENDERNAV.md` § 1.6. |
-| 2026-08-05 | Added a Zimbabwe regional notice to § 10 (CDPA [Chapter 12:07] / SI 155 / POTRAZ: 24-hour breach notification, cross-border transfer notice under § 25, minor-consent requirement). Companion change: `legal-terms.md` § 14 and a new Zimbabwe entry in `compliance/INDEX.md`, which explains why the main Supabase-backed Service and a proposed static/no-account eco-library node get different SI 155 treatment. |
-| 2026-08-05 | Added a "Third-party details you submit" row to § 2's data table and a new "A note on data about someone other than you" subsection, disclosing three previously-undocumented fields where a user can enter another person's name/contact details: Knowledge Keeper records (`keeper_name`/`consent_note`, consent attested by the submitter, not verified by us), community node listings' optional contact field, and ecology field sites' optional access/contact note. Closes a gap identified while reviewing the app's Supabase schema for pluggable-backend planning — these fields existed in the data model without a corresponding disclosure here. |
+Material changes to this policy are logged with a date on the
+[Privacy changelog page](/privacy/changelog) — see § 11.
