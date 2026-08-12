@@ -79,6 +79,9 @@ typings/
 .env.development
 .env*.local
 
+# Wrangler local secrets (workers/support-inbox) — real values only, never committed.
+.dev.vars
+
 # Quasar build output (was previously committed)
 .quasar/
 /dist/
@@ -87,6 +90,11 @@ typings/
 *.swp
 *.swo
 .scratch-*
+
+# Rust build output (zk-e8/) — pkg/ output is copied into src/lib/wasm-gen/
+# and public/wasm/ by hand after a rebuild; see zk-e8/README.md
+zk-e8/target
+zk-e8/pkg
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache

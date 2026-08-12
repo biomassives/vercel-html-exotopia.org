@@ -1638,8 +1638,15 @@ function buildSystemScene(sys: StarSystem, starPos: THREE.Vector3) {
 
     scene.add(pMesh); systemObjects.push(pMesh); animObjects.push(pMesh)
 
-    const l4geo = new THREE.ConeGeometry(1.2, 3.5, 3)
-    const l4mat = new THREE.MeshBasicMaterial({ color: 0x3cdc64, transparent: true, opacity: 0.7 })
+    // Lagrange markers: kept subtle by default (small + low opacity) so 7 planets
+    // don't become 21 competing shapes — full size/opacity only while their own
+    // planet is focused (focusT ramped in galaxyTick's 'lagrange' branch below).
+    const LAGRANGE_BASE_OPACITY  = 0.18
+    const LAGRANGE_FOCUS_OPACITY = 0.72
+    const LAGRANGE_FOCUS_SCALE   = 1.7
+
+    const l4geo = new THREE.ConeGeometry(0.7, 2.0, 3)
+    const l4mat = new THREE.MeshBasicMaterial({ color: 0x3cdc64, transparent: true, opacity: LAGRANGE_BASE_OPACITY })
     const l4mesh = new THREE.Mesh(l4geo, l4mat)
     const l4initAngle = initAngle + Math.PI / 3
     l4mesh.position.set(
@@ -1651,13 +1658,15 @@ function buildSystemScene(sys: StarSystem, starPos: THREE.Vector3) {
       type: 'lagrange', point: 'L4', planet: pl,
       starPos, orbR, orbAngle: l4initAngle, angSpeed, incl,
       label: `L4 — ${pl.pl_name} Lagrange point (+60°)`,
+      baseOpacity: LAGRANGE_BASE_OPACITY, focusOpacity: LAGRANGE_FOCUS_OPACITY, focusScale: LAGRANGE_FOCUS_SCALE,
+      focusT: 0,
     }
     scene.add(l4mesh)
     systemObjects.push(l4mesh)
     animObjects.push(l4mesh)
 
-    const l5geo = new THREE.ConeGeometry(1.2, 3.5, 3)
-    const l5mat = new THREE.MeshBasicMaterial({ color: 0xffb41e, transparent: true, opacity: 0.7 })
+    const l5geo = new THREE.ConeGeometry(0.7, 2.0, 3)
+    const l5mat = new THREE.MeshBasicMaterial({ color: 0xffb41e, transparent: true, opacity: LAGRANGE_BASE_OPACITY })
     const l5mesh = new THREE.Mesh(l5geo, l5mat)
     const l5initAngle = initAngle - Math.PI / 3
     l5mesh.position.set(
@@ -1669,6 +1678,8 @@ function buildSystemScene(sys: StarSystem, starPos: THREE.Vector3) {
       type: 'lagrange', point: 'L5', planet: pl,
       starPos, orbR, orbAngle: l5initAngle, angSpeed, incl,
       label: `L5 — ${pl.pl_name} Lagrange zone (−60°)`,
+      baseOpacity: LAGRANGE_BASE_OPACITY, focusOpacity: LAGRANGE_FOCUS_OPACITY, focusScale: LAGRANGE_FOCUS_SCALE,
+      focusT: 0,
     }
     scene.add(l5mesh)
     systemObjects.push(l5mesh)
@@ -2008,21 +2019,6 @@ function focusPlanet(pMesh: THREE.Mesh) {
     },
   })
 
-  // Equatorial ring — colour-coded by physical class (not a rarity tier)
-  const rar = planetClass(pMesh.userData.planet as Planet)
-  const eqTorus = new THREE.Mesh(
-    new THREE.TorusGeometry(pR * 1.40, pR * 0.038, 8, 80),
-    new THREE.MeshBasicMaterial({
-      color: new THREE.Color(rar.color),
-      transparent: true, opacity: 0.55,
-      depthWrite: false, blending: THREE.AdditiveBlending,
-    })
-  )
-  eqTorus.position.copy(P)
-  eqTorus.rotation.x = Math.PI / 2
-  scene.add(eqTorus)
-  focusMoonObjects.push(eqTorus)
-
   // Moons: use system total, max 5
   const moonCount = Math.min(5, Math.max(1, currentSystem.value?.sy_mnum ?? 1))
   spawnFocusMoons(pMesh, moonCount, pR)
@@ -2137,6 +2133,15 @@ function galaxyTick(_t: number) {
             d.starPos.y  + d.orbR * Math.sin(d.orbAngle) * Math.sin(incl),
             d.starPos.z  + d.orbR * Math.sin(d.orbAngle) * Math.cos(incl),
           )
+
+          // Ramp toward full prominence only while this marker's own planet is
+          // focused — keeps the default view uncluttered (see creation above).
+          const isFocused = !!focusedPlanetMesh && d.planet === focusedPlanetMesh.userData.planet
+          d.focusT += ((isFocused ? 1 : 0) - d.focusT) * 0.1
+          const mat = (obj as THREE.Mesh).material as THREE.MeshBasicMaterial
+          mat.opacity = d.baseOpacity + (d.focusOpacity - d.baseOpacity) * d.focusT
+          const s = 1 + (d.focusScale - 1) * d.focusT
+          obj.scale.setScalar(s)
         }
       }
 
@@ -2202,17 +2207,31 @@ function galaxyTick(_t: number) {
           lookTarget = _fs.lookTgt.copy(S).lerp(P, 0.35)
         }
 
-        // Spring-damped follow. The coefficient scales with distance to planet
-        // so the camera feels tighter (more responsive) at close range — the
-        // "perspective slows" effect: far out = lazy drift, close = crisp lock.
+        // Spring-damped follow for camera *position* only. The coefficient
+        // scales with distance to planet so the camera feels tighter (more
+        // responsive) at close range — the "perspective slows" effect: far
+        // out = lazy drift, close = crisp lock.
+        //
+        // The look-at target is NOT lerped in orbit mode (below) — lerping
+        // toward a continuously-moving point never actually catches up, it
+        // settles into a persistent steady-state lag instead (basic pursuit
+        // dynamics: closing a fixed *fraction* of the gap each frame against
+        // a target that keeps moving leaves a residual offset proportional
+        // to the planet's angular speed ÷ the lerp rate). That's exactly
+        // "the camera comes close but doesn't move with the planet" — the
+        // fix is a rigid look-at lock, not a tighter spring.
         const distToPlanet = camera.position.distanceTo(P)
         const pRad         = (focusedPlanetMesh!.geometry as THREE.SphereGeometry).parameters?.radius ?? 2
         const closeness    = Math.max(0, Math.min(1, 1 - (distToPlanet - pRad * 8) / (pRad * 40)))
         const lerpK        = planetCamMode.value === 'orbit'
-          ? 0.032 + closeness * 0.038   // 0.032 (far drift) → 0.070 (near crisp)
+          ? 0.12 + closeness * 0.16     // 0.12 (far) → 0.28 (near) — tight enough position-wise
           : 0.020                        // DK.MAT: very slow, majestic
         camera.position.lerp(camTarget, lerpK)
-        controls.target.lerp(lookTarget, lerpK * 1.5)
+        if (planetCamMode.value === 'orbit') {
+          controls.target.copy(lookTarget)   // rigid — always exactly on the planet, true co-orbit
+        } else {
+          controls.target.lerp(lookTarget, lerpK * 1.5)   // DK.MAT: still soft, target isn't the bare planet anyway
+        }
         controls.update()
       }
     }

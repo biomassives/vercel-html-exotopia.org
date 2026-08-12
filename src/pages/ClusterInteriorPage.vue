@@ -118,6 +118,13 @@
           <q-btn flat dense size="xs" icon="mdi-close" color="blue-grey-5" @click="exitGalaxyExplore" />
         </div>
 
+        <!-- Full-page galaxy view — the same dissolve handoff descendToSurface
+             uses, so browsing here gets the matched-placement crossfade too,
+             not just "Create a Settlement Here" (SPEC_DISSOLVE_HANDOFF.md §3,
+             Q1: this was previously the only path into ClusterGalaxyPage). -->
+        <q-btn flat dense size="xs" color="cyan-7" class="full-width q-mb-xs"
+          icon="mdi-view-dashboard" label="View Full Galaxy" @click="navigateToGalaxy(false)" />
+
         <template v-if="selectedSystem">
           <q-separator color="blue-grey-8" class="q-my-sm" />
           <div class="text-caption text-cyan-9 q-mb-xs" style="font-size:8px;letter-spacing:0.10em">STAR SYSTEM</div>
@@ -189,6 +196,7 @@ import type { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js
 import gsap from 'gsap'
 import { useVizRenderer, VIZ_BAR_H } from 'src/composables/useVizRenderer'
 import { disposeScene } from 'src/lib/three-utils'
+import { computeHandoffOrigin, placeCameraForHandoff } from 'src/lib/scene-handoff'
 import { prefetchClusterGalaxies, fetchGalaxyDoc, buildBackgroundField, mulberry32 } from 'src/composables/useClusterGalaxyData'
 import type { ClusterGalaxyDoc } from 'src/composables/useClusterGalaxyData'
 import { useSettlements, clusterKey } from 'src/lib/settlements'
@@ -272,7 +280,11 @@ const systemDataMap = ref(new Map<string, SystemDataEntry>())
 
 // ── Void nav (only when this slug's members carry a cluster_zone — i.e. it's a
 // void member catalog, not a real galaxy cluster) ──────────────────────────────
-const isVoid = computed(() => !!clusterData.value?.members[0]?.system_architecture?.cluster_zone)
+// Checks all members, not just members[0] — a catalog where the first entry
+// happens to omit cluster_zone (e.g. it's added incrementally by a generator)
+// would otherwise be misclassified as a non-void cluster.
+const isVoid = computed(() =>
+  !!clusterData.value?.members?.some(m => m.system_architecture?.cluster_zone))
 
 const voidNavMembers = computed<VoidNavMember[]>(() => {
   if (!isVoid.value || !clusterData.value) return []
@@ -288,13 +300,17 @@ const voidNavMembers = computed<VoidNavMember[]>(() => {
   }))
 })
 
-function selectVoidNavMember(memberId: string) {
+async function selectVoidNavMember(memberId: string) {
   const member = clusterData.value?.members.find(m => m.id === memberId)
   const proxy  = hitProxies.find(p => (p.userData.member as ClusterMember).id === memberId)
   if (!member || !proxy) return
   selected.value = member
   void router.replace({ query: { member: member.id } })
-  flyToMember(proxy.position)
+  // Edge-ring nav is a fast-travel shortcut — unlike a direct sprite click (which
+  // only selects + shows the "Explore Star Systems" button), this goes straight
+  // into the galaxy interior so the ring is actually a one-click descent path
+  // down to star systems / settlements, not a dead end requiring a second click.
+  await exploreGalaxy(member)
 }
 
 // ── LOD / zoom reveal state ───────────────────────────────────────────────────
@@ -535,16 +551,30 @@ async function loadAndBuild() {
     const camOffset    = Math.max(28, boundRadius * 1.6)
     overviewCamOffset  = camOffset
 
-    controls.target.copy(c)
-    camera.position.set(c.x, c.y + camOffset * 0.35, c.z + camOffset)
-    camera.lookAt(c)
-    controls.update()
-
-    // Gentle intro zoom from farther back
-    gsap.from(camera.position, {
-      duration: 2.4, z: c.z + camOffset * 1.9, ease: 'power3.out',
-      onUpdate: () => controls?.update(),
-    })
+    if (transition.phase !== 'idle') {
+      // Arrived via a transition (the common case — CosmicPage's cluster-sphere
+      // click) — place the camera to reproduce the departing frame's
+      // composition around the cluster's real centroid, reusing camOffset as
+      // the handoff distance rather than a fixed constant (clusters and voids
+      // span wildly different physical scales, which is exactly why camOffset
+      // is already computed per-cluster). See SPEC_DISSOLVE_HANDOFF.md §2.
+      placeCameraForHandoff(
+        camera, controls, c,
+        { ox: transition.ox, oy: transition.oy, bearing: transition.bearing },
+        camOffset,
+      )
+    } else {
+      // Direct navigation (bookmark, refresh) — no departing frame to match,
+      // fall back to the previous recenter + gentle intro zoom from farther back.
+      controls.target.copy(c)
+      camera.position.set(c.x, c.y + camOffset * 0.35, c.z + camOffset)
+      camera.lookAt(c)
+      controls.update()
+      gsap.from(camera.position, {
+        duration: 2.4, z: c.z + camOffset * 1.9, ease: 'power3.out',
+        onUpdate: () => controls?.update(),
+      })
+    }
     // Restore selected member from URL if present
     const memberId = String(route.query.member ?? '').trim()
     if (memberId && clusterData.value) {
@@ -698,6 +728,14 @@ function onMouseLeave() {
 
 function onClick(e: MouseEvent) {
   if (dragMoved > 6 || !camera) return
+  // onClick is bound on the page root, so clicks on the side panel's own
+  // buttons (Explore Star Systems, Create a Settlement Here, etc.) bubble up
+  // here too. This branch's cluster-mode hit path also calls router.replace
+  // (member query sync) — a button click landing over a 3D hit target's
+  // screen projection would otherwise race that against the button's own
+  // navigateToGalaxy()/router.push. Same viz-overlay-page target-class guard
+  // CosmicPage.vue's onClick uses for the identical hazard.
+  if (!(e.target as HTMLElement)?.classList?.contains('viz-overlay-page')) return
   const w = window.innerWidth, h = window.innerHeight - VIZ_BAR_H
   mouseNDC.x =  (e.clientX / w) * 2 - 1
   mouseNDC.y = -((e.clientY - VIZ_BAR_H) / h) * 2 + 1
@@ -733,6 +771,10 @@ function onClick(e: MouseEvent) {
   )
   void router.replace({ query: { member: member.id } })
   flyToMember(proxy.position)
+  // Warm the cache during the ~2s flyToMember tween so "Explore Star Systems"
+  // usually finds the doc already resolved — the loading gap is what used to
+  // freeze the camera mid-approach (see exploreGalaxy()).
+  void fetchGalaxyDoc(slug.value, member.id)
 }
 
 // ── Galaxy interior helpers ───────────────────────────────────────────────────
@@ -746,7 +788,7 @@ function mapDocToGalSystems(doc: ClusterGalaxyDoc, origin: THREE.Vector3): GalSy
   const seed = (doc.cluster_slug + doc.galaxy_id)
     .split('').reduce((a, c, i) => a + c.charCodeAt(0) * (i + 1), 0) & 0xFFFFFFFF
   const rng  = mulberry32(seed)
-  return doc.star_systems.slice(0, 80).map((s, i) => {
+  return (doc.star_systems ?? []).slice(0, 80).map((s, i) => {
     const spec      = s.spectral_type[0] ?? 'K'
     const specColor = SPECTRAL_COLOR[spec] ?? '#ffbe6e'
     const temps     = s.planets.map(p => p.eq_temp_k)
@@ -882,11 +924,28 @@ async function exploreGalaxy(member: ClusterMember | null) {
     sp => (sp.userData as { member: ClusterMember }).member.id === member.id
   )?.position.clone() ?? new THREE.Vector3()
 
+  // Continue the approach immediately, in parallel with the (usually
+  // already-warm, see onClick's prefetch) data fetch below — this used to
+  // wait for the fetch to resolve before moving the camera at all, which
+  // froze it mid-approach behind the "Loading star systems…" panel, then
+  // jumped it OUT to 4.0 su (farther than flyToMember's 2.8 su landing
+  // spot) once data arrived. Landing closer than flyToMember here keeps the
+  // whole click → explore sequence monotonically zooming in — no pull-back.
+  const camDir  = camera.position.clone().sub(origin).normalize()
+  const camDest = origin.clone().addScaledVector(camDir, 1.8)
+  gsap.killTweensOf(camera.position); gsap.killTweensOf(controls.target)
+  gsap.to(controls.target, { x: origin.x, y: origin.y, z: origin.z, duration: 1.6, ease: 'power2.out', onUpdate: () => controls?.update() })
+  gsap.to(camera.position, { x: camDest.x, y: camDest.y, z: camDest.z, duration: 2.0, ease: 'power3.out', onUpdate: () => controls?.update() })
+
   try {
     const doc = await fetchGalaxyDoc(slug.value, member.id)
     exploredDoc.value = doc
     const systems = mapDocToGalSystems(doc, origin)
     galSystems.value = systems
+    // buildGalaxyInterior fades its own meshes in from opacity 0 (background
+    // field + each star-system dot/glow, staggered) — that's the "smooth
+    // vector object reveal," and it now plays out while the camera above is
+    // still gliding in, instead of popping in only once the camera stops.
     buildGalaxyInterior(doc, origin, systems)
 
     // Dim all other galaxy sprites so the explored one reads clearly
@@ -897,19 +956,15 @@ async function exploreGalaxy(member: ClusterMember | null) {
       gsap.to(mat, { opacity: target, duration: 0.9 })
     }
 
-    // Fly camera to ~4 su from the galaxy, looking at it
-    if (!camera || !controls) return
-    const camDir = camera.position.clone().sub(origin).normalize()
-    const camDest = origin.clone().addScaledVector(camDir, 4.0)
-    gsap.killTweensOf(camera.position); gsap.killTweensOf(controls.target)
-    gsap.to(controls.target, { x: origin.x, y: origin.y, z: origin.z, duration: 1.0, ease: 'power2.out', onUpdate: () => controls?.update() })
-    gsap.to(camera.position, { x: camDest.x, y: camDest.y, z: camDest.z, duration: 2.0, ease: 'power3.out', onUpdate: () => controls?.update() })
-
     viewMode.value = 'galaxy'
   } catch (e) {
     console.warn('[ClusterInteriorPage] exploreGalaxy failed:', e)
     viewMode.value = 'cluster'
     exploredMember.value = null
+    // The approach tween above may still be running toward a galaxy whose
+    // data failed to load — bring the camera back to the member framing
+    // (flyToMember's distance) rather than leaving it stalled mid-flight.
+    if (camera && controls) flyToMember(origin)
   }
 }
 
@@ -965,15 +1020,16 @@ async function descendToSurface(sys: GalSystem) {
     })
   }
 
-  const sc      = sys.worldPos.clone().project(camera)
-  const px      = (sc.x + 1) / 2 * 100
-  const py      = (1 - sc.y) / 2 * 100
-  const bearing = Math.atan2(py / 100 - 0.5, px / 100 - 0.5)
-  await transition.depart(px, py, 'lightning', bearing)
+  // 'dissolve' + the handoff origin below: ClusterSystemPage places its
+  // arrival camera to reproduce this exact composition (see
+  // src/lib/scene-handoff.ts), so the crossfade resolves into a matching
+  // view of the same star instead of a fresh establishing shot.
+  const handoff = computeHandoffOrigin(camera, sys.worldPos)
+  await transition.depart(handoff.ox, handoff.oy, 'dissolve', handoff.bearing)
   void router.push({
     name:   'cluster-system',
     params: { clusterSlug: slug.value, memberId: mem.id, systemIdx: sys.idx },
-    query:  { bearing: bearing.toFixed(3) },
+    query:  { bearing: handoff.bearing.toFixed(3) },
   })
 }
 
@@ -1000,9 +1056,9 @@ async function navigateToGalaxy(settle = false) {
   const id = mem.id
 
   // In-page camera zoom toward the galaxy node before the route change
-  // (SPEC_ZOOM_DESCENT.md §4.2) — ClusterGalaxyPage still owns a private
-  // renderer, so the boundary itself is covered by a quick iris wipe rather
-  // than the old 1.5s spirograph.
+  // (SPEC_ZOOM_DESCENT.md §4.2 / SPEC_DISSOLVE_HANDOFF.md §3) — lands close
+  // to the galaxy sprite so the handoff origin below reflects an already-
+  // tight composition, same as the system-descent reference implementation.
   if (camera && controls) {
     const proxy = hitProxies.find(p => (p.userData.member as ClusterMember).id === id)
     if (proxy) {
@@ -1016,11 +1072,19 @@ async function navigateToGalaxy(settle = false) {
     }
   }
 
-  await transition.depart(clickPct.x, clickPct.y, 'iris', clickBearing.value)
+  // Handoff origin: ClusterGalaxyPage places its arrival camera to reproduce
+  // this composition around coreSprite (its own local origin) — see
+  // SPEC_DISSOLVE_HANDOFF.md §3.
+  let origin = { ox: 50, oy: 50, bearing: 0 }
+  if (camera) {
+    const proxy = hitProxies.find(p => (p.userData.member as ClusterMember).id === id)
+    if (proxy) origin = computeHandoffOrigin(camera, proxy.position)
+  }
+  await transition.depart(origin.ox, origin.oy, 'dissolve', origin.bearing)
   const base  = `/cluster-galaxy/${slug.value}/${encodeURIComponent(id)}`
   const query = settle
-    ? `?action=claim&bearing=${clickBearing.value.toFixed(3)}&morph=${mem.hubble}`
-    : `?bearing=${clickBearing.value.toFixed(3)}&morph=${mem.hubble}`
+    ? `?action=claim&bearing=${origin.bearing.toFixed(3)}&morph=${mem.hubble}`
+    : `?bearing=${origin.bearing.toFixed(3)}&morph=${mem.hubble}`
   void router.push(base + query)
 }
 

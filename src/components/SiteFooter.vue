@@ -1,23 +1,28 @@
 <template>
   <div class="sf-bar">
     <div class="sf-links">
+      <button type="button" class="sf-about" @click="aboutOpen = true">About</button>
       <router-link to="/terms">Terms</router-link>
       <router-link to="/privacy">Privacy</router-link>
       <router-link to="/community-guidelines">Community Guidelines</router-link>
       <router-link to="/account">Your Data</router-link>
+      <router-link to="/contact">Contact</router-link>
       <button type="button" class="sf-about sf-report" @click="reportOpen = true">Report a problem</button>
       <a :href="REPO_URL" target="_blank" rel="noopener">Source</a>
     </div>
   </div>
 
+  <AboutExotopiaModal v-model="aboutOpen" />
   <ReportIssueModal v-model="reportOpen" />
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import AboutExotopiaModal from 'src/components/AboutExotopiaModal.vue'
 import ReportIssueModal from 'src/components/ReportIssueModal.vue'
 
 const REPO_URL = 'https://github.com/biomassives/vercel-html-exotopia.org'
+const aboutOpen = ref(false)
 const reportOpen = ref(false)
 </script>
 
@@ -54,6 +59,18 @@ const reportOpen = ref(false)
   text-decoration: none;
 }
 .sf-links a:hover { color: rgba(160, 200, 240, 0.90); }
+
+.sf-about {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  letter-spacing: inherit;
+  color: rgba(0, 212, 180, 0.72);
+  cursor: pointer;
+}
+.sf-about:hover { color: rgba(0, 240, 210, 0.95); }
 .sf-report { color: rgba(255, 170, 90, 0.65) !important; }
 .sf-report:hover { color: rgba(255, 190, 120, 0.90) !important; }
 

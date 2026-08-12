@@ -82,6 +82,8 @@
               <span class="pcs-log-date">{{ new Date(entry.logged_at).toLocaleDateString() }}</span>
               <span class="pcs-log-notes">{{ entry.notes }}</span>
               <span v-if="entry.metrics.concentration_ppt != null" class="pcs-log-metric">{{ entry.metrics.concentration_ppt }} ppt</span>
+              <RecordFingerprintBadge :hex="entry.fingerprint_sha256"
+                hint="Server-computed at submission, over notes+metrics only — this table has no edit path (append-only), so this fingerprint's real guarantee is the database policy, not the number itself. See SPEC_E8_RECORD_FINGERPRINT.md." />
             </div>
             <p v-if="!entriesFor(selectedProject.id).length" class="pcs-p pcs-p--dim">No progress logged yet.</p>
           </div>
@@ -98,7 +100,11 @@
               </div>
               <p v-if="markerJustAttached" class="pcs-p pcs-p--dim">Marker attached — visible next time you enter that dome.</p>
             </template>
-            <p v-else class="pcs-p pcs-p--dim">Start a settlement first to attach a decon-site marker to your dome.</p>
+            <p v-else class="pcs-p pcs-p--dim">
+              <router-link to="/galaxy?suggestedFocus=watsan" class="pcs-inline-link"
+                @click="setSuggestedFocus('watsan')">Start a settlement →</router-link>
+              first to attach a decon-site marker to your dome.
+            </p>
           </div>
         </div>
       </div>
@@ -125,6 +131,24 @@
           </div>
         </div>
 
+        <h2 class="pcs-h2" style="margin-top:24px">Free &amp; Low-Income Testing Assistance</h2>
+        <p class="pcs-p">
+          Check this before paying for anything below. Several states now cover PFAS testing (and
+          sometimes treatment) entirely for eligible households — this list can't stay current with
+          every program, so the last entry matters even if your state isn't named yet.
+        </p>
+        <div v-for="a in LOW_INCOME_TESTING_ASSISTANCE" :key="a.title" class="pcs-reg">
+          <div class="pcs-reg__head">
+            <span class="pcs-reg__title">{{ a.title }}</span>
+            <span class="pcs-reg__status">{{ a.region }}</span>
+          </div>
+          <p class="pcs-p">{{ a.body }}</p>
+          <p class="pcs-p pcs-p--dim">
+            <a v-if="a.url" :href="a.url" target="_blank" rel="noopener" class="pcs-inline-link">Program details →</a>
+            &nbsp;Checked {{ a.asOf }} — programs change; verify it's still open before relying on it.
+          </p>
+        </div>
+
         <h2 class="pcs-h2" style="margin-top:24px">Keeping Sampling Costs Low — Without Losing Credibility</h2>
         <p class="pcs-p">
           PFAS has no validated cheap field test the way chlorine or pH does — reliable detection
@@ -141,6 +165,21 @@
           <p class="pcs-p pcs-p--dim"><strong>Caveat:</strong> {{ t.caveat }}</p>
         </div>
         <p class="pcs-p" style="margin-top:8px"><strong>Lowering real cost:</strong> {{ POOLED_SAMPLING_NOTE }}</p>
+
+        <h3 class="pcs-h2" style="margin-top:16px;font-size:12.5px">Specific kits worth ordering, compared</h3>
+        <p class="pcs-p pcs-p--dim">
+          Same EPA method and compound count on both — the price gap below is turnaround polish and
+          support, not accuracy. Start with the cheaper one on a tight budget.
+        </p>
+        <div v-for="k in ORDERABLE_PFAS_TEST_KITS" :key="k.vendor" class="pcs-tier">
+          <div class="pcs-tier__head">
+            <a :href="k.productUrl" target="_blank" rel="noopener" class="pcs-tier__name pcs-inline-link">{{ k.vendor }}</a>
+            <span class="pcs-tier__cost">{{ k.price }}</span>
+          </div>
+          <p class="pcs-p pcs-p--dim">{{ k.method }} · {{ k.compoundCount }} compounds · {{ k.turnaround }}</p>
+          <p class="pcs-p">{{ k.bestFor }}</p>
+          <p class="pcs-p pcs-p--dim">Checked {{ k.asOf }} — verify current price before ordering.</p>
+        </div>
 
         <h2 class="pcs-h2" style="margin-top:24px">Regulatory Context — What "Actionable" Actually Means</h2>
         <p class="pcs-p">
@@ -229,12 +268,18 @@
 import { ref, computed, onMounted } from 'vue'
 import { useMemberStore } from 'src/stores/member'
 import { usePfasCitizenScienceStore, type DeconProject, type FocusArea } from 'src/stores/pfas-citizen-science'
-import { REMEDIATION_METHODS, LEGAL_SAMPLING_GUIDANCE, FIELD_SAFETY_GUIDANCE, SAMPLING_COST_TIERS, POOLED_SAMPLING_NOTE, REGULATORY_CONTEXT } from 'src/data/pfas-methods-library'
+import {
+  REMEDIATION_METHODS, LEGAL_SAMPLING_GUIDANCE, FIELD_SAFETY_GUIDANCE,
+  SAMPLING_COST_TIERS, POOLED_SAMPLING_NOTE, REGULATORY_CONTEXT,
+  LOW_INCOME_TESTING_ASSISTANCE, ORDERABLE_PFAS_TEST_KITS,
+} from 'src/data/pfas-methods-library'
 import { LOGGING_STREAK_THRESHOLD_WEEKS } from 'src/data/rewards-catalog'
 import { useLoggingStreak } from 'src/composables/useLoggingStreak'
 import { useSettlements } from 'src/lib/settlements'
 import { useSettlementItems } from 'src/lib/settlement-items'
+import { setSuggestedFocus } from 'src/lib/settlement-focus-intent'
 import MemberSignIn from 'src/components/MemberSignIn.vue'
+import RecordFingerprintBadge from 'src/components/RecordFingerprintBadge.vue'
 
 const member = useMemberStore()
 const store  = usePfasCitizenScienceStore()

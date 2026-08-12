@@ -1,7 +1,7 @@
 # Privacy Policy — Exotopia
 
 **⚠️ DRAFT — NOT LEGAL ADVICE.** See the same caveat at the top of
-`TERMS_OF_SERVICE.md`. Privacy law is the area of highest actual enforcement
+`legal-terms.md`. Privacy law is the area of highest actual enforcement
 risk across the countries you listed — several of them (EU/UK/Netherlands,
 Kenya, Mexico, Canada-Quebec) have active regulators that issue real fines.
 Don't publish this without a lawyer's pass, and don't collect any data
@@ -17,45 +17,77 @@ This Privacy Policy explains how **Sustainable Community Development Hub**
 ("SCD Hub," "we," "us") — a Colorado nonprofit corporation, tax-exempt under
 IRC § 501(c)(3), and the entity that operates **Exotopia** as a project —
 collects, uses, and shares personal data when you use Exotopia (the
-"Service"), including where a payment or minting step routes you through our
-sibling platform **pon.ink**. It applies to visitors, registered users,
-wallet-connected users, citizen-science/eco-ops participants, donors, and
-blog/community contributors.
+"Service"), including where a payment step routes you through our sibling
+platform **pon.ink**. It applies to visitors, registered users,
+citizen-science/eco-ops participants, donors, and blog/community
+contributors.
 
 ## 2. What we collect
 
 | Category | Examples | Source |
 |---|---|---|
 | Account data | Email, username, hashed password (if applicable) | You, directly |
-| Wallet data | Public wallet address on Solana, Algorand, or an EVM network (Polygon/Celo), on-chain transaction history you initiate | Blockchain (public), your wallet provider |
+| Settlement/pinning data | Settlement address, title/description you choose to pin, IPFS content identifier (CID) of pinned content | You, directly; the pinning service you use |
 | Payment data | Last 4 digits/card type (Stripe), M-Pesa phone number and transaction reference (M-Pesa) — full card and PIN details are never received by us | You, directly, via our payment processors |
 | Usage data | Pages visited, session duration, device/browser type, IP address | Automatically, via [analytics tool] |
 | Cookies | Session/functional cookies, analytics cookies (see § 6) | Automatically |
 | Citizen-science / eco-ops data | Field observations, geolocation of submitted sites, photos, project status notes | You, directly, when you choose to submit |
 | Recorded/staged entries | Audio or written entries you stage locally before submitting (e.g. via the Record widget) | You, directly — stored locally on your device until you choose to submit |
 | Community content | Blog comments, community posts, profile info you choose to add. Comments are visible only to mutual, green-lit connections (max. seven per thread) — not to the general public or, outside a valid legal request or a recipient-initiated report (see § 4), to us | You, directly |
+| Third-party details you submit | A Knowledge Keeper's name and any consent/context notes when you submit their wisdom to the Knowledge Keepers library; a landowner's, site contact's, or co-owner's name/details you optionally add to a community node listing or an ecology field site's access notes | You, directly — about someone else, not the third party themselves; see note below |
 | Communications | Support requests, emails to us | You, directly |
 
-**We do not collect wallet private keys or seed phrases, and never ask for
-them.**
+### A note on location and presence
 
-### On-chain vs. off-chain data — important distinction
-Public wallet addresses and transaction data that you broadcast to a
-blockchain are recorded permanently and cannot be deleted, corrected, or
-made private by us — this is a property of the blockchain itself, not a
-choice we make. **We do not write personal information (name, email,
-precise home address) directly into on-chain metadata.** Where a "deed" or
-settlement record references you, it references your public wallet address
-only; any human-readable profile information you add is stored off-chain in
-our database, where it can be corrected or deleted per § 8.
+The "geolocation of submitted sites" row above is data **you** choose to submit about a
+place (e.g. a PFAS/citizen-science field site) — it is never your own live device
+location, and we do not use it, or any other signal, to show your position or movement to
+other members. Presence indicators elsewhere in the product (e.g. a gallery headcount) are
+aggregate counts only — never a per-user location or identity. See
+`SPEC_DEFENDERNAV.md` § 1.6 and `legal-community-guidelines.md` § 3.
+
+### Pinned vs. account data — important distinction
+If you choose to pin a settlement's content to IPFS (see § 4 of the Terms of
+Service), that content is held by whichever pinning service you use — us, a
+third-party service, or your own node — for as long as it stays pinned. It
+is content-addressed (identified by a hash of its content, the CID) rather
+than tied to your account, and unpinning it removes it from that service.
+**We do not write personal information (name, email, precise home address)
+into pinned settlement content** beyond what you choose to enter into the
+title/description fields yourself; anything else you add to your profile is
+stored in our database, where it can be corrected or deleted per § 8.
+
+### A note on data about someone other than you
+
+A few features let you submit information that names or describes a **third
+party** — someone who isn't the one using our Service and hasn't consented to
+us directly:
+
+- **Knowledge Keeper records**: if you submit an Elder's or Knowledge
+  Keeper's wisdom to the library, the record includes their name and, where
+  you provide it, a note about the consent/context under which they shared
+  it. That consent is between you and them — we rely on your attestation
+  that it was given; we do not independently verify it. These records are
+  held back from public view until reviewed.
+- **Community node contact details**: if you list a business or creative
+  page, the optional contact field may include a third party's name or
+  contact information (e.g. a co-owner or site manager) rather than only
+  your own.
+- **Ecology field site notes**: if you submit a field site, the optional
+  access/contact note may name a landowner or site contact who isn't a
+  Service user.
+
+If you are the third party named in one of these records — not the person
+who submitted it — and want it corrected or removed, contact us (§ 12); we
+don't require you to have an account with us to make that request.
 
 ## 3. Why we process your data (legal bases, where applicable)
 
 For users in the EU/EEA, UK, and other jurisdictions that require a stated
 legal basis:
 
-- **Contract** — to create your account, process a mint transaction, operate
-  the Service you asked for.
+- **Contract** — to create your account and operate the Service you asked
+  for.
 - **Consent** — for optional citizen-science data submission, marketing
   communications, and non-essential cookies. You can withdraw consent at any
   time without affecting past processing.
@@ -71,14 +103,16 @@ legal basis:
   your Supabase project dashboard; this determines your actual answer to
   § 5 below]**, acting as data processors under contract, not independent
   users of your data.
-- **Payment processors**: **Stripe** and **M-Pesa** (via [name your licensed
-  Kenyan payment aggregator/PSP partner, if any — see planning notes on why
-  M-Pesa integration may require a licensed partner rather than direct
-  integration]), each acting as an independent controller for the payment
-  data they process under their own privacy policies.
-- **Blockchain networks**: transactions you sign are broadcast to a public,
-  permissionless network (Solana, Algorand, or an EVM network) — this is
-  inherently public and outside our control once broadcast.
+- **Payment processors**: **Stripe** and **M-Pesa** (via **[name your licensed
+  Kenyan payment aggregator/PSP partner, if any — CBK regulates Safaricom's
+  M-Pesa directly (see `compliance/INDEX.md` § East Africa/Kenya); confirm
+  whether pon.ink integrates through a licensed aggregator or needs one
+  before this ships]**), each acting as an independent controller for the
+  payment data they process under their own privacy policies.
+- **IPFS pinning services**: if you choose to pin settlement content (e.g.
+  via Pinata), the content you submit is sent to that service and becomes
+  publicly retrievable by its CID on the IPFS network — this is inherent to
+  how content-addressed storage works, not a choice we make on your behalf.
 - **Research/regulatory partners**: aggregated or de-identified
   citizen-science data may be shared with environmental research
   institutions or regulators, as disclosed at the point of data submission.
@@ -133,8 +167,8 @@ We retain account data for as long as your account is active, plus
 **[X months/years]** after closure for legal/accounting purposes. Citizen
 science field submissions may be retained indefinitely in aggregated/
 de-identified form for research continuity, as disclosed at submission.
-On-chain data is retained permanently by the nature of the blockchain (see
-§ 2).
+Pinned settlement content persists for as long as it stays pinned by you,
+by a pinning service, or by us — see § 2.
 
 ## 8. Your rights
 
@@ -142,9 +176,11 @@ Subject to the law that applies to you, you may have the right to:
 
 - Access a copy of your personal data
 - Correct inaccurate data
-- Delete data we hold off-chain about you ("right to erasure" / "right to be
-  forgotten" where applicable — **note this cannot extend to data already
-  broadcast to a public blockchain**, which we do not control)
+- Delete data we hold about you ("right to erasure" / "right to be
+  forgotten" where applicable — this includes unpinning settlement content
+  pinned through a service we operate; content pinned by you or a
+  third-party service is outside our control to unpin, but is also outside
+  our custody in the first place)
 - Object to or restrict certain processing
 - Withdraw consent (where processing is based on consent)
 - Data portability (receive your data in a structured format)
@@ -156,7 +192,7 @@ file of everything tied to your account immediately; a deletion request is
 logged with a timestamp and processed by a team member, since actually
 deleting an account needs elevated access we don't expose to your browser.
 For correction, objection, or anything `/account` doesn't yet cover, contact
-**[PRIVACY CONTACT EMAIL]**. We will respond within the time limit required
+**ecocommunity@protonmail.com**. We will respond within the time limit required
 by the law that applies to you (see § 10 for jurisdiction-specific
 timelines) — for a self-service deletion request, that's the same day it's
 processed, not the statutory maximum.
@@ -185,17 +221,18 @@ we will delete it.
   deletion rights above still apply.
 
 ### European Union / EEA (incl. Netherlands/Amsterdam) — GDPR
-- **Controller**: Sustainable Community Development Hub, **[ADDRESS]**.
+- **Controller**: Sustainable Community Development Hub, **350 East St. #911, Nederland, CO 80466, USA**.
 - **EU representative** (if you are not established in the EU but process EU
-  residents' data at scale): [NAME/ADDRESS, required under GDPR Art. 27 —
-  see planning notes].
+  residents' data at scale): **[NAME/ADDRESS — required under GDPR Art. 27;
+  not yet appointed/researched]**.
 - **Supervisory authority**: you may lodge a complaint with your local
   authority, e.g. the Dutch Autoriteit Persoonsgegevens if you are in the
   Netherlands, or the authority in your EU country of residence.
-- **DPIA/DPO**: [state whether you've conducted a Data Protection Impact
+- **DPIA/DPO**: **[state whether you've conducted a Data Protection Impact
   Assessment for citizen-science/geolocation data, and whether a Data
-  Protection Officer has been appointed — see planning notes on when this is
-  mandatory].
+  Protection Officer has been appointed — GDPR Art. 35/37 set the thresholds
+  for when each is mandatory; not yet assessed against our actual processing
+  volume]**.
 - We aim to respond to rights requests within **one month** (extendable by
   two further months for complex requests), per GDPR Art. 12(3).
 
@@ -241,6 +278,25 @@ we will delete it.
   Law 25, and disclose automated decision-making that produces legal or
   similarly significant effects, if any.
 
+### Zimbabwe — Cyber and Data Protection Act [Chapter 12:07] (CDPA)
+- Supervisory authority: **POTRAZ (Postal and Telecommunications Regulatory
+  Authority of Zimbabwe)**.
+- If our processing of Zimbabwean residents' data meets SI 155's
+  data-controller licensing threshold, our registration with POTRAZ is:
+  **[REGISTRATION NUMBER, once registered]** — see
+  `compliance/INDEX.md` § Zimbabwe for the underlying analysis, which
+  currently distinguishes the main account-based Service (in scope) from a
+  static, no-account eco-library deployment (out of scope by design).
+- Any data compromise affecting Zimbabwean residents' data is reportable to
+  POTRAZ within **24 hours** of discovery.
+- Cross-border transfer of Zimbabwean residents' data (e.g. to our
+  US-hosted Supabase project) requires notice to POTRAZ and confirmation
+  that the receiving country meets Zimbabwe's data-privacy adequacy
+  standard under CDPA § 25 — **not yet assessed**.
+- Processing data from a participant under 18 requires verifiable, explicit
+  consent from a parent or legal guardian — relevant to school- or
+  youth-group-based eco-ops participation specifically; see § 9.
+
 ### African Union member states generally
 - Where your country of residence has a comprehensive data protection law
   (e.g. **Nigeria** — Data Protection Act 2023, enforced by the Nigeria Data
@@ -248,7 +304,7 @@ we will delete it.
   Information Regulator; or similar frameworks in other countries), you have
   the rights that law grants, in addition to those listed in § 8.
 - Because legal frameworks vary significantly across the continent and are
-  evolving rapidly, contact **[PRIVACY CONTACT EMAIL]** for country-specific
+  evolving rapidly, contact **ecocommunity@protonmail.com** for country-specific
   questions — we will confirm what applies to your country of residence.
 
 ## 11. Changes to this policy
@@ -258,15 +314,10 @@ take effect.
 
 ## 12. Contact
 
-**[PRIVACY CONTACT EMAIL — same recommendation as Terms of Service § 15]**
+**ecocommunity@protonmail.com**
 — for all data protection questions and rights requests.
 
 ## 13. Changelog
 
-Material changes to this policy are logged here — see § 11.
-
-| Date | Change |
-|---|---|
-| [DATE] | Initial draft template. |
-| 2026-07-22 | Added the private-comments privacy-model explanation in § 4 (visibility, report path, lawful-request policy pointer) and this changelog. |
-| 2026-07-23 | Identified SCD Hub (Sustainable Community Development Hub) as the operating entity — Colorado nonprofit corporation, confirmed IRS 501(c)(3) — and Exotopia as its project, replacing the `[LEGAL ENTITY NAME]` placeholder in § 1 and the EU controller line in § 10. Added a "United States" regional notice in § 10 (previously missing) covering the Colorado Privacy Act. Updated the Terms of Service cross-reference in § 12 to match that document's renumbering. |
+Material changes to this policy are logged with a date on the
+[Privacy changelog page](/privacy/changelog) — see § 11.

@@ -130,6 +130,7 @@ import type { ClusterGalaxyDoc } from 'src/composables/useClusterGalaxyData'
 import { useSettlements, clusterKey }                             from 'src/lib/settlements'
 import { useSceneTransitionStore }                                from 'src/stores/scene-transition'
 import { disposeScene }                                           from 'src/lib/three-utils'
+import { computeHandoffOrigin, placeCameraForHandoff }             from 'src/lib/scene-handoff'
 
 // ── Route ──────────────────────────────────────────────────────────────────────
 const route  = useRoute()
@@ -139,12 +140,22 @@ const clusterSlug = computed(() => String(route.params.clusterSlug ?? ''))
 const memberId    = computed(() => String(route.params.memberId    ?? ''))
 
 // ── Data composable ────────────────────────────────────────────────────────────
-const { loading, error, doc, load: loadGalaxyData } = useClusterGalaxyData(clusterSlug, memberId)
+// morph/dist come from the query string the previous page (ClusterInteriorPage or
+// XClusterPage) already pushed — used only as a Stage-3 fallback hint when neither
+// a generated doc nor a members catalog exists for this galaxy (the X-ray-cluster
+// case: no /clusters/{slug}-members.json, so this was silently defaulting to a
+// hardcoded elliptical at 65 Mpc regardless of the real oracle morph/distance).
+const galaxyDocHints = {
+  morph:   typeof route.query.morph === 'string' ? route.query.morph : undefined,
+  distMpc: route.query.dist ? Number(route.query.dist) : undefined,
+}
+const { loading, error, doc, load: loadGalaxyData } = useClusterGalaxyData(clusterSlug, memberId, galaxyDocHints)
 
 // ── State ──────────────────────────────────────────────────────────────────────
 const hoveringSystem = ref(false)
 
 interface StarSystem {
+  id:         string     // stable machine id (e.g. "ngc0224-s01") — used for settlement keys; never the display name
   idx:        number
   name:       string
   spectral:   string
@@ -241,7 +252,7 @@ function mapDocToSystems(galaxyDoc: ClusterGalaxyDoc): StarSystem[] {
     .split('').reduce((a, c, i) => a + c.charCodeAt(0) * (i + 1), 0) & 0xFFFFFFFF
   const rng  = mulberry32(seed)
 
-  return galaxyDoc.star_systems.slice(0, 80).map((s, i) => {
+  return (galaxyDoc.star_systems ?? []).slice(0, 80).map((s, i) => {
     const spec       = s.spectral_type[0] ?? 'K'
     const specColor  = SPECTRAL_COLOR[spec] ?? '#ffbe6e'
     const temps      = s.planets.map(p => p.eq_temp_k)
@@ -259,7 +270,7 @@ function mapDocToSystems(galaxyDoc: ClusterGalaxyDoc): StarSystem[] {
     const label      = bestTier === 'candidate' ? `★ ${s.label}` : s.label
 
     return {
-      idx: i, name: label, spectral: spec, specColor,
+      id: s.id, idx: i, name: label, spectral: spec, specColor,
       planetCount: s.planets.length,
       eqtRange: `${eqtLo}–${eqtHi} K`, distKly, eqtK,
       orbitR, theta, phi,
@@ -390,11 +401,27 @@ function buildScene() {
   camera.near = 0.001
   camera.far  = 200
 
-  // Bearing-synced arrival: approach from the direction of the click in the prior scene
-  const b = parseFloat(String(route.query.bearing ?? '0')) || 0
-  const entryDist = 11
-  camera.position.set(Math.sin(b) * entryDist, 4.2, Math.cos(b) * entryDist)
-  camera.updateProjectionMatrix()
+  if (transition.phase !== 'idle') {
+    // Arrived via a transition (ClusterInteriorPage's navigateToGalaxy) —
+    // place the camera to reproduce the departing frame's composition around
+    // coreSprite's position (this page's local origin) — see
+    // SPEC_DISSOLVE_HANDOFF.md §3. DIST=4.0 is a paper estimate against this
+    // page's own minDistance/maxDistance range (0.06/14), by analogy with
+    // ClusterSystemPage's 4.5 — flagged as needing a visual check, not yet
+    // tuned against a running build.
+    placeCameraForHandoff(
+      camera, controls, new THREE.Vector3(0, 0, 0),
+      { ox: transition.ox, oy: transition.oy, bearing: transition.bearing },
+      4.0,
+    )
+  } else {
+    // Direct navigation (bookmark, refresh) — no departing frame to match,
+    // fall back to the previous bearing-only entry.
+    const b = parseFloat(String(route.query.bearing ?? '0')) || 0
+    const entryDist = 11
+    camera.position.set(Math.sin(b) * entryDist, 4.2, Math.cos(b) * entryDist)
+    camera.updateProjectionMatrix()
+  }
 
   // Configure controls for cluster-galaxy navigation
   controls.dampingFactor  = 0.06
@@ -556,6 +583,14 @@ function resetToGalaxyCenter() {
 
 function onClick(event: MouseEvent) {
   if (dragMoved > 6) return
+  // onClick is bound on the page root, so clicks on the side panel's own
+  // buttons (Enter system, Settle, etc.) bubble up here too. A spurious hit
+  // here calls flyToSystem() -> gsap.killTweensOf(camera.position), which can
+  // kill the in-flight approach tween descendToSurface() is awaiting via its
+  // own onComplete callback — the promise then never resolves, hanging the
+  // navigation with no error. Same viz-overlay-page target-class guard
+  // CosmicPage.vue's onClick uses for the identical hazard.
+  if (!(event.target as HTMLElement)?.classList?.contains('viz-overlay-page')) return
   const sys = raycastSystems(event)
   if (sys) {
     selectedSystem.value = sys
@@ -652,18 +687,31 @@ async function descendToSurface(sys: StarSystem) {
     })
   }
 
-  // Project selected system's mesh to screen for transition origin
+  // Project selected system's mesh to screen for the transition handoff —
+  // ClusterSystemPage places its arrival camera to match this exact
+  // composition (see src/lib/scene-handoff.ts), so the crossfade resolves
+  // into the same star rather than a fresh establishing shot.
   if (mesh && camera) {
-    const sc = mesh.position.clone().project(camera)
-    clickPct.x      = (sc.x + 1) / 2 * 100
-    clickPct.y      = (1 - sc.y) / 2 * 100
-    clickBearing.value = Math.atan2(clickPct.y/100 - 0.5, clickPct.x/100 - 0.5)
+    const handoff = computeHandoffOrigin(camera, mesh.position)
+    clickPct.x      = handoff.ox
+    clickPct.y      = handoff.oy
+    clickBearing.value = handoff.bearing
   }
-  await transition.depart(clickPct.x, clickPct.y, 'lightning', clickBearing.value)
+  await transition.depart(clickPct.x, clickPct.y, 'dissolve', clickBearing.value)
   void router.push({
     name:   'cluster-system',
     params: { clusterSlug: clusterSlug.value, memberId: memberId.value, systemIdx: sys.idx },
-    query:  { bearing: clickBearing.value.toFixed(3) },
+    query:  {
+      bearing: clickBearing.value.toFixed(3),
+      // Carry the already-resolved real morph/distance forward so
+      // ClusterSystemPage's useClusterGalaxyData call lands on the same
+      // cache entry (and, on a cache miss, the same Stage-3 fallback
+      // values) this page used — see useClusterGalaxyData.ts's
+      // GalaxyDocHints. Without these an X-ray-cluster galaxy with no
+      // members catalog would silently re-derive a generic 'E' morph here.
+      ...(doc.value?.galaxy_hubble    ? { morph: doc.value.galaxy_hubble }             : {}),
+      ...(doc.value?.cluster_dist_mpc ? { dist: String(doc.value.cluster_dist_mpc) }   : {}),
+    },
   })
 }
 
@@ -687,9 +735,16 @@ async function loadAndBuild() {
       )
     }
   }
+  // Whether buildScene() will place the camera via the transition handoff or
+  // the direct-nav fallback, decided before buildScene() runs — the tween
+  // below only fires for the fallback case: a handoff arrival is already the
+  // frame the 'dissolve' crossfade is revealing, and re-tweening it to a
+  // fixed (0,1.8,4.5) would undo the match (same reasoning as
+  // ClusterSystemPage.onMounted's arrivedViaHandoff gate).
+  const arrivedViaHandoff = transition.phase !== 'idle'
   buildScene()
-  // Fly in to normal orbital distance after scene builds
-  if (camera && controls) {
+  if (!arrivedViaHandoff && camera && controls) {
+    // Fly in to normal orbital distance after scene builds
     gsap.to(camera.position, {
       x: 0, y: 1.8, z: 4.5,
       duration: 1.6, ease: 'power3.out',

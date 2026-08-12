@@ -165,6 +165,60 @@
         :lat="claimLat"
         :lon="claimLon"
       />
+
+      <!-- Focus editor — shown once established (skipped confirmFromPreview's
+           gate by claiming directly via PlanetClaimOverlay's "Establish
+           Settlement" button). Also lets an existing settler change focus
+           later, since it just calls updateSettlement each click. -->
+      <div v-if="!isPreview" class="cw-pathways q-mt-md">
+        <div class="cw-pathways__label">What will this settlement do?</div>
+        <div class="cw-pathways__grid">
+          <div v-for="p in FOCUS_OPTIONS" :key="p.id" class="cw-card"
+            :class="{ 'cw-card--active': selectedFocus === p.id }"
+            @click="selectedFocus = p.id; updateSettlement(surfaceKey(claimPlanet), { focus: p.id })">
+            <q-icon :name="p.icon" class="cw-card__icon" />
+            <div class="cw-card__title">{{ p.title }}</div>
+            <div class="cw-card__desc">{{ p.desc }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Publish a public settlement page — opt-in, separate from the
+           private local claim above. Requires a real account since a guest
+           needs an actual owner_id/RLS row to read, not just localStorage. -->
+      <div v-if="!isPreview" class="publish-card q-mt-md">
+        <div v-if="!member.isSignedIn" class="publish-card__signin">
+          <div class="publish-card__label">PUBLISH A SETTLEMENT PAGE</div>
+          <p class="publish-card__desc">Sign in to publish this settlement at its own public URL.</p>
+          <MemberSignIn />
+        </div>
+        <div v-else-if="publishedProfile" class="publish-result">
+          <q-icon name="check_circle" color="green-5" size="14px" class="q-mr-xs"/>
+          Published —
+          <router-link :to="`/settlement/${publishedProfile.public_slug}`" class="publish-result__link">
+            exotopia.org/settlement/{{ publishedProfile.public_slug }}
+          </router-link>
+        </div>
+        <div v-else>
+          <div class="publish-card__label">PUBLISH A SETTLEMENT PAGE</div>
+          <p class="publish-card__desc">
+            Optional — makes this settlement visible to guests at its own URL, showing
+            your chosen focus and any technologies from the library you want to feature.
+            You can change any of this later.
+          </p>
+          <div class="publish-tech-grid">
+            <label v-for="m in REMEDIATION_METHODS" :key="m.key" class="publish-tech-chip"
+              :class="{ 'publish-tech-chip--active': selectedTechKeys.includes(m.key) }">
+              <input v-model="selectedTechKeys" type="checkbox" :value="m.key" class="publish-tech-checkbox" />
+              {{ m.name }}
+            </label>
+          </div>
+          <q-btn unelevated color="cyan-8" icon="mdi-earth"
+            :label="publishing ? 'Publishing…' : 'Publish settlement page'"
+            :loading="publishing" :disable="!selectedFocus" @click="doPublishProfile" />
+          <div v-if="publishError" class="publish-error">✗ {{ publishError }}</div>
+        </div>
+      </div>
     </div>
 
     <!-- ════════════════════════════════════════════════════════════════════
@@ -290,13 +344,13 @@
         <div class="cw-hero__free">FREE TO MINT · 0 USDC · PON INK PROTOCOL</div>
       </div>
 
-      <!-- Eco pathway cards -->
+      <!-- Focus cards -->
       <div class="cw-pathways">
         <div class="cw-pathways__label">What will this settlement do?</div>
         <div class="cw-pathways__grid">
-          <div v-for="p in CW_ECO_PATHWAYS" :key="p.id" class="cw-card"
-            :class="{ 'cw-card--active': selectedCwPathway === p.id }"
-            @click="selectedCwPathway = p.id">
+          <div v-for="p in FOCUS_OPTIONS" :key="p.id" class="cw-card"
+            :class="{ 'cw-card--active': selectedFocus === p.id }"
+            @click="selectedFocus = p.id">
             <q-icon :name="p.icon" class="cw-card__icon" />
             <div class="cw-card__title">{{ p.title }}</div>
             <div class="cw-card__desc">{{ p.desc }}</div>
@@ -304,8 +358,8 @@
         </div>
       </div>
 
-      <!-- Mini claim form (shown after pathway chosen) -->
-      <div v-if="selectedCwPathway" class="cw-form q-mt-md">
+      <!-- Mini claim form (shown after a focus is chosen) -->
+      <div v-if="selectedFocus" class="cw-form q-mt-md">
         <div class="cw-form__label">LOCATION · AUTO-FILLED FROM YOUR EXPLORATION PATH</div>
         <div class="cw-form__address-row">
           <q-icon name="mdi-map-marker" color="amber-6" size="xs" />
@@ -316,8 +370,8 @@
           class="q-mt-sm cw-form__input"
           placeholder="e.g. Fana Ka Community, your pon.ink handle" />
         <div class="cw-form__pathway-note">
-          Selected pathway: <strong class="text-amber-5">{{ cwSelectedLabel }}</strong>
-          — pre-loads the Mule knowledge corpus for this domain.
+          Selected focus: <strong class="text-amber-5">{{ selectedFocusLabel }}</strong>
+          — a self-declared badge shown on this settlement, here and on its public page if you publish it.
         </div>
         <div class="row q-gutter-sm q-mt-sm">
           <q-btn unelevated
@@ -331,7 +385,7 @@
             title="Show full exolocation metadata form" />
         </div>
         <div class="cw-form__note q-mt-xs">
-          Confirms coordinates and pathway. No transaction until you sign in your wallet.
+          Confirms coordinates and focus. Free — no wallet, no gas fee.
         </div>
       </div>
     </div>
@@ -437,54 +491,6 @@
     <!-- ════════════════════════════════════════════════════════════════════
          ONBOARDING FIRST DEED HERO
          ════════════════════════════════════════════════════════════════════ -->
-    <div v-else-if="mintMode === 'onboarding'" class="onboard-hero">
-      <!-- Star field -->
-      <div class="hero-stars" aria-hidden="true">
-        <div v-for="s in heroStars" :key="s.id"
-          class="hero-star"
-          :style="{ left: s.x+'%', top: s.y+'%', width: s.r+'px', height: s.r+'px', opacity: s.o, animationDelay: s.d+'s' }"
-        />
-      </div>
-
-      <div class="onboard-hero__inner">
-        <!-- Step trail -->
-        <div class="onboard-steps">
-          <span class="ob-step ob-step--done">① EXPLORE</span>
-          <span class="ob-step-arrow">→</span>
-          <span class="ob-step ob-step--done">② WALLET</span>
-          <span class="ob-step-arrow">→</span>
-          <span class="ob-step ob-step--active">③ MINT</span>
-        </div>
-
-        <h1 class="onboard-hero__heading">
-          Your First<br>
-          <span class="onboard-hero__accent">Exotopia Deed</span>
-        </h1>
-
-        <p class="onboard-hero__desc">
-          You've set up your wallet and explored the cosmos.
-          Now mint your first land deed — permanently yours, on-chain, free.
-        </p>
-
-        <!-- Chain badge -->
-        <div class="onboard-chain-wrap">
-          <div class="onboard-chain-badge" :class="`onboard-chain-badge--${onboardChain}`">
-            <span class="ocb-icon">◈</span>
-            <span class="ocb-name">{{ onboardChainLabel }}</span>
-            <span class="ocb-status">SELECTED</span>
-          </div>
-          <div class="onboard-chain-hint">
-            Mint on {{ onboardChainLabel }} · switch chains any time below
-          </div>
-        </div>
-
-        <div class="onboard-hero__meta">
-          <span class="onboard-free">FREE TO MINT · 0 USDC</span>
-          <span class="onboard-protocol">40 ACRES · ONE MULE · PERMANENT DEED</span>
-        </div>
-      </div>
-    </div>
-
     <!-- ════════════════════════════════════════════════════════════════════
          HERO — card fan showcase + edition intro (shown when no claim)
          ════════════════════════════════════════════════════════════════════ -->
@@ -639,52 +645,47 @@
         </div>
       </div>
 
-      <div class="pc-section-label" style="margin-top:20px">WHAT HAPPENS WHEN YOU ESTABLISH</div>
-      <div class="pc-checklist">
-        <div class="pc-check-row">
-          <span class="pc-check-icon">◈</span>
-          Your plot is saved locally as your settlement record
-        </div>
-        <div class="pc-check-row">
-          <span class="pc-check-icon">◈</span>
-          Choose a settlement pathway — eco, gallery, water, learning, or community command
-        </div>
-        <div class="pc-check-row">
-          <span class="pc-check-icon">◈</span>
-          A Mule knowledge corpus is pre-loaded for your chosen domain
-        </div>
-        <div class="pc-check-row">
-          <span class="pc-check-icon pc-check-icon--dim">◈</span>
-          <span class="pc-check-dim">Optional: register the deed for permanent record (no cost at registration)</span>
+      <div class="pc-section-label" style="margin-top:20px">WHAT WILL THIS SETTLEMENT DO?</div>
+      <div class="cw-pathways">
+        <div class="cw-pathways__grid">
+          <div v-for="p in FOCUS_OPTIONS" :key="p.id" class="cw-card"
+            :class="{ 'cw-card--active': selectedFocus === p.id }"
+            @click="selectedFocus = p.id">
+            <q-icon :name="p.icon" class="cw-card__icon" />
+            <div class="cw-card__title">{{ p.title }}</div>
+            <div class="cw-card__desc">{{ p.desc }}</div>
+          </div>
         </div>
       </div>
 
       <div class="pc-cta-row">
-        <button class="pc-cta-btn pc-cta-btn--confirm" @click="confirmFromPreview">
+        <button class="pc-cta-btn pc-cta-btn--confirm" :disabled="!selectedFocus" @click="confirmFromPreview">
           ⬡ Establish Settlement
         </button>
         <button class="pc-cta-btn pc-cta-btn--back" @click="router.back()">
           ← Back to plot selection
         </button>
       </div>
+      <div class="pc-check-row q-mt-xs">
+        <span class="pc-check-icon pc-check-icon--dim">◈</span>
+        <span class="pc-check-dim">Free — no wallet, no gas fee. Change your focus anytime from your settlement page.</span>
+      </div>
     </div>
 
     <!-- ════════════════════════════════════════════════════════════════════
          PATHWAY WIZARD — card gallery to configure the mint
          ════════════════════════════════════════════════════════════════════ -->
-    <div v-if="mintMode !== 'cluster-world' && !isPreview" class="pathway-section">
-      <MintPathwayWizard @select="onPathwaySelect"/>
-    </div>
-
     <!-- ════════════════════════════════════════════════════════════════════
-         MINTING FORMS
+         SUPPORT THE NETWORK — pin to IPFS
+         No wallet, no chain, no gas fee. Durability comes from content
+         persistence (as long as someone keeps it pinned), not from
+         exclusivity of on-chain ownership — see SETTLEMENT_ADDRESS_API.md.
          ════════════════════════════════════════════════════════════════════ -->
     <div v-if="(mintMode !== 'cluster-world' || showCwAdvanced) && !isPreview" ref="formsAnchor" class="mint-forms q-pa-md">
 
-      <!-- Suppress heading when deed header above is already showing -->
-      <div v-if="mintMode === 'general'" class="row items-center q-mb-xs">
+      <div class="row items-center q-mb-xs">
         <div class="text-h6 text-blue-grey-2" style="font-family:monospace; letter-spacing:0.08em">
-          ◈ CONFIGURE YOUR MINT
+          ◈ SUPPORT THIS SETTLEMENT
         </div>
         <q-space />
         <q-btn flat dense size="sm" color="amber-6" icon="mdi-tune-variant" label="Style Builder"
@@ -692,635 +693,56 @@
           title="Configure generative minting styles combining network sources" />
       </div>
 
-      <div v-if="mintMode === 'general'" class="text-caption text-blue-grey-5 q-mb-md" style="font-family:monospace; letter-spacing:0.05em">
-        <span class="text-green-5">FREE TO MINT</span> · utility-first model ·
-        no resale or aftermarket fee — Exotopia doesn't operate a secondary market.
-        Network gas is the only cost at mint time.
+      <p class="text-caption text-blue-grey-5 q-mb-md" style="font-family:monospace; letter-spacing:0.03em; line-height:1.6">
+        Pinning to IPFS keeps this settlement's content available — no wallet,
+        no blockchain, no gas fee. There is no collision-proof claim registry
+        here by design: durability comes from someone keeping it pinned, not
+        from exclusive ownership. Pin it yourself, or use the service below.
+      </p>
+
+      <div class="pin-card q-pa-md">
+        <q-input
+          v-model="pinTitle"
+          label="Settlement title"
+          dark dense outlined class="q-mb-sm"
+        />
+        <q-input
+          v-model="pinDescription"
+          label="Description (optional)"
+          type="textarea" rows="2"
+          dark dense outlined class="q-mb-sm"
+        />
+        <div class="pin-address-row q-mb-sm">
+          <span class="pin-address-label">Exolocation address</span>
+          <span class="pin-address-value">{{ currentExolocAddress || '(not yet available)' }}</span>
+        </div>
+
+        <q-btn
+          unelevated color="cyan-8"
+          icon="mdi-cloud-upload-outline"
+          :label="pinLoading ? 'Pinning…' : 'Pin to IPFS'"
+          class="full-width"
+          :loading="pinLoading"
+          :disable="!currentExolocAddress || !pinTitle.trim()"
+          @click="doPin"
+        />
+
+        <div v-if="!hasAnyPinningConfigured()" class="pin-hint q-mt-sm">
+          No pinning service is configured in this deployment yet
+          (VITE_PINATA_JWT). You can still copy the address above and pin it
+          yourself with any IPFS pinning service.
+        </div>
+
+        <div v-if="pinError" class="pin-error q-mt-sm">✗ {{ pinError }}</div>
+
+        <div v-if="pinCid" class="pin-result q-mt-sm">
+          <q-icon name="check_circle" color="green-5" size="14px" class="q-mr-xs"/>
+          Pinned — <span class="pin-cid">{{ pinCid }}</span>
+          <a :href="`https://ipfs.io/ipfs/${pinCid.replace('ipfs://', '')}`" target="_blank" rel="noopener" class="pin-link">
+            View on IPFS gateway →
+          </a>
+        </div>
       </div>
-
-      <!-- Compact deed context bar shown in claim mode -->
-      <div v-if="mintMode === 'surface-deed'" class="deed-context-bar q-mb-sm">
-        <span class="dcb-star">★</span>
-        <span class="dcb-text">Select your settlement pathway below · each pre-loads a Mule knowledge corpus</span>
-        <q-btn flat dense size="xs" color="amber-6" icon="mdi-tune-variant"
-          @click="$router.push('/mint-style')" class="q-ml-auto" title="Style Builder"/>
-      </div>
-
-    <q-tabs v-model="tab" dense align="left" class="q-mb-md" scrollable>
-      <q-tab name="exolocation" label="Exolocation (Algorand)" />
-      <q-tab name="station"     label="Station Core (Solana)"  />
-      <q-tab name="module"      label="Module (Solana)"        />
-      <q-tab name="solution"    label="Ecocity Solution"       />
-      <q-tab name="polygon"     label="Polygon / MATIC" />
-      <q-tab name="celo"        label="Celo"            />
-    </q-tabs>
-
-    <q-tab-panels v-model="tab" animated class="bg-transparent">
-
-      <!-- ── Exolocation (Algorand ARC-3 / ARC-69) ───────────────────── -->
-      <q-tab-panel name="exolocation">
-        <div id="exoloc-form" class="mint-form">
-
-          <div class="form-section-label">LOCATION METADATA</div>
-
-          <q-select
-            v-model="exo.coordSystem"
-            :options="COORD_SYSTEMS"
-            label="Coordinate System  (Trophic Level)"
-            dark dense outlined
-            class="q-mb-sm"
-            emit-value map-options
-          />
-
-          <!-- Trophic level badge -->
-          <div v-if="exo.coordSystem" class="trophic-badge q-mb-sm">
-            {{ COORD_SYSTEMS.find(c => c.value === exo.coordSystem)?.label ?? exo.coordSystem }}
-          </div>
-
-          <q-input
-            v-model="exo.refBody"
-            :label="isMoonCoord ? 'Parent Planet (hostname / planet)' : 'Reference Body (hostname / planet)'"
-            dark dense outlined
-            class="q-mb-sm"
-            :rules="[v => !!v.trim() || 'Required']"
-          />
-
-          <!-- Moon-specific fields -->
-          <template v-if="isMoonCoord">
-            <div class="moon-section-label">MOON SPECIFICATION</div>
-            <div class="row q-col-gutter-sm q-mb-sm">
-              <div class="col-4">
-                <q-input v-model.number="exo.moonIndex" type="number" min="1" max="9"
-                  label="Moon index (I=1, II=2…)" dark dense outlined />
-              </div>
-              <div class="col-8">
-                <q-input
-                  :model-value="exo.refBody ? `${exo.refBody} Moon ${'IIIIIVVVIVIIVIII'.slice((exo.moonIndex-1)*0).charAt(0) || exo.moonIndex}` : ''"
-                  label="Moon name (auto-built)"
-                  dark dense outlined readonly
-                  hint="Derived from parent planet + index"
-                />
-              </div>
-            </div>
-            <q-toggle v-model="exo.tidallyLocked" :true-value="true" :false-value="false" :null-value="null"
-              label="Tidally locked (one face always toward parent planet)"
-              color="amber-6" dense class="q-mb-sm" />
-          </template>
-
-          <!-- L5 SYZYGY: Lagrange point selector -->
-          <template v-if="isMoonLagrange">
-            <div class="moon-section-label">LAGRANGE POINT</div>
-            <q-select
-              v-model="exo.lagrangePoint"
-              :options="MOON_LAGRANGE_OPTS"
-              emit-value map-options
-              label="Lagrange Point"
-              dark dense outlined class="q-mb-sm"
-            />
-            <div class="lagrange-physics" v-if="exo.lagrangePoint">
-              <div v-for="lp in MOON_LAGRANGE_OPTS.filter(o => o.value === exo.lagrangePoint)" :key="lp.value">
-                <span :class="['lagrange-stability', exo.lagrangePoint === 'L4' || exo.lagrangePoint === 'L5' ? 'stable' : 'unstable']">
-                  {{ exo.lagrangePoint === 'L4' || exo.lagrangePoint === 'L5' ? 'STABLE — no station-keeping required' : 'UNSTABLE — active station-keeping required' }}
-                </span>
-              </div>
-            </div>
-          </template>
-
-          <!-- L6 LIMINAL: Interface zone selector -->
-          <template v-if="isMoonInterface">
-            <div class="moon-section-label">INTERFACE ZONE TYPE</div>
-            <q-select
-              v-model="exo.interfaceZone"
-              :options="MOON_INTERFACE_OPTS"
-              emit-value map-options
-              label="Zone Type"
-              dark dense outlined class="q-mb-sm"
-            />
-          </template>
-
-          <q-input
-            v-model="exo.regionName"
-            label="Settlement / Region Name"
-            dark dense outlined
-            class="q-mb-sm"
-            counter maxlength="64"
-            :rules="[v => v.trim().length >= 2 || 'Min 2 characters']"
-          />
-
-          <q-input
-            v-if="!isMoonLagrange && !isMoonInterface"
-            v-model="exo.boundary"
-            :label="isMoonSurface ? 'Moon surface lat/long boundary' : 'Boundary descriptor (e.g. lat/long or AU range)'"
-            dark dense outlined
-            class="q-mb-sm"
-            :hint="isMoonSurface ? 'e.g. 14.5,-23.1 (terminator zone coordinates)' : 'e.g. 14.5,-23.1 or 1.1-1.3au'"
-          />
-
-          <div class="form-section-label q-mt-md">TRANSACTION PREVIEW</div>
-
-          <!-- ── FEE ISOLATION DISPLAY ──────────────────────────────── -->
-          <!-- SPEC: community return and network costs are displayed in  -->
-          <!-- separate blocks with independent data paths.               -->
-          <!-- NEVER compute Total = Yield - NetworkFee in the template. -->
-
-          <div class="fee-isolation-card q-mb-sm">
-            <!-- MINT COST — FREE ────────────────────────────────────────── -->
-            <div class="fee-block fee-block--free">
-              <div class="fee-block-label">MINT COST</div>
-              <div class="fee-block-value text-green-4">
-                FREE · USD {{ mintCostUSD }}
-              </div>
-              <div class="fee-block-note">
-                Utility-first model — no purchase required to mint your initial exolocation deed.
-                Platform growth takes priority over early monetisation.
-              </div>
-            </div>
-
-            <q-separator dark class="q-my-sm" style="opacity:0.15" />
-
-            <!-- NETWORK COSTS (informational only) ──────────────── -->
-            <div class="fee-block fee-block--network">
-              <div class="fee-row">
-                <span>Algorand ASA creation fee</span>
-                <span class="text-blue-grey-5">0.001 ALGO (network only)</span>
-              </div>
-              <div class="fee-row">
-                <span>IPFS metadata pin</span>
-                <span class="text-blue-grey-5">~0.00 ALGO (Pinata free tier)</span>
-              </div>
-              <div class="fee-block-note">
-                This mints a collectible record. Exotopia does not operate a resale market —
-                there is no platform fee to disclose because there is no secondary sale to apply it to.
-              </div>
-            </div>
-          </div>
-
-          <!-- Chain target note -->
-          <div class="chain-badge chain-badge--polygon q-mb-sm" style="font-size:8px;padding:3px 8px">
-            POLYGON AMOY TESTNET · chainId 80002 · Exolocation ERC-721
-          </div>
-
-          <q-btn
-            unelevated color="cyan-8"
-            icon="mdi-hexagon-outline"
-            :label="exoloLoading ? 'Estimating…' : 'Dry Run — Preview without on-chain cost'"
-            class="full-width q-mb-xs"
-            :loading="exoloLoading && !exoloResult"
-            @click="dryRun('exolocation')"
-          />
-
-          <!-- Explicit pre-mint disclaimer — an affirmative, logged user action
-               rather than a buried ToS clause. Required before Execute Mint
-               enables, for every mint on this page, not just this one type. -->
-          <label class="mint-disclaimer-check">
-            <q-checkbox v-model="mintDisclaimerAccepted" dense color="cyan-6" />
-            <span>This mints a collectible record. It has no cash value, no expectation of profit, and is not an investment.</span>
-          </label>
-
-          <q-btn
-            unelevated color="green-8"
-            icon="mdi-send"
-            :label="exoloLoading && exoloResult !== null ? 'Minting…' : (walletAddress ? 'Execute Mint on Polygon Amoy' : 'Connect Wallet & Mint')"
-            class="full-width"
-            :disable="!exoFormValid || !mintDisclaimerAccepted"
-            :loading="exoloLoading && !!exoloResult"
-            @click="doMint('exolocation')"
-          />
-          <div v-if="!exoFormValid" class="validation-hint">
-            Fill in Reference Body and Settlement Name to enable minting.
-          </div>
-          <div v-else-if="!mintDisclaimerAccepted" class="validation-hint">
-            Check the box above to enable minting.
-          </div>
-          <div v-else-if="exoFormValid && !exoloResult" class="validation-hint validation-hint--info">
-            Click <strong>Execute Mint</strong> — the contract will validate and report any issues inline.
-          </div>
-
-          <!-- Dry run result panel -->
-          <div v-if="exoloDryResult" class="dry-result q-mt-sm">
-            <div v-for="e in exoloDryResult.errors"   :key="e" class="dry-err">✗ {{ e }}</div>
-            <div v-for="w in exoloDryResult.warnings.filter(w => !w.includes('placeholder') && !w.includes('Gas estimation skipped'))" :key="w" class="dry-warn">⚠ {{ w }}</div>
-            <div class="dry-stats row q-gutter-x-sm q-mt-xs" v-if="exoloDryResult.valid">
-              <span v-if="exoloDryResult.estimatedGasEth" class="dry-gas">
-                ⛽ {{ exoloDryResult.estimatedGasEth }}
-              </span>
-              <span class="dry-bytes">
-                {{ exoloDryResult.metadataBytes }} bytes ·
-                {{ exoloDryResult.metadataBytes < 512 ? 'on-chain safe' : hasPinata() ? 'IPFS upload enabled' : 'add VITE_PINATA_JWT for IPFS' }}
-              </span>
-              <span class="dry-ok">✓ Ready to mint</span>
-            </div>
-          </div>
-
-          <!-- Mint result panel -->
-          <div v-if="exoloResult" class="q-mt-sm" :class="exoloResult.success ? 'mint-ok' : 'mint-err'">
-            <template v-if="exoloResult.success">
-              <q-icon name="check_circle" color="green-5" size="14px" class="q-mr-xs"/>
-              Minted on Polygon Amoy!
-              <a v-if="exoloResult.explorerUrl" :href="exoloResult.explorerUrl" target="_blank"
-                rel="noopener" class="mint-link">View on Polygonscan →</a>
-              <div v-if="exoloResult.txHash" class="mint-hash">{{ exoloResult.txHash }}</div>
-            </template>
-            <template v-else>
-              <q-icon name="error_outline" color="red-5" size="14px" class="q-mr-xs"/>
-              {{ exoloResult.error }}
-            </template>
-          </div>
-
-          <!-- ── Live metadata preview ─────────────────────────────── -->
-          <div class="meta-preview-wrap q-mt-md">
-            <div class="meta-preview-header" @click="metaPreviewOpen = !metaPreviewOpen; metaPreviewOpen && refreshMetaPreview()">
-              <span class="meta-preview-label">◈ NFT METADATA PREVIEW</span>
-              <q-btn flat dense size="xs" icon="mdi-refresh" color="cyan-7"
-                @click.stop="refreshMetaPreview(); metaPreviewOpen = true"
-                title="Refresh metadata from current form values"/>
-              <q-btn flat dense size="xs"
-                :icon="metaPreviewOpen ? 'expand_less' : 'expand_more'"
-                color="blue-grey-5"/>
-            </div>
-
-            <Transition name="meta-slide">
-              <div v-if="metaPreviewOpen && metaPreview" class="meta-preview-body">
-                <div class="meta-preview-actions">
-                  <span class="meta-byte-count">{{ metaPreview.length }} bytes</span>
-                  <q-btn flat dense size="xs" color="cyan-7"
-                    :label="metaCopied ? '✓ copied' : 'copy JSON'"
-                    @click="copyMetaPreview"/>
-                </div>
-                <pre class="meta-preview-code">{{ metaPreview }}</pre>
-
-                <!-- ARC-69 note preview -->
-                <div class="meta-arc69-label">ARC-69 on-chain note (≤1 KB fingerprint)</div>
-                <pre class="meta-preview-code meta-preview-code--arc69">{{ arc69Preview }}</pre>
-              </div>
-            </Transition>
-          </div>
-
-        </div>
-      </q-tab-panel>
-
-      <!-- ── Station Core (Solana Bubblegum cNFT) ────────────────────── -->
-      <q-tab-panel name="station">
-        <div class="mint-form">
-
-          <div class="form-section-label">STATION METADATA</div>
-
-          <q-input
-            v-model="station.name"
-            label="Station Name"
-            dark dense outlined class="q-mb-sm"
-            counter maxlength="48"
-            :rules="[v => !!v.trim() || 'Required']"
-          />
-
-          <q-select
-            v-model="station.category"
-            :options="STATION_CATEGORIES"
-            label="Station Category"
-            dark dense outlined class="q-mb-sm"
-            emit-value map-options
-          />
-
-          <q-input
-            v-model="station.exolocationRef"
-            label="Exolocation NFT address"
-            dark dense outlined class="q-mb-sm"
-            hint="exo-surface-v1:hostname:region"
-            :rules="[v => v.startsWith('exo-') || 'Must start with exo- prefix']"
-          />
-
-          <div class="form-section-label q-mt-md">TRANSACTION PREVIEW</div>
-
-          <div class="fee-isolation-card q-mb-sm">
-            <div class="fee-block fee-block--free">
-              <div class="fee-block-label">MINT COST</div>
-              <div class="fee-block-value text-green-4">FREE</div>
-              <div class="fee-block-note">
-                Utility-first model. No resale or aftermarket fee — Exotopia doesn't operate
-                a secondary market. The 10% Hardware Fund allocation applies at mint time only.
-              </div>
-            </div>
-            <q-separator dark class="q-my-sm" style="opacity:0.15" />
-            <div class="fee-block fee-block--network">
-              <div class="fee-row">
-                <span>Solana Bubblegum cNFT gas</span>
-                <span class="text-blue-grey-5">~0.000005 SOL (network only)</span>
-              </div>
-              <div class="fee-row">
-                <span>Metaplex protocol fee</span>
-                <span class="text-blue-grey-5">~0.01 SOL (network only)</span>
-              </div>
-              <div class="fee-block-note fee-note--warn">
-                Gas is estimated — confirm in wallet. Never deducted from community allocation.
-              </div>
-            </div>
-          </div>
-
-          <q-btn
-            unelevated color="cyan-8"
-            icon="mdi-hexagon-outline"
-            label="Dry Run — Preview without on-chain cost"
-            class="full-width q-mb-xs"
-            @click="dryRun('station')"
-          />
-          <q-btn
-            outline color="cyan-6"
-            icon="mdi-send"
-            label="Execute Mint (connects wallet)"
-            class="full-width"
-            :disable="!stationFormValid"
-            @click="doMint('station')"
-          />
-        </div>
-      </q-tab-panel>
-
-      <!-- ── Module (Solana) ──────────────────────────────────────────── -->
-      <q-tab-panel name="module">
-        <div class="mint-form">
-          <div class="text-caption text-blue-grey-5 q-mb-sm">
-            Station Module NFT — binds a functional zone to a Station Core.
-          </div>
-          <div class="form-section-label">MODULE METADATA</div>
-          <q-select
-            v-model="module_.type"
-            :options="MODULE_TYPES"
-            label="Module Type"
-            dark dense outlined class="q-mb-sm"
-            emit-value map-options
-          />
-          <q-input
-            v-model="module_.stationRef"
-            label="Parent Station Core NFT address"
-            dark dense outlined class="q-mb-sm"
-            :rules="[v => !!v.trim() || 'Station Core reference required']"
-          />
-          <div class="fee-isolation-card q-mt-md q-mb-sm">
-            <div class="fee-block fee-block--network">
-              <div class="fee-row"><span>Solana cNFT mint</span><span class="text-pink-4">~0.000005 SOL</span></div>
-              <div class="fee-block-note fee-note--warn">Gas is informational — confirmed at wallet signing only.</div>
-            </div>
-          </div>
-          <q-btn unelevated color="cyan-8" label="Dry Run" class="full-width q-mb-xs" @click="dryRun('module')" />
-          <q-btn outline color="cyan-6" label="Execute Mint" class="full-width" :disable="!moduleFormValid" @click="doMint('module')" />
-        </div>
-      </q-tab-panel>
-
-      <!-- ── Ecocity Solution ─────────────────────────────────────────── -->
-      <q-tab-panel name="solution">
-        <div class="mint-form">
-          <div class="text-caption text-blue-grey-5 q-mb-sm">
-            EcocitySolution NFT — records a real-world sustainable design object
-            earned through eco-ops activity or workshop completion.
-          </div>
-          <div class="form-section-label">SOLUTION METADATA</div>
-          <q-select
-            v-model="solution.category"
-            :options="ECOCITY_CATEGORIES"
-            label="Category"
-            dark dense outlined class="q-mb-sm"
-            emit-value map-options
-          />
-          <q-input
-            v-model="solution.impactMetric"
-            label="Impact metric (e.g. 200L/day, 1.5kWh/day)"
-            dark dense outlined class="q-mb-sm"
-            :rules="[v => !!v.trim() || 'Required']"
-          />
-          <q-input
-            v-model="solution.recipientAddress"
-            label="Recipient wallet address"
-            dark dense outlined class="q-mb-sm"
-            :rules="[v => v.trim().length > 10 || 'Valid wallet required']"
-          />
-          <div class="fee-isolation-card q-mt-md q-mb-sm">
-            <div class="fee-block fee-block--community">
-              <div class="fee-block-label">ECO-OPS MILESTONE REWARD</div>
-              <div class="fee-block-value text-green-5">Earned — no purchase required</div>
-              <div class="fee-block-note">Dispatched automatically on milestone completion via pon.ink.</div>
-            </div>
-            <q-separator dark class="q-my-sm" style="opacity:0.15" />
-            <div class="fee-block fee-block--network">
-              <div class="fee-row"><span>Solana cNFT (airdrop)</span><span class="text-pink-4">~0.000005 SOL (platform covers)</span></div>
-            </div>
-          </div>
-          <q-btn unelevated color="green-8" label="Dry Run Airdrop" class="full-width q-mb-xs" @click="dryRun('solution')" />
-          <q-btn outline color="green-6" label="Execute Airdrop" class="full-width" :disable="!solutionFormValid" @click="doMint('solution')" />
-        </div>
-      </q-tab-panel>
-
-      <!-- ── Polygon / MATIC ─────────────────────────────────────────────── -->
-      <q-tab-panel name="polygon">
-        <div class="mint-form">
-
-          <!-- Wallet onboarding — shown when no injected wallet is present -->
-          <Transition name="onboard-fade">
-            <div v-if="!hasInjectedWallet() && !walletAddress" class="onboard-wrap">
-              <WalletOnboardingGuide
-                chain-id="polygon"
-                :chain-data="POLYGON_AMOY"
-                :has-wallet="hasInjectedWallet()"
-                @connect="ensureWallet().then(a => { if (a) walletAddress = a })"
-                @addNetwork="switchToChain(POLYGON_AMOY).catch(() => {})"
-              />
-              <q-separator color="blue-grey-8" class="q-my-lg" />
-            </div>
-          </Transition>
-
-          <div class="chain-badge chain-badge--polygon">
-            <q-icon name="mdi-hexagon-outline" size="14px" class="q-mr-xs" />
-            POLYGON AMOY TESTNET  ·  chainId 80002  ·  Draft Push
-          </div>
-          <div class="text-caption text-blue-grey-5 q-mb-md">
-            Polygon PoS (EVM-compatible) — low gas fees, large ecosystem.
-            Used for $SUNLIGHT SUNLIGHT NFTs, Water Quality Certifications, and Health Card IDs.
-          </div>
-
-          <!-- Sub-type selector -->
-          <q-btn-toggle
-            v-model="polyType"
-            unelevated dense
-            :options="POLY_TYPES"
-            class="q-mb-md"
-            color="blue-grey-8" text-color="blue-grey-4"
-            toggle-color="purple-9" toggle-text-color="white"
-          />
-
-          <!-- $SUNLIGHT -->
-          <template v-if="polyType === 'sunlight'">
-            <div class="form-section-label">$SUNLIGHT SOUND NFT METADATA</div>
-            <q-input v-model="sunlight.title"    label="Track Title"   dark dense outlined class="q-mb-sm" :rules="[v => !!v.trim() || 'Required']" />
-            <q-input v-model="sunlight.artist"   label="Artist (pon.ink handle)" dark dense outlined class="q-mb-sm" :rules="[v => !!v.trim() || 'Required']" />
-            <div class="row q-col-gutter-sm q-mb-sm">
-              <div class="col-4"><q-input v-model.number="sunlight.duration_sec" type="number" label="Duration (s)" dark dense outlined /></div>
-              <div class="col-4"><q-input v-model.number="sunlight.bpm"          type="number" label="BPM" dark dense outlined /></div>
-              <div class="col-4"><q-input v-model="sunlight.key"                               label="Key (e.g. Am)" dark dense outlined /></div>
-            </div>
-            <q-select v-model="sunlight.license" :options="SUNLIGHT_LICENSES" label="License" emit-value map-options dark dense outlined class="q-mb-sm" />
-            <q-input v-model="sunlight.ipfs_audio_cid" label="Audio IPFS CID" dark dense outlined class="q-mb-sm" hint="Upload audio to Pinata first — paste CID here" />
-            <q-input v-model="sunlight.description" label="Description" dark dense outlined type="textarea" rows="2" counter maxlength="200" class="q-mb-sm" />
-          </template>
-
-          <!-- Water Quality Cert -->
-          <template v-if="polyType === 'wq_cert'">
-            <div class="form-section-label">WATER QUALITY CERTIFICATION</div>
-            <q-input v-model="wqCert.cert_id"      label="Certificate ID (e.g. WQC-LAMU-2026-001)" dark dense outlined class="q-mb-sm" :rules="[v => !!v.trim() || 'Required']" />
-            <q-input v-model="wqCert.location_name" label="Site Name"        dark dense outlined class="q-mb-sm" :rules="[v => !!v.trim() || 'Required']" />
-            <q-input v-model="wqCert.measured_by"  label="Field Worker (handle)" dark dense outlined class="q-mb-sm" />
-            <div class="row q-col-gutter-sm q-mb-sm">
-              <div class="col-4"><q-input v-model.number="wqCert.ph"               type="number" label="pH"             dark dense outlined /></div>
-              <div class="col-4"><q-input v-model.number="wqCert.turbidity_ntu"    type="number" label="Turbidity (NTU)" dark dense outlined /></div>
-              <div class="col-4"><q-input v-model.number="wqCert.nitrate_mg_l"     type="number" label="Nitrate mg/L"   dark dense outlined /></div>
-            </div>
-            <q-toggle v-model="wqCert.potable" label="Water is potable (drinkable)" color="green-5" class="q-mb-sm" />
-          </template>
-
-          <!-- Fee isolation + preview -->
-          <div class="form-section-label q-mt-md">TRANSACTION PREVIEW</div>
-          <div class="fee-isolation-card q-mb-sm">
-            <div class="fee-block fee-block--free">
-              <div class="fee-block-label">MINT COST</div>
-              <div class="fee-block-value text-green-4">FREE</div>
-              <div class="fee-block-note">Utility-first. No resale or aftermarket fee — Exotopia doesn't operate a secondary market.</div>
-            </div>
-            <q-separator dark class="q-my-sm" style="opacity:0.15" />
-            <div class="fee-block fee-block--network">
-              <div class="fee-row"><span>Polygon Amoy gas</span><span class="text-blue-grey-5">{{ polyGasEstimate }} (network only)</span></div>
-              <div class="fee-row"><span>IPFS metadata pin</span><span class="text-blue-grey-5">0.00 MATIC (Pinata free tier)</span></div>
-              <div class="fee-block-note fee-note--warn">Testnet only — use faucet at faucet.polygon.technology</div>
-            </div>
-          </div>
-
-          <!-- Metadata preview -->
-          <div v-if="polyDryResult" class="metadata-preview q-mb-sm">
-            <div class="form-section-label">METADATA PREVIEW (dry run)</div>
-            <div v-for="w in polyDryResult.warnings" :key="w" class="vp-warning">⚠ {{ w }}</div>
-            <div v-for="e in polyDryResult.errors"   :key="e" class="mint-error">✗ {{ e }}</div>
-            <pre class="meta-json">{{ polyDryResult.metadataJson.slice(0, 800) }}{{ polyDryResult.metadataJson.length > 800 ? '\n…' : '' }}</pre>
-            <div class="meta-bytes">{{ polyDryResult.metadataBytes }} bytes — {{ polyDryResult.metadataBytes < 512 ? 'on-chain safe' : 'use IPFS URI' }}</div>
-          </div>
-
-          <div class="wallet-status q-mb-sm" v-if="walletAddress">
-            <q-icon name="account_balance_wallet" size="12px" color="cyan-5" class="q-mr-xs" />
-            {{ walletAddress.slice(0, 6) }}…{{ walletAddress.slice(-4) }} connected
-          </div>
-
-          <div class="row q-gutter-xs">
-            <q-btn unelevated color="cyan-8" icon="mdi-eye" label="Dry Run" @click="polyDryRun" :loading="polyLoading" class="col" />
-            <q-btn outline color="cyan-6" icon="mdi-send" label="Mint on Amoy" @click="polyExecute"
-              :disable="!polyCanMint" :loading="polyLoading" class="col" />
-          </div>
-          <div v-if="polyResult" class="mint-result q-mt-sm" :class="polyResult.success ? 'mint-result--ok' : 'mint-result--fail'">
-            <template v-if="polyResult.success">
-              ✓ Minted — <a :href="polyResult.explorerUrl" target="_blank" rel="noopener">View on Polygonscan</a>
-            </template>
-            <template v-else>✗ {{ polyResult.error }}</template>
-          </div>
-        </div>
-      </q-tab-panel>
-
-      <!-- ── Celo ─────────────────────────────────────────────────────────── -->
-      <q-tab-panel name="celo">
-        <div class="mint-form">
-
-          <!-- Wallet onboarding — shown when no injected wallet is present -->
-          <Transition name="onboard-fade">
-            <div v-if="!hasInjectedWallet() && !walletAddress" class="onboard-wrap">
-              <WalletOnboardingGuide
-                chain-id="celo"
-                :chain-data="CELO_ALFAJORES"
-                :has-wallet="hasInjectedWallet()"
-                @connect="ensureWallet().then(a => { if (a) walletAddress = a })"
-                @addNetwork="switchToChain(CELO_ALFAJORES).catch(() => {})"
-              />
-              <q-separator color="blue-grey-8" class="q-my-lg" />
-            </div>
-          </Transition>
-
-          <div class="chain-badge chain-badge--celo">
-            <q-icon name="mdi-leaf-circle-outline" size="14px" class="q-mr-xs" />
-            CELO ALFAJORES TESTNET  ·  chainId 44787  ·  Draft Push
-          </div>
-          <div class="text-caption text-blue-grey-5 q-mb-md">
-            Celo is EVM-compatible, mobile-first, and has strong adoption in East Africa.
-            Its cUSD stablecoin maps directly to M-Pesa payment flows for community workers.
-            Used for Community Badges and Eco-ops Participation Tokens.
-          </div>
-
-          <!-- Sub-type selector -->
-          <q-btn-toggle
-            v-model="celoType"
-            unelevated dense
-            :options="CELO_TYPES"
-            class="q-mb-md"
-            color="blue-grey-8" text-color="blue-grey-4"
-            toggle-color="green-9" toggle-text-color="white"
-          />
-
-          <!-- Community Badge -->
-          <template v-if="celoType === 'community_badge'">
-            <div class="form-section-label">COMMUNITY BADGE METADATA</div>
-            <q-input v-model="badge.badge_name"  label="Badge Name" dark dense outlined class="q-mb-sm" :rules="[v => !!v.trim() || 'Required']" />
-            <q-input v-model="badge.community"   label="Community (e.g. Fana Ka)" dark dense outlined class="q-mb-sm" :rules="[v => !!v.trim() || 'Required']" />
-            <q-input v-model="badge.recipient"   label="Recipient (pon.ink handle)" dark dense outlined class="q-mb-sm" />
-            <q-input v-model="badge.awarded_for" label="Awarded for" dark dense outlined class="q-mb-sm" />
-            <q-select v-model="badge.tier" :options="['bronze','silver','gold','platinum']" label="Badge Tier" dark dense outlined class="q-mb-sm" />
-          </template>
-
-          <!-- Eco-ops token -->
-          <template v-if="celoType === 'eco_ops_token'">
-            <div class="form-section-label">ECO-OPS PARTICIPATION TOKEN</div>
-            <q-input v-model="ecoToken.token_id"      label="Token ID (e.g. ECO-LAMU-WQ-001)" dark dense outlined class="q-mb-sm" :rules="[v => !!v.trim() || 'Required']" />
-            <q-select v-model="ecoToken.activity_type" :options="ECO_OPS_TYPES" emit-value map-options label="Activity Type" dark dense outlined class="q-mb-sm" />
-            <q-input v-model="ecoToken.participant"   label="Participant (pon.ink handle)" dark dense outlined class="q-mb-sm" />
-            <q-input v-model="ecoToken.location_name" label="Location Name" dark dense outlined class="q-mb-sm" />
-            <q-input v-model.number="ecoToken.checkin_count" type="number" label="Check-in count at milestone" dark dense outlined class="q-mb-sm" />
-            <q-input v-model="ecoToken.milestone"     label="Milestone description" dark dense outlined class="q-mb-sm" />
-            <q-input v-model="ecoToken.group"         label="SHG Group (optional)" dark dense outlined class="q-mb-sm" />
-          </template>
-
-          <!-- Fee isolation -->
-          <div class="form-section-label q-mt-md">TRANSACTION PREVIEW</div>
-          <div class="fee-isolation-card q-mb-sm">
-            <div class="fee-block fee-block--free">
-              <div class="fee-block-label">MINT COST</div>
-              <div class="fee-block-value text-green-4">FREE</div>
-              <div class="fee-block-note">Earned via eco-ops or event attendance. Dispatched automatically via pon.ink. No purchase required. No resale or aftermarket fee — Exotopia doesn't operate a secondary market.</div>
-            </div>
-            <q-separator dark class="q-my-sm" style="opacity:0.15" />
-            <div class="fee-block fee-block--network">
-              <div class="fee-row"><span>Celo Alfajores gas</span><span class="text-blue-grey-5">{{ celoGasEstimate }} (network only)</span></div>
-              <div class="fee-block-note fee-note--warn">Testnet only — use faucet at faucet.celo.org/alfajores</div>
-            </div>
-          </div>
-
-          <!-- Metadata preview -->
-          <div v-if="celoDryResult" class="metadata-preview q-mb-sm">
-            <div class="form-section-label">METADATA PREVIEW (dry run)</div>
-            <div v-for="w in celoDryResult.warnings" :key="w" class="vp-warning">⚠ {{ w }}</div>
-            <div v-for="e in celoDryResult.errors"   :key="e" class="mint-error">✗ {{ e }}</div>
-            <pre class="meta-json">{{ celoDryResult.metadataJson.slice(0, 800) }}{{ celoDryResult.metadataJson.length > 800 ? '\n…' : '' }}</pre>
-          </div>
-
-          <div class="wallet-status q-mb-sm" v-if="walletAddress">
-            <q-icon name="account_balance_wallet" size="12px" color="green-5" class="q-mr-xs" />
-            {{ walletAddress.slice(0, 6) }}…{{ walletAddress.slice(-4) }} connected
-          </div>
-
-          <div class="row q-gutter-xs">
-            <q-btn unelevated color="green-8" icon="mdi-eye" label="Dry Run" @click="celoDryRun" :loading="celoLoading" class="col" />
-            <q-btn outline color="green-6" icon="mdi-send" label="Mint on Alfajores" @click="celoExecute"
-              :disable="!celoCanMint" :loading="celoLoading" class="col" />
-          </div>
-          <div v-if="celoResult" class="mint-result q-mt-sm" :class="celoResult.success ? 'mint-result--ok' : 'mint-result--fail'">
-            <template v-if="celoResult.success">
-              ✓ Minted — <a :href="celoResult.explorerUrl" target="_blank" rel="noopener">View on Celoscan</a>
-            </template>
-            <template v-else>✗ {{ celoResult.error }}</template>
-          </div>
-        </div>
-      </q-tab-panel>
-
-    </q-tab-panels>
 
     </div><!-- /mint-forms -->
 
@@ -1329,51 +751,63 @@
 
 <script setup lang="ts">
 /**
- * MintPage.vue — NFT minting interface
+ * MintPage.vue — settlement claim + IPFS support interface
  *
- * SECURITY: Strict fee isolation enforced throughout.
- *   - Community return (80% Resonance Split) is computed from its own variable.
- *   - Platform draw (0%) and Hardware Fund (10%) are computed independently.
- *   - Network gas costs are informational only — displayed in a separate UI block
- *     and never combined with community values in any expression.
- *   - Dry-run mode is always offered before any wallet interaction.
+ * Previously a blockchain/NFT minting interface (wallet connect, per-chain
+ * mint transactions). That's been removed — settlement creation was already
+ * independent of minting (addSettlement() below never depended on a
+ * successful mint), so this page now does exactly that plus an optional
+ * "pin to IPFS" step (src/lib/ipfs-pinning.ts) in place of the old mint
+ * forms. No wallet, no chain, no gas fee, and deliberately no collision-proof
+ * claim registry — see SETTLEMENT_ADDRESS_API.md.
  *
- * TODO (next sprint):
- *   - Bind exolocation tab to buildARC3() in src/lib/algorand/exolocation-metadata.js
- *   - Bind station tab to mintStation() in src/lib/solana/mint-station.ts
- *   - Connect wallet store (useWalletStore) for address resolution
- *   - Add IPFS upload step (Pinata) before on-chain mint
+ * The removed per-chain mint code (EVM/Solana/Algorand) was relocated, not
+ * deleted — see /lib/chains for reuse in other projects.
  */
 
 import { ref, computed, onMounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import PlanetClaimCard      from 'src/components/PlanetClaimCard.vue'
-import MintPathwayWizard    from 'src/components/MintPathwayWizard.vue'
-import type { MintPathway } from 'src/lib/mint-config'
 import CollectorCard         from 'src/components/CollectorCard.vue'
 import {
   COLLECTOR_CARDS,
 } from 'src/data/collector-cards'
-import { POLYGON_AMOY, CELO_ALFAJORES, TESTNET_CONTRACTS } from 'src/lib/evm/chains'
-import {
-  buildSunlightMeta, buildWqCertMeta, buildCommunityBadgeMeta, buildEcoOpsTokenMeta,
-  buildExolocMeta,
-  type ExolocParams,
-} from 'src/lib/evm/erc721-metadata'
-import {
-  dryRunMint,
-  executeMint  as evmExecuteMint,   // renamed to avoid clash with local doMint
-  requestAccount, hasInjectedWallet, switchToChain, hasPinata,
-  type DryRunResult, type MintResult,
-} from 'src/lib/evm/mint-evm'
-import WalletOnboardingGuide from 'src/components/WalletOnboardingGuide.vue'
 import { useSettlements, surfaceKey, clusterKey } from 'src/lib/settlements'
-import { SETTLEMENT_SPLIT } from 'src/lib/resonance-split'
+import { consumeSuggestedFocus } from 'src/lib/settlement-focus-intent'
+import { FOCUS_OPTIONS, focusLabel } from 'src/data/settlement-focus-options'
+import { pinSettlement, hasAnyPinningConfigured, type SettlementPinMetadata } from 'src/lib/ipfs-pinning'
+import { useSettlementProfilesStore, type SettlementProfile } from 'src/stores/settlement-profiles'
+import { useMemberStore } from 'src/stores/member'
+import { REMEDIATION_METHODS } from 'src/data/pfas-methods-library'
+import MemberSignIn from 'src/components/MemberSignIn.vue'
 
-const { hasSettlement, addSettlement } = useSettlements()
+const { hasSettlement, addSettlement, getSettlement, updateSettlement } = useSettlements()
+const settlementProfiles = useSettlementProfilesStore()
+const member             = useMemberStore()
 
-const tab           = ref('exolocation')
-const walletAddress = ref<string | null>(null)
+const selectedTechKeys  = ref<string[]>([])
+const publishing        = ref(false)
+const publishError      = ref<string | null>(null)
+const publishedProfile  = ref<SettlementProfile | null>(null)
+
+async function doPublishProfile() {
+  if (!selectedFocus.value || !claimHost.value || !claimPlanet.value) return
+  publishing.value   = true
+  publishError.value = null
+  const result = await settlementProfiles.createProfile({
+    exolocation:    `exo-surface-v1:${claimHost.value}:${claimPlanet.value}`,
+    displayName:    `${claimPlanet.value} · ${claimHost.value}`,
+    focus:          selectedFocus.value,
+    technologyKeys: selectedTechKeys.value,
+  })
+  publishing.value = false
+  if (!result) {
+    publishError.value = 'Could not publish — you may have reached the daily limit (3 per 24h), or a sign-in issue.'
+    return
+  }
+  publishedProfile.value = result
+}
+
 const formsAnchor   = ref<HTMLElement | null>(null)
 
 function scrollToForms() {
@@ -1412,89 +846,6 @@ const heroStars = Array.from({ length: 40 }, (_, i) => {
   return { id: i, x: rng(i*4)*100, y: rng(i*4+1)*100, r: 0.8+rng(i*4+2)*1.4, o: 0.15+rng(i*4+3)*0.45, d: rng(i)*4 }
 })
 
-// Connect wallet helper — called by either Polygon or Celo flows
-async function ensureWallet(): Promise<string | null> {
-  if (!hasInjectedWallet()) return null
-  try {
-    const addr = await requestAccount()
-    walletAddress.value = addr
-    return addr
-  } catch {
-    return null
-  }
-}
-
-// ── Option catalogs ───────────────────────────────────────────────────────────
-
-// Trophic hierarchy — ordered L1 (stellar) → L6 (liminal)
-const COORD_SYSTEMS = [
-  // ── Existing (L1–L3) ───────────────────────────────────────────────────
-  { label: 'L1 · Stellar orbital zone',                         value: 'exo-stellar-orbital-v1'  },
-  { label: 'L2 · Planet surface (lat/long polygon)',            value: 'exo-surface-v1'           },
-  { label: 'L2 · Planet orbital altitude band',                 value: 'exo-orbital-v1'           },
-  { label: 'L3 · Moon orbit (altitude above moon)',             value: 'exo-lunar-orbital-v1'     },
-  // ── Moon-relative trophic levels (L4–L6) ──────────────────────────────
-  { label: 'L4 · Moon surface  (SUBLUNARY)',                    value: 'exo-moon-surface-v1'      },
-  { label: 'L5 · Moon–Planet Lagrange  (SYZYGY)  L1/L2/L4/L5', value: 'exo-moon-lagrange-v1'    },
-  { label: 'L6 · Moon–Planet interface  (LIMINAL)',             value: 'exo-moon-interface-v1'   },
-]
-
-const MOON_LAGRANGE_OPTS = [
-  { label: 'L4 — Leading Trojan (stable, permanent settlement)', value: 'L4' },
-  { label: 'L5 — Trailing Trojan (stable, permanent settlement)', value: 'L5' },
-  { label: 'L1 — Inner Gateway (unstable, requires station-keeping)', value: 'L1' },
-  { label: 'L2 — Outer Observatory (unstable, requires station-keeping)', value: 'L2' },
-]
-
-const MOON_INTERFACE_OPTS = [
-  { label: 'Hill Sphere Boundary — gravitational dominance transition', value: 'hill-sphere' },
-  { label: 'Roche Limit Zone — tidal disruption inner boundary',        value: 'roche-limit' },
-  { label: 'Tidal Lock Transition — synchronous rotation boundary',     value: 'tidal-lock-zone' },
-  { label: 'Magnetosphere Interface — magnetic field boundary',         value: 'magnetosphere' },
-  { label: 'Orbital Resonance Zone — mean motion resonance',            value: 'resonance-zone' },
-]
-
-const STATION_CATEGORIES = [
-  { label: 'Gallery',           value: 'gallery'    },
-  { label: 'WATSAN node',       value: 'watsan'     },
-  { label: 'Energy node',       value: 'energy'     },
-  { label: 'Healthcare post',   value: 'healthcare' },
-  { label: 'Food production',   value: 'food'       },
-  { label: 'Command module',    value: 'command'    },
-]
-
-const MODULE_TYPES = [
-  { label: 'Gallery module',    value: 'gallery'    },
-  { label: 'WATSAN module',     value: 'watsan'     },
-  { label: 'Energy module',     value: 'energy'     },
-  { label: 'Shelter module',    value: 'shelter'    },
-  { label: 'Healthcare module', value: 'healthcare' },
-  { label: 'Food module',       value: 'food'       },
-]
-
-const ECOCITY_CATEGORIES = [
-  { label: 'WATSAN',     value: 'watsan'     },
-  { label: 'ENERGY',     value: 'energy'     },
-  { label: 'SHELTER',    value: 'shelter'    },
-  { label: 'HEALTHCARE', value: 'healthcare' },
-  { label: 'FOOD',       value: 'food'       },
-]
-
-// ── Form state ────────────────────────────────────────────────────────────────
-
-const exo = ref({
-  coordSystem:   'exo-surface-v1',
-  refBody:       '',
-  regionName:    '',
-  boundary:      '',
-  // Moon-specific fields (used when coordSystem is exo-moon-*)
-  moonIndex:     1,         // moon ordinal (I=1, II=2, …)
-  moonName:      '',        // auto-built from refBody + moonIndex
-  lagrangePoint: 'L4',     // for exo-moon-lagrange-v1
-  interfaceZone: 'hill-sphere',  // for exo-moon-interface-v1
-  tidallyLocked: null as boolean | null,
-})
-
 // ── Pre-populate from surface-view claim links ────────────────────────────────
 
 const route  = useRoute()
@@ -1517,6 +868,7 @@ const isPreview = computed(() => route.query.preview === '1')
 
 function confirmFromPreview() {
   if (!claimHost.value || !claimPlanet.value || isNaN(claimLat.value) || isNaN(claimLon.value)) return
+  if (!selectedFocus.value) return
   addSettlement({
     key:         surfaceKey(claimPlanet.value),
     type:        'surface',
@@ -1526,6 +878,7 @@ function confirmFromPreview() {
     displayName: `${claimPlanet.value} · ${claimHost.value}`,
     lat:         claimLat.value,
     lon:         claimLon.value,
+    focus:       selectedFocus.value,
   })
   const params = new URLSearchParams({
     host:   claimHost.value,
@@ -1537,16 +890,12 @@ function confirmFromPreview() {
   void router.replace(`/mint?${params.toString()}`)
 }
 
-// Pathway wizard handler
-
-const mintMode = computed((): 'surface-deed' | 'moon-orbital' | 'cluster-world' | 'cluster-outpost' | 'onboarding' | 'general' => {
+const mintMode = computed((): 'surface-deed' | 'moon-orbital' | 'cluster-world' | 'cluster-outpost' | 'general' => {
   if (hasClaimPlot.value) return 'surface-deed'
   const coord = (route.query.coord as string) ?? ''
   if (coord.includes('moon') && route.query.host && route.query.planet) return 'moon-orbital'
   if (route.query.mode === 'cluster-world') return 'cluster-world'
   if (route.query.mode === 'cluster-outpost') return 'cluster-outpost'
-  const tabQ = (route.query.tab as string) ?? ''
-  if (tabQ === 'celo' || tabQ === 'polygon') return 'onboarding'
   return 'general'
 })
 
@@ -1560,52 +909,21 @@ const cwExolocation = computed(() =>
   `exo-cluster-v1:${cwCluster.value}:${cwGalaxy.value}:${cwSystem.value}:${cwPlanet.value}`
 )
 
-const selectedCwPathway = ref<string | null>(null)
-const cwHandle          = ref('')
-const showCwAdvanced    = ref(false)
-
-const CW_ECO_PATHWAYS = [
-  {
-    id:    'eco',
-    icon:  'mdi-leaf',
-    title: 'Ecological Settlement',
-    desc:  'Water, food, shelter node — full eco-ops field monitoring',
-  },
-  {
-    id:    'learning',
-    icon:  'mdi-school',
-    title: 'Community Learning Hub',
-    desc:  'Education, youth pathways, professional certificate support',
-  },
-  {
-    id:    'watsan',
-    icon:  'mdi-water',
-    title: 'WATSAN Science Node',
-    desc:  'Water quality monitoring, pH, turbidity, on-chain certificates',
-  },
-  {
-    id:    'food',
-    icon:  'mdi-sprout',
-    title: 'Food Systems Station',
-    desc:  'Permaculture, farm mapping, food co-op business management',
-  },
-  {
-    id:    'health',
-    icon:  'mdi-heart-pulse',
-    title: 'Health & Green Business',
-    desc:  'Healthcare outpost, clean energy training, green enterprise',
-  },
-  {
-    id:    'command',
-    icon:  'mdi-hexagon-multiple',
-    title: 'Complete Station',
-    desc:  'All five domains — for established SCD Hub communities',
-  },
-]
-
-const cwSelectedLabel = computed(
-  () => CW_ECO_PATHWAYS.find(p => p.id === selectedCwPathway.value)?.title ?? ''
+// ── Settlement focus — shown at both surface-deed and cluster-world claim
+// time. Pre-selected from ?suggestedFocus=<id> when the user arrived via a
+// subsystem page's own "Start a settlement" CTA (see e.g. PfasCitizenSciencePage,
+// EcoLibrary, KnowledgeKeepersPage, RewardsPage), so the wordy generic form
+// collapses to a one-click confirm instead of an open choice every time.
+const selectedFocus = ref<string | null>(
+  getSettlement(surfaceKey(claimPlanet.value || 'x'))?.focus
+  || (route.query.suggestedFocus as string)
+  || consumeSuggestedFocus()
+  || null
 )
+const cwHandle       = ref('')
+const showCwAdvanced = ref(false)
+
+const selectedFocusLabel = computed(() => focusLabel(selectedFocus.value))
 
 function proceedCwMint() {
   // Record settlement intent in browser storage
@@ -1620,23 +938,13 @@ function proceedCwMint() {
       displayName: `${cwSystem.value} · ${cwPlanet.value || 'b'} (${cwCluster.value})`,
       clusterSlug: cwCluster.value,
       memberId:    cwGalaxy.value,
+      focus:       selectedFocus.value ?? undefined,
     })
   }
-  // Pre-fill exolocation form and scroll to it
-  exo.value.refBody     = cwSystem.value ? `${cwSystem.value}/${cwPlanet.value}` : cwPlanet.value
-  exo.value.coordSystem = 'exo-surface-v1'
-  exo.value.regionName  = cwHandle.value || cwExolocation.value
-  exo.value.boundary    = cwExolocation.value
-  if (selectedCwPathway.value) {
-    const p = CW_ECO_PATHWAYS.find(pw => pw.id === selectedCwPathway.value)
-    if (p) station.value.category = selectedCwPathway.value === 'health' ? 'healthcare' : selectedCwPathway.value
-  }
+  // Reveal the IPFS-pin section and prefill it from the cluster-world context.
+  pinTitle.value = cwHandle.value || cwExolocation.value
   showCwAdvanced.value = true
-  tab.value = 'exolocation'
-  void nextTick(() => {
-    const el = document.getElementById('exoloc-form')
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  })
+  void nextTick(() => scrollToForms())
 }
 
 // Moon orbital computeds
@@ -1681,389 +989,53 @@ const clusterDots = computed(() => {
   return dots
 })
 
-// Onboarding computeds
-const onboardChain = computed(() => (route.query.tab as string) === 'polygon' ? 'polygon' : 'celo')
-const onboardChainLabel = computed(() => onboardChain.value === 'polygon' ? 'Polygon (MATIC)' : 'Celo')
+// ── IPFS pinning (replaces the old wallet-connect / on-chain mint forms) ─────
 
-onMounted(async () => {
-  const { host, planet, coord, moon, lat, lon, mode, system, cluster, galaxy } = route.query as Record<string, string>
-
-  // cluster-world mode: identity is shown in the hero — no form pre-fill until pathway chosen
-  if (mode === 'cluster-world') return
-
-  if (!host && !planet) return
-  if (host && planet) exo.value.refBody = `${host}/${planet}`
-  if (coord)          exo.value.coordSystem = coord
-  if (moon)           exo.value.moonIndex = parseInt(moon) || 1
-  if (lat && lon) {
-    const latN = parseFloat(lat), lonN = parseFloat(lon)
-    const latStr = `${Math.abs(latN)}${latN >= 0 ? 'N' : 'S'}`
-    const lonStr = `${Math.abs(lonN)}${lonN >= 0 ? 'E' : 'W'}`
-    exo.value.regionName = `${latStr}, ${lonStr}`
-    exo.value.boundary   = `exo-surface-v1:${planet}:${latStr},${lonStr}`
+onMounted(() => {
+  // Arrived via a claim link (surface-deed / moon-orbital) — scroll straight
+  // to the pin section once the settlement context is on screen.
+  if (route.query.host && route.query.planet) {
+    void nextTick(() => scrollToForms())
   }
-  tab.value = 'exolocation'
-
-  await nextTick()
-  const el = document.getElementById('exoloc-form')
-  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
 })
 
-// Derived: is the selected coordinate system a moon-relative one?
-const isMoonCoord = computed(() =>
-  ['exo-moon-surface-v1', 'exo-moon-lagrange-v1', 'exo-moon-interface-v1',
-   'exo-lunar-orbital-v1'].includes(exo.value.coordSystem)
-)
-const isMoonSurface  = computed(() => exo.value.coordSystem === 'exo-moon-surface-v1')
-const isMoonLagrange = computed(() => exo.value.coordSystem === 'exo-moon-lagrange-v1')
-const isMoonInterface = computed(() => exo.value.coordSystem === 'exo-moon-interface-v1')
-
-const station = ref({
-  name:            '',
-  category:        'gallery',
-  exolocationRef:  '',
+/** Best-effort exoloc address for whatever mode the page is currently in. */
+const currentExolocAddress = computed(() => {
+  if (mintMode.value === 'cluster-world' || mintMode.value === 'cluster-outpost') {
+    return cwExolocation.value
+  }
+  if (claimHost.value && claimPlanet.value) {
+    return `exo-surface-v1:${claimHost.value}:${claimPlanet.value}`
+  }
+  const host   = (route.query.host as string)   ?? ''
+  const planet = (route.query.planet as string) ?? ''
+  const coord  = (route.query.coord as string)  ?? 'exo-surface-v1'
+  return host && planet ? `${coord}:${host}:${planet}` : ''
 })
 
-const module_ = ref({
-  type:       'gallery',
-  stationRef: '',
-})
+const pinTitle       = ref('')
+const pinDescription = ref('')
+const pinLoading     = ref(false)
+const pinCid         = ref<string | null>(null)
+const pinError       = ref<string | null>(null)
 
-const solution = ref({
-  category:         'watsan',
-  impactMetric:     '',
-  recipientAddress: '',
-})
-
-// ── Fee isolation — each value has its own independent variable path ──────────
-// NEVER combine community yield and network fee in a single expression.
-//
-// CURRENT MODEL: initial mint is FREE (utility-first, network growth phase).
-// Exotopia does not operate a secondary market or resale mechanism, so there
-// is no aftermarket fee to compute or display — see
-// RISK_REDUCTION_RECOMMENDATIONS.md §1 for why this was removed rather than
-// just set to a 0% placeholder. Never reintroduce a fiat (e.g. KES) exchange
-// rate display tied to in-app points/tokens — see §2.
-
-// Initial mint cost — FREE
-const mintCostUSD = '0.00'
-
-// ── Validation ────────────────────────────────────────────────────────────────
-
-const exoFormValid     = computed(() => exo.value.refBody.trim().length > 0 && exo.value.regionName.trim().length >= 2)
-const stationFormValid = computed(() => station.value.name.trim().length > 0 && station.value.exolocationRef.startsWith('exo-'))
-const moduleFormValid  = computed(() => module_.value.stationRef.trim().length > 0)
-const solutionFormValid = computed(() => solution.value.impactMetric.trim().length > 0 && solution.value.recipientAddress.trim().length > 10)
-
-// ── Exolocation EVM state (Polygon Amoy) ──────────────────────────────────────
-
-const exoloDryResult = ref<DryRunResult | null>(null)
-const exoloResult    = ref<MintResult   | null>(null)
-const exoloLoading   = ref(false)
-
-// ── Pre-mint disclaimer — required for every mint type on this page ──────────
-// An affirmative, timestamped click-through beats a buried ToS clause under
-// consumer-protection review. Logged to localStorage (one entry per accepted
-// mint action) rather than only held in memory, so it survives page reload.
-const mintDisclaimerAccepted = ref(false)
-
-function logMintDisclaimerAcceptance(mintType: string) {
-  const record = { mintType, acceptedAt: new Date().toISOString() }
+async function doPin() {
+  if (!currentExolocAddress.value || !pinTitle.value.trim()) return
+  pinLoading.value = true
+  pinError.value   = null
+  pinCid.value      = null
   try {
-    const key = 'exo.mint-disclaimer-log'
-    const existing = JSON.parse(localStorage.getItem(key) ?? '[]') as unknown[]
-    existing.push(record)
-    localStorage.setItem(key, JSON.stringify(existing))
-  } catch { /* private mode / storage unavailable — non-fatal, mint still proceeds */ }
-  console.info('[MINT DISCLAIMER ACCEPTED]', record)
-}
-
-// ── Actions ───────────────────────────────────────────────────────────────────
-
-async function dryRun(type: string) {
-  if (type !== 'exolocation') {
-    console.info(`[MINT DRY RUN] type=${type} — no on-chain transaction dispatched`)
-    return
-  }
-  exoloDryResult.value = null
-  exoloResult.value    = null
-  exoloLoading.value   = true
-  try {
-    const meta     = buildExolocMeta(buildExolocParams())
-    const addr     = walletAddress.value ?? await ensureWallet() ?? undefined
-    const contract = TESTNET_CONTRACTS.amoy.exolocNft!
-    exoloDryResult.value = await dryRunMint(meta, POLYGON_AMOY, contract, addr)
-  } finally {
-    exoloLoading.value = false
-  }
-  // Also show the metadata preview panel
-  refreshMetaPreview()
-  metaPreviewOpen.value = true
-}
-
-// ── Metadata preview state ────────────────────────────────────────────────────
-
-const metaPreview     = ref<string | null>(null)    // pretty-printed JSON for display
-const metaPreviewOpen = ref(false)
-const metaCopied      = ref(false)
-
-function buildExolocParams(): ExolocParams {
-  const [rawHost, rawPlanet] = exo.value.refBody.split('/')
-  const host   = rawHost   ?? exo.value.refBody
-  const planet = rawPlanet ?? exo.value.refBody
-
-  // Try to read lat/lon from route if they were set by PlanetClaimOverlay
-  const latVal = parseFloat((route.query.lat as string) ?? '')
-  const lonVal = parseFloat((route.query.lon as string) ?? '')
-
-  return {
-    planet_name:      planet.trim(),
-    hostname:         host.trim(),
-    coord_system:     exo.value.coordSystem,
-    region:           exo.value.regionName || exo.value.boundary.split(':').pop() || '',
-    boundary:         exo.value.boundary   || `${exo.value.coordSystem}:${planet.trim()}:${exo.value.regionName}`,
-    plot_lat:         isNaN(latVal) ? undefined : latVal,
-    plot_lon:         isNaN(lonVal) ? undefined : lonVal,
-    zone_name:        undefined,
-    climate_class:    undefined,
-    trophic_level:    exo.value.coordSystem.includes('moon') ? 'L4 SUBLUNARY' : 'L2 PLANETARY',
-    pathway_id:       station.value.category || undefined,
-    moon_index:       exo.value.moonIndex > 1 ? exo.value.moonIndex : undefined,
-    lagrange_point:   exo.value.lagrangePoint || undefined,
-    interface_zone:   exo.value.interfaceZone || undefined,
-    resonance_split:  { ...SETTLEMENT_SPLIT },
-  }
-}
-
-function refreshMetaPreview() {
-  try {
-    const params = buildExolocParams()
-    const meta   = buildExolocMeta(params)
-    metaPreview.value = JSON.stringify(meta, null, 2)
-  } catch {
-    metaPreview.value = null
-  }
-}
-
-async function copyMetaPreview() {
-  if (!metaPreview.value) return
-  await navigator.clipboard.writeText(metaPreview.value)
-  metaCopied.value = true
-  setTimeout(() => { metaCopied.value = false }, 2000)
-}
-
-// ── doMint — unified local dispatcher (replaces shadowed import name) ──────────
-// Builds metadata, shows preview, then dispatches to the right chain driver.
-// Algorand (exolocation/station/module/solution) → stub + preview for now.
-// EVM chains (Polygon, Celo) → use evmExecuteMint via polyExecute / celoExecute.
-
-const arc69Preview = computed((): string => {
-  if (!metaPreview.value) return ''
-  try {
-    const params = buildExolocParams()
-    const note   = {
-      standard: 'arc69',
-      media_url: 'ipfs://<CID-after-upload>',
-      mime_type: 'application/json',
-      properties: {
-        exoloc:      `${params.coord_system}:${params.planet_name}:${params.region}`,
-        chain:       'algorand',
-        protocol:    'pon_ink_v1',
-        resonance:   params.resonance_split,
-      },
+    const metadata: SettlementPinMetadata = {
+      title:              pinTitle.value.trim(),
+      description:        pinDescription.value.trim() || undefined,
+      exolocationAddress: currentExolocAddress.value,
+      createdAt:          new Date().toISOString(),
     }
-    return JSON.stringify(note, null, 2)
-  } catch { return '' }
-})
-
-async function doMint(type: string) {
-  if (!mintDisclaimerAccepted.value) {
-    exoloResult.value = { success: false, error: 'Please accept the disclaimer above before minting.' }
-    return
-  }
-
-  if (type !== 'exolocation') {
-    refreshMetaPreview()
-    metaPreviewOpen.value = true
-    // Show a visible result message instead of silent console.info
-    exoloResult.value = {
-      success: false,
-      error: `${type} chain integration is in development — metadata preview is shown above.`,
-    }
-    return
-  }
-
-  exoloResult.value  = null
-  exoloLoading.value = true
-  try {
-    // Fail fast on undeployed contract — no wallet connection needed
-    const contract = TESTNET_CONTRACTS.amoy.exolocNft!
-    if (contract.startsWith('PLACE')) {
-      exoloResult.value = {
-        success: false,
-        error: 'Contract not yet deployed on Polygon Amoy. Set VITE_AMOY_EXOLOC_CONTRACT in .env.local after running the deploy script.',
-      }
-      return
-    }
-
-    const addr = walletAddress.value ?? await ensureWallet()
-    if (!addr) { exoloResult.value = { success: false, error: 'No wallet connected. Install MetaMask or another EVM wallet.' }; return }
-    walletAddress.value = addr
-
-    logMintDisclaimerAcceptance(type)
-    const meta = buildExolocMeta({ ...buildExolocParams(), minted_by: addr })
-    exoloResult.value = await evmExecuteMint(meta, POLYGON_AMOY, contract, addr)
+    pinCid.value = await pinSettlement(metadata)
+  } catch (e) {
+    pinError.value = e instanceof Error ? e.message : String(e)
   } finally {
-    exoloLoading.value = false
-  }
-}
-
-// ── Polygon / MATIC state ─────────────────────────────────────────────────────
-
-const POLY_TYPES = [
-  { label: '$SUNLIGHT SUNLIGHT NFT',        value: 'sunlight'    },
-  { label: 'Water Quality Cert',     value: 'wq_cert' },
-]
-const SUNLIGHT_LICENSES = [
-  { label: 'Personal use',     value: 'personal_use' },
-  { label: 'Commercial',       value: 'commercial'   },
-  { label: 'Sync licensing',   value: 'sync'         },
-  { label: 'Exclusive rights', value: 'exclusive'    },
-]
-
-const polyType    = ref<'sunlight' | 'wq_cert'>('sunlight')
-const polyLoading = ref(false)
-const polyDryResult = ref<DryRunResult | null>(null)
-const polyResult    = ref<MintResult | null>(null)
-const polyGasEstimate = ref('connect wallet to estimate')
-
-const sunlight = ref({
-  title: '', artist: '', duration_sec: 0, bpm: null as number | null,
-  key: null as string | null, license: 'personal_use' as const,
-  ipfs_audio_cid: '', description: '',
-})
-
-const wqCert = ref({
-  cert_id: '', location_name: '', measured_by: '',
-  ph: null as number | null, turbidity_ntu: null as number | null,
-  nitrate_mg_l: null as number | null, potable: false, date_utc: new Date().toISOString().split('T')[0]!,
-})
-
-const polyCanMint = computed(() => !!polyDryResult.value?.valid)
-
-async function polyDryRun() {
-  polyLoading.value = true
-  polyResult.value  = null
-  try {
-    const meta = polyType.value === 'sunlight'
-      ? buildSunlightMeta({ ...sunlight.value, license: sunlight.value.license as any })
-      : buildWqCertMeta(wqCert.value)
-    const addr = walletAddress.value ?? await ensureWallet() ?? undefined
-    const contract = polyType.value === 'sunlight'
-      ? TESTNET_CONTRACTS.amoy.barsNft!
-      : TESTNET_CONTRACTS.amoy.wqCertNft!
-    polyDryResult.value = await dryRunMint(meta, POLYGON_AMOY, contract, addr ?? undefined)
-    if (polyDryResult.value.estimatedGasEth) {
-      polyGasEstimate.value = polyDryResult.value.estimatedGasEth
-    }
-  } catch (e: any) {
-    polyDryResult.value = { valid: false, metadataJson: '', metadataBytes: 0, errors: [e.message ?? String(e)], warnings: [] }
-  } finally {
-    polyLoading.value = false
-  }
-}
-
-async function polyExecute() {
-  polyLoading.value = true
-  try {
-    const addr = walletAddress.value ?? await ensureWallet()
-    if (!addr) { polyResult.value = { success: false, error: 'No wallet connected. Install MetaMask or another EVM wallet.' }; return }
-    const meta     = polyType.value === 'sunlight'
-      ? buildSunlightMeta({ ...sunlight.value, license: sunlight.value.license as any })
-      : buildWqCertMeta(wqCert.value)
-    const contract = polyType.value === 'sunlight'
-      ? TESTNET_CONTRACTS.amoy.barsNft!
-      : TESTNET_CONTRACTS.amoy.wqCertNft!
-    polyResult.value = await evmExecuteMint(meta, POLYGON_AMOY, contract, addr)
-  } catch (e: any) {
-    polyResult.value = { success: false, error: e.message ?? String(e) }
-  } finally {
-    polyLoading.value = false
-  }
-}
-
-// ── Celo state ────────────────────────────────────────────────────────────────
-
-const CELO_TYPES = [
-  { label: 'Community Badge',         value: 'community_badge' },
-  { label: 'Eco-ops Token',           value: 'eco_ops_token'   },
-]
-const ECO_OPS_TYPES = [
-  { label: 'Water Quality',    value: 'wqMap'        },
-  { label: 'Waste Mapping',    value: 'garbageMap'   },
-  { label: 'Farm Practice',    value: 'farmMap'       },
-  { label: 'Resource Product', value: 'productMap'   },
-  { label: 'Transport',        value: 'transportMap' },
-  { label: 'Storage',          value: 'storageMap'   },
-  { label: 'Source',           value: 'sourceMap'    },
-  { label: 'Cleaning',         value: 'cleaningMap'  },
-]
-
-const celoType    = ref<'community_badge' | 'eco_ops_token'>('community_badge')
-const celoLoading = ref(false)
-const celoDryResult = ref<DryRunResult | null>(null)
-const celoResult    = ref<MintResult | null>(null)
-const celoGasEstimate = ref('connect wallet to estimate')
-
-const badge = ref({
-  badge_id: `BADGE-${Date.now()}`, badge_name: '', community: '',
-  recipient: '', awarded_for: '', tier: 'bronze' as 'bronze'|'silver'|'gold'|'platinum',
-})
-
-const ecoToken = ref({
-  token_id: '', activity_type: 'wqMap' as any,
-  participant: '', location_name: '', checkin_count: 0,
-  milestone: '', group: null as string | null,
-})
-
-const celoCanMint = computed(() => !!celoDryResult.value?.valid)
-
-async function celoDryRun() {
-  celoLoading.value = true
-  celoResult.value  = null
-  try {
-    const meta = celoType.value === 'community_badge'
-      ? buildCommunityBadgeMeta(badge.value)
-      : buildEcoOpsTokenMeta(ecoToken.value)
-    const addr     = walletAddress.value ?? await ensureWallet() ?? undefined
-    const contract = celoType.value === 'community_badge'
-      ? TESTNET_CONTRACTS.alfajores.communityBadge!
-      : TESTNET_CONTRACTS.alfajores.ecoOpsToken!
-    celoDryResult.value = await dryRunMint(meta, CELO_ALFAJORES, contract, addr ?? undefined)
-    if (celoDryResult.value.estimatedGasEth) celoGasEstimate.value = celoDryResult.value.estimatedGasEth
-  } catch (e: any) {
-    celoDryResult.value = { valid: false, metadataJson: '', metadataBytes: 0, errors: [e.message ?? String(e)], warnings: [] }
-  } finally {
-    celoLoading.value = false
-  }
-}
-
-async function celoExecute() {
-  celoLoading.value = true
-  try {
-    const addr = walletAddress.value ?? await ensureWallet()
-    if (!addr) { celoResult.value = { success: false, error: 'No wallet connected. Install MetaMask, Celo Valora, or another EVM wallet.' }; return }
-    const meta     = celoType.value === 'community_badge'
-      ? buildCommunityBadgeMeta(badge.value)
-      : buildEcoOpsTokenMeta(ecoToken.value)
-    const contract = celoType.value === 'community_badge'
-      ? TESTNET_CONTRACTS.alfajores.communityBadge!
-      : TESTNET_CONTRACTS.alfajores.ecoOpsToken!
-    celoResult.value = await evmExecuteMint(meta, CELO_ALFAJORES, contract, addr)
-  } catch (e: any) {
-    celoResult.value = { success: false, error: e.message ?? String(e) }
-  } finally {
-    celoLoading.value = false
+    pinLoading.value = false
   }
 }
 </script>
@@ -3443,6 +2415,16 @@ async function celoExecute() {
   background: rgba(0, 100, 55, 0.55);
   border-color: rgba(80, 230, 130, 0.65);
 }
+.pc-cta-btn--confirm:disabled {
+  color: rgba(120, 150, 140, 0.45);
+  background: rgba(20, 30, 26, 0.30);
+  border-color: rgba(60, 90, 80, 0.25);
+  cursor: not-allowed;
+}
+.pc-cta-btn--confirm:disabled:hover {
+  background: rgba(20, 30, 26, 0.30);
+  border-color: rgba(60, 90, 80, 0.25);
+}
 
 .pc-cta-btn--back {
   color: rgba(80, 140, 180, 0.65);
@@ -3453,4 +2435,65 @@ async function celoExecute() {
   background: rgba(0, 30, 60, 0.30);
   border-color: rgba(80, 150, 200, 0.40);
 }
+
+/* ── Publish a settlement page ─────────────────────────────────────────── */
+
+.publish-card {
+  background: rgba(0, 12, 22, 0.55);
+  border: 1px solid rgba(0, 160, 200, 0.18);
+  border-radius: 8px;
+  padding: 16px;
+}
+.publish-card__label {
+  font-family: 'Courier New', monospace;
+  font-size: 10px; letter-spacing: 0.12em;
+  color: rgba(0, 200, 240, 0.65);
+  margin-bottom: 6px;
+}
+.publish-card__desc {
+  font-size: 12px; line-height: 1.6;
+  color: rgba(140, 190, 220, 0.72);
+  margin-bottom: 12px;
+}
+.publish-tech-grid {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  margin-bottom: 14px;
+}
+.publish-tech-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(0, 8, 22, 0.60);
+  color: rgba(160, 200, 225, 0.75);
+  cursor: pointer;
+  transition: all 0.12s;
+}
+.publish-tech-chip:hover { background: rgba(0, 40, 80, 0.55); }
+.publish-tech-chip--active {
+  border-color: rgba(0, 200, 240, 0.55);
+  color: rgba(200, 235, 255, 0.95);
+  background: rgba(0, 60, 90, 0.45);
+}
+.publish-tech-checkbox { accent-color: #00c8f0; }
+
+.publish-result {
+  font-size: 12.5px;
+  color: rgba(140, 190, 220, 0.80);
+}
+.publish-result__link {
+  color: rgba(0, 220, 255, 0.85);
+  font-family: 'Courier New', monospace;
+  text-decoration: none;
+}
+.publish-result__link:hover { color: rgba(80, 235, 255, 0.95); }
+
+.publish-error {
+  margin-top: 10px;
+  font-size: 11.5px;
+  color: rgba(255, 110, 110, 0.85);
+}
+
+.publish-card__signin { max-width: 320px; }
 </style>

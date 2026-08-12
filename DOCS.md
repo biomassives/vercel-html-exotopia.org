@@ -45,11 +45,14 @@ Technical specs for individual features and UI systems.
 |---|---|---|
 | [SPEC_CELESTIAL_REVEAL.md](SPEC_CELESTIAL_REVEAL.md) | LOD-driven reveal of real Webb/Hubble/Chandra imagery; nav gap fill; 5-sprint plan | Specced |
 | [SPEC_COSMOS_ENTRY.md](SPEC_COSMOS_ENTRY.md) | CosmosPage rename from WelcomePage; WelcomeOverlay component; role-aware entry | Specced |
+| [SPEC_DARK_MATTER_VIEW.md](SPEC_DARK_MATTER_VIEW.md) | Replaces the non-functional X-RAY view-mode toggle; halo-extent overlay from real per-cluster M200/r_vir data; one-off Bullet Cluster resolved-offset image | Draft |
 | [SPEC_DEFENDERNAV.md](SPEC_DEFENDERNAV.md) | Defender arcade-style 360° horizontal strip navigator; 3 modes; GSAP fly-to + E8 portal transit | Specced |
 | [SPEC_GALAXY_CLUSTER_VIEWER.md](SPEC_GALAXY_CLUSTER_VIEWER.md) | Galaxy cluster viewer upgrade; morphology bars; LOD star reveal; subcluster detection | Specced |
 | [SPEC_NFT_FRONTIER.md](SPEC_NFT_FRONTIER.md) | Frontier exolocation NFTs for predicted/candidate/theoretical exoplanets; upgrade chain; 4-tier system | Specced |
 | [SPEC_PROVENANCE.md](SPEC_PROVENANCE.md) | Provenance block schema; data source badging (catalog vs generated); observatory report field | Active |
+| [SPEC_SHAREABLE_ROUTES.md](SPEC_SHAREABLE_ROUTES.md) | Standardized query-param convention (`at`/`cam`/`zoom`/`pan`/`bearing`) so a shared URL reproduces camera/zoom/pan state anywhere in the visualization, not just the coarse route | Draft |
 | [SPEC_STARSYSTEM_ALGORITHM.md](SPEC_STARSYSTEM_ALGORITHM.md) | 3-stage deterministic pipeline: stellar populations → orbital architecture → planet composition; 2,823 galaxies → 10,900 planets | Active |
+| [SPEC_XCLUSTER_STARSYSTEMS.md](SPEC_XCLUSTER_STARSYSTEMS.md) | Extends the star-system generation pipeline to the 345 Takey2013 X-ray clusters (26,225 galaxies, sprite-only today); tiered generation strategy; literature-researched calibration constants for all 15 named clusters | Draft |
 | [SETTLEMENT_ADDRESS_API.md](SETTLEMENT_ADDRESS_API.md) | Dependency chain behind a settlement address (reference data → construction → local record → chain metadata → mint); companion to SPEC_EXOLOC_ADDRESS.md; documents that the spec's `/api/v1/exoloc` endpoint is not implemented | Active |
 | [SPEC_COMMUNITY_NODES.md](SPEC_COMMUNITY_NODES.md) | Business listings/locations, creative pages, and future node types; populates the previously-empty OrbitalGalleryEntry pipeline; node_type extensibility mechanism; self-host/export story | Active |
 
@@ -70,6 +73,7 @@ Specs for the broader SCD Hub platform and inter-platform protocols.
 | [SPEC_PON_INK.md](SPEC_PON_INK.md) | pon.ink platform — sound tools, events, M-Pesa/Stripe payments, NFT minting, user dashboard | Specced |
 | [SPEC_PRIVACY_TIMESCALES.md](SPEC_PRIVACY_TIMESCALES.md) | Privacy architecture, vulnerability lifecycle, active defense, cross-scale anonymization | Specced |
 | [SPEC_SECURITY_BULLETIN.md](SPEC_SECURITY_BULLETIN.md) | Security notification bulletin format; CVE alert relay; responsible disclosure pipeline | Draft |
+| [SPEC_SELF_HOSTED_NETWORK.md](SPEC_SELF_HOSTED_NETWORK.md) | Blockchain-free self-hosting: Supabase/Git/Vercel baseline, Cloudflare/Redis/Appwrite refinements layer, and the open questions behind instance-to-instance data sharing | Draft |
 | [SPEC_WORLDBRIDGER_ONE.md](SPEC_WORLDBRIDGER_ONE.md) | Worldbridger One protocol — collective creative attribution, multi-author asset fracturing, dynamic resource commitments | Specced |
 
 > **Note:** `SPEC_FEE_ISOLATION00.md` is an older near-identical draft of `SPEC_FEE_ISOLATION.md` (two-line wording difference). Use `SPEC_FEE_ISOLATION.md` as canonical.
@@ -92,6 +96,7 @@ Published-intent writing about the platform, ecosystem, and communities. All GPL
 | [blog-shared-language-lamu-ecoledger.md](blog-shared-language-lamu-ecoledger.md) | Introducing the Eco-Ledger for Mpeketoni; shared vocabulary for land and livelihood records | Field |
 | [blog-costa-rica-biodiversity-platform.md](blog-costa-rica-biodiversity-platform.md) | Three-generation vision for biodiversity collaboration in Costa Rica; SCD Hub regional strategy | Field |
 | [blog-settlement-address-api.md](blog-settlement-address-api.md) | The settlement address dependency chain end to end; confirms SPEC_EXOLOC_ADDRESS.md's `/api/v1/exoloc` endpoint isn't implemented and there's no server-side settlements table | Dev / ecosystem |
+| [blog-self-hosted-exotopia.md](blog-self-hosted-exotopia.md) | The three-step blockchain-free self-host path (Supabase/Git/Vercel), the optional refinements layer, and the honest state of instance-to-instance data sharing | Dev / community / ecosystem |
 
 ---
 

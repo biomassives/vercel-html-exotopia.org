@@ -20,6 +20,10 @@ import { reactive, computed, watch } from 'vue'
 import type { Ref } from 'vue'
 import * as THREE from 'three'
 import { safeRead, safeWrite, hashStorageKey, encryptForStorage, decryptFromStorage } from './storage-cipher'
+import { tryLoadGLTF, ASSET_PATHS } from './asset-loader'
+import { disposeScene } from './three-utils'
+import { REMEDIATION_METHODS } from 'src/data/pfas-methods-library'
+import { supabase } from './supabase'
 
 // ── Core types ────────────────────────────────────────────────────────────────
 
@@ -53,9 +57,38 @@ export interface SettlementItem {
   airdropBundle?:  string        // pon.ink bundle type
   // Eco-ops
   community?:      string        // name of the SHG / community that earned it
+  // Voxel-built presets (see requiresBuilder on ItemMeshPreset) — a settler's own
+  // colour-grid sculpture. Absent (or empty) means "not yet designed": buildItemMesh()
+  // falls back to that preset's plain placeholder shape.
+  voxels?:         VoxelPayload
   // Metadata
   acquiredAt:      number        // unix ms
   settlementKey:   string
+}
+
+/**
+ * A settler-designed voxel sculpture — a fixed-size grid of colours, nothing else.
+ * Deliberately not free text or an image: there's no field here that could carry a
+ * slur or an objectionable photo, so unlike a hypothetical "upload your own art"
+ * feature, this needs no admin review queue or public-visibility gate. Same trust
+ * model as the gift-code sharing below it: peer-to-peer, attribution only.
+ */
+export interface VoxelPayload {
+  size:    number     // grid is size × size × size — fixed at VOXEL_GRID_SIZE for v1
+  palette: string[]   // up to VOXEL_MAX_COLORS '#RRGGBB' strings used in this sculpture
+  cells:   number[]   // flat array, length size**3; 0 = empty, else a 1-based palette index
+}
+
+export const VOXEL_GRID_SIZE  = 5
+export const VOXEL_MAX_COLORS = 8
+
+/** True if the payload has valid shape and at least one non-empty cell. */
+export function hasVoxelContent(voxels: VoxelPayload | undefined): voxels is VoxelPayload {
+  return !!voxels
+    && Number.isInteger(voxels.size) && voxels.size > 0
+    && Array.isArray(voxels.palette) && voxels.palette.length > 0
+    && Array.isArray(voxels.cells) && voxels.cells.length === voxels.size ** 3
+    && voxels.cells.some(c => c > 0)
 }
 
 // ── Mesh preset catalogue ─────────────────────────────────────────────────────
@@ -67,6 +100,9 @@ export interface ItemMeshPreset {
   acquiredBy:   ItemAcquisitionType[]
   description:  string
   buildCost?:   number           // for constructed items
+  // Acquiring this preset opens a creative dialog (e.g. VoxelBuilderDialog) instead
+  // of an instant add — SettlementInventory.vue checks this flag, not a preset key.
+  requiresBuilder?: boolean
 }
 
 /** Preset key for the free lighting item every settlement is founded with. */
@@ -122,8 +158,10 @@ export const ITEM_MESH_PRESETS: Record<string, ItemMeshPreset> = {
   },
   'art-sphere': {
     label: 'Art Sphere', defaultColor: 0xff6688, zoneDefault: 'courtyard',
-    acquiredBy: ['traded', 'generated'],
-    description: 'Displays community artwork or an NFT piece.',
+    acquiredBy: ['constructed', 'traded', 'generated'],
+    description: 'A settler-built voxel sculpture on display — design it yourself, or receive one as a trade.',
+    buildCost: 30,
+    requiresBuilder: true,
   },
   'comms-relay': {
     label: 'Comms Relay', defaultColor: 0x55ffaa, zoneDefault: 'gateway',
@@ -143,6 +181,23 @@ export const ITEM_MESH_PRESETS: Record<string, ItemMeshPreset> = {
     acquiredBy: ['eco-ops', 'reward'],
     description: 'Marks a PFAS/PFOA decontamination project logged in your citizen-science work. Color reflects project status at the time it was attached (amber = planning/active, cyan = monitoring, green = complete) — set via the color override when the item is added, not live-updating.',
   },
+
+  // ── Technologies grouping (SPEC_AUTHORED_ART_LIBRARY.md §3–5) ──────────────
+  // One entry per REMEDIATION_METHODS[].key (pfas-methods-library.ts) — never
+  // hand-duplicated here, so the key can't drift out of sync with the source
+  // catalogue. Renders as the generic-orb placeholder (buildItemMesh()'s
+  // default case, since no case below matches these keys) until a real .glb
+  // exists at ASSET_PATHS.technology(key) — see enhanceTechnologyMesh().
+  ...Object.fromEntries(REMEDIATION_METHODS.map((m): [string, ItemMeshPreset] => [m.key, {
+    label: m.name,
+    defaultColor: m.media === 'water' ? 0x2288cc : m.media === 'soil' ? 0x996633 : 0x55aa88,
+    zoneDefault: m.media === 'soil' ? 'garden' : 'water-edge',
+    // Self-selected by the settlement owner to feature on their public page
+    // (see settlement_profiles.technology_keys) — not a certificate/effort
+    // gate like the reward-only presets above.
+    acquiredBy: ['eco-ops'],
+    description: m.mechanism,
+  }])),
 }
 
 // ── Zone world positions (relative to dome centre at ground level) ────────────
@@ -196,7 +251,47 @@ export function autoPosition(
  */
 export const MAX_ITEM_LIGHTS = 12
 
-export function buildItemMesh(presetKey: string, colorHex: string, withLight = true): THREE.Group {
+/**
+ * One InstancedMesh cube per non-empty voxel cell — used both for the placed
+ * art-sphere mesh (below) and the VoxelBuilderDialog's live preview, so the two
+ * always render identically. Centered on the group's local origin; callers
+ * position/scale the returned mesh as needed.
+ */
+export function buildVoxelInstancedMesh(voxels: VoxelPayload): THREE.InstancedMesh {
+  const { size, palette, cells } = voxels
+  const cellSize = 1
+  const offset = (size - 1) / 2
+
+  const filled: { x: number; y: number; z: number; color: THREE.Color }[] = []
+  for (let i = 0; i < cells.length; i++) {
+    const paletteIdx = cells[i]!
+    if (paletteIdx <= 0) continue
+    const hex = palette[paletteIdx - 1]
+    if (!hex) continue
+    const x = i % size
+    const y = Math.floor(i / size) % size
+    const z = Math.floor(i / (size * size))
+    filled.push({ x: x - offset, y: y - offset, z: z - offset, color: new THREE.Color(hex) })
+  }
+
+  const geometry = new THREE.BoxGeometry(cellSize * 0.92, cellSize * 0.92, cellSize * 0.92)
+  const material = new THREE.MeshPhongMaterial({ color: 0xffffff, shininess: 40 })
+  const mesh = new THREE.InstancedMesh(geometry, material, Math.max(filled.length, 1))
+
+  const m = new THREE.Matrix4()
+  filled.forEach((cell, idx) => {
+    m.makeTranslation(cell.x * cellSize, cell.y * cellSize, cell.z * cellSize)
+    mesh.setMatrixAt(idx, m)
+    mesh.setColorAt(idx, cell.color)
+  })
+  mesh.count = filled.length
+  if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true
+  mesh.instanceMatrix.needsUpdate = true
+
+  return mesh
+}
+
+export function buildItemMesh(presetKey: string, colorHex: string, withLight = true, voxels?: VoxelPayload): THREE.Group {
   const col   = new THREE.Color(colorHex)
   const group = new THREE.Group()
 
@@ -294,18 +389,27 @@ export function buildItemMesh(presetKey: string, colorHex: string, withLight = t
       break
     }
     case 'art-sphere': {
-      const sphere = new THREE.Mesh(
-        new THREE.SphereGeometry(1.4, 18, 18),
-        new THREE.MeshPhongMaterial({ color: col, emissive: col.clone().multiplyScalar(0.18), shininess: 60 })
-      )
-      sphere.position.y = 2.2
+      // A settler's voxel sculpture, on display — falls back to a plain sphere
+      // placeholder for items with no design yet (freshly traded/generated, or
+      // pre-dating this feature).
+      let display: THREE.Object3D
+      if (hasVoxelContent(voxels)) {
+        display = buildVoxelInstancedMesh(voxels)
+        display.scale.setScalar(2.6 / voxels.size)   // fit the grid to roughly the old sphere's footprint
+      } else {
+        display = new THREE.Mesh(
+          new THREE.SphereGeometry(1.4, 18, 18),
+          new THREE.MeshPhongMaterial({ color: col, emissive: col.clone().multiplyScalar(0.18), shininess: 60 })
+        )
+      }
+      display.position.y = 2.2
       const stand = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.4, 1.8, 7), new THREE.MeshPhongMaterial({ color: 0x223344 }))
       stand.position.y = 0.9
       const orbit = new THREE.Mesh(new THREE.TorusGeometry(1.8, 0.05, 6, 32), new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: 0.45 }))
       orbit.position.y = 2.2
       orbit.rotation.x = 0.6
       const g = glow(2.0, 2.2, 0.10)
-      group.add(sphere, stand, orbit, g)
+      group.add(display, stand, orbit, g)
       break
     }
     case 'comms-relay': {
@@ -363,6 +467,60 @@ export function buildItemMesh(presetKey: string, colorHex: string, withLight = t
   return group
 }
 
+/**
+ * After buildItemMesh() has already built and (typically) been added to the
+ * scene, try to swap its procedural placeholder children for an authored
+ * .glb — see ASSET_PATHS.settlementItem in asset-loader.ts for the exact
+ * drop-in path per preset key. No-op (resolves false, group left untouched)
+ * until that file actually exists, so this is safe to call unconditionally
+ * for every item.
+ *
+ * Keeps the group's own PointLight child (if buildItemMesh added one) since
+ * an authored model isn't expected to carry its own light — the point light
+ * still lands at y=2.0 regardless of the swapped-in model's proportions.
+ *
+ * Callers that registered this group's meshes for hover/raycasting (e.g.
+ * DomeInteriorPage.vue's itemMeshArr) need to re-run that registration when
+ * this resolves true, since the previously-registered procedural meshes are
+ * disposed and no longer in the scene graph.
+ */
+export async function enhanceItemMeshWithAsset(group: THREE.Group, presetKey: string): Promise<boolean> {
+  const gltf = await tryLoadGLTF(ASSET_PATHS.settlementItem(presetKey))
+  if (!gltf) return false
+
+  const keptLight = group.children.find(c => (c as THREE.PointLight).isPointLight)
+  for (const child of [...group.children]) {
+    group.remove(child)
+    if (child !== keptLight) disposeScene(child)
+  }
+
+  group.add(gltf.scene)
+  if (keptLight) group.add(keptLight)
+  return true
+}
+
+/**
+ * Same swap-in as enhanceItemMeshWithAsset(), but for the Technologies
+ * grouping specifically (SPEC_AUTHORED_ART_LIBRARY.md) — a distinct asset
+ * folder (ASSET_PATHS.technology, not settlementItem) since these represent
+ * real, named remediation equipment rather than abstract settlement decor
+ * and get their own art direction. methodKey matches REMEDIATION_METHODS[].key.
+ */
+export async function enhanceTechnologyMesh(group: THREE.Group, methodKey: string): Promise<boolean> {
+  const gltf = await tryLoadGLTF(ASSET_PATHS.technology(methodKey))
+  if (!gltf) return false
+
+  const keptLight = group.children.find(c => (c as THREE.PointLight).isPointLight)
+  for (const child of [...group.children]) {
+    group.remove(child)
+    if (child !== keptLight) disposeScene(child)
+  }
+
+  group.add(gltf.scene)
+  if (keptLight) group.add(keptLight)
+  return true
+}
+
 // ── Per-settlement colour ─────────────────────────────────────────────────────
 // Deterministic hue from the settlement key, so every settlement's starter
 // lantern reads as visually distinct rather than one fixed stock colour.
@@ -402,6 +560,7 @@ export interface GiftCodePayload {
   donorKey:       string
   donorStarColor: string
   donorName?:     string
+  voxels?:        VoxelPayload
 }
 
 export function exportItemGiftCode(
@@ -416,8 +575,20 @@ export function exportItemGiftCode(
     donorKey:       fromSettlementKey,
     donorStarColor: starterLightColorHex(fromSettlementKey),
     ...(designerName ? { donorName: designerName } : {}),
+    ...(hasVoxelContent(item.voxels) ? { voxels: item.voxels } : {}),
   }
   return encryptForStorage(JSON.stringify(payload))
+}
+
+/** Structural validation for a voxel payload arriving over an untrusted gift code. */
+function isValidVoxelPayload(v: unknown): v is VoxelPayload {
+  if (!v || typeof v !== 'object') return false
+  const d = v as Partial<VoxelPayload>
+  return Number.isInteger(d.size) && d.size! > 0 && d.size! <= VOXEL_GRID_SIZE
+    && Array.isArray(d.palette) && d.palette.length > 0 && d.palette.length <= VOXEL_MAX_COLORS
+    && d.palette.every(c => typeof c === 'string' && /^#[0-9a-fA-F]{6}$/.test(c))
+    && Array.isArray(d.cells) && d.cells.length === d.size! ** 3
+    && d.cells.every(c => Number.isInteger(c) && c >= 0 && c <= d.palette!.length)
 }
 
 /** Decode a gift code. Returns null for malformed, foreign, or unknown-preset input. */
@@ -432,6 +603,7 @@ export function importItemGiftCode(code: string): GiftCodePayload | null {
     if (typeof d.zone !== 'string' || !(d.zone in ZONE_POSITIONS)) return null
     if (typeof d.color !== 'string' || !/^#[0-9a-fA-F]{6}$/.test(d.color)) return null
     if (typeof d.donorKey !== 'string' || !d.donorKey) return null
+    if (d.voxels !== undefined && !isValidVoxelPayload(d.voxels)) return null
     return {
       meshPreset:     d.meshPreset,
       zone:           d.zone as ItemZone,
@@ -439,6 +611,7 @@ export function importItemGiftCode(code: string): GiftCodePayload | null {
       donorKey:       d.donorKey,
       donorStarColor: typeof d.donorStarColor === 'string' ? d.donorStarColor : d.color,
       ...(typeof d.donorName === 'string' && d.donorName ? { donorName: d.donorName } : {}),
+      ...(d.voxels ? { voxels: d.voxels } : {}),
     }
   } catch {
     return null
@@ -513,6 +686,54 @@ function ensureLoaded(sk: string) {
   itemsStore[sk] = items
 }
 
+// ── Server sync (016_settlement_items.sql) — signed-in members only ────────
+//
+// Fast-follow to settlements.ts's own sync: same hybrid model (localStorage
+// stays the source of truth read on every page load; a signed-in member's
+// writes are ALSO upserted server-side so items survive a cleared cache or
+// show up on a second device). One row per (owner, settlement), holding the
+// whole item list as JSONB — matching persist()'s own always-rewrite-the-
+// full-array model, so there's no per-item diffing to get wrong.
+
+async function currentUserId(): Promise<string | null> {
+  if (!supabase) return null
+  const { data } = await supabase.auth.getSession()
+  return data.session?.user?.id ?? null
+}
+
+async function syncItemsUpsert(sk: string, items: SettlementItem[]) {
+  const uid = await currentUserId()
+  if (!uid || !supabase) return
+  await supabase.from('settlement_items')
+    .upsert({ owner_id: uid, settlement_key: sk, items }, { onConflict: 'owner_id,settlement_key' })
+}
+
+/**
+ * Called once when a member's session becomes available (see member.ts) —
+ * same integration point as settlements.ts's loadMySettlements(), and called
+ * right after it. Pulls down every settlement's items this member has on the
+ * server; a server-known settlement replaces the local cache for that
+ * settlement (it's the durable copy), and local-only settlements (not yet
+ * synced) are pushed up as-is.
+ */
+export async function loadMySettlementItems(): Promise<void> {
+  const uid = await currentUserId()
+  if (!uid || !supabase) return
+  const { data } = await supabase.from('settlement_items').select('settlement_key, items').eq('owner_id', uid)
+  const rows = (data ?? []) as { settlement_key: string; items: SettlementItem[] }[]
+  const serverKeys = new Set<string>()
+  for (const row of rows) {
+    serverKeys.add(row.settlement_key)
+    itemsStore[row.settlement_key] = row.items
+    saveItems(row.settlement_key, row.items)
+  }
+  // Push up anything already loaded locally this session that the server
+  // doesn't have yet (mirrors settlements.ts's local-only migration path).
+  for (const sk of Object.keys(itemsStore)) {
+    if (!serverKeys.has(sk)) void syncItemsUpsert(sk, itemsStore[sk]!)
+  }
+}
+
 // ── Composable ────────────────────────────────────────────────────────────────
 
 export function useSettlementItems(settlementKey: Ref<string>) {
@@ -524,7 +745,10 @@ export function useSettlementItems(settlementKey: Ref<string>) {
     set: (val: SettlementItem[]) => { itemsStore[settlementKey.value] = val },
   })
 
-  function persist() { saveItems(settlementKey.value, items.value) }
+  function persist() {
+    saveItems(settlementKey.value, items.value)
+    void syncItemsUpsert(settlementKey.value, items.value)
+  }
 
   function addItem(
     partial: Pick<SettlementItem, 'type' | 'meshPreset' | 'zone'> &
@@ -561,7 +785,7 @@ export function useSettlementItems(settlementKey: Ref<string>) {
 
   function updateItem(
     id: string,
-    patch: Partial<Pick<SettlementItem, 'color' | 'zone' | 'label'>>,
+    patch: Partial<Pick<SettlementItem, 'color' | 'zone' | 'label' | 'voxels'>>,
   ) {
     items.value = items.value.map(i => i.id === id ? { ...i, ...patch } : i)
     persist()

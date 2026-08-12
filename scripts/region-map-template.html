@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+  html, body, #map { margin: 0; padding: 0; width: 1200px; height: 800px; background: #000; }
+  /* The color transform lives on the tile pane specifically, not the whole
+     map — so overlays/attribution text (added after) stay readable and
+     aren't pushed through the same wild filter as the base tiles. */
+  .leaflet-tile-pane { filter: var(--tile-filter, none); }
+  .region-label {
+    position: absolute; left: 18px; bottom: 14px; z-index: 1000;
+    font-family: 'Trebuchet MS', Helvetica, sans-serif;
+    color: #fff; text-shadow: 0 1px 4px rgba(0,0,0,0.9), 0 0 12px rgba(0,0,0,0.6);
+    font-size: 15px; font-weight: 700; letter-spacing: 0.02em;
+  }
+</style>
+</head>
+<body>
+<div id="map"></div>
+<div class="region-label" id="label"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  // Params via URL: lat, lon, zoom, filter (CSS filter string), label
+  const p = new URLSearchParams(location.search)
+  const lat    = parseFloat(p.get('lat'))
+  const lon    = parseFloat(p.get('lon'))
+  const zoom   = parseFloat(p.get('zoom'))
+  const filter = p.get('filter') || 'none'
+  const label  = p.get('label') || ''
+
+  document.documentElement.style.setProperty('--tile-filter', filter)
+  document.getElementById('label').textContent = label
+
+  const map = L.map('map', {
+    center: [lat, lon], zoom, zoomControl: false, attributionControl: true,
+    dragging: false, scrollWheelZoom: false, doubleClickZoom: false, boxZoom: false, keyboard: false, tap: false,
+  })
+
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors',
+    crossOrigin: true,
+  }).addTo(map)
+
+  // Signal readiness to the Playwright driver once tiles have actually painted.
+  let loaded = 0
+  map.eachLayer(layer => {
+    layer.on('load', () => { loaded++; window.__mapReady = true })
+  })
+  // Fallback in case 'load' doesn't fire cleanly (e.g. all-cache hits)
+  setTimeout(() => { window.__mapReady = true }, 4000)
+</script>
+</body>
+</html>

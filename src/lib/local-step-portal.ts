@@ -24,6 +24,7 @@
  */
 
 import * as THREE from 'three'
+import { tryLoadTexture, ASSET_PATHS } from './asset-loader'
 
 // ── Planet physics input ──────────────────────────────────────────────────────
 
@@ -456,16 +457,51 @@ export class LocalStepPortal {
     const framePath = new SquarePath(FRAME_SIZE * 0.5)
     const frameGeo  = new THREE.TubeGeometry(framePath, 128, FRAME_TUBE_R, 8, true)
 
-    // Frame colour: neutral dark base with strong star-tinted emissive
-    const frameBase = lerpColor(new THREE.Color(0x0a0f1a), starColor, 0.25)
+    // Frame colour: previously pure star-tint, which washes out to flat
+    // near-white for early-type (F/A) stars and reads as a disconnected grey
+    // square sitting on top of the water instead of belonging to it. Blended
+    // toward the portal's own temperature-derived baseColor instead — same
+    // palette as the water surface below it — with saturation floored so it
+    // never goes fully neutral even for a pale star.
+    const frameAccent = lerpColor(starColor, baseColor, 0.65)
+    const frameHsl     = { h: 0, s: 0, l: 0 }
+    frameAccent.getHSL(frameHsl)
+    frameAccent.setHSL(frameHsl.h, Math.max(0.45, frameHsl.s), Math.min(0.62, Math.max(0.38, frameHsl.l)))
+    const frameBase = lerpColor(new THREE.Color(0x0a0f1a), frameAccent, 0.55)
     this._frameMat  = new THREE.MeshStandardMaterial({
       color:             frameBase,
-      emissive:          starColor,
-      emissiveIntensity: 0.85,
-      metalness:         0.80,
-      roughness:         0.18,
+      emissive:          frameAccent,
+      emissiveIntensity: 1.05,
+      metalness:         0.65,
+      roughness:         0.22,
     })
     this._group.add(new THREE.Mesh(frameGeo, this._frameMat))
+
+    // Swap in an authored normal/roughness pair for the frame if they exist —
+    // no-op until dropped in at ASSET_PATHS.portalFrameNormal/Roughness (see
+    // asset-loader.ts). Applied to the same material instance the corner
+    // accent spheres below reuse. Repeat count is tuned for the tube's UV
+    // wrap (U runs once around the square's perimeter, V around its
+    // circumference) so a tileable source texture reads as a continuous
+    // trim rather than one stretched image.
+    void Promise.all([
+      tryLoadTexture(ASSET_PATHS.portalFrameNormal),
+      tryLoadTexture(ASSET_PATHS.portalFrameRoughness),
+    ]).then(([normalMap, roughnessMap]) => {
+      if (!normalMap && !roughnessMap) return
+      if (normalMap) {
+        normalMap.wrapS = normalMap.wrapT = THREE.RepeatWrapping
+        normalMap.repeat.set(16, 1)
+        this._frameMat.normalMap = normalMap
+        this._frameMat.normalScale.set(1, 1)
+      }
+      if (roughnessMap) {
+        roughnessMap.wrapS = roughnessMap.wrapT = THREE.RepeatWrapping
+        roughnessMap.repeat.set(16, 1)
+        this._frameMat.roughnessMap = roughnessMap
+      }
+      this._frameMat.needsUpdate = true
+    })
 
     // Corner accent spheres — subtle jewel points at each corner
     const cornerPositions = [
@@ -534,8 +570,11 @@ export class LocalStepPortal {
     this._hoveredT += ((this._hovered ? 1.0 : 0.0) - this._hoveredT) * Math.min(1, dt * 10)
     u['uHovered']!.value = this._hoveredT
 
-    // Frame emissive glows brighter on hover and entering
-    this._frameMat.emissiveIntensity = 0.85 + this._hoveredT * 1.35 + this._entering * 2.20
+    // Frame emissive: a slow idle breathing pulse at rest, brighter on hover
+    // and entering — makes the portal read as "alive" even before interaction,
+    // rather than a static prop that only reacts once you're already close.
+    const idlePulse = 0.18 + 0.10 * Math.sin(elapsed * 0.85)
+    this._frameMat.emissiveIntensity = 1.05 + idlePulse + this._hoveredT * 1.35 + this._entering * 2.20
 
     // Glow sprite opacity breathes gently, stronger on hover
     const glowSprite = this._group.children.find(c => c instanceof THREE.Sprite) as THREE.Sprite | undefined

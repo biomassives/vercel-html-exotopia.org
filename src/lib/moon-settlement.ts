@@ -24,6 +24,15 @@
 
 // ── Trophic level definitions ─────────────────────────────────────────────────
 
+// Mirrors src/stores/rewards.ts's RewardTrack — kept as a local string union
+// rather than imported, since this is a lib file and rewards.ts is a Pinia
+// store (libs don't depend on stores in this codebase's layering; stores
+// depend on libs). Null means "no single track fits" — the level spans all
+// of them (L2_PLANETARY, i.e. ordinary surface settlements) or is decided by
+// a more specific child (L5_SYZYGY/L6_LIMINAL — see LAGRANGE_POINTS/
+// INTERFACE_ZONES, whose individual points/zones carry their own track).
+export type MoonLearningTrack = 'volunteering' | 'finance_literacy' | 'educating_others' | null
+
 export interface TrophicLevel {
   level:       number         // 1–6
   code:        string         // e.g. 'L4_SUBLUNARY'
@@ -33,6 +42,12 @@ export interface TrophicLevel {
   stability:   'stable' | 'unstable' | 'semi-stable' | 'surface'
   accessDiff:  'low' | 'medium' | 'high' | 'extreme'
   notes:       string
+  // "Advantage-opportunity" mapping — which of the three existing reward
+  // tracks (src/data/rewards-catalog.ts) this position is the natural home
+  // for, so a settlement's location carries real meaning beyond its address
+  // prefix. See LAGRANGE_POINTS/INTERFACE_ZONES for the finer-grained mapping
+  // within L5/L6.
+  learningTrack: MoonLearningTrack
 }
 
 export const TROPHIC_HIERARCHY: TrophicLevel[] = [
@@ -42,6 +57,7 @@ export const TROPHIC_HIERARCHY: TrophicLevel[] = [
     description: 'Orbital zone around the host star — the highest-energy trophic level.',
     stability: 'stable', accessDiff: 'extreme',
     notes: 'Requires shielding against stellar radiation. Energy-rich but hostile.',
+    learningTrack: 'educating_others',
   },
   {
     level: 2, code: 'L2_PLANETARY', name: 'Planetary Surface/Orbit',
@@ -49,6 +65,7 @@ export const TROPHIC_HIERARCHY: TrophicLevel[] = [
     description: 'On or in orbit around a confirmed exoplanet.',
     stability: 'stable', accessDiff: 'medium',
     notes: 'Primary habitation tier. HZ planets most suitable for open-air biomes.',
+    learningTrack: null,   // ordinary surface settlements — no single track fits better than another
   },
   {
     level: 3, code: 'L3_LUNAR', name: 'Moon Orbit',
@@ -56,6 +73,7 @@ export const TROPHIC_HIERARCHY: TrophicLevel[] = [
     description: 'In orbit around an exomoon — above the moon\'s surface.',
     stability: 'stable', accessDiff: 'high',
     notes: 'Parent planet is highly visible from low moon orbit. Good for relay stations.',
+    learningTrack: 'educating_others',
   },
   {
     level: 4, code: 'L4_SUBLUNARY', name: 'Moon Surface',
@@ -63,6 +81,7 @@ export const TROPHIC_HIERARCHY: TrophicLevel[] = [
     description: 'Directly on the surface of an exomoon.',
     stability: 'surface', accessDiff: 'high',
     notes: 'Parent planet may dominate the sky depending on orbital distance. Tidal heating may provide subsurface liquid water (e.g. Europa-type).',
+    learningTrack: 'volunteering',
   },
   {
     level: 5, code: 'L5_SYZYGY', name: 'Moon–Planet Lagrange',
@@ -70,6 +89,7 @@ export const TROPHIC_HIERARCHY: TrophicLevel[] = [
     description: 'At one of the four Lagrange equilibrium points of the moon–planet system.',
     stability: 'semi-stable', accessDiff: 'high',
     notes: 'L4/L5 are gravitationally stable (trojan points). L1/L2 are unstable but strategically valuable as gateways and observatories.',
+    learningTrack: null,   // varies by point — see LAGRANGE_POINTS
   },
   {
     level: 6, code: 'L6_LIMINAL', name: 'Moon–Planet Interface',
@@ -77,6 +97,7 @@ export const TROPHIC_HIERARCHY: TrophicLevel[] = [
     description: 'In the transition zone between a moon\'s gravitational dominance and its parent planet\'s dominance.',
     stability: 'unstable', accessDiff: 'extreme',
     notes: 'Includes Hill sphere boundary, Roche limit zone, tidal lock transition region. Exotic physics; suited to specialist research stations.',
+    learningTrack: null,   // varies by zone — see INTERFACE_ZONES
   },
 ]
 
@@ -101,6 +122,11 @@ export interface LagrangePointInfo {
   description: string
   useCase:     string
   angularOffset: number  // degrees from moon in its orbit (approximate)
+  // See TrophicLevel.learningTrack — same "advantage-opportunity" mapping,
+  // at the individual-point granularity. L1/L4/L5 make a natural finance_
+  // literacy -> volunteering progression from orientation to hands-on work;
+  // L2's isolation suits research/data-analysis instead.
+  learningTrack: MoonLearningTrack
 }
 
 export const LAGRANGE_POINTS: LagrangePointInfo[] = [
@@ -109,24 +135,28 @@ export const LAGRANGE_POINTS: LagrangePointInfo[] = [
     stability: 'unstable', angularOffset: 0,
     description: 'Between the moon and its parent planet. Gravity from both bodies cancels.',
     useCase: 'Gateway station, transit hub, customs checkpoint between planet and moon systems.',
+    learningTrack: 'finance_literacy',   // gateway/orientation — natural home for P-Fin 8 basics
   },
   {
     id: 'L2', name: 'Outer Lagrange (L2)',
     stability: 'unstable', angularOffset: 180,
     description: 'Directly behind the moon as seen from the parent planet.',
     useCase: 'Deep-space observatory (shielded from planet radio noise), communication relay.',
+    learningTrack: 'educating_others',   // isolated research/comms post
   },
   {
     id: 'L4', name: 'Leading Trojan (L4)',
     stability: 'stable', angularOffset: 60,
     description: '60° ahead of the moon in its orbital path. Gravitationally stable — trojan position.',
     useCase: 'Permanent settlement, agricultural ring, energy collection station. Most viable for long-term habitation.',
+    learningTrack: 'volunteering',   // hands-on eco-ops work, matches its own "agricultural ring" use case
   },
   {
     id: 'L5', name: 'Trailing Trojan (L5)',
     stability: 'stable', angularOffset: -60,
     description: '60° behind the moon in its orbital path. Gravitationally stable — trojan position.',
     useCase: 'Permanent settlement, material storage, manufacturing station. Complementary to L4.',
+    learningTrack: 'volunteering',   // complementary to L4 — same vocational track
   },
 ]
 
@@ -145,6 +175,17 @@ export interface InterfaceZoneInfo {
   description: string
   physics:     string
   useCase:     string
+  // See TrophicLevel.learningTrack. hill-sphere pairs with Lagrange L1 (both
+  // literally described as customs/transit checkpoints); roche-limit is the
+  // "advanced" finance_literacy venue — pairs with the harder PFIN-28 pass,
+  // same track as the gateway zones but the expert end of it.
+  learningTrack: MoonLearningTrack
+}
+
+export const LEARNING_TRACK_LABELS: Record<Exclude<MoonLearningTrack, null>, string> = {
+  volunteering:      'Volunteering & Field Work',
+  finance_literacy:  'Financial Literacy',
+  educating_others:  'Research & Mentorship',
 }
 
 export const INTERFACE_ZONES: InterfaceZoneInfo[] = [
@@ -154,6 +195,7 @@ export const INTERFACE_ZONES: InterfaceZoneInfo[] = [
     description: 'The outer boundary of the moon\'s gravitational sphere of influence.',
     physics: 'r_H = a × ∛(m_moon / 3m_planet)  — typically 1–10% of moon\'s orbital radius.',
     useCase: 'Strategic gateway station marking the transition between planet-controlled and moon-controlled space. Customs / transit checkpoint.',
+    learningTrack: 'finance_literacy',
   },
   {
     id: 'roche-limit',
@@ -161,6 +203,7 @@ export const INTERFACE_ZONES: InterfaceZoneInfo[] = [
     description: 'The closest approach before tidal forces exceed the moon\'s self-gravity.',
     physics: 'd = 2.44 R_planet × ∛(ρ_planet / ρ_moon)  — inside this, natural moons cannot form.',
     useCase: 'Extreme-engineering research outpost. Resource extraction from ring material if present. Not suitable for conventional habitation.',
+    learningTrack: 'finance_literacy',
   },
   {
     id: 'tidal-lock-zone',
@@ -168,6 +211,7 @@ export const INTERFACE_ZONES: InterfaceZoneInfo[] = [
     description: 'The orbital altitude region where a moon transitions between tidally locked and free rotation.',
     physics: 'Applies to moons in synchronous rotation — one face permanently toward the parent planet.',
     useCase: 'Observation post at the boundary between the always-lit (planet-facing) and always-dark (far-side) hemispheres.',
+    learningTrack: 'educating_others',
   },
   {
     id: 'magnetosphere',
@@ -175,6 +219,7 @@ export const INTERFACE_ZONES: InterfaceZoneInfo[] = [
     description: 'The boundary of a moon\'s own magnetic field where it interacts with the parent planet\'s magnetosphere.',
     physics: 'Requires the moon to have an intrinsic magnetic field (like Ganymede). Creates a mini-magnetosphere bubble.',
     useCase: 'Radiation-shielded research station leveraging the magnetic anomaly. Rare and scientifically valuable.',
+    learningTrack: 'educating_others',
   },
   {
     id: 'resonance-zone',
@@ -182,6 +227,7 @@ export const INTERFACE_ZONES: InterfaceZoneInfo[] = [
     description: 'A region where a settlement\'s orbital period is in simple ratio to the moon\'s period (e.g. 1:2, 2:3).',
     physics: 'Mean motion resonance — analogous to Jupiter\'s Trojan asteroids but tuned to the moon\'s orbit.',
     useCase: 'Relay network station that passes the moon at predictable intervals. Communication and supply chain infrastructure.',
+    learningTrack: 'educating_others',
   },
 ]
 

@@ -85,16 +85,15 @@
           <div class="propose-range-hints"><span>tight</span><span>wide</span></div>
         </div>
 
+        <div v-if="proposeError" class="propose-conflict">⚠ {{ proposeError }}</div>
+
         <div class="propose-actions">
-          <button class="propose-btn propose-btn--primary" @click="commitProposal()">
-            ⊙ Render path &amp; zoom
-          </button>
           <button
-            class="propose-btn propose-btn--secondary"
-            @click="() => { if(_proposalClickWorld) { const z = proposedZones.at(-1); if(z) claimAsTheoreticalNft(z) } }"
-            :disabled="!proposedZones.length"
+            class="propose-btn propose-btn--primary"
+            :disabled="!!proposeError"
+            @click="commitProposal()"
           >
-            ◇ Claim Frontier NFT
+            ⊙ Render path &amp; zoom
           </button>
           <button class="propose-btn propose-btn--ghost" @click="() => { clearProposalRings(); showProposePanel = false }">
             Clear all paths
@@ -335,23 +334,6 @@
         <div class="ctx-claim-title">CLAIM A WORLD</div>
         <div class="ctx-claim-sub">
           40 acres · one mule · permanent deed
-        </div>
-
-        <!-- 6-chain support grid (mini) -->
-        <div class="ctx-chains">
-          <button
-            v-for="c in SUPPORTED_CHAINS" :key="c.id"
-            class="ctx-chain-chip"
-            :class="`ctx-chain-chip--${c.status}`"
-            :title="`${c.name} — ${c.statusLabel}`"
-            @click="$router.push('/chains')"
-          >
-            <span class="ctx-chain-dot" :style="{ background: c.color }" />
-            {{ c.symbol }}
-          </button>
-        </div>
-        <div class="ctx-chains-hint" @click="$router.push('/chains')">
-          6 chains · view status matrix →
         </div>
 
         <div class="row q-gutter-xs q-mt-sm">
@@ -856,7 +838,9 @@ import {
 } from 'src/lib/star-sprites'
 import { VOID_VERT, VOID_FRAG } from 'src/lib/void-shader'
 import { disposeScene }                          from 'src/lib/three-utils'
+import { computeHandoffOrigin }                  from 'src/lib/scene-handoff'
 import { loadOracleCluster, prewarmOracleIndex } from 'src/lib/galaxy-oracle'
+import { tryLoadTexture, ASSET_PATHS }           from 'src/lib/asset-loader'
 import type { OracleGalaxy } from 'src/data/galaxy-oracle.types'
 import {
   COSMIC_EVENTS,
@@ -1048,10 +1032,16 @@ type ContextLevel = 'overview' | 'nearby' | 'milkyway' | 'conduit' | 'xray' | 'v
 const contextLevel = computed((): ContextLevel => {
   if (selected.value?.isMilkyWay || camDistToOrigin.value < 0.7) return 'milkyway'
   if (camDistToOrigin.value < 3.5)                                return 'nearby'
-  if (activeCluster.value)                                        return 'cluster_interior'
+  // An explicit click always outranks activeCluster's ambient camera-proximity
+  // state — otherwise merely being near a real cluster while clicking a void/
+  // conduit/X-ray-cluster object swallows that click into the cluster-interior
+  // panel, whose "Browse Cluster Galaxies" button then falls through to the
+  // X-ray route with the wrong (non-cluster) name — e.g. clicking a void near
+  // a cluster produced a 404 for /galaxy-oracle/local void.json.
   if (selected.value?.isConduit)                                  return 'conduit'
   if (selected.value?.xrayCluster)                                return 'xray'
   if (selected.value?.isVoid)                                     return 'void'
+  if (activeCluster.value)                                        return 'cluster_interior'
   if (selected.value && !selected.value.isBrightGalaxy)           return 'selected'
   return 'overview'
 })
@@ -1105,6 +1095,18 @@ function onCosmicViewModeChange(mode: 'natural' | 'xray' | 'dark_matter') {
   // Lower pyramids share the same material but need scale updated independently
   for (const mesh of conduitLowerMeshes) {
     mesh.scale.setScalar(cfg.scale)
+  }
+
+  // Dark-matter halo spheres: faint ambient dressing (0.028) in natural/xray,
+  // boosted to read as an intentional overlay in dark_matter mode. This is
+  // the actual real-data halo-extent view SPEC_DARK_MATTER_VIEW.md proposed —
+  // the mesh itself is already sized from cited M200/r_vir data where
+  // available (see the build site above); this is just what makes that
+  // sizing visible rather than a constant near-invisible 0.028 regardless
+  // of mode.
+  const dmOpacity = mode === 'dark_matter' ? 0.16 : 0.028
+  for (const mesh of dmHaloMeshes) {
+    (mesh.material as THREE.MeshBasicMaterial).opacity = dmOpacity
   }
 }
 
@@ -1162,9 +1164,19 @@ const proposalPanelStyle  = computed(() => ({
   left: Math.min(_proposalPanelPos.value.x, (window.innerWidth  || 1200) - 280) + 'px',
   top:  Math.min(_proposalPanelPos.value.y + 12, (window.innerHeight || 800) - 320) + 'px',
 }))
+// Inline rejection reason for the current draft placement — null when clear
+// of real charted structure and other proposed zones. Recomputes as the
+// orbit-radius slider moves since that affects the overlap check.
+const proposeError = computed<string | null>(() => {
+  if (!_proposalClickWorld.value) return null
+  return zoneConflict(_proposalClickWorld.value, draftZone.value.orbRadiusSu)
+})
 
 // Live Three.js objects for rendered proposals (for cleanup)
 const _proposalRings: THREE.Object3D[] = []
+// zone id → its rendered group, so a single zone can be located and removed
+// (e.g. when its cluster context is left) without touching the others
+const _zoneGroups = new Map<string, THREE.Group>()
 
 const PLANET_TYPE_COLOR: Record<PlanetType, number> = {
   rocky:       0x88aacc,
@@ -1266,6 +1278,11 @@ let hitTargets: HitTarget[] = []
 let conduitMeshes: THREE.Mesh[] = []
 // conduit lower pyramids — share material with upper; synced in animation tick
 let conduitLowerMeshes: THREE.Mesh[] = []
+// dark-matter halo spheres — faint ambient dressing in natural/xray mode,
+// boosted to a real, sized-from-data overlay in dark_matter mode (see
+// onCosmicViewModeChange); SPEC_DARK_MATTER_VIEW.md's proposed fix, applied
+// to the halo mesh that already existed rather than a new one.
+let dmHaloMeshes: THREE.Mesh[] = []
 
 // BH ring meshes — slow rotation animation (one ring per SMBH/ULSMBH galaxy)
 let bhRingMeshes: THREE.Mesh[] = []
@@ -2019,8 +2036,17 @@ function buildClusters() {
       sprite.position.copy(pos)
       pageGroup.add(sprite)
 
-      // Dark matter halo — faint additive purple sphere at 4.5× physical radius
-      const dmR   = physR * 4.5
+      // Dark matter halo — faint additive purple sphere, ambient dressing in
+      // natural/xray mode. Sized from this cluster's real dmHaloRadiusMpc
+      // (cosmic-structures.ts, reconciled against clusters/*-members.json's
+      // rvir_mpc — see SPEC_XCLUSTER_STARSYSTEMS.md §5) when available,
+      // rather than the generic physR × 4.5 placeholder — falls back to that
+      // placeholder only for the clusters this dataset doesn't cover.
+      // Opacity is boosted reactively in dark_matter mode; see
+      // onCosmicViewModeChange, which is what actually makes the DK.MAT
+      // toggle show real per-cluster halo extent instead of just recoloring
+      // the wormhole conduits.
+      const dmR   = c.dmHaloRadiusMpc ? c.dmHaloRadiusMpc * MPC_SCALE : physR * 4.5
       const dmMat = new THREE.MeshBasicMaterial({
         color:       0x4422aa,
         transparent: true,
@@ -2032,6 +2058,7 @@ function buildClusters() {
       const dmMesh = new THREE.Mesh(new THREE.SphereGeometry(dmR, 14, 10), dmMat)
       dmMesh.position.copy(pos)
       pageGroup.add(dmMesh)
+      dmHaloMeshes.push(dmMesh)
 
       // Invisible hit sphere — slightly larger than sprite for comfortable clicking
       const hitR   = Math.max(0.10, spriteSize * 0.55)
@@ -3216,7 +3243,10 @@ function updateNamedLod() {
   // fog is still dissolving — avoids a dark gap between the two LOD layers.
   if (closestEntry && closestDist < LOD_NAMED_NEAR * 1.8) {
     if (activeNamedLodEntry !== closestEntry) {
-      if (activeNamedLodEntry) despawnNamedStarField(activeNamedLodEntry)
+      if (activeNamedLodEntry) {
+        despawnNamedStarField(activeNamedLodEntry)
+        clearProposalRingsForCluster(activeNamedLodEntry.cluster.name)
+      }
       activeNamedLodEntry = closestEntry
       spawnNamedStarField(closestEntry)
       // Move orbit center to cluster position so scroll-zoom orbits the cluster
@@ -3228,6 +3258,7 @@ function updateNamedLod() {
     }
   } else if (activeNamedLodEntry && closestDist >= LOD_NAMED_NEAR * 2.2) {
     despawnNamedStarField(activeNamedLodEntry)
+    clearProposalRingsForCluster(activeNamedLodEntry.cluster.name)
     activeNamedLodEntry = null
     // Return orbit center to galactic origin as camera pulls back out
     gsap.to(controls.target, {
@@ -3309,7 +3340,7 @@ async function navigateToVoid() {
 
   // Continuous in-page camera zoom toward the void before the route change
   // (mirrors navigateToClusterInterior) — VoidInteriorPage now shares the renderer.
-  let ox = 50, oy = 50
+  let origin = { ox: 50, oy: 50, bearing: 0 }
   if (camera && controls) {
     const targetPos = voidScenePos(v)
     const distNow   = camera.position.distanceTo(targetPos)
@@ -3322,12 +3353,12 @@ async function navigateToVoid() {
         gsap.to(camera!.position, { x: dest.x, y: dest.y, z: dest.z, duration: 1.4, ease: 'power2.inOut', onUpdate: () => controls?.update(), onComplete: resolve })
       })
     }
-    const sc = targetPos.clone().project(camera)
-    ox = (sc.x + 1) / 2 * 100
-    oy = (1 - sc.y) / 2 * 100
+    // Handoff origin: VoidInteriorPage places its arrival camera (orbit.theta
+    // driven, not free position) to reproduce this composition — see
+    // SPEC_DISSOLVE_HANDOFF.md §4 Phase 3.
+    origin = computeHandoffOrigin(camera, targetPos)
   }
-  const bearing = Math.atan2(oy / 100 - 0.5, ox / 100 - 0.5)
-  await transition.depart(ox, oy, 'iris', bearing)
+  await transition.depart(origin.ox, origin.oy, 'dissolve', origin.bearing)
   void router.push({
     path:  `/void/${voidSlug(v.name)}`,
     query: {
@@ -3344,9 +3375,25 @@ function xrayClusterSlug(name: string): string {
   return name.toLowerCase().replace(/\./g, '-').replace(/\+/g, '-')
 }
 
-function navigateToXCluster() {
+async function navigateToXCluster() {
   const c = selected.value?.xrayCluster
   if (!c) return
+
+  // Handoff origin, same idea as navigateToVoid()/navigateToClusterInterior()
+  // — but XClusterPage still owns a private WebGLRenderer (SPEC_ZOOM_DESCENT.md
+  // §14 Q1's audit), not the shared canvas 'dissolve' mode snapshots. Depart
+  // with 'iris' instead: an opaque wipe doesn't care which canvas is
+  // underneath, so it's the correct choice for this one remaining
+  // private-renderer boundary rather than a broken snapshot of the wrong
+  // canvas. The bearing is still carried through as a query param (this page
+  // doesn't share the transition store's camera/scene the way shared-renderer
+  // arrivals do) so XClusterPage can at least rotate its entry angle to match.
+  let origin = { ox: 50, oy: 50, bearing: 0 }
+  const entry = xrayLodEntries.find(e => e.cluster === c)
+  if (camera && entry) {
+    origin = computeHandoffOrigin(camera, entry.pos)
+  }
+  await transition.depart(origin.ox, origin.oy, 'iris', origin.bearing)
   void router.push({
     path:  `/xcluster/${xrayClusterSlug(c.name)}`,
     query: {
@@ -3354,6 +3401,7 @@ function navigateToXCluster() {
       kev:  String(c.tapKev),
       z:    String(c.z),
       dist: String(Math.round(c.distMpc)),
+      bearing: origin.bearing.toFixed(3),
     },
   })
 }
@@ -3366,6 +3414,38 @@ async function navigateToClusterInterior() {
     : activeCluster.value?.name
   if (!name) return
   const c = CLUSTERS.find(cl => cl.name === name)
+
+  // Defense in depth against the same misrouting the contextLevel reorder
+  // above fixes at its usual source (a click): activeCluster.value is set
+  // purely by camera proximity (updateActiveClusterState()), and if a void
+  // ever ends up feeding that same LOD-entry system, `name` here would be a
+  // void's name, not a cluster's — send it to the void page, not /xcluster/.
+  if (VOIDS.some(v => v.name === name)) {
+    void router.push({ path: `/void/${voidSlug(name)}`, query: { name } })
+    return
+  }
+
+  // X-ray-catalog clusters (Takey2013 J-designations, e.g. "J111805.7+440935")
+  // have no curated /clusters/{slug}-members.json file — only the ~15
+  // hand-authored named clusters do (see cluster_data_research_query.md).
+  // `clusterSlug()` also strips the "." and "+" that `xrayClusterSlug()`
+  // preserves as hyphens, so even the filename wouldn't match. Previously
+  // this fell through to `/cluster-interior/${clusterSlug(name)}` unconditionally
+  // and ClusterInteriorPage's fetch 404'd with no fallback. Route X-ray
+  // clusters (activeCluster.value?.isXray, or simply "not in CLUSTERS") to
+  // the X-ray cluster page instead, mirroring navigateToXCluster().
+  if (!c) {
+    const ac = activeCluster.value
+    void router.push({
+      path: `/xcluster/${xrayClusterSlug(name)}`,
+      query: {
+        name,
+        ...(ac?.tapKev  !== undefined ? { kev:  String(ac.tapKev) } : {}),
+        ...(ac?.distMpc !== undefined ? { dist: String(Math.round(ac.distMpc)) } : {}),
+      },
+    })
+    return
+  }
 
   // Continuous in-page camera zoom toward the cluster before the route change
   // (SPEC_ZOOM_DESCENT.md §4.1). CosmicPage and ClusterInteriorPage now share
@@ -3386,16 +3466,15 @@ async function navigateToClusterInterior() {
     }
   }
 
-  // Project cluster scene position to screen for the iris origin
-  let ox = 50, oy = 50
+  // Handoff origin: ClusterInteriorPage places its arrival camera to
+  // reproduce this composition around the cluster's real centroid (see
+  // SPEC_DISSOLVE_HANDOFF.md §2) — 'dissolve' crossfades this page's actual
+  // last frame into that placement instead of wiping through black.
+  let origin = { ox: 50, oy: 50, bearing: 0 }
   if (c && camera) {
-    const pos3d = clusterScenePos(c)
-    const sc    = pos3d.clone().project(camera)
-    ox = (sc.x + 1) / 2 * 100
-    oy = (1 - sc.y) / 2 * 100
+    origin = computeHandoffOrigin(camera, clusterScenePos(c))
   }
-  const bearing = Math.atan2(oy / 100 - 0.5, ox / 100 - 0.5)
-  await transition.depart(ox, oy, 'iris', bearing)
+  await transition.depart(origin.ox, origin.oy, 'dissolve', origin.bearing)
   void router.push(`/cluster-interior/${clusterSlug(name)}`)
 }
 
@@ -3582,6 +3661,17 @@ function onCanvasWheel(e: WheelEvent) {
 
 function onClick(e: MouseEvent) {
   if (enteringMW.value || !camera) return
+  // onClick is bound on the page root (<q-page class="viz-overlay-page">), so
+  // every click inside the page bubbles up here — including clicks on the
+  // side panel's own buttons (Browse Cluster Galaxies, Fly in, Settle, etc.).
+  // Without this guard, a button click that happens to land over a 3D hit
+  // target's screen projection also fires this raycast, which can select a
+  // *different* object and call router.replace — racing the button's own
+  // handler's later router.push and silently breaking navigation. Same
+  // target-class convention useVizRenderer.ts's pointer relay already uses
+  // to distinguish "empty scene" clicks from UI: only the plain overlay page
+  // itself (not a descendant panel/button) should ever be the real target.
+  if (!(e.target as HTMLElement)?.classList?.contains('viz-overlay-page')) return
   const w = window.innerWidth, h = window.innerHeight - 44
   mouseNDC.x =  (e.clientX / w) * 2 - 1
   mouseNDC.y = -((e.clientY - 44) / h) * 2 + 1
@@ -3880,6 +3970,19 @@ function renderProposedOrbit(zone: ProposedZone): THREE.Group {
   planet.position.set(R, 0, 0)
   group.add(planet)
 
+  // Swap in an authored surface texture if one exists for this planet type —
+  // no-op until that file is dropped in at ASSET_PATHS.planetSurface() (see
+  // asset-loader.ts). Cleared to white so the photo isn't tinted by the
+  // placeholder's planet-type color; depthWrite/opacity/transparency stay as
+  // set above.
+  void tryLoadTexture(ASSET_PATHS.planetSurface(zone.planetType)).then(tex => {
+    if (!tex || !planet.parent) return   // group may already be gone (proposal cleared)
+    const mat = planet.material as THREE.MeshBasicMaterial
+    mat.map = tex
+    mat.color.set(0xffffff)
+    mat.needsUpdate = true
+  })
+
   // Soft glow at planet position
   const glow = new THREE.Mesh(
     new THREE.SphereGeometry(planetR * 2.8, 12, 8),
@@ -3898,7 +4001,69 @@ function renderProposedOrbit(zone: ProposedZone): THREE.Group {
 
   pageGroup.add(group)
   _proposalRings.push(group)
+  _zoneGroups.set(zone.id, group)
   return group
+}
+
+// ── Placement guards — keep theoretical zones from nesting into real structure ──
+
+/**
+ * Real member-galaxy spread radius around the active cluster context, in scene
+ * units. A "path & zone" is uncharted by definition — it shouldn't render
+ * nested inside a cluster's actual charted structure (star field / DM halo).
+ */
+function clusterExclusionRadius(): number {
+  if (activeNamedLodEntry) return activeNamedLodEntry.physR * 1.8
+  if (activeLodEntry) return 0.55 + tapKevToRichness(activeLodEntry.cluster.tapKev) * 0.08
+  return 0.30
+}
+
+/**
+ * Whether placing a zone at `worldPos` with orbit `orbRadiusSu` would visually
+ * nest inside real cluster structure or overlap an already-proposed zone in the
+ * same context. Returns a human-readable reason, or null when the placement is
+ * clear.
+ */
+function zoneConflict(worldPos: THREE.Vector3, orbRadiusSu: number): string | null {
+  const clusterPos = activeLodEntry?.pos ?? activeNamedLodEntry?.pos
+  if (clusterPos) {
+    const exclusion = clusterExclusionRadius()
+    if (worldPos.distanceTo(clusterPos) < exclusion) {
+      return 'Too close to charted cluster structure — double-click further out.'
+    }
+  }
+  const clusterCtx = activeLodEntry?.cluster.name ?? activeNamedLodEntry?.cluster.name
+  for (const z of proposedZones.value) {
+    if (z.clusterCtx !== clusterCtx) continue
+    const sep = worldPos.distanceTo(z.worldPos)
+    if (sep < (orbRadiusSu + z.orbRadiusSu) * 1.4) {
+      return `Overlaps the "${z.name}" path already proposed here.`
+    }
+  }
+  return null
+}
+
+/**
+ * Remove every proposed zone tied to `clusterName` — called when the camera
+ * leaves that cluster context so theoretical sketches don't linger and end up
+ * visually nested into whatever cluster the user visits next.
+ */
+function clearProposalRingsForCluster(clusterName: string) {
+  if (!proposedZones.value.some(z => z.clusterCtx === clusterName)) return
+  const remaining: ProposedZone[] = []
+  for (const z of proposedZones.value) {
+    if (z.clusterCtx !== clusterName) { remaining.push(z); continue }
+    const group = _zoneGroups.get(z.id)
+    if (group) {
+      pageGroup.remove(group)
+      disposeScene(group)
+      const idx = _proposalRings.indexOf(group)
+      if (idx !== -1) _proposalRings.splice(idx, 1)
+      _zoneGroups.delete(z.id)
+      if (_draftRing === group) _draftRing = null
+    }
+  }
+  proposedZones.value = remaining
 }
 
 /** Fly camera to L4-companion position relative to a proposed orbit. */
@@ -3921,27 +4086,39 @@ function zoomToProposedOrbit(zone: ProposedZone) {
 /** Remove the current uncommitted draft ring only (one-at-a-time model). */
 let _draftRing: THREE.Object3D | null = null
 function clearDraftRing() {
-  if (!scene) return
   if (_draftRing) {
-    scene.remove(_draftRing)
+    // Rings are parented under pageGroup (see renderProposedOrbit), not scene
+    // directly — Object3D.remove() only detaches direct children, so this must
+    // target pageGroup or it silently no-ops and the ring never leaves the scene.
+    pageGroup.remove(_draftRing)
+    disposeScene(_draftRing)
     const idx = _proposalRings.indexOf(_draftRing)
     if (idx !== -1) _proposalRings.splice(idx, 1)
+    for (const [id, g] of _zoneGroups) if (g === _draftRing) _zoneGroups.delete(id)
     _draftRing = null
   }
 }
 
 /** Remove all proposal rings from the scene. */
 function clearProposalRings() {
-  if (!scene) return
-  for (const obj of _proposalRings) scene.remove(obj)
+  for (const obj of _proposalRings) {
+    pageGroup.remove(obj)
+    disposeScene(obj)
+  }
   _proposalRings.length = 0
+  _zoneGroups.clear()
   _draftRing = null
+  proposedZones.value = []
 }
 
 /** Commit the draft zone — render it, track as _draftRing, zoom. */
 function commitProposal() {
   if (!camera || !controls || !scene) return
   if (!_proposalClickWorld.value) return
+  // Refuse to render a path that would nest inside real structure or another
+  // proposed zone — the panel already surfaces this via proposeError, this is
+  // the hard stop in case it's called some other way.
+  if (proposeError.value) return
   // Replace any previous uncommitted ring before rendering the new one
   clearDraftRing()
   const clusterCtx = activeLodEntry?.cluster.name
@@ -3960,19 +4137,6 @@ function commitProposal() {
   showProposePanel.value = false
   _proposalClickWorld.value = null
   draftZone.value = { orbRadiusSu: 0.18, planetType: 'rocky', name: '' }
-}
-
-/** Route to mint page with theoretical NFT prefill. */
-function claimAsTheoreticalNft(zone: ProposedZone) {
-  const params = new URLSearchParams({
-    mode:   'theoretical',
-    name:   zone.name,
-    type:   zone.planetType,
-    ctx:    zone.clusterCtx,
-    orbR:   zone.orbRadiusSu.toFixed(3),
-  })
-  showProposePanel.value = false
-  router.push(`/mint?${params.toString()}`)
 }
 
 // Projects tracked BCG/sub-cluster sprites to 2D screen positions for DOM labels.
@@ -4230,12 +4394,16 @@ function updateXrayLod(t: number) {
   // Spawn when inside LOD_NEAR; despawn with hysteresis
   if (closestEntry && closestDist < LOD_NEAR) {
     if (activeLodEntry !== closestEntry) {
-      if (activeLodEntry) despawnStarField(activeLodEntry)
+      if (activeLodEntry) {
+        despawnStarField(activeLodEntry)
+        clearProposalRingsForCluster(activeLodEntry.cluster.name)
+      }
       activeLodEntry = closestEntry
       spawnStarField(closestEntry)
     }
   } else if (activeLodEntry && closestDist >= LOD_NEAR * 1.30) {
     despawnStarField(activeLodEntry)
+    clearProposalRingsForCluster(activeLodEntry.cluster.name)
     activeLodEntry = null
   }
 }
@@ -4406,6 +4574,7 @@ onUnmounted(() => {
   voidUniforms     = []
   conduitMeshes      = []
   conduitLowerMeshes = []
+  dmHaloMeshes       = []
   bhRingMeshes       = []
   gaRingMeshes       = []
   hitTargets       = []
@@ -4670,16 +4839,6 @@ function onDefenderCosmicFlyTo(target: DefenderTarget) {
   }
 }
 
-// ── Supported chain quick-reference (mirrors ChainStatusPage data) ────────────
-const SUPPORTED_CHAINS = [
-  { id: 'algo',   symbol: 'ALGO',  name: 'Algorand', color: '#1b85e0', status: 'live',    statusLabel: 'Live — Exolocation NFTs (ARC-3/ARC-69)' },
-  { id: 'matic',  symbol: 'MATIC', name: 'Polygon',  color: '#8247e5', status: 'testing', statusLabel: 'Testnet (Amoy) — $BARS, WQ Certs, Health Cards' },
-  { id: 'sol',    symbol: 'SOL',   name: 'Solana',   color: '#14f195', status: 'live',    statusLabel: 'Live — Station Core / Module / EcocitySolution' },
-  { id: 'tez',    symbol: 'TEZ',   name: 'Tezos',    color: '#2c7df7', status: 'planned', statusLabel: 'Planned — Art collectibles, $BARS (FA2)' },
-  { id: 'hbar',   symbol: 'HBAR',  name: 'Hedera',   color: '#3dbcb4', status: 'planned', statusLabel: 'Planned — Eco-data certs, supply chain' },
-  { id: 'celo',   symbol: 'CELO',  name: 'Celo',     color: '#35d07f', status: 'testing', statusLabel: 'Testnet (Alfajores) — Community badges, Eco-ops tokens' },
-]
-
 const legendItems = [
   { label: 'Milky Way',                   color: '#ffd480', size: 12 },
   { label: 'Galaxy cluster',              color: '#88ccff', size: 9 },
@@ -4770,6 +4929,13 @@ const legendItems = [
   top: 54px;
   right: 12px;
   width: 250px;
+  /* Content (details rows, BH/nav sections) can exceed the viewport on short
+     laptop screens. The panel sits inside .viz-overlay-page's overflow:hidden,
+     so without its own scroll the bottom of the panel — including the primary
+     "Browse Cluster Galaxies" nav button — silently clips off with no visible
+     scrollbar and no way to reach it. */
+  max-height: calc(100vh - 44px - 54px - 12px);
+  overflow-y: auto;
   background: rgba(1, 4, 16, 0.92);
   border: 1px solid rgba(0, 229, 255, 0.18);
   border-radius: 6px;
@@ -4967,10 +5133,6 @@ const legendItems = [
   background: rgba(20,55,120,0.6); border-color: #336699; color: #88ccff;
 }
 .propose-btn--primary:hover:not(:disabled) { background: rgba(30,70,150,0.7); border-color: #4488bb; }
-.propose-btn--secondary {
-  background: rgba(10,35,60,0.5); border-color: #224466; color: #5577aa;
-}
-.propose-btn--secondary:hover:not(:disabled) { border-color: #336699; color: #88aacc; }
 .propose-btn--ghost {
   background: none; border-color: transparent; color: #334455;
   font-size: 8px;
@@ -4979,6 +5141,10 @@ const legendItems = [
 .propose-note {
   margin-top: 8px; font-size: 7px; letter-spacing: 0.08em;
   color: #334455; font-style: italic;
+}
+.propose-conflict {
+  margin-top: 6px; margin-bottom: 2px; font-size: 8px; letter-spacing: 0.04em;
+  color: #ffaa66; line-height: 1.4;
 }
 
 /* Panel fade transition */
@@ -5048,12 +5214,26 @@ const legendItems = [
   left: 12px;
   z-index: 5;
   width: 244px;
+  max-height: calc(100vh - 24px);
   background: rgba(1, 4, 16, 0.91);
   border: 1px solid rgba(0, 180, 220, 0.18);
   border-radius: 6px;
   backdrop-filter: blur(9px);
   font-family: 'Courier New', monospace;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
+}
+
+.ctx-panel-body {
+  /* Same fixed-position-with-no-scroll hazard as .side-panel below: on short
+     viewports this body (stats + always-shown nav pathway + claim CTA) can
+     exceed the panel's max-height, pushing action buttons off-screen with no
+     way to reach them. min-height:0 lets this flex child actually shrink and
+     scroll instead of forcing the panel taller than its max-height. */
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
 }
 
 .ctx-header {
@@ -5063,6 +5243,7 @@ const legendItems = [
   padding: 6px 10px;
   background: rgba(0, 8, 24, 0.55);
   border-bottom: 1px solid rgba(0, 80, 120, 0.32);
+  flex-shrink: 0;
 }
 
 .ctx-icon     { color: rgba(0, 200, 240, 0.78); font-size: 11px; }
@@ -5217,59 +5398,6 @@ const legendItems = [
   line-height: 1.55;
   margin-bottom: 7px;
 }
-
-/* ── 6-chain mini-grid in claim panel ─────────────────────────── */
-
-.ctx-chains {
-  display: flex;
-  gap: 4px;
-  flex-wrap: wrap;
-  margin-bottom: 3px;
-}
-
-.ctx-chain-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-family: 'Courier New', monospace;
-  font-size: 7px;
-  letter-spacing: 0.07em;
-  padding: 2px 6px;
-  border-radius: 3px;
-  border: 1px solid rgba(255,255,255,0.10);
-  background: rgba(0, 8, 22, 0.60);
-  color: rgba(140, 190, 220, 0.72);
-  cursor: pointer;
-  transition: all 0.12s;
-}
-
-.ctx-chain-chip:hover {
-  background: rgba(0, 40, 80, 0.65);
-  color: rgba(200, 230, 255, 0.90);
-}
-
-.ctx-chain-chip--live    { border-color: rgba(50, 220, 140, 0.30); }
-.ctx-chain-chip--testing { border-color: rgba(200, 160, 50, 0.30); }
-.ctx-chain-chip--planned { border-color: rgba(80, 100, 140, 0.22); color: rgba(100, 140, 170, 0.55); }
-
-.ctx-chain-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  opacity: 0.85;
-}
-
-.ctx-chains-hint {
-  font-family: 'Courier New', monospace;
-  font-size: 6px;
-  letter-spacing: 0.08em;
-  color: rgba(50, 100, 140, 0.50);
-  cursor: pointer;
-  margin-bottom: 5px;
-  transition: color 0.12s;
-}
-.ctx-chains-hint:hover { color: rgba(0, 180, 220, 0.65); }
 
 /* ── Dark matter overlay (DK.MAT mode) ─────────────────────────── */
 

@@ -27,6 +27,14 @@ export interface DeconProject {
 export interface ProjectLogEntry {
   id: string; project_id: string; author_id: string
   notes: string; metrics: Record<string, unknown>; logged_at: string
+  /**
+   * Server-computed SHA-256 of notes+metrics, set once at INSERT by a
+   * database trigger (migration 018) — never client-supplied. Hex-encoded
+   * by PostgREST's bytea-as-hex-string default. See
+   * SPEC_E8_RECORD_FINGERPRINT.md. Render via record-fingerprint.ts's
+   * renderFingerprintFromHex() (strip the `\x` prefix PostgREST adds first).
+   */
+  fingerprint_sha256: string | null
 }
 
 export interface Citation { title: string; url: string; note?: string }

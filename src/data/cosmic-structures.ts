@@ -176,8 +176,8 @@ export const CLUSTERS: CosmicCluster[] = [
     clusterType: 'richcluster',
     orientDeg: 108,   // elongated roughly E-W; A/B/C subclusters run SE-NW
     axisRatio: 1.45,
-    dmHaloRadiusMpc: 1.55,
-    virialMassMsun:  '6.3 × 10¹⁴ M☉',
+    dmHaloRadiusMpc: 1.1,        // corrected from 1.55 to match rvir_mpc in clusters/virgo-members.json
+    virialMassMsun:  '1.4 × 10¹⁴ M☉',  // corrected from 6.3 × 10¹⁴ — was ~6x too high (eROSITA 2024/Suzaku 2017), see SPEC_XCLUSTER_STARSYSTEMS.md §5
     dmFraction:      0.84,
     brightGalaxies: [
       { name: 'M87 — NGC 4486',  type: 'cD elliptical / radio jet',       lum: '~2 trillion L☉',   offset: [-0.55,  0.22, -0.30],
@@ -191,7 +191,7 @@ export const CLUSTERS: CosmicCluster[] = [
   },
   {
     name: 'Fornax Cluster',
-    raDeg: 54.62, decDeg: -35.45, distMpc: 19.0,
+    raDeg: 54.62, decDeg: -35.45, distMpc: 20.0,   // corrected from 19.0 — Blakeslee+2009 SBF
     richness: 5,
     color: 0x99ffcc,
     supercluster: 'Laniakea',
@@ -240,8 +240,8 @@ export const CLUSTERS: CosmicCluster[] = [
     clusterType: 'cluster',
     orientDeg: 48,    // Cen30/Cen45 axis runs NE-SW
     axisRatio: 1.32,
-    dmHaloRadiusMpc: 1.10,
-    virialMassMsun:  '3.2 × 10¹⁴ M☉',
+    dmHaloRadiusMpc: 1.13,       // corrected from 1.10 — Walker+2013b hydrostatic analysis to r200
+    virialMassMsun:  '1.6 × 10¹⁴ M☉',  // corrected from 3.2 × 10¹⁴ — Walker+2013b (also: "Sanders+2016" citation elsewhere was wrong, that's a Chandra paper — the XMM study is Walker+2013a)
     dmFraction:      0.84,
     brightGalaxies: [
       { name: 'NGC 4696', type: 'cD elliptical (BCG) — X-ray cavities', lum: '~1.1 trillion L☉', offset: [ 0.08,  0.12, -0.06],
@@ -259,8 +259,8 @@ export const CLUSTERS: CosmicCluster[] = [
     clusterType: 'cluster',
     orientDeg: 90,    // twin BCG NGC3309/NGC3311 separation runs roughly E-W
     axisRatio: 1.22,
-    dmHaloRadiusMpc: 0.97,
-    virialMassMsun:  '1.9 × 10¹⁴ M☉',
+    dmHaloRadiusMpc: 1.28,       // corrected from 0.97 — Hayakawa+2006 (~1.2-1.35 Mpc)
+    virialMassMsun:  '3.0 × 10¹⁴ M☉',  // corrected from 1.9 × 10¹⁴ — aligned to the confirmed-accurate M200 in clusters/hydra-members.json (this dataset's own figure was the one that disagreed)
     dmFraction:      0.83,
     brightGalaxies: [
       { name: 'NGC 3309', type: 'Elliptical galaxy (BCG)',  lum: '~700 billion L☉', offset: [ 0.10,  0.06, -0.09] },
@@ -278,8 +278,8 @@ export const CLUSTERS: CosmicCluster[] = [
     clusterType: 'richcluster',
     orientDeg: 62,    // Perseus filament chain runs NE-SW
     axisRatio: 1.38,
-    dmHaloRadiusMpc: 1.80,
-    virialMassMsun:  '8.5 × 10¹⁴ M☉',
+    dmHaloRadiusMpc: 1.79,       // corrected from 1.80 — Simionescu+2011 Science, adopted as a pair with M200 below
+    virialMassMsun:  '6.65 × 10¹⁴ M☉',  // corrected from 8.5 × 10¹⁴ — was mixing a dynamical M200 with an r500-scale radius
     dmFraction:      0.85,
     brightGalaxies: [
       { name: 'NGC 1275 — Perseus A', type: 'Seyfert galaxy (BCG)',       lum: '~1.5 trillion L☉', offset: [ 0.05,  0.15, -0.10],
@@ -299,8 +299,8 @@ export const CLUSTERS: CosmicCluster[] = [
     clusterType: 'richcluster',
     orientDeg: 15,    // NGC4889 (N) / NGC4874 (S) bimodal axis
     axisRatio: 1.28,
-    dmHaloRadiusMpc: 2.05,
-    virialMassMsun:  '1.5 × 10¹⁵ M☉',
+    dmHaloRadiusMpc: 2.10,       // corrected from 2.05 to match rvir_mpc in clusters/coma-members.json
+    virialMassMsun:  '8.2 × 10¹⁴ M☉',  // corrected from 1.5 × 10¹⁵ — newest (2026) Subaru/HSC weak-lensing two-halo fit; flagged literature disagreement, newest measurement adopted rather than averaged
     dmFraction:      0.86,
     brightGalaxies: [
       { name: 'NGC 4889', type: 'cD elliptical (BCG-N) — ultra-massive BH', lum: '~3 trillion L☉', offset: [ 0.12,  0.18, -0.08],
@@ -316,7 +316,7 @@ export const CLUSTERS: CosmicCluster[] = [
     // Sits at very high southern declination (Dec −60.9°), so it appears deep-south
     // in the equatorial scene frame — physically distinct from the GA direction label.
     name: 'Norma Cluster',
-    raDeg: 243.3, decDeg: -60.9, distMpc: 65.0,    // Abell 3627 — NED
+    raDeg: 243.3, decDeg: -60.9, distMpc: 69.5,    // corrected from 65.0 — Said+2021 Fundamental Plane; peculiar velocity ~0, confirms Hubble-flow distance
     richness: 9,
     color: 0xff9933,
     supercluster: 'Laniakea',
@@ -324,8 +324,8 @@ export const CLUSTERS: CosmicCluster[] = [
     clusterType: 'richcluster',
     orientDeg: 132,   // elongated along Great Attractor infall direction
     axisRatio: 1.42,
-    dmHaloRadiusMpc: 1.90,
-    virialMassMsun:  '1.1 × 10¹⁵ M☉',
+    dmHaloRadiusMpc: 1.55,       // corrected from 1.90 — Carlberg+1997 scaling from measured sigma_v (~1.5-1.6 Mpc)
+    virialMassMsun:  '1.2 × 10¹⁵ M☉',  // tightened from 1.1 × 10¹⁵ to match M200 in clusters/norma-members.json (M200 itself confirmed accurate, not corrected)
     dmFraction:      0.87,
     brightGalaxies: [
       { name: 'ESO 137-001', type: 'Spiral — ram-pressure stripped tail', lum: '~400 billion L☉', offset: [0.06, 0.04, -0.10] },

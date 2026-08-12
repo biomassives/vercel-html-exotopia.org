@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { supabase, type Member, type Connection, type DeletionRequest } from 'src/lib/supabase'
+import { loadMySettlements } from 'src/lib/settlements'
+import { loadMySettlementItems } from 'src/lib/settlement-items'
 import type { Session } from '@supabase/supabase-js'
 
 const BLOCK_STORAGE_KEY = 'scd_blocked_members'
@@ -39,12 +41,14 @@ export const useMemberStore = defineStore('member', () => {
     if (!supabase) return
     const { data } = await supabase.auth.getSession()
     session.value = data.session
-    if (session.value) await _loadProfile()
+    if (session.value) { await _loadProfile(); void loadMySettlements(); void loadMySettlementItems() }
 
     supabase.auth.onAuthStateChange(async (_event, s) => {
       session.value = s
       if (s) {
         await _loadProfile()
+        void loadMySettlements()
+        void loadMySettlementItems()
       } else {
         profile.value     = null
         connections.value = []

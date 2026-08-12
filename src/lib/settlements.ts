@@ -1,5 +1,7 @@
 import { ref, computed } from 'vue'
 import { safeRead, safeWrite } from './storage-cipher'
+import { supabase } from './supabase'
+import { recordFingerprint } from './record-fingerprint'
 
 const STORAGE_KEY = 'e8.1'   // opaque — was 'exotopia_settlements_v1'
 
@@ -16,6 +18,37 @@ export interface SettlementRecord {
   clusterSlug?: string
   memberId?: string
   objects?: string[]    // unlocked reward-catalog object keys attached to this settlement
+  focus?: string         // FocusOption id from MintPage's FOCUS_OPTIONS — editable via updateSettlement()
+  /**
+   * SHA-256 hex digest of this settlement's meaningful fields (see
+   * fingerprintableFields() below), computed once at creation — an identity
+   * marker, not a live integrity check. See SPEC_E8_RECORD_FINGERPRINT.md.
+   * Render as the E8 theta commitment via record-fingerprint.ts's
+   * renderFingerprintFromHex() — never recomputed after creation, so it
+   * stays stable even if focus/items change later.
+   */
+  fingerprint?: string
+}
+
+/**
+ * The subset of a settlement's fields that make it "this settlement" for
+ * fingerprinting purposes — excludes createdAt and other pure bookkeeping so
+ * the fingerprint doesn't change on every save for no meaningful reason.
+ * Fixed key order (not a spread of the record) so the canonical string this
+ * produces is stable regardless of how the record object was constructed.
+ */
+function fingerprintableFields(r: SettlementRecord) {
+  return {
+    type: r.type,
+    planetName: r.planetName,
+    hostname: r.hostname,
+    exolocation: r.exolocation,
+    displayName: r.displayName,
+    focus: r.focus ?? null,
+    objects: r.objects ?? [],
+    lat: r.lat ?? null,
+    lon: r.lon ?? null,
+  }
 }
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
@@ -33,6 +66,13 @@ export interface SettlementRecord {
 // count.
 
 function assertBareField(fnName: string, field: string, value: string): void {
+  if (typeof value !== 'string') {
+    // Catches a caller passing a field that was never actually populated
+    // (undefined/null from an incomplete object mapping upstream) — a plain
+    // `.includes(':')` call turns that into an opaque "Cannot read
+    // properties of undefined" several stack frames away from the real bug.
+    throw new Error(`${fnName}: ${field} must be a string (got ${typeof value}: ${String(value)}).`)
+  }
   if (value.includes(':')) {
     throw new Error(
       `${fnName}: ${field} must be a bare designation, not a settlement key (got "${value}"). ` +
@@ -135,6 +175,104 @@ function saveToStorage(records: SettlementRecord[]) {
 // Single shared reactive state (module-level singleton)
 const _records = ref<SettlementRecord[]>(loadFromStorage())
 
+// ── Server sync (015_settlements.sql) — signed-in members only ──────────────
+//
+// Anonymous settlement creation keeps working exactly as before: localStorage
+// stays the source of truth read on every page load (fast, works offline,
+// nothing changes for a signed-out visitor). For a signed-in member, every
+// write is ALSO fired at the `settlements` table (owner-only RLS, mirrors
+// settlement_profiles' pattern) so the same settlement survives a cleared
+// cache or shows up on a second device. Sync is fire-and-forget on writes —
+// callers of addSettlement/updateSettlement/removeSettlement don't need to
+// change, they stay synchronous.
+//
+// No collision authority over `key`/`exolocation` here either, same as
+// everywhere else in this design (SETTLEMENT_ADDRESS_API.md) — this table
+// only guarantees ONE member can't have two rows for the same key, not that
+// two different members can't each have their own row for the same address.
+
+interface SettlementRow {
+  key: string
+  type: SettlementRecord['type']
+  planet_name: string
+  hostname: string
+  exolocation: string
+  display_name: string
+  created_at: string
+  lat: number | null
+  lon: number | null
+  cluster_slug: string | null
+  cluster_member_id: string | null
+  objects: string[] | null
+  focus: string | null
+  fingerprint: string | null
+}
+
+function recordToRow(r: SettlementRecord, ownerId: string) {
+  return {
+    owner_id: ownerId,
+    key: r.key, type: r.type, planet_name: r.planetName, hostname: r.hostname,
+    exolocation: r.exolocation, display_name: r.displayName,
+    lat: r.lat ?? null, lon: r.lon ?? null,
+    cluster_slug: r.clusterSlug ?? null, cluster_member_id: r.memberId ?? null,
+    objects: r.objects ?? [], focus: r.focus ?? null,
+    fingerprint: r.fingerprint ?? null,
+  }
+}
+
+function rowToRecord(row: SettlementRow): SettlementRecord {
+  return {
+    key: row.key, type: row.type, planetName: row.planet_name, hostname: row.hostname,
+    exolocation: row.exolocation, displayName: row.display_name, createdAt: row.created_at,
+    lat: row.lat ?? undefined, lon: row.lon ?? undefined,
+    clusterSlug: row.cluster_slug ?? undefined, memberId: row.cluster_member_id ?? undefined,
+    objects: row.objects ?? undefined, focus: row.focus ?? undefined,
+    fingerprint: row.fingerprint ?? undefined,
+  }
+}
+
+async function currentUserId(): Promise<string | null> {
+  if (!supabase) return null
+  const { data } = await supabase.auth.getSession()
+  return data.session?.user?.id ?? null
+}
+
+async function syncUpsert(record: SettlementRecord) {
+  const uid = await currentUserId()
+  if (!uid || !supabase) return
+  await supabase.from('settlements').upsert(recordToRow(record, uid), { onConflict: 'owner_id,key' })
+}
+
+async function syncDelete(key: string) {
+  const uid = await currentUserId()
+  if (!uid || !supabase) return
+  await supabase.from('settlements').delete().eq('owner_id', uid).eq('key', key)
+}
+
+/**
+ * Called once when a member's session becomes available (see member.ts's
+ * init()/onAuthStateChange — this is the one place that decides "am I signed
+ * in," so this function is the integration point, not something every page
+ * needs to remember to call). Pulls down every settlement this member has on
+ * the server, merges into the local list (server data wins on key conflict),
+ * then pushes up whatever was local-only — the one-time migration path for
+ * settlements created before signing in, or created anonymously in a browser
+ * that later signs in.
+ */
+export async function loadMySettlements(): Promise<void> {
+  const uid = await currentUserId()
+  if (!uid || !supabase) return
+  const { data } = await supabase.from('settlements').select('*').eq('owner_id', uid)
+  const serverRecords = ((data ?? []) as SettlementRow[]).map(rowToRecord)
+  const serverKeys = new Set(serverRecords.map(r => r.key))
+
+  const localOnly = _records.value.filter(r => !serverKeys.has(r.key))
+  _records.value = [...serverRecords, ...localOnly]
+  saveToStorage(_records.value)
+
+  for (const r of localOnly) void syncUpsert(r)
+}
+
 export function useSettlements() {
   const settlements = computed(() => _records.value)
 
@@ -151,16 +289,26 @@ export function useSettlements() {
     const full: SettlementRecord = { ...record, createdAt: new Date().toISOString() }
     _records.value = [..._records.value, full]
     saveToStorage(_records.value)
+    void syncUpsert(full)
+
+    // Fingerprinting needs crypto.subtle + WASM init, both async — addSettlement()
+    // stays synchronous for existing callers, so this attaches the fingerprint
+    // via updateSettlement() once it resolves rather than blocking creation on it.
+    void recordFingerprint(JSON.stringify(fingerprintableFields(full)))
+      .then(fp => updateSettlement(full.key, { fingerprint: fp.sha256Hex }))
   }
 
   function updateSettlement(key: string, patch: Partial<SettlementRecord>) {
     _records.value = _records.value.map(r => r.key === key ? { ...r, ...patch } : r)
     saveToStorage(_records.value)
+    const updated = getSettlement(key)
+    if (updated) void syncUpsert(updated)
   }
 
   function removeSettlement(key: string) {
     _records.value = _records.value.filter(r => r.key !== key)
     saveToStorage(_records.value)
+    void syncDelete(key)
   }
 
   return { settlements, hasSettlement, getSettlement, addSettlement, updateSettlement, removeSettlement }

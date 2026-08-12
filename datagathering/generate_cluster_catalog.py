@@ -136,9 +136,9 @@ CLUSTER_PROFILES: dict = {
     'richness':   7,
     # Binggeli+1985 VCC: 2096 members in 7.5°×7.5° survey
     # Three subclusters: A (M87), B (M49/NGC4472), C (NGC4261)
-    'sigma_v_kms': 760,
-    'tx_kev':      2.5,
-    'M200_1e14':   8.0,
+    'sigma_v_kms': 640,   # corrected from 760 — Boselli+2020
+    'tx_kev':      2.3,   # corrected from 2.5
+    'M200_1e14':   1.4,   # corrected from 8.0 (was ~6x too high) — eROSITA 2024 / Suzaku 2017
     'rvir_mpc':    1.10,
     'count':       250,    # render ~230; VCC lists 2096 total
     'subclusters': [
@@ -173,7 +173,7 @@ CLUSTER_PROFILES: dict = {
     'name':       'Fornax Cluster',
     'ra_deg':     54.62,
     'dec_deg':    -35.45,
-    'dist_mpc':   19.0,
+    'dist_mpc':   20.0,   # corrected from 19.0 — Blakeslee+2009 SBF
     'richness':   5,
     # FCC (Ferguson+1989): 340 members; very compact, regular cluster
     'sigma_v_kms': 370,
@@ -247,15 +247,20 @@ CLUSTER_PROFILES: dict = {
     'dec_deg':    -41.3,
     'dist_mpc':   46.0,
     'richness':   6,
-    # Two sub-clusters: Cen30 (main, NGC4696 BCG) + Cen45 (+4500 km/s)
-    # Sanders+2016 XMM; σ_v = 830 km/s for full cluster
+    # Two sub-clusters: Cen30 (main, NGC4696 BCG) + Cen45 (~1500 km/s offset,
+    # corrected from +4500 — that was Cen45's absolute recession velocity,
+    # not its offset from Cen30; real merger signature is the smaller number)
+    # Walker+2013a XMM (corrected citation — "Sanders+2016" was a Chandra paper,
+    # not the XMM merger study); sigma_v = 830 km/s for full cluster
     'sigma_v_kms': 830,
     'tx_kev':      3.7,
-    'M200_1e14':   4.0,
-    'rvir_mpc':    0.90,
+    'M200_1e14':   1.6,   # corrected from 4.0 — Walker+2013b hydrostatic analysis to r200
+    'rvir_mpc':    1.13,  # corrected from 0.90 — Walker+2013b
     'count':       190,    # ~300 known members
     'subclusters': [
-      # Cen45: infalling foreground group at +4500 km/s velocity offset
+      # Cen45: infalling group at ~1500 km/s velocity offset from Cen30 (corrected
+      # from +4500, which was Cen45's absolute recession velocity, not its offset —
+      # real merger signature confirmed via a shock-heated X-ray bridge)
       {'name': 'Cen45 (NGC4709 group)', 'offset_rvir': [-0.24, 0.06, 0.20], 'fraction': 0.22},
     ],
     'special': {
@@ -273,8 +278,8 @@ CLUSTER_PROFILES: dict = {
       (0.25, 0.60, {'E': 0.42, 'S0': 0.34, 'Sa': 0.18, 'Sb': 0.05, 'Irr': 0.01}),
       (0.60, 1.00, {'E': 0.24, 'S0': 0.32, 'Sa': 0.28, 'Sb': 0.12, 'Irr': 0.04}),
     ],
-    'notes': ('Abell 3526 (Sanders+2016); ~300 members. '
-              'Two sub-clusters: Cen30 main (NGC4696 BCG) and Cen45 infalling group (+4500 km/s). '
+    'notes': ('Abell 3526 (Walker+2013a XMM); ~300 members. '
+              'Two sub-clusters: Cen30 main (NGC4696 BCG) and Cen45 infalling group (~1500 km/s offset). '
               'Most luminous classical cooling flow in any cluster; X-ray cavities around NGC4696. '
               'Cooling flow: inner zone extremely E-dominated.'),
   },
@@ -286,11 +291,11 @@ CLUSTER_PROFILES: dict = {
     'dec_deg':    -27.53,
     'dist_mpc':   59.0,
     'richness':   5,
-    # Abell 1060; Christlein+2003; twin BCGs NGC3309 + NGC3311
-    'sigma_v_kms': 680,
+    # Abell 1060; Christlein & Zabludoff 2003 (own cited source was misquoted); twin BCGs NGC3309 + NGC3311
+    'sigma_v_kms': 724,   # corrected from 680 — own cited source misquoted
     'tx_kev':      3.3,
     'M200_1e14':   3.0,
-    'rvir_mpc':    0.90,
+    'rvir_mpc':    1.28,  # corrected from 0.90 — Hayakawa+2006 (~1.2-1.35 Mpc)
     'count':       160,    # ~200 known members
     'subclusters': [],
     'special': {
@@ -318,14 +323,14 @@ CLUSTER_PROFILES: dict = {
     'name':       'Norma Cluster',
     'ra_deg':     243.3,
     'dec_deg':    -60.9,
-    'dist_mpc':   65.0,
+    'dist_mpc':   69.5,   # corrected from 65.0 — Said+2021 Fundamental Plane; peculiar velocity ~0, confirms Hubble-flow distance
     'richness':   9,
     # Abell 3627 — Great Attractor dominant cluster; Woudt+2004
     # Highly obscured: A_V > 1.5–3 mag in survey region
     'sigma_v_kms': 900,
     'tx_kev':      6.7,
     'M200_1e14':   12.0,
-    'rvir_mpc':    1.20,
+    'rvir_mpc':    1.55,  # corrected from 1.20 — Carlberg+1997 scaling from measured sigma_v (~1.5-1.6 Mpc)
     'count':       200,    # ~700 known; many missed due to MW extinction
     'subclusters': [
       # Western sub-cluster: 2nd density peak ~20% of rvir offset W
@@ -365,8 +370,8 @@ CLUSTER_PROFILES: dict = {
     # NGC1265: head-tail radio galaxy — strong ram-pressure indicator
     'sigma_v_kms': 1040,
     'tx_kev':      6.0,
-    'M200_1e14':   12.0,
-    'rvir_mpc':    1.30,
+    'M200_1e14':   6.65,  # corrected from 12.0 — was mixing a dynamical M200 with an r500-scale radius
+    'rvir_mpc':    1.79,  # corrected from 1.30 — Simionescu+2011 Science, adopted as a pair with M200 above (the one measurement that reaches R200)
     'count':       310,    # ~500 known members
     'subclusters': [
       # Infalling group at +5500 km/s velocity offset; slight offset NE
@@ -405,7 +410,7 @@ CLUSTER_PROFILES: dict = {
     # Two co-BCGs: NGC4889 (ultra-massive 21 billion M☉ BH) + NGC4874
     'sigma_v_kms': 1082,
     'tx_kev':      8.25,
-    'M200_1e14':   15.0,
+    'M200_1e14':   8.2,   # corrected from 15.0 — newest (2026) Subaru/HSC weak-lensing two-halo fit; flagged literature disagreement, newest measurement adopted rather than averaged
     'rvir_mpc':    2.10,
     'count':       460,    # ~1000+ bright members; render ~455
     'subclusters': [
@@ -448,8 +453,8 @@ CLUSTER_PROFILES: dict = {
     # Core: A3558 (richest) + A3562 (merging) + A3556 (infalling group)
     # Also A3569, A3571, A3572 in outer region
     'sigma_v_kms': 940,
-    'tx_kev':      8.0,
-    'M200_1e14':   20.0,
+    'tx_kev':      5.7,   # corrected from 8.0 — ASCA/XMM (~5.4-6.0 keV)
+    'M200_1e14':   20.0,  # NOT independently corrected — defensible only as "core-complex total," not A3558 alone (A3558's own dynamical mass is 14.8e14); tied to the unresolved "anchor to A3558 specifically" reframing, see SPEC_XCLUSTER_STARSYSTEMS.md §5
     'rvir_mpc':    2.50,
     'count':       310,    # thousands in full superconcentration; render ~300
     'subclusters': [

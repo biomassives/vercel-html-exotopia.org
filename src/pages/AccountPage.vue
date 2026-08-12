@@ -40,6 +40,40 @@
           <button class="acc-btn" :disabled="exporting" @click="doExport">
             {{ exporting ? 'Gathering your data…' : 'Download my data (JSON)' }}
           </button>
+
+          <div class="acc-encrypted-block">
+            <p class="acc-hint acc-hint--strong">
+              Want the download itself protected — in case it ends up in a synced
+              Downloads folder or an email attachment? Encrypt it with a passphrase
+              first. This uses AES-256-GCM with the passphrase run through PBKDF2 —
+              standard, real encryption, not something we invented. We never see or
+              store the passphrase, which also means: if you lose it, the file is
+              unrecoverable. There's no reset link for a secret we never had.
+            </p>
+            <input v-model="backupPassphrase" type="password" class="acc-input"
+              placeholder="Choose a passphrase for this backup" />
+            <button class="acc-btn" :disabled="exporting || !backupPassphrase" @click="doEncryptedExport">
+              {{ exporting ? 'Encrypting…' : 'Download encrypted backup' }}
+            </button>
+            <p v-if="backupError" class="acc-error">{{ backupError }}</p>
+          </div>
+        </section>
+
+        <!-- Decrypt a backup -->
+        <section class="acc-section">
+          <h2 class="acc-h2">Read an encrypted backup</h2>
+          <p class="acc-p">
+            Decrypts a file made with "Download encrypted backup" above, entirely in
+            your browser — the file and passphrase never leave your device.
+          </p>
+          <input type="file" accept=".json" class="acc-file" @change="onBackupFilePicked" />
+          <input v-model="restorePassphrase" type="password" class="acc-input"
+            placeholder="Passphrase for this file" />
+          <button class="acc-btn" :disabled="restoring || !restoreFile || !restorePassphrase" @click="doDecryptBackup">
+            {{ restoring ? 'Decrypting…' : 'Decrypt and download as plain JSON' }}
+          </button>
+          <p v-if="restoreError" class="acc-error">{{ restoreError }}</p>
+          <p v-if="restoreOk" class="acc-ok">Decrypted successfully — check your downloads.</p>
         </section>
 
         <!-- Deletion -->
@@ -78,6 +112,17 @@ import { ref, onMounted } from 'vue'
 import { useMemberStore } from 'src/stores/member'
 import type { DeletionRequest } from 'src/lib/supabase'
 import MemberSignIn from 'src/components/MemberSignIn.vue'
+import { encryptBackup, decryptBackup } from 'src/lib/encrypted-backup'
+
+function downloadBlob(contents: string, mime: string, filename: string) {
+  const blob = new Blob([contents], { type: mime })
+  const url  = URL.createObjectURL(blob)
+  const a    = document.createElement('a')
+  a.href = url
+  a.download = filename
+  a.click()
+  URL.revokeObjectURL(url)
+}
 
 const member = useMemberStore()
 
@@ -94,15 +139,61 @@ async function doExport() {
   exporting.value = true
   try {
     const data = await member.exportMyData()
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
-    const url  = URL.createObjectURL(blob)
-    const a    = document.createElement('a')
-    a.href = url
-    a.download = `exotopia-data-export-${new Date().toISOString().slice(0, 10)}.json`
-    a.click()
-    URL.revokeObjectURL(url)
+    downloadBlob(JSON.stringify(data, null, 2), 'application/json',
+      `exotopia-data-export-${new Date().toISOString().slice(0, 10)}.json`)
   } finally {
     exporting.value = false
+  }
+}
+
+// ── Encrypted export ─────────────────────────────────────────────────────
+const backupPassphrase = ref('')
+const backupError      = ref('')
+async function doEncryptedExport() {
+  exporting.value = true
+  backupError.value = ''
+  try {
+    const data = await member.exportMyData()
+    const envelope = await encryptBackup(backupPassphrase.value, data)
+    downloadBlob(envelope, 'application/json',
+      `exotopia-data-export-encrypted-${new Date().toISOString().slice(0, 10)}.json`)
+    backupPassphrase.value = ''
+  } catch (e) {
+    backupError.value = e instanceof Error ? e.message : 'Could not encrypt the backup.'
+  } finally {
+    exporting.value = false
+  }
+}
+
+// ── Decrypt a backup ─────────────────────────────────────────────────────
+const restorePassphrase = ref('')
+const restoreFile       = ref<File | null>(null)
+const restoring         = ref(false)
+const restoreError      = ref('')
+const restoreOk         = ref(false)
+
+function onBackupFilePicked(ev: Event) {
+  restoreFile.value = (ev.target as HTMLInputElement).files?.[0] ?? null
+  restoreError.value = ''
+  restoreOk.value = false
+}
+
+async function doDecryptBackup() {
+  if (!restoreFile.value) return
+  restoring.value = true
+  restoreError.value = ''
+  restoreOk.value = false
+  try {
+    const contents = await restoreFile.value.text()
+    const data = await decryptBackup(restorePassphrase.value, contents)
+    downloadBlob(JSON.stringify(data, null, 2), 'application/json',
+      `exotopia-data-export-decrypted-${new Date().toISOString().slice(0, 10)}.json`)
+    restoreOk.value = true
+    restorePassphrase.value = ''
+  } catch (e) {
+    restoreError.value = e instanceof Error ? e.message : 'Could not decrypt this file.'
+  } finally {
+    restoring.value = false
   }
 }
 
@@ -180,4 +271,15 @@ onMounted(() => {
 .acc-btn--danger:hover:not(:disabled) { border-color: rgba(255,90,90,0.60); }
 
 .acc-pending { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; font-size: 11px; color: rgba(255,195,120,0.85); }
+
+.acc-encrypted-block { margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.06); }
+.acc-hint--strong { color: rgba(160,195,220,0.75); font-style: normal; margin-bottom: 10px; }
+.acc-input, .acc-file {
+  display: block; width: 100%; box-sizing: border-box;
+  background: rgba(0,15,35,0.70); border: 1px solid rgba(0,100,160,0.25); border-radius: 5px;
+  color: rgba(200,230,255,0.85); font-family: inherit; font-size: 10.5px; padding: 8px 10px;
+  margin-bottom: 10px;
+}
+.acc-error { font-size: 10.5px; color: rgba(255,120,120,0.90); margin: 8px 0 0; }
+.acc-ok    { font-size: 10.5px; color: rgba(100,220,150,0.90); margin: 8px 0 0; }
 </style>

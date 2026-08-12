@@ -278,6 +278,29 @@ The original "incorporate first" list placed the NASA Archive re-pull, GWTC-3 gr
 
 ---
 
+## Real vs. generated — the running ledger (August 2026)
+
+This is the question underneath every item on this page: for a given object on screen, is the number on its card *measured* or *modelled*? Both are legitimate — a modelled number derived from a published density law or scaling relation is not a lie — but they are different epistemic categories, and a user should always be able to tell which one they're looking at. This ledger is the current whole-app tally, counted directly against the files shipped in this repo (not aspirational figures), so it can be regenerated and checked at any time. A companion post, [Counting the Universe](/blog/counting-the-universe), walks through what these numbers mean and how realistic the overall approach is; this table is its source data.
+
+| Category | Count | Real or generated | Source / method |
+|---|---|---|---|
+| X-ray galaxy clusters | 345 | **Real** — catalogued | Takey2013 / XMM-Newton (`public/clusters-xray.json`) |
+| Hand-curated named clusters/groups | 15 | **Real** — literature-anchored | σ_v, T_x, M200, r_vir per cluster from published papers (`cosmic-structures.ts`, `generate_cluster_catalog.py`); includes the Shapley/A3558 calibration work above |
+| Individually named bright galaxies (BCGs etc.) | ~56 | **Real** — catalogued | Real positions, Hubble types, and measured/imaged black hole masses (EHT, reverberation mapping, stellar dynamics) |
+| Procedurally generated cluster-member galaxies | 26,225 | **Generated** — plausible, not observed | Galaxy Oracle, one file per X-ray cluster, seeded on cluster ID; count and morphology mix driven by that cluster's real T_x/L_X |
+| Milky Way stars shipped in-app | 61,817 | **Real** — catalogued (trimmed) | HYG Stellar Database v3 compact export (`public/stars/hyg-compact.json`); the full HYG v3 catalog is 119,614 stars — the app ships a performance-trimmed subset, not the full table, and this page previously stated the untrimmed figure without that caveat |
+| Confirmed + candidate exoplanet records | 35,896 | **Real** — catalogued | NASA Exoplanet Archive composite planetary systems table (`public/exoapril2_2024.json`) |
+| TESS Objects of Interest (candidate tier) | 6,830 | **Real** — observational, unconfirmed | `public/candidate-exoplanets.json`, `source_catalog: "toi"` |
+| "Frontier" predicted planets | 5,000 | **Generated** — statistically anchored | `public/frontier-exoplanets.json`; synthetic planets placed around *real* Hipparcos-catalog host stars, not detections |
+| Generated star systems | 7,096 | **Generated** — physically modelled | Deterministic planet pipeline, seeded per real galaxy ID (e.g. `NGC4569`), architecture biased by that galaxy's real cluster-zone/ICM-stress/metallicity inputs |
+| Generated planets | 10,900 | **Generated** — physically modelled | Same pipeline; per-planet type/orbit/atmosphere from Stage 2/3 rules in `SPEC_STARSYSTEM_ALGORITHM.md`, provenance-blocked per `SPEC_PROVENANCE.md` |
+| Exomoons | 2 confirmed candidates; 0 generated at scale | **Real** (the 2) / **not yet generated** (everything else) | Kepler-1625b-i, Kepler-1708b-i (Teachey & Kipping 2018; Kipping et al. 2022); `moon-settlement.ts` defines a 6-level trophic hierarchy but no bulk moon-generation pass has been run — an open gap, not a hidden one |
+
+Two things fall out of this table worth stating plainly. First, real and generated content sit at roughly comparable scale across the app (order 40,000–45,000 records each way) — this is not a thin real dataset wrapped in a much larger synthetic shell, nor the reverse. Second, every generated row above ties back to a real input at the *type* level (a real cluster's T_x sets its member count and morphology mix; a real galaxy's cluster-zone sets its planetary architecture bias) even where the individual object is not itself observed. That distinction — modelled from real physics vs. fabricated from nothing — is the whole design philosophy, and it's covered in more depth in the companion post.
+
+---
+
 *SCD Hub / Exotopia.org · GPL v3*
 *Initial draft data sources: Takey2013 XMM-Newton catalog (NASA/HEASARC); NASA Exoplanet Archive composite planetary systems table; HYG Stellar Database v3; Gaia DR3 (ESA); ATNF Pulsar Catalog (Parkes); Habitable Exoplanet Catalog (UPR Arecibo); Event Horizon Telescope collaboration; GWTC-3 (LIGO/Virgo/KAGRA); SDSS DR17 void catalogs; NEXUS+ cosmic web filament reconstruction; VCC Virgo Cluster Catalog; Kreckel et al. 2012 void galaxy survey; PHOENIX/BT-Settl stellar atmosphere library; Kipping et al. exomoon candidates.*
 *June 2026 update: NASA Exoplanet Archive composite planetary systems table (`sy_dist`, `st_teff`, `st_rad` columns populated); parallax sky pipeline implementation in `SurfaceViewPage`; `moon-settlement.ts` trophic hierarchy; `void-oracle.ts` loader.*
+*August 2026 update: real-vs-generated ledger added and cross-checked directly against shipped data files; HYG star count corrected (61,817 shipped vs. 119,614 in the full v3 catalog); companion post "Counting the Universe" published covering scale and realism evaluation across the whole app.*

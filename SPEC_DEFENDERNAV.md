@@ -75,6 +75,58 @@ This is a `<canvas>` element drawn every frame by the parent page's Three.js tic
 Right side of canvas, vertical: a faint ruler with 2–4 labelled tick marks indicating the
 spatial scale of the current strip viewport. Updates when the user zooms the strip.
 
+### 1.5 Angle ruler
+
+Top edge of canvas, horizontal: a faint ruler over the strip's angular X-axis (orbital
+angle in `system` mode, azimuth in `surface` mode — both share the same 0°→360° wrapping
+mapping, see §2.1). Major ticks land on multiples of 90° and are always labelled ("0°",
+"90°", "180°", "270°"); as the user zooms in and the visible range narrows, unlabelled minor
+ticks at 45°/30°/15° fill in between so the ruler keeps a roughly constant on-screen tick
+density rather than the labelled ticks alone going sparse. Degrees only — no radian labels.
+
+### 1.6 No individual user tracking
+
+This is a deliberate constraint on the component, not an oversight: **DefenderNav never
+renders another user's live position, trajectory, or session presence as an
+individually-identifiable marker.** The only "self" marker on the strip is the local
+camera cursor (§2.1, "YOU" — your own camera, never anyone else's). The only presence
+signal for other users anywhere in the component is the gallery `presenceCount` badge
+(§2.1) — an integer headcount, not a list of identities or positions.
+
+Any future "traveller" feature that lets users find or coordinate with specific other
+users must live outside DefenderNav's map surface, must be opt-in and mutual-consent
+based (never passive or default-on), and should prefer routing to an external service the
+user already trusts (Discord, Signal, etc.) over building location/presence infrastructure
+in-house. See `RISK_REDUCTION_RECOMMENDATIONS.md` §4 and `legal-community-guidelines.md`
+§3 for the platform-wide reasoning this follows.
+
+### 1.7 Galactic-anchored compass (system mode only)
+
+In `system` mode, the angle ruler's 0° is **not** an arbitrary orbital-plane origin — it's
+re-anchored each time the strip loads to the current star system's real galactic longitude
+(`galacticLongitudeDeg()` in `DefenderNav.vue`, a standard J2000 equatorial→galactic
+conversion off the system's real RA/Dec, already available as `currentSystemRef`). The 0°
+tick is labelled `0°GC` and reads as "toward the galactic center" from that system's real
+sky position.
+
+**What this is, and isn't, claiming.** The RA/Dec → galactic-longitude conversion is exact,
+real astronomy. What it is *not* is a claim that a generated system's orbital plane is
+physically tilted to point that way in 3D — that orientation isn't modeled anywhere in this
+app (orbital planes are a 2D top-down abstraction, per §2.1 below). So `0°GC` means "this
+strip's zero point is calibrated to this system's real sky position," not "planet X's orbit
+is physically aligned toward Sagittarius." Don't let this get flattened into the stronger
+claim in UI copy or marketing — the honest version is already useful (every system gets a
+distinct, real, non-arbitrary zero point instead of always starting at a meaningless 0), and
+doesn't need embellishing into something the underlying data can't support.
+
+Implementation-wise, the offset is applied once, inside `angleToX()` — every planet, gallery,
+and the camera cursor is positioned from its raw scene angle exactly as before; only the
+final screen-X conversion shifts by the offset. The tick ruler itself does the reverse
+conversion (compass angle → raw angle) so tick positions and labels stay fixed and correct
+while the scene content shifts to align with them. `surface` mode is untouched — its azimuth
+is already a real local compass and doesn't need re-anchoring; `cosmic` mode has no single
+system to anchor to, so the offset is always 0 there.
+
 ---
 
 ## 2. The Three Scene Modes

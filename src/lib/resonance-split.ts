@@ -1,19 +1,19 @@
 /**
- * resonance-split.ts — single source of truth for allocation percentages.
+ * resonance-split.ts — single source of truth for contribution-allocation
+ * percentages.
  *
  * WHY THIS FILE EXISTS
  * --------------------
- * Before this, the same concept was stated with five different sets of numbers
- * across the app: 99/0.75/0.25 (DocsPage, DocPage, DocPage0, erc721-metadata,
- * mint-style), 80/15/5 (GlossaryPage summary line, SettlementHashmark),
- * 80/10/0 (GlossaryPage body — which also contradicted its own summary line),
- * and 100/0/0 (the exoloc settlement deed written by MintPage).
- *
- * Two of those were being committed to immutable records: the SettlementHashmark
- * figure is inside the object that gets SHA-256'd into `design_hash`, which is
- * then embedded in ERC-721 deed metadata. A wrong number in that position is not
- * a typo, it is a permanent misstatement about where money goes, attached to an
- * artefact a user paid gas to create.
+ * Originally written for on-chain NFT minting (settlement deeds, $SUNLIGHT
+ * recordings) — before this file existed, the same split was stated with five
+ * different, inconsistent sets of numbers across the app. Minting itself has
+ * since been removed from this app in favour of IPFS pinning (see
+ * src/lib/ipfs-pinning.ts, SETTLEMENT_ADDRESS_API.md) — no chain, no gas fee,
+ * no wallet. The underlying math is kept: it's a general-purpose "how is a
+ * contribution divided between creator/community/platform" calculation, not
+ * inherently a minting concept, and stays available for whatever the
+ * IPFS-support model needs next (e.g. attributing a paid pinning-service
+ * subscription, or a future community fund).
  *
  * RULES
  * -----
@@ -21,11 +21,8 @@
  * 2. `PRIMARY_MINT_IS_FREE` is not decoration — see the note below it. Any UI
  *    that displays a split must also make clear whether there is a fee to split.
  * 3. Fee isolation: never render a split figure combined into one expression
- *    with a gas figure or a community payout amount. Compute and display them
- *    independently.
- * 4. Changing SETTLEMENT_SPLIT changes the SettlementHashmark digest. Bump the
- *    hashmark schema version in the same commit so existing deed hashes stay
- *    reproducible against the schema they were minted under.
+ *    with a network-cost figure or a community payout amount. Compute and
+ *    display them independently.
  */
 
 export interface ResonanceSplit {

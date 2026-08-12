@@ -6,6 +6,7 @@
     @mouseup="onDragEnd"
     @mouseleave="onDragEnd"
     @click="onCanvasClick"
+    @wheel="onWheel"
     @touchstart.passive="onTouchStart"
     @touchmove.passive="onTouchMove"
     @touchend="onTouchEnd"
@@ -381,11 +382,22 @@ const drag  = { active: false, lastX: 0, lastY: 0 }
 const touch = { lastX: 0, lastY: 0 }
 let dragMoved = 0
 
+// Systems generated in generateSystems() sit at r in [2.8, 9.0] from the
+// galaxy's local origin -- clamp zoom to stay outside that cloud on the near
+// end (avoid clipping into a marker) and not so far out the galaxy reads as
+// a speck on the far end.
+const camR = ref(22)
+
 function updateCamera() {
   if (!camera) return
   const sp = Math.sin(orbit.phi), cp = Math.cos(orbit.phi)
-  camera.position.set(22 * sp * Math.sin(orbit.theta), 22 * cp, 22 * sp * Math.cos(orbit.theta))
+  camera.position.set(camR.value * sp * Math.sin(orbit.theta), camR.value * cp, camR.value * sp * Math.cos(orbit.theta))
   camera.lookAt(0, 0, 0)
+}
+
+function onWheel(e: WheelEvent) {
+  e.preventDefault()
+  camR.value = Math.max(6, Math.min(40, camR.value + e.deltaY * 0.10))
 }
 
 function onDragStart(e: MouseEvent) { drag.active = true; drag.lastX = e.clientX; drag.lastY = e.clientY; dragMoved = 0 }
@@ -469,8 +481,9 @@ function buildScene(sysList: VoidStarSystem[], morph: string, colHex: string) {
   controls = viz.controls
   if (!renderer || !scene || !camera || !controls) return
 
-  // This page drives the camera with its own orbit math (no OrbitControls) —
-  // disable the shared controls so a drag here isn't double-handled by both.
+  // Already disabled in onMounted (before the async oracle fetch) — reasserted
+  // here defensively since this page drives the camera with its own orbit
+  // math and a drag must never be double-handled by both.
   controls.enabled = false
 
   scene.background = new THREE.Color(0x000002)
@@ -591,6 +604,19 @@ onMounted(async () => {
   // Await a tick so MainLayout's onMounted (which calls viz.init()) runs first —
   // this page can otherwise mount before the shared renderer exists.
   await Promise.resolve()
+
+  // Disable the shared OrbitControls *before* the async oracle fetch below,
+  // not inside buildScene() after it. VoidInteriorPage's onUnmounted (the
+  // page this one is always entered from) re-enables them for CosmicPage's
+  // benefit, so there's otherwise a window — for as long as loadVoidOracle()
+  // takes — where the shared controls are live with CosmicPage's old zoom
+  // settings. A scroll during that window moves camera.position via
+  // OrbitControls; the instant buildScene() finishes and calls
+  // updateCamera(), it snaps the camera back to this page's own orbit
+  // radius, discarding that zoom — the "camera bounces back" bug.
+  controls = viz.controls
+  if (controls) controls.enabled = false
+
   scheduleHide()
   loading.value = true
 

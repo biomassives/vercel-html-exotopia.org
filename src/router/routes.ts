@@ -106,6 +106,15 @@ const routes: RouteRecordRaw[] = [
         props: true,
       },
       {
+        // Gallery interior: bioluminescent geodesic-biodome structure near the dome
+        // (not /gallery — that's the unrelated NFT collector-card gallery)
+        path: 'surface/:hostname/:planetName/gallery',
+        name: 'gallery-interior',
+        component: () => import('src/pages/GalleryInteriorPage.vue'),
+        meta: { title: 'Gallery Interior' },
+        props: true,
+      },
+      {
         // Cluster interior: navigate member galaxies within a named cluster
         path: 'cluster-interior/:slug',
         name: 'cluster-interior',
@@ -168,6 +177,23 @@ const routes: RouteRecordRaw[] = [
         meta: { title: 'Orbital Gallery' },
       },
       {
+        // Public settlement page — see supabase/migrations/012_settlement_profiles.sql
+        path: 'settlement/:slug',
+        name: 'settlement-profile',
+        component: () => import('src/pages/SettlementProfilePage.vue'),
+        meta: { title: 'Settlement' },
+        props: true,
+      },
+      {
+        // Public directory of all published settlement profiles — no sign-in
+        // required, same RLS-permitted read as settlement/:slug above, just
+        // unfiltered by a known slug.
+        path: 'settlements',
+        name: 'settlement-directory',
+        component: () => import('src/pages/SettlementDirectoryPage.vue'),
+        meta: { title: 'Settlement Directory' },
+      },
+      {
         // A single published community_nodes row, clicked from a gallery marker
         // in DefenderNav.vue (which already builds this exact path) — was 404ing
         // since this route never existed.
@@ -218,12 +244,6 @@ const routes: RouteRecordRaw[] = [
         name: 'mint-style',
         component: () => import('src/pages/MintStylePage.vue'),
         meta: { title: 'Minting Style Builder' },
-      },
-      {
-        path: 'chains',
-        name: 'chains',
-        component: () => import('src/pages/ChainStatusPage.vue'),
-        meta: { title: 'Networks · Exotopia' },
       },
       {
         path: 'cve_alerts',
@@ -280,6 +300,24 @@ const routes: RouteRecordRaw[] = [
         meta: { title: 'Admin · Community Nodes' },
       },
       {
+        path: 'admin/video-suggestions',
+        name: 'admin-video-suggestions',
+        component: () => import('src/pages/AdminVideoSuggestionsPage.vue'),
+        meta: { title: 'Admin · Video Suggestions' },
+      },
+      {
+        path: 'admin/error-log',
+        name: 'admin-error-log',
+        component: () => import('src/pages/AdminErrorLogPage.vue'),
+        meta: { title: 'Admin · Error Log' },
+      },
+      {
+        path: 'admin/support-messages',
+        name: 'admin-support-messages',
+        component: () => import('src/pages/AdminSupportMessagesPage.vue'),
+        meta: { title: 'Admin · Support Messages' },
+      },
+      {
         path: 'learn',
         name: 'learn',
         component: () => import('src/pages/LearnPage.vue'),
@@ -304,10 +342,22 @@ const routes: RouteRecordRaw[] = [
         meta: { title: 'PFAS/PFOA Citizen Science · Exotopia' },
       },
       {
+        path: 'ecology-citizen-science',
+        name: 'ecology-citizen-science',
+        component: () => import('src/pages/EcologyCitizenSciencePage.vue'),
+        meta: { title: 'Ecology & Biodiversity Citizen Science · Exotopia' },
+      },
+      {
         path: 'method-proposals',
         name: 'method-proposals',
         component: () => import('src/pages/MethodProposalsPage.vue'),
         meta: { title: 'Method Proposals · Exotopia' },
+      },
+      {
+        path: 'contact',
+        name: 'contact',
+        component: () => import('src/pages/SiteContactPage.vue'),
+        meta: { title: 'Contact & Support · Exotopia' },
       },
       {
         path: 'knowledge-keepers',
@@ -358,16 +408,34 @@ const routes: RouteRecordRaw[] = [
         meta: { docKey: 'terms', title: 'Terms of Service — Exotopia' },
       },
       {
+        path: 'terms/changelog',
+        name: 'terms-changelog',
+        component: () => import('src/pages/LegalDocPage.vue'),
+        meta: { docKey: 'terms', changelog: true, title: 'Terms of Service — Changelog — Exotopia' },
+      },
+      {
         path: 'privacy',
         name: 'privacy',
         component: () => import('src/pages/LegalDocPage.vue'),
         meta: { docKey: 'privacy', title: 'Privacy Policy — Exotopia' },
       },
       {
+        path: 'privacy/changelog',
+        name: 'privacy-changelog',
+        component: () => import('src/pages/LegalDocPage.vue'),
+        meta: { docKey: 'privacy', changelog: true, title: 'Privacy Policy — Changelog — Exotopia' },
+      },
+      {
         path: 'community-guidelines',
         name: 'community-guidelines',
         component: () => import('src/pages/LegalDocPage.vue'),
         meta: { docKey: 'community-guidelines', title: 'Community Guidelines — Exotopia' },
+      },
+      {
+        path: 'community-guidelines/changelog',
+        name: 'community-guidelines-changelog',
+        component: () => import('src/pages/LegalDocPage.vue'),
+        meta: { docKey: 'community-guidelines', changelog: true, title: 'Community Guidelines — Changelog — Exotopia' },
       },
       {
         path: 'pon-ink',

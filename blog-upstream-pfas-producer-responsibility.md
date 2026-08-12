@@ -1,6 +1,6 @@
 # Clean Compost from Source: An Upstream Producer Responsibility Toolkit for Community Advocates
 
-*A practical guide for volunteers in the Nederland, Colorado zero-waste ecosystem — and any community running an in-vessel or open-windrow compost program that feeds community gardens.*
+*A practical guide for volunteers in the Nederland, Colorado zero-waste ecosystem — and any community running an in-vessel or open-windrow compost program that feeds community gardens. If you're planning this work before running it — deciding what to test, who to contact, and how it fits a broader campaign — see the companion strategy document, ["Designing a Municipal Compost Producer-Responsibility Campaign"](/blog/municipal-compost-campaign-strategy), first.*
 
 ---
 

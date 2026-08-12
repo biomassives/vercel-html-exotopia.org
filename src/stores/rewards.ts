@@ -200,6 +200,27 @@ export const useRewardsStore = defineStore('rewards', () => {
     await loadMyRewards()
   }
 
+  /**
+   * Charge a settlement-item construction cost against the finance_literacy
+   * track. Deliberately debt-permissive — see migration 014_construction_
+   * ledger.sql: points carry no real-world value, so a negative balance here
+   * is a safe first encounter with "you spent more than you have," meant to
+   * point toward the PFIN-8/PFIN-28 quizzes (LearnPage.vue) that pay real
+   * points back in. The cost itself is never sent from the client — the RPC
+   * looks it up server-side from construction_catalog, keyed by item_key.
+   */
+  async function debitConstruction(itemKey: string, metadata: Record<string, unknown> = {}): Promise<boolean> {
+    const member = useMemberStore()
+    if (!supabase || !member.userId) return false
+    const { error: e } = await supabase.rpc('debit_construction', {
+      p_item_key: itemKey,
+      p_metadata: metadata,
+    })
+    if (e) { error.value = e.message; return false }
+    await loadMyRewards()
+    return true
+  }
+
   async function requestMentorSession(menteeId: string, topic: string) {
     const member = useMemberStore()
     if (!supabase || !member.userId) return
@@ -240,6 +261,7 @@ export const useRewardsStore = defineStore('rewards', () => {
     totalPoints, pointsByTrack, certificateTypes, unlockedObjects, pendingMentorConfirmations,
     volunteerProgress, mentorProgress,
     loadMyRewards, awardQuizCompletion, logVolunteerAction, logEducatingAction,
+    debitConstruction,
     requestMentorSession, confirmMentorSession, adminGrantReward,
     checkIsAdmin, searchMembers, issueCertificate,
   }

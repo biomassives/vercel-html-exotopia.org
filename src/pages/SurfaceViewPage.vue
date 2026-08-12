@@ -228,6 +228,26 @@
             </div>
           </div>
 
+          <!-- Moon learning venue — see moon-settlement.ts's "advantage-opportunity" mapping -->
+          <div class="pip-section" v-if="moonVenueInfo">
+            <div class="pip-section-label">LEARNING VENUE</div>
+            <div class="pip-row">
+              <span class="pip-k">Trophic tier</span>
+              <span class="pip-v">{{ moonVenueInfo.trophic.name }}</span>
+            </div>
+            <div class="pip-row" v-if="moonVenueInfo.trackLabel">
+              <span class="pip-k">Natural track</span>
+              <span class="pip-v">{{ moonVenueInfo.trackLabel }}</span>
+            </div>
+            <div class="pip-row">
+              <span class="pip-k">Feasibility</span>
+              <span class="pip-v">{{ moonVenueInfo.feasibility.tier }} ({{ moonVenueInfo.feasibility.score }}/100)</span>
+            </div>
+            <div class="pip-climate-note" v-if="moonVenueInfo.feasibility.notes[0]">
+              {{ moonVenueInfo.feasibility.notes[0] }}
+            </div>
+          </div>
+
           <!-- THIS PLANET section re-opened for settlement button -->
           <div class="pip-section">
             <button v-if="planet && !hasThisSettlement" class="pip-claim-primary"
@@ -238,6 +258,9 @@
               @click="openSettlement">
               ⬡ Use Your Settlement
             </button>
+            <div v-if="settlementFingerprintDisplay" class="pip-fingerprint" :title="'SHA-256-based identity marker, set once at creation — see SPEC_E8_RECORD_FINGERPRINT.md'">
+              {{ settlementFingerprintDisplay }}
+            </div>
           </div>
 
           <!-- Sibling planets — chip grid -->
@@ -830,6 +853,7 @@ import * as THREE                                        from 'three'
 import { OrbitControls }                                from 'three/examples/jsm/controls/OrbitControls.js'
 import { useGalaxyStore }                               from 'src/stores/galaxy'
 import { usePortalStore }                               from 'src/stores/portal'
+import { BRIGHT_STARS }                                 from 'src/data/bright-stars'
 import {
   starColorFromTeff,
   planetColor,
@@ -842,11 +866,14 @@ import {
 import { enforceSessionHorizon, detectBandwidthTier } from 'src/lib/security'
 import { logNavEvent }                                from 'src/lib/nav-history'
 import { useSettlements, surfaceKey, moonKey }        from 'src/lib/settlements'
+import { useSettlementItems, autoPosition, buildItemMesh } from 'src/lib/settlement-items'
+import { renderFingerprintFromHex, formatFingerprint } from 'src/lib/record-fingerprint'
 import type { Planet } from 'src/stores/galaxy'
 import {
   buildClimateProfile, formatTempK, formatRangeK, usesFahrenheit,
 } from 'src/lib/planet-climate'
 import { hasNoSolidGround } from 'src/lib/surface-classify'
+import { TROPHIC_HIERARCHY, LEARNING_TRACK_LABELS, assessMoonSurfaceFeasibility } from 'src/lib/moon-settlement'
 import { useCommunityNodesStore } from 'src/stores/community-nodes'
 
 // ── Route / props ─────────────────────────────────────────────────────────────
@@ -873,7 +900,7 @@ const communityNodesStore = useCommunityNodesStore()
 // Populated once in onMounted, read synchronously by buildSkyDefenderData()
 // (called every render-loop tick) — same reasoning as GalaxyPage.vue.
 const galleriesForCurrentSystem = ref<OrbitalGalleryEntry[]>([])
-const { hasSettlement, addSettlement: recordSettlement } = useSettlements()
+const { settlements, hasSettlement, getSettlement, addSettlement: recordSettlement } = useSettlements()
 
 const system      = computed(() => galaxyStore.getSystem(hostname.value) ?? null)
 const planet      = computed(() => galaxyStore.getPlanet(planetName.value) ?? null)
@@ -915,6 +942,45 @@ const settlementKey     = computed(() => isMoonView.value
   ? moonKey(parentName.value || planetName.value, 1, 'exo-moon-surface-v1')
   : surfaceKey(planetName.value))
 const hasThisSettlement = computed(() => hasSettlement(settlementKey.value))
+
+// Settlement identity fingerprint (SPEC_E8_RECORD_FINGERPRINT.md) — computed
+// once at creation, stored on the record; rendering the E8 theta commitment
+// from the stored hash is async (WASM init), so this is a watched ref rather
+// than a plain computed.
+const settlementFingerprintDisplay = ref<string | null>(null)
+watch([settlements, settlementKey], async () => {
+  settlementFingerprintDisplay.value = null
+  const hex = hasThisSettlement.value ? getSettlement(settlementKey.value)?.fingerprint : undefined
+  if (!hex) return
+  const key = settlementKey.value
+  const e8 = await renderFingerprintFromHex(hex)
+  if (key !== settlementKey.value) return   // navigated away while awaiting
+  settlementFingerprintDisplay.value = formatFingerprint(e8)
+}, { immediate: true })
+
+// Items placed via SettlementInventory.vue (DomeInteriorPage/StationInteriorPage)
+// — rendered here too, decorative-only, so a settler's choices are visible from
+// outside the dome, not just from inside it. Same composable, same reactive
+// store, so switching planets here picks up that planet's items automatically.
+const { items: placedItems } = useSettlementItems(settlementKey)
+
+// Moon settlements as specialized learning venues (moon-settlement.ts) — the
+// L4_SUBLUNARY trophic level (this is the only moon-relative tier with a
+// live claim path today; Lagrange/interface-zone settlements have no UI yet)
+// carries a real "advantage-opportunity" mapping onto one of the three
+// existing reward tracks, plus this planet's own feasibility read as a moon
+// host, rather than a moon settlement being identical to a surface one save
+// for its address prefix.
+const moonVenueInfo = computed(() => {
+  if (!isMoonView.value) return null
+  const trophic = TROPHIC_HIERARCHY.find(t => t.code === 'L4_SUBLUNARY')!
+  const feasibility = assessMoonSurfaceFeasibility(parentPlanet.value?.pl_eqt, null, 1)
+  return {
+    trophic,
+    trackLabel: trophic.learningTrack ? LEARNING_TRACK_LABELS[trophic.learningTrack] : null,
+    feasibility,
+  }
+})
 
 function openSettlement() {
   if (!hasThisSettlement.value && planet.value) {
@@ -1497,6 +1563,7 @@ function initScene() {
 
   addAmbientLight()
   addStarField()
+  addBrightStars()
   addHostStar()
   if (isMoonView.value) addParentPlanet()
   addSystemPlanets()
@@ -1513,12 +1580,22 @@ function initScene() {
 function addAmbientLight() {
   const eqt = planet.value?.pl_eqt ?? null
   if (eqt != null && eqt > 1500) {
-    scene.add(new THREE.AmbientLight(0xdd6622, 3.8))  // ultra-hot: volcanic orange fill
+    pageGroup.add(new THREE.AmbientLight(0xdd6622, 3.8))  // ultra-hot: volcanic orange fill
   } else if (eqt != null && eqt > 600) {
-    scene.add(new THREE.AmbientLight(0xcc8833, 3.0))  // hot: warm amber — thermal lens
+    pageGroup.add(new THREE.AmbientLight(0xcc8833, 3.0))  // hot: warm amber — thermal lens
   } else {
-    scene.add(new THREE.AmbientLight(0x334466, 1.2))
+    pageGroup.add(new THREE.AmbientLight(0x334466, 1.2))
   }
+
+  // Soft sky/ground fill, independent of day/night and whatever large body is in
+  // the background (e.g. an uncapped moon-view parent planet) — same fix already
+  // proven inside the dome (DomeInteriorPage.vue's buildLights()). Without this,
+  // temperate/cold planets drop to zero directional light at night
+  // (applyLocalTime()'s nightFloor is 0 for eqt <= 600), leaving the dome and
+  // placed items unreadable regardless of what's lighting the sky behind them.
+  const e = eqt ?? 285
+  const skyColor = e > 800 ? new THREE.Color(0x1a0808) : e < 200 ? new THREE.Color(0x080818) : new THREE.Color(0x060e18)
+  pageGroup.add(new THREE.HemisphereLight(skyColor, new THREE.Color(0x020408), 0.6))
 }
 
 function addStarField() {
@@ -1555,7 +1632,7 @@ function addStarField() {
     const bgGeo = new THREE.BufferGeometry()
     bgGeo.setAttribute('position', new THREE.Float32BufferAttribute(bgPos, 3))
     bgGeo.setAttribute('color',    new THREE.Float32BufferAttribute(bgCol, 3))
-    scene.add(new THREE.Points(bgGeo, new THREE.PointsMaterial({
+    pageGroup.add(new THREE.Points(bgGeo, new THREE.PointsMaterial({
       size: 0.9, vertexColors: true, sizeAttenuation: false,
       transparent: true, opacity: 0.70, depthWrite: false,
     })))
@@ -1625,10 +1702,75 @@ function addStarField() {
     geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3))
     geo.setAttribute('color',    new THREE.Float32BufferAttribute(colors,    3))
     geo.setAttribute('size',     new THREE.Float32BufferAttribute(sizes,     1))
-    scene.add(new THREE.Points(geo, new THREE.PointsMaterial({
+    pageGroup.add(new THREE.Points(geo, new THREE.PointsMaterial({
       size: 1.8, vertexColors: true, sizeAttenuation: false,
       transparent: true, opacity: 0.88, depthWrite: false,
     })))
+  }
+}
+
+/**
+ * The ~45 real, named naked-eye stars from bright-stars.ts — same parallax
+ * technique as addStarField()'s Layer 2 (recompute each star's true 3D
+ * position, take the direction from the observer's exoplanet), but rendered
+ * as individual clickable meshes with a glow halo rather than a Points cloud,
+ * since these are meant to be identifiable landmarks in the sky, not
+ * background texture. Sized/brightened by apparent magnitude *from here*
+ * (via the star's real absolute magnitude), not just raw distance, so
+ * intrinsically luminous stars (supergiants etc.) correctly stay prominent
+ * from further away.
+ */
+function addBrightStars() {
+  const obsRA   = system.value?.ra  ?? 0
+  const obsDec  = system.value?.dec ?? 0
+  const obsDist = system.value?.sy_dist ?? 0
+  const obsPc   = raDecToVec3(obsRA, obsDec, obsDist)
+
+  for (const s of BRIGHT_STARS) {
+    const starPc  = raDecToVec3(s.ra, s.dec, s.dist_pc)
+    const relVec  = new THREE.Vector3().subVectors(starPc, obsPc)
+    const distToStar = relVec.length()
+    if (distToStar < 0.05) continue   // this bright star is the observer's own host star
+    relVec.normalize()
+    const skyPos = relVec.multiplyScalar(900)
+
+    const absMag = s.mag - 5 * Math.log10(Math.max(s.dist_pc, 0.01) / 10)
+    const appMagFromHere = absMag + 5 * Math.log10(Math.max(distToStar, 0.01) / 10)
+
+    const col        = starColorFromTeff(s.teff)
+    const brightness = Math.max(0, Math.min(1, (6 - appMagFromHere) / 8))
+    const r           = 1.1 + brightness * 2.2
+
+    const mesh = new THREE.Mesh(
+      new THREE.SphereGeometry(r, 10, 10),
+      new THREE.MeshBasicMaterial({ color: col, fog: false })
+    )
+    mesh.position.copy(skyPos)
+    mesh.renderOrder = -1
+    pageGroup.add(mesh)
+
+    const glow = new THREE.Mesh(
+      new THREE.SphereGeometry(r * 3.2, 10, 10),
+      new THREE.MeshBasicMaterial({
+        color: col, transparent: true, opacity: 0.16 + brightness * 0.22,
+        depthWrite: false, blending: THREE.AdditiveBlending, fog: false,
+      })
+    )
+    glow.position.copy(skyPos)
+    glow.renderOrder = -1
+    pageGroup.add(glow)
+
+    hitTargets.push({ mesh, hit: {
+      name:  s.name,
+      type:  `${s.spectral} star`,
+      color: '#' + col.getHexString(),
+      details: {
+        'Dist. from here':   `${distToStar.toFixed(distToStar < 10 ? 2 : 0)} pc`,
+        'Dist. from Earth':  `${s.dist_pc} pc`,
+        'App. mag. here':    appMagFromHere.toFixed(2),
+        'App. mag. (Earth)': s.mag.toFixed(2),
+      },
+    }})
   }
 }
 
@@ -1651,7 +1793,7 @@ function addHostStar() {
     new THREE.MeshBasicMaterial({ color: hex, transparent: true, opacity: 0.08, fog: false, depthWrite: false, blending: THREE.AdditiveBlending })
   )
   hostStarLight = new THREE.DirectionalLight(hex, 2.4)
-  scene.add(hostStarMesh, hostStarGlow, outerGlow, hostStarLight)
+  pageGroup.add(hostStarMesh, hostStarGlow, outerGlow, hostStarLight)
 
   hitTargets.push({
     mesh: hostStarMesh,
@@ -1677,7 +1819,7 @@ function addParentPlanet() {
   )
   mesh.position.set(380, 300, -700)
   mesh.renderOrder = -1
-  scene.add(mesh)
+  pageGroup.add(mesh)
 
   const ring = new THREE.Mesh(
     new THREE.RingGeometry(115, 124, 64),
@@ -1685,11 +1827,11 @@ function addParentPlanet() {
   )
   ring.position.copy(mesh.position)
   ring.rotation.x = Math.PI * 0.18
-  scene.add(ring)
+  pageGroup.add(ring)
 
   const parentLight = new THREE.PointLight(pCol.getHex(), 0.4, 600)
   parentLight.position.copy(mesh.position)
-  scene.add(parentLight)
+  pageGroup.add(parentLight)
 
   hitTargets.push({ mesh, hit: {
     name:  parentName.value,
@@ -1726,7 +1868,7 @@ function addSystemPlanets() {
     )
     mesh.position.set(x, y, z)
     mesh.renderOrder = -1
-    scene.add(mesh)
+    pageGroup.add(mesh)
 
     const glowMesh2 = new THREE.Mesh(
       new THREE.SphereGeometry(size * 2.8, 8, 8),
@@ -1737,7 +1879,7 @@ function addSystemPlanets() {
     )
     glowMesh2.position.copy(mesh.position)
     glowMesh2.renderOrder = -1
-    scene.add(glowMesh2)
+    pageGroup.add(glowMesh2)
 
     hitTargets.push({ mesh, hit: {
       name:  p.pl_name,
@@ -1775,7 +1917,7 @@ function addTerrain(palette: ReturnType<typeof surfacePaletteFor>) {
   )
   terrain.rotation.x = -Math.PI / 2
   terrain.position.y = terrainBaseY
-  scene.add(terrain)
+  pageGroup.add(terrain)
 
   const rockMat = new THREE.MeshPhongMaterial({ color: palette.rock, flatShading: true, shininess: 2 })
   for (let i = 0; i < 18; i++) {
@@ -1783,7 +1925,7 @@ function addTerrain(palette: ReturnType<typeof surfacePaletteFor>) {
     const rm = new THREE.Mesh(new THREE.SphereGeometry(r, 5, 4), rockMat)
     rm.position.set((Math.random() - 0.5) * 300, terrainBaseY + r * 0.4, -20 - Math.random() * 200)
     rm.rotation.set(Math.random(), Math.random(), Math.random())
-    scene.add(rm)
+    pageGroup.add(rm)
   }
 
   // Solid planet body — opaque cylinder below terrain prevents seeing through the surface.
@@ -1794,7 +1936,7 @@ function addTerrain(palette: ReturnType<typeof surfacePaletteFor>) {
     new THREE.MeshPhongMaterial({ color: crustColor, flatShading: false, fog: false })
   )
   floorMesh.position.y = terrainBaseY - 40   // top of cylinder aligns with terrain base
-  scene.add(floorMesh)
+  pageGroup.add(floorMesh)
 }
 
 // ── Settlement ────────────────────────────────────────────────────────────────
@@ -1806,15 +1948,111 @@ function addSettlement() {
   // All settlement objects live in this group so they track terrainBaseY automatically
   settlementGroup = new THREE.Group()
   settlementGroup.position.y = terrainBaseY
-  scene.add(settlementGroup)
+  pageGroup.add(settlementGroup)
 
   addDome()
   addLibrary()
   addWater()
+  addGallery()
   addVegetation()
   addSoulOrbs()
   addStoneCircle()   // visible by default — organic cultural landmark
   addPyramid()       // hidden by default — revealed in DK.MAT mode only
+  addPlacedItems()
+}
+
+/**
+ * A small geodesic-sphere gallery structure, bioluminescent-lit so it's
+ * findable in the dark — mirrors addWater()'s site on the opposite side of
+ * the dome for a symmetric footprint. Approaching it (see galleryTick logic
+ * in surfaceTick()) reveals a geodesic-biodome-styled interior
+ * (GalleryInteriorPage.vue) — deliberately not the boxy library shape, since
+ * the whole point is "enter the sphere."
+ *
+ * Lattice technique mirrors DomeInteriorPage.vue's buildDomeShell() (wireframe
+ * shell + soft inner fill + ground ring) at a much smaller scale, recolored
+ * warm instead of that function's cool blue.
+ */
+const GALLERY_POS    = new THREE.Vector3(-40, 0, -25)
+const GALLERY_RADIUS = 15
+let galleryEnterT = 0   // approach progress toward the gallery, 0 (far) → 1 (entering) — see surfaceTick()
+
+function addGallery() {
+  const sg = settlementGroup!
+  const geo = new THREE.SphereGeometry(GALLERY_RADIUS, 24, 16)
+
+  const wireMesh = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
+    color: 0xffaa55, wireframe: true, transparent: true, opacity: 0.30, depthWrite: false,
+  }))
+  wireMesh.position.copy(GALLERY_POS)
+  sg.add(wireMesh)
+
+  const innerMesh = new THREE.Mesh(geo.clone(), new THREE.MeshBasicMaterial({
+    color: 0x2a1a08, transparent: true, opacity: 0.22, depthWrite: false,
+  }))
+  innerMesh.position.copy(GALLERY_POS)
+  sg.add(innerMesh)
+
+  const ring = new THREE.Mesh(
+    new THREE.RingGeometry(GALLERY_RADIUS - 1, GALLERY_RADIUS + 3, 48),
+    new THREE.MeshBasicMaterial({
+      color: 0xffcc66, side: THREE.DoubleSide, transparent: true, opacity: 0.30,
+      depthWrite: false, blending: THREE.AdditiveBlending,
+    })
+  )
+  ring.rotation.x = -Math.PI / 2
+  ring.position.set(GALLERY_POS.x, 0.15, GALLERY_POS.z)
+  sg.add(ring)
+
+  // Bioluminescent glow — additive sphere, same idiom used throughout this
+  // codebase for "living light" (e.g. settlement-items.ts's glow() helper).
+  const galleryGlow = (r: number, x: number, y: number, z: number, color: number, opacity: number): THREE.Mesh => {
+    const m = new THREE.Mesh(
+      new THREE.SphereGeometry(r, 10, 10),
+      new THREE.MeshBasicMaterial({ color, transparent: true, opacity, depthWrite: false, blending: THREE.AdditiveBlending })
+    )
+    m.position.set(x, y, z)
+    return m
+  }
+
+  // Ring of alternating warm-gold / living-green point lights + glow halos around
+  // the gallery's base — the "several lights near it that give the area a warm
+  // lit hue" the entrance is meant to read by.
+  const GALLERY_LIGHT_COLORS = [0xffaa44, 0x55ffaa, 0xffaa44, 0x55ffaa]
+  for (let i = 0; i < GALLERY_LIGHT_COLORS.length; i++) {
+    const angle = (i / GALLERY_LIGHT_COLORS.length) * Math.PI * 2
+    const lx = GALLERY_POS.x + Math.cos(angle) * (GALLERY_RADIUS + 4)
+    const lz = GALLERY_POS.z + Math.sin(angle) * (GALLERY_RADIUS + 4)
+    const col = GALLERY_LIGHT_COLORS[i]!
+
+    const light = new THREE.PointLight(col, 1.1, 45)
+    light.position.set(lx, 3, lz)
+    sg.add(light)
+    sg.add(galleryGlow(3.2, lx, 3, lz, col, 0.22))
+  }
+
+  // Apex + base glow so the sphere itself reads as luminous, not just its perimeter lights
+  sg.add(galleryGlow(GALLERY_RADIUS * 0.55, GALLERY_POS.x, GALLERY_RADIUS * 0.7, GALLERY_POS.z, 0xffbb66, 0.10))
+}
+
+/**
+ * Renders SettlementInventory.vue's items on the exterior dome. Decorative
+ * only for v1 (not added to hitTargets) — matches the treatment of the other
+ * exterior settlement objects. Positions come from the same ZONE_POSITIONS/
+ * autoPosition used inside the dome (DomeInteriorPage.vue), which already fit
+ * comfortably inside this dome's radius-70 hemisphere, so no rescaling needed.
+ */
+function addPlacedItems() {
+  const sg = settlementGroup!
+  const zoneCount: Record<string, number> = {}
+  for (const item of placedItems.value) {
+    const slotIdx = zoneCount[item.zone] ?? 0
+    zoneCount[item.zone] = slotIdx + 1
+    const pos   = autoPosition(item, slotIdx)
+    const group = buildItemMesh(item.meshPreset, item.color, false)
+    group.position.set(pos.x, 0, pos.z)
+    sg.add(group)
+  }
 }
 
 function addDome() {
@@ -1824,7 +2062,7 @@ function addDome() {
   // Wireframe lattice — outer shell only; no filled sphere so there is no
   // "inner blue ball" artefact when viewed from outside the dome.
   const wireMesh = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
-    color: 0x0099dd, wireframe: true, transparent: true, opacity: 0.07, depthWrite: false,
+    color: 0x0099dd, wireframe: true, transparent: true, opacity: 0.12, depthWrite: false,
   }))
   wireMesh.position.set(0, 0, 0)
   sg.add(wireMesh)
@@ -1841,7 +2079,7 @@ function addDome() {
   // Ground ring where dome meets terrain
   const ringGeo = new THREE.RingGeometry(68, 72, 64)
   const ringMat = new THREE.MeshBasicMaterial({
-    color: 0x00aaff, side: THREE.DoubleSide, transparent: true, opacity: 0.25,
+    color: 0x00aaff, side: THREE.DoubleSide, transparent: true, opacity: 0.32,
     depthWrite: false, blending: THREE.AdditiveBlending,
   })
   const groundRing = new THREE.Mesh(ringGeo, ringMat)
@@ -2101,8 +2339,8 @@ function addMoons() {
     )
     glow.renderOrder = -1
 
-    scene.add(mesh)
-    scene.add(glow)
+    pageGroup.add(mesh)
+    pageGroup.add(glow)
     moonMeshes.push({ mesh, glow, info })
     moonCount.value = moonMeshes.length
 
@@ -2300,7 +2538,7 @@ function applyLocalTime(deg: number) {
   hostStarGlow.position.copy(pos)
   hostStarLight.position.copy(pos)
   hostStarLight.target.position.set(0, 0, 0)
-  scene.add(hostStarLight.target)
+  pageGroup.add(hostStarLight.target)
 
   const altitude   = Math.asin(Math.max(-1, Math.min(1, dir.y)))
   const eqt        = planet.value?.pl_eqt ?? null
@@ -2359,6 +2597,22 @@ function surfaceTick(t: number) {
 
       if (d.glowMesh)   (d.glowMesh   as THREE.Mesh).position.copy(orb.position)
       if (d.pointLight) (d.pointLight as THREE.PointLight).position.copy(orb.position)
+    }
+
+    // Gallery proximity — walk the camera close enough and it opens on its own.
+    // Ramp 0→1 over the approach range, edge-detect the 0.95 crossing exactly
+    // once (same hysteresis idiom as LocalStepPortal.setEntering(), inlined here
+    // since that class is a fully specialized orbiting water-portal, not a fit
+    // for a stationary building entrance).
+    if (camera) {
+      const galleryWorldPos = new THREE.Vector3(GALLERY_POS.x, terrainBaseY + GALLERY_POS.y, GALLERY_POS.z)
+      const dist = camera.position.distanceTo(galleryWorldPos)
+      const GALLERY_APPROACH_FAR  = 30
+      const GALLERY_APPROACH_NEAR = 8
+      const targetT = 1 - Math.max(0, Math.min(1, (dist - GALLERY_APPROACH_NEAR) / (GALLERY_APPROACH_FAR - GALLERY_APPROACH_NEAR)))
+      const prevT = galleryEnterT
+      galleryEnterT = targetT
+      if (prevT < 0.95 && galleryEnterT >= 0.95) enterGallery()
     }
 
     // Moon sky positions — each moon traces an arc across the horizon
@@ -2664,6 +2918,15 @@ function goBackToGalaxy() {
 function enterDome() {
   void router.push({
     name: 'dome-interior',
+    params: { hostname: hostname.value, planetName: planetName.value },
+    query: { eqt: String(planet.value?.pl_eqt ?? 285) },
+  })
+}
+
+/** Navigate into the gallery interior page — see galleryEnterT in surfaceTick(). */
+function enterGallery() {
+  void router.push({
+    name: 'gallery-interior',
     params: { hostname: hostname.value, planetName: planetName.value },
     query: { eqt: String(planet.value?.pl_eqt ?? 285) },
   })
@@ -3191,6 +3454,15 @@ watch([hostname, planetName], async () => {
   color: rgba(100, 220, 180, 0.90);
   background: rgba(0, 60, 50, 0.45);
   border-color: rgba(60, 200, 160, 0.38);
+}
+.pip-fingerprint {
+  margin-top: 6px;
+  font-family: 'Courier New', monospace;
+  font-size: 8px;
+  letter-spacing: 0.04em;
+  color: rgba(120, 160, 190, 0.55);
+  text-align: center;
+  cursor: help;
 }
 .pip-claim-primary--manage:hover {
   background: rgba(0, 100, 80, 0.55);

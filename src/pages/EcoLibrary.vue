@@ -59,6 +59,30 @@
           </div>
         </div>
         <q-btn
+          v-if="member.isSignedIn && !rewards.isAdmin"
+          flat dense size="sm"
+          icon="mdi-lightbulb-on-outline"
+          label="Suggest a video"
+          color="teal-4"
+          @click="openSuggestVideo()"
+        />
+        <q-btn
+          flat dense size="sm"
+          icon="mdi-map-marker-plus"
+          label="Start a settlement"
+          color="blue-grey-4"
+          @click="setSuggestedFocus('library'); $router.push('/galaxy?suggestedFocus=library')"
+        />
+        <q-btn
+          v-if="rewards.isAdmin"
+          flat dense size="sm"
+          icon="mdi-inbox-arrow-down-outline"
+          :label="`Suggestions${pendingSuggestions.length ? ' (' + pendingSuggestions.length + ')' : ''}`"
+          :color="pendingSuggestions.length ? 'amber-5' : 'blue-grey-4'"
+          @click="openReviewQueue"
+        />
+        <q-btn
+          v-if="canEditLibrary"
           flat dense size="sm"
           :icon="editMode ? 'mdi-pencil-off-outline' : 'mdi-pencil-outline'"
           :label="editMode ? 'Done editing' : 'Edit library'"
@@ -279,7 +303,12 @@
                     </div>
 
                     <div class="eco-video-info">
-                      <div class="eco-video-title">{{ vid.title }}</div>
+                      <div class="eco-video-title">
+                        {{ vid.title }}
+                        <span v-if="vid.communitySuggested" class="eco-community-badge" title="Suggested by a community member, approved by the editor">
+                          <q-icon name="mdi-account-heart-outline" size="10px" /> community
+                        </span>
+                      </div>
                       <div
                         v-if="vid.description && vid.description.length > 2"
                         class="eco-video-desc"
@@ -324,6 +353,15 @@
                   label="Add video"
                   color="teal-5"
                   @click="openAddVideo(activeAreaIdx, si)"
+                />
+              </div>
+              <div v-else-if="member.isSignedIn && !rewards.isAdmin" class="eco-add-video-row">
+                <q-btn
+                  flat dense size="sm"
+                  icon="mdi-lightbulb-on-outline"
+                  label="Suggest a video for this section"
+                  color="teal-4"
+                  @click="openSuggestVideo(activeAreaIdx, si)"
                 />
               </div>
 
@@ -579,11 +617,99 @@
       </q-card>
     </q-dialog>
 
+    <!-- ── Suggest a video — queued for editor review, not a direct write ── -->
+    <q-dialog v-model="suggestDialog" persistent>
+      <q-card class="eco-edit-card">
+        <div class="eco-edit-header">
+          <span class="text-subtitle2 text-teal-4">Suggest a Video</span>
+          <q-space />
+          <q-btn flat round dense size="sm" icon="mdi-close" color="blue-grey-5" @click="suggestDialog = false" />
+        </div>
+        <div class="eco-edit-body">
+          <p class="text-caption text-blue-grey-5 q-mb-sm">
+            Goes to the editor for review — not added to the library automatically.
+          </p>
+
+          <div class="eco-edit-field-label">Area</div>
+          <select v-model="suggestForm.areaKey" class="eco-edit-input">
+            <option v-for="a in areas" :key="a.area" :value="a.area">{{ a.area }}</option>
+          </select>
+
+          <div class="eco-edit-field-label">Section</div>
+          <select v-model="suggestForm.subcatId" class="eco-edit-input">
+            <option v-for="s in suggestSubcatOptions" :key="s.uniqueId" :value="s.uniqueId">{{ s.title }}</option>
+          </select>
+
+          <div class="eco-edit-field-label">YouTube URL or ID <span class="eco-field-required">*</span></div>
+          <input
+            v-model.trim="suggestForm.youtubeId"
+            class="eco-edit-input eco-yt-raw-input"
+            :class="{ 'eco-edit-input--error': suggestForm.youtubeId && !isValidYtId(suggestForm.youtubeId) }"
+            placeholder="https://youtu.be/… or dQw4w9WgXcQ"
+          />
+          <div v-if="suggestForm.youtubeId && !isValidYtId(suggestForm.youtubeId)" class="eco-edit-error">
+            Could not extract a valid YouTube ID from this URL
+          </div>
+          <div v-if="isValidYtId(suggestForm.youtubeId)" class="eco-edit-preview">
+            <img :src="`https://img.youtube.com/vi/${suggestForm.youtubeId}/mqdefault.jpg`" class="eco-edit-preview-img"
+              @error="(e) => ((e.target as HTMLImageElement).style.opacity = '0.2')" />
+          </div>
+
+          <div class="eco-edit-field-label">Title <span class="eco-field-required">*</span></div>
+          <input v-model="suggestForm.title" class="eco-edit-input" placeholder="Video title" />
+
+          <div class="eco-edit-field-label">Why this fits <span class="eco-field-hint">(shown to the reviewer only)</span></div>
+          <textarea v-model="suggestForm.note" class="eco-edit-input eco-edit-textarea" rows="3"
+            placeholder="What it covers, why it's a good fit for this section" />
+        </div>
+        <div class="eco-edit-footer">
+          <q-btn flat label="Cancel" color="blue-grey-5" @click="suggestDialog = false" />
+          <q-btn unelevated label="Submit for review" color="teal-7"
+            :disable="!suggestForm.title.trim() || !isValidYtId(suggestForm.youtubeId) || suggesting"
+            @click="submitSuggestion" />
+        </div>
+        <p v-if="suggestSubmitted" class="text-caption text-teal-4 q-px-md q-pb-md">Submitted — thank you.</p>
+      </q-card>
+    </q-dialog>
+
+    <!-- ── Admin review queue ──────────────────────────────────────────── -->
+    <q-dialog v-model="reviewDialog">
+      <q-card class="eco-edit-card" style="max-width:560px">
+        <div class="eco-edit-header">
+          <span class="text-subtitle2 text-amber-4">Suggested Videos</span>
+          <q-space />
+          <q-btn flat round dense size="sm" icon="mdi-close" color="blue-grey-5" @click="reviewDialog = false" />
+        </div>
+        <div class="eco-edit-body">
+          <p v-if="!pendingSuggestions.length" class="text-caption text-blue-grey-5">Nothing pending review.</p>
+          <div v-for="s in pendingSuggestions" :key="s.id" class="eco-suggestion-row">
+            <img v-if="isValidYtId(s.youtube_id)" :src="`https://img.youtube.com/vi/${s.youtube_id}/mqdefault.jpg`" class="eco-suggestion-thumb" />
+            <div class="eco-suggestion-body">
+              <div class="text-body2 text-blue-grey-2">{{ s.title }}</div>
+              <div class="text-caption text-blue-grey-5">{{ s.area }} › {{ subcatTitle(s.area, s.subcat_id) }}</div>
+              <div v-if="s.note" class="text-caption text-blue-grey-6 q-mt-xs">{{ s.note }}</div>
+              <a :href="`https://www.youtube.com/watch?v=${s.youtube_id}`" target="_blank" rel="noopener" class="eco-edit-yt-link">
+                <q-icon name="mdi-open-in-new" size="12px" /> view on YouTube
+              </a>
+            </div>
+            <div class="eco-suggestion-actions">
+              <q-btn flat dense size="sm" icon="mdi-check" color="green-5" label="Approve" @click="reviewSuggestion(s.id, 'approved')" />
+              <q-btn flat dense size="sm" icon="mdi-close" color="red-4" label="Reject" @click="reviewSuggestion(s.id, 'rejected')" />
+            </div>
+          </div>
+        </div>
+      </q-card>
+    </q-dialog>
+
   </q-page>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import { supabase } from 'src/lib/supabase'
+import { useMemberStore } from 'src/stores/member'
+import { useRewardsStore } from 'src/stores/rewards'
+import { setSuggestedFocus } from 'src/lib/settlement-focus-intent'
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 interface OtVideo {
@@ -628,6 +754,15 @@ const loading = ref(true)
 const areas   = ref<OtArea[]>([])
 const dirty   = ref(false)
 
+const member  = useMemberStore()
+const rewards = useRewardsStore()
+// "Edit library" mode used to render for every visitor with no gate at all —
+// saving only ever worked for the site owner running locally anyway (see
+// isLocalhost/saveToRepo below), but the toggle itself was visible and
+// interactive to anyone. Gated on the same trust model saveToRepo already
+// uses (localhost) plus real admin status for production.
+const canEditLibrary = computed(() => isLocalhost || rewards.isAdmin)
+
 // Runtime filtering states tracking subcategory components individually
 const activeVideoFilters = ref<Record<string, string | null>>({})
 
@@ -649,6 +784,7 @@ async function loadData() {
       const res = await fetch('/ot6a.json')
       areas.value = (await res.json()) as OtArea[]
     }
+    await mergeApprovedSuggestions()
   } catch (e) {
     console.error('EcoOps: Initialization stream broke down', e)
   } finally {
@@ -1330,12 +1466,121 @@ function drawHeader() {
   ctx.beginPath(); ctx.moveTo(pX, pY-pH); ctx.lineTo(pX, pY); ctx.stroke(); ctx.restore()
 }
 
+// ── Video suggestions — a moderation queue, not a direct write ─────────────
+// See supabase/migrations/010_video_suggestions.sql. Submitters go through
+// this path instead of editMode, which is now gated to canEditLibrary.
+
+interface VideoSuggestion {
+  id: string; submitted_by: string; area: string; subcat_id: string
+  youtube_id: string; title: string; note: string | null
+  status: 'pending' | 'approved' | 'rejected'
+  created_at: string
+}
+
+const suggestDialog    = ref(false)
+const suggestSubmitted = ref(false)
+const suggesting       = ref(false)
+const suggestForm = ref({ areaKey: '', subcatId: '', youtubeId: '', title: '', note: '' })
+
+const suggestSubcatOptions = computed(() =>
+  areas.value.find(a => a.area === suggestForm.value.areaKey)?.subcategories ?? []
+)
+watch(() => suggestForm.value.areaKey, () => {
+  suggestForm.value.subcatId = suggestSubcatOptions.value[0]?.uniqueId ?? ''
+})
+watch(() => suggestForm.value.youtubeId, (raw) => {
+  const extracted = extractYtId(raw)
+  if (extracted !== raw && isValidYtId(extracted)) suggestForm.value.youtubeId = extracted
+})
+
+function openSuggestVideo(areaIdx?: number, subcatIdx?: number) {
+  const area   = areaIdx != null ? areas.value[areaIdx] : (areas.value.find(a => a.area.toLowerCase() === activeTab.value) ?? areas.value[0])
+  const subcat = area && subcatIdx != null ? area.subcategories[subcatIdx] : area?.subcategories[0]
+  suggestForm.value = {
+    areaKey: area?.area ?? '', subcatId: subcat?.uniqueId ?? '',
+    youtubeId: '', title: '', note: '',
+  }
+  suggestSubmitted.value = false
+  suggestDialog.value = true
+}
+
+async function submitSuggestion() {
+  if (!supabase || !member.userId) return
+  if (!suggestForm.value.title.trim() || !isValidYtId(suggestForm.value.youtubeId)) return
+  suggesting.value = true
+  try {
+    const { error } = await supabase.from('video_suggestions').insert({
+      submitted_by: member.userId,
+      area:         suggestForm.value.areaKey,
+      subcat_id:    suggestForm.value.subcatId,
+      youtube_id:   suggestForm.value.youtubeId,
+      title:        suggestForm.value.title.trim(),
+      note:         suggestForm.value.note.trim() || null,
+    })
+    if (!error) {
+      suggestSubmitted.value = true
+      setTimeout(() => { suggestDialog.value = false }, 1400)
+    }
+  } finally {
+    suggesting.value = false
+  }
+}
+
+// ── Admin review queue ──────────────────────────────────────────────────────
+
+const reviewDialog       = ref(false)
+const pendingSuggestions = ref<VideoSuggestion[]>([])
+
+function subcatTitle(area: string, subcatId: string): string {
+  return areas.value.find(a => a.area === area)?.subcategories.find(s => s.uniqueId === subcatId)?.title ?? subcatId
+}
+
+async function loadPendingSuggestions() {
+  if (!supabase || !rewards.isAdmin) return
+  const { data } = await supabase.from('video_suggestions').select('*')
+    .eq('status', 'pending').order('created_at', { ascending: false })
+  pendingSuggestions.value = (data as VideoSuggestion[]) ?? []
+}
+
+function openReviewQueue() {
+  reviewDialog.value = true
+  void loadPendingSuggestions()
+}
+
+async function reviewSuggestion(id: string, status: 'approved' | 'rejected') {
+  if (!supabase || !member.userId) return
+  await supabase.from('video_suggestions').update({
+    status, reviewed_at: new Date().toISOString(), reviewed_by: member.userId,
+  }).eq('id', id)
+  pendingSuggestions.value = pendingSuggestions.value.filter(s => s.id !== id)
+  if (status === 'approved') await mergeApprovedSuggestions()
+}
+
+/**
+ * Merges status='approved' suggestions into the in-memory library, tagged
+ * communitySuggested so the template can badge them. Never written back to
+ * localStorage/ot6a.json — this is a read-time overlay, re-fetched fresh on
+ * every load, so approving/rejecting elsewhere can't leave a stale copy.
+ */
+async function mergeApprovedSuggestions() {
+  if (!supabase) return
+  const { data } = await supabase.from('video_suggestions').select('*').eq('status', 'approved')
+  for (const s of (data as VideoSuggestion[] | null) ?? []) {
+    const subcat = areas.value.find(a => a.area === s.area)?.subcategories.find(x => x.uniqueId === s.subcat_id)
+    if (!subcat) continue
+    subcat.videos ??= []
+    if (subcat.videos.some(v => v.youtubeId === s.youtube_id)) continue
+    subcat.videos.push({ title: s.title, youtubeId: s.youtube_id, communitySuggested: true })
+  }
+}
+
 let resizeObs: ResizeObserver | null = null
 onMounted(async () => {
   drawHeader()
   resizeObs = new ResizeObserver(drawHeader)
   if (headerWrap.value) resizeObs.observe(headerWrap.value)
   document.addEventListener('click', onDocumentClick)
+  if (member.isSignedIn) await rewards.checkIsAdmin()
   await loadData()
 })
 onBeforeUnmount(() => {
@@ -1508,6 +1753,17 @@ onBeforeUnmount(() => {
 
 .eco-video-info { flex: 1; padding: 8px 10px 8px 2px; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
 .eco-video-title { font-size: 12px; font-weight: 500; color: #9ec4b0; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.eco-community-badge {
+  display: inline-flex; align-items: center; gap: 2px; font-size: 8px; letter-spacing: 0.04em;
+  color: rgba(120,200,170,0.85); background: rgba(60,180,140,0.14); border-radius: 3px;
+  padding: 1px 5px; margin-left: 4px; vertical-align: middle; white-space: nowrap;
+}
+
+.eco-suggestion-row { display: flex; gap: 10px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
+.eco-suggestion-row:last-child { border-bottom: none; }
+.eco-suggestion-thumb { width: 80px; height: 45px; object-fit: cover; border-radius: 4px; flex-shrink: 0; }
+.eco-suggestion-body { flex: 1; min-width: 0; }
+.eco-suggestion-actions { display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; }
 .eco-video-desc { font-size: 10px; color: rgba(80,140,105,0.78); line-height: 1.45; }
 .eco-video-author { font-size: 9px; color: rgba(70,120,90,0.65); }
 .eco-video-soon { font-size: 9px; color: rgba(90,130,105,0.55); display: flex; align-items: center; }

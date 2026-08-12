@@ -11,7 +11,14 @@
         <span class="si-title">STATION INTERIOR</span>
         <span class="si-hostname q-ml-sm">{{ hostname }}</span>
       </div>
-      <div class="si-exoloc">{{ exolocation }}</div>
+      <div class="row items-center q-gutter-x-sm no-wrap">
+        <div class="si-exoloc">{{ exolocation }}</div>
+        <q-btn dense rounded unelevated size="sm"
+          :color="hasThisSettlement ? 'teal-8' : 'amber-9'"
+          :icon="hasThisSettlement ? 'mdi-home-circle' : 'mdi-map-marker-plus'"
+          :label="hasThisSettlement ? 'Your Settlement' : 'Create a Settlement'"
+          @click="goSettle" />
+      </div>
     </div>
 
     <!-- ── Hover tooltip ───────────────────────────────────────────────── -->
@@ -139,13 +146,14 @@ import {
   CYLINDER_ZONE_POSITIONS,
   autoPosition,
   buildItemMesh,
+  enhanceItemMeshWithAsset,
   MAX_ITEM_LIGHTS,
   STARTER_LIGHT_PRESET,
   consumeStarterReveal,
   type ItemAcquisitionType,
   type SettlementItem,
 } from 'src/lib/settlement-items'
-import { orbitalKey } from 'src/lib/settlements'
+import { orbitalKey, useSettlements } from 'src/lib/settlements'
 import SettlementInventory from 'src/components/SettlementInventory.vue'
 
 // ── Route ──────────────────────────────────────────────────────────────────────
@@ -169,6 +177,37 @@ const exolocation   = computed(() => refName.value
   : `${coordSystem.value}:${hostname.value}`)
 
 const { items, removeItem } = useSettlementItems(settlementKey)
+
+// ── Settlement record ────────────────────────────────────────────────────────
+// Unlike every other interior page, this one had no way to actually create a
+// SettlementRecord — a visitor got a free starter-lantern item (useSettlementItems
+// auto-grants one) but never anything findable later via "My Settlements." Matters
+// most for the no-solid-ground cluster-planet path (ClusterSystemPage.vue's
+// descendToPlanet(), see clusterSlug/memberId query params below): those planets
+// route straight here with no claim step at all, unlike their solid-ground
+// siblings which get ClusterSurfacePage.vue's "Create a Settlement" button.
+const clusterSlugQ = computed(() => typeof route.query.clusterSlug === 'string' ? route.query.clusterSlug : undefined)
+const memberIdQ    = computed(() => typeof route.query.memberId    === 'string' ? route.query.memberId    : undefined)
+const surfaceTypeQ = computed(() => typeof route.query.surfaceType === 'string' ? route.query.surfaceType : undefined)
+
+const { hasSettlement, addSettlement } = useSettlements()
+const hasThisSettlement = computed(() => hasSettlement(settlementKey.value))
+
+function goSettle() {
+  if (hasThisSettlement.value) return
+  addSettlement({
+    key:         settlementKey.value,
+    type:        'orbital',
+    planetName:  refName.value || hostname.value,
+    hostname:    hostname.value,
+    exolocation: exolocation.value,
+    displayName: surfaceTypeQ.value
+      ? `${hostname.value} (${surfaceTypeQ.value.replace(/_/g, ' ')})`
+      : hostname.value,
+    ...(clusterSlugQ.value ? { clusterSlug: clusterSlugQ.value } : {}),
+    ...(memberIdQ.value    ? { memberId:    memberIdQ.value }    : {}),
+  })
+}
 
 // ── Constants / display ────────────────────────────────────────────────────────
 
@@ -403,7 +442,7 @@ function buildItems() {
     zoneCount[item.zone] = slotIdx + 1
 
     const pos   = autoPosition(item, slotIdx, CYLINDER_ZONE_POSITIONS)
-    const group = buildItemMesh(item.meshPreset, item.color, idx < MAX_ITEM_LIGHTS)
+    const group = buildItemMesh(item.meshPreset, item.color, idx < MAX_ITEM_LIGHTS, item.voxels)
     group.position.set(pos.x, deckY, pos.z)
     group.name = `item:${item.id}`
     if (item.meshPreset === STARTER_LIGHT_PRESET && playReveal) {
@@ -415,6 +454,16 @@ function buildItems() {
 
     group.traverse(obj => {
       if ((obj as THREE.Mesh).isMesh) itemMeshArr.push({ mesh: obj, id: item.id })
+    })
+
+    // Swap in an authored model if one exists at its preset's asset path —
+    // no-ops until that file is actually dropped in (see asset-loader.ts).
+    void enhanceItemMeshWithAsset(group, item.meshPreset).then(swapped => {
+      if (!swapped) return
+      itemMeshArr = itemMeshArr.filter(m => m.id !== item.id)
+      group.traverse(obj => {
+        if ((obj as THREE.Mesh).isMesh) itemMeshArr.push({ mesh: obj, id: item.id })
+      })
     })
   }
 }

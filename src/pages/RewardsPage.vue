@@ -121,6 +121,9 @@
         <p class="rw-p rw-p--dim">
           Mentoring someone? You can share a settlement design with them — open your settlement's
           inventory, expand an item and choose "Share this design" to generate a code they can redeem.
+          No settlement yet?
+          <router-link to="/galaxy?suggestedFocus=learning" class="rw-cta"
+            @click="setSuggestedFocus('learning')">Start one focused on learning &amp; mentoring →</router-link>
         </p>
 
         <div v-if="rewards.pendingMentorConfirmations.length" class="rw-event-list">
@@ -174,6 +177,7 @@ import { useRewardsStore, type RewardEvent } from 'src/stores/rewards'
 import { useSettlements } from 'src/lib/settlements'
 import { useSettlementItems } from 'src/lib/settlement-items'
 import { SETTLEMENT_OBJECT_MESH } from 'src/data/rewards-catalog'
+import { setSuggestedFocus } from 'src/lib/settlement-focus-intent'
 import MemberSignIn from 'src/components/MemberSignIn.vue'
 
 const member  = useMemberStore()
