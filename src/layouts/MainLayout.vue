@@ -692,6 +692,13 @@
                 <span class="mob-nav-sub">Reserve your settlement</span>
               </span>
             </button>
+            <button class="mob-nav-item" @click="navTo('/mint-style')">
+              <span class="mob-nav-icon">🎨</span>
+              <span class="mob-nav-text">
+                <span class="mob-nav-label">Design Generative Art</span>
+                <span class="mob-nav-sub">Compose a piece · you own what you make</span>
+              </span>
+            </button>
             <button class="mob-nav-item" @click="navTo('/learn')">
               <span class="mob-nav-icon">📚</span>
               <span class="mob-nav-text">

@@ -20,6 +20,44 @@
 
     <div class="ms-body">
 
+      <!-- ── Start here: curated presets ───────────────────────────────────
+           A small, hand-picked set of one-click starting points — distinct
+           from the history-based "suggested today" panel below, which needs
+           browsing activity to have anything to suggest. This is the
+           first-visit path: pick a tile, get a real composed piece
+           immediately, calibrate further in the configurator if you want. -->
+      <Transition name="ms-expand">
+        <div v-if="showCuratedPresets" class="ms-curated">
+          <div class="ms-curated-head">
+            <span>START HERE — PICK A PIECE</span>
+            <button class="ms-suggested-dismiss" @click="showCuratedPresets = false" title="Dismiss">✕</button>
+          </div>
+          <div class="ms-curated-note">
+            One click composes a real piece from live Exotopia data. Adjust anything below, or mint it as-is —
+            you own what you make; Exotopia provides the tools, not a marketplace for the result.
+          </div>
+          <div class="ms-regime-tabs">
+            <button
+              v-for="r in PRESET_REGIMES" :key="r.id"
+              :class="['ms-regime-tab', { 'ms-regime-tab--active': r.id === activeRegime }]"
+              @click="activeRegime = r.id"
+            >{{ r.label }}</button>
+          </div>
+          <div class="ms-regime-blurb">{{ activeRegimeInfo.blurb }}</div>
+          <div class="ms-curated-grid">
+            <button
+              v-for="p in visiblePresets" :key="p.id"
+              class="ms-curated-tile" :style="{ '--accent': p.accentColor }"
+              @click="applyCuratedPreset(p)"
+            >
+              <span class="ms-curated-icon">{{ p.icon }}</span>
+              <span class="ms-curated-label">{{ p.label }}</span>
+              <span class="ms-curated-blurb">{{ p.blurb }}</span>
+            </button>
+          </div>
+        </div>
+      </Transition>
+
       <!-- ── Left: style library ─────────────────────────────────────────── -->
       <div class="ms-library">
         <div class="ms-library-head">
@@ -399,6 +437,10 @@ import {
   readNavHistory, generateSmartPresets,
   type SmartPreset,
 } from 'src/lib/nav-history'
+import {
+  CURATED_PRESETS, PRESET_REGIMES, buildCuratedStyle,
+  type CuratedPreset, type PresetRegimeId,
+} from 'src/data/mint-style-presets'
 
 const router = useRouter()
 const store  = useMintStyleStore()
@@ -426,6 +468,31 @@ function applySmartPreset(preset: SmartPreset) {
   store.updateStyle(saved.id, saved)
   store.selectStyle(saved.id)
   showSuggestions.value = false
+  recompose()
+}
+
+// ── Curated presets — the first-visit "start here" path ─────────────────────
+
+const showCuratedPresets = ref(true)
+const activeRegime = ref<PresetRegimeId>(PRESET_REGIMES[0]!.id)
+
+const activeRegimeInfo = computed(() =>
+  PRESET_REGIMES.find(r => r.id === activeRegime.value) ?? PRESET_REGIMES[0]!
+)
+
+const visiblePresets = computed(() =>
+  CURATED_PRESETS.filter(p => p.regime === activeRegime.value)
+)
+
+function applyCuratedPreset(preset: CuratedPreset) {
+  const built = buildCuratedStyle(preset)
+  const saved = store.createStyle(built.name)
+  Object.assign(saved, {
+    ...JSON.parse(JSON.stringify(built)),
+    id: saved.id, created: saved.created, updated: saved.updated, mintCount: 0,
+  })
+  store.updateStyle(saved.id, saved)
+  store.selectStyle(saved.id)
   recompose()
 }
 
@@ -644,9 +711,119 @@ function doImport() {
 .ms-body {
   display: grid;
   grid-template-columns: 200px 1fr 320px;
+  grid-template-rows: auto 1fr;
   flex: 1;
   overflow: hidden;
   height: calc(100vh - 48px);
+}
+
+/* Curated presets sits in its own full-width row above the 3-column
+   layout — the three columns below (each already overflow-y: auto) end up
+   in row 2, sized by whatever the 1fr leaves after this row's natural
+   height, instead of the old implicit single-row grid. */
+.ms-curated { grid-column: 1 / -1; grid-row: 1; }
+.ms-library, .ms-configurator, .ms-preview, .ms-empty-preview { grid-row: 2; }
+
+/* ── Curated presets ("start here") ──────────────────────────── */
+
+.ms-curated {
+  background: rgba(0, 14, 26, 0.85);
+  border-bottom: 1px solid rgba(0, 160, 200, 0.25);
+  padding: 10px 16px 12px;
+}
+
+.ms-curated-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 8px;
+  letter-spacing: 0.16em;
+  color: rgba(0, 210, 250, 0.70);
+  margin-bottom: 3px;
+}
+
+.ms-curated-note {
+  font-size: 8px;
+  color: rgba(80, 140, 170, 0.65);
+  letter-spacing: 0.03em;
+  line-height: 1.5;
+  max-width: 620px;
+  margin-bottom: 10px;
+}
+
+.ms-regime-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 6px;
+}
+
+.ms-regime-tab {
+  background: rgba(0, 10, 22, 0.55);
+  border: 1px solid rgba(0, 100, 140, 0.30);
+  border-radius: 999px;
+  color: rgba(120, 175, 200, 0.75);
+  font-family: inherit;
+  font-size: 8px;
+  letter-spacing: 0.05em;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+.ms-regime-tab:hover { border-color: rgba(0, 160, 200, 0.55); color: rgba(180, 220, 240, 0.90); }
+
+.ms-regime-tab--active {
+  background: rgba(0, 90, 130, 0.40);
+  border-color: rgba(0, 200, 240, 0.65);
+  color: rgba(200, 235, 250, 0.95);
+}
+
+.ms-regime-blurb {
+  font-size: 7.5px;
+  color: rgba(90, 145, 175, 0.70);
+  letter-spacing: 0.03em;
+  margin-bottom: 8px;
+}
+
+.ms-curated-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
+  max-width: 900px;
+}
+
+.ms-curated-tile {
+  --accent: rgba(0, 200, 240, 0.85);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  background: rgba(0, 10, 22, 0.70);
+  border: 1px solid rgba(0, 100, 140, 0.30);
+  border-top: 2px solid var(--accent);
+  border-radius: 4px;
+  padding: 9px 10px;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: background 0.12s, border-color 0.12s, transform 0.12s;
+}
+.ms-curated-tile:hover {
+  background: rgba(0, 30, 50, 0.65);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.ms-curated-icon  { font-size: 16px; }
+.ms-curated-label {
+  font-size: 9.5px;
+  color: rgba(190, 225, 245, 0.92);
+  letter-spacing: 0.02em;
+}
+.ms-curated-blurb {
+  font-size: 7.5px;
+  color: rgba(100, 150, 180, 0.70);
+  line-height: 1.45;
 }
 
 /* ── Smart preset suggestion panel ───────────────────────────── */

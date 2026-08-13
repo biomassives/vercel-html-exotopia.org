@@ -15,7 +15,7 @@
         {{ claimLon >= 0 ? claimLon + '°E' : Math.abs(claimLon) + '°W' }}
       </div>
       <div class="pb-actions">
-        <button class="pb-btn pb-btn--confirm" @click="confirmFromPreview">
+        <button class="pb-btn pb-btn--confirm" :disabled="!mintConsentAccepted" @click="confirmFromPreview">
           ⬡ Establish Settlement
         </button>
         <button class="pb-btn pb-btn--back" @click="router.back()">
@@ -373,8 +373,16 @@
           Selected focus: <strong class="text-amber-5">{{ selectedFocusLabel }}</strong>
           — a self-declared badge shown on this settlement, here and on its public page if you publish it.
         </div>
+        <label class="pc-check-row pc-check-row--consent q-mt-sm">
+          <input type="checkbox" v-model="mintConsentAccepted" />
+          <span class="pc-check-dim">
+            This creates a free address record — no wallet, no blockchain transaction, no investment
+            or expectation of profit.
+          </span>
+        </label>
         <div class="row q-gutter-sm q-mt-sm">
           <q-btn unelevated
+            :disable="!mintConsentAccepted"
             :color="hasSettlement(clusterKey(cwCluster, cwGalaxy, cwSystem, cwPlanet||'b')) ? 'teal-8' : 'amber-9'"
             :icon="hasSettlement(clusterKey(cwCluster, cwGalaxy, cwSystem, cwPlanet||'b')) ? 'mdi-home-circle' : 'mdi-map-marker-plus'"
             :label="hasSettlement(clusterKey(cwCluster, cwGalaxy, cwSystem, cwPlanet||'b')) ? 'Continue Your Settlement' : 'Create a Settlement'"
@@ -512,14 +520,16 @@
         </div>
 
         <h1 class="hero-heading">
-          Build your<br>
+          Design your<br>
           <span class="hero-heading-accent">place in the cosmos</span>
         </h1>
 
         <p class="hero-desc">
-          11 hand-crafted SVG collector's cards. Each one a unique astronomical
-          object, phenomenon, or concept from the Exotopia ecosystem.
-          Minted on-chain. Yours permanently.
+          11 hand-crafted SVG collector's cards, or a generative piece you configure
+          yourself from real astronomical and eco-ops data. Either way: you compose
+          it, you hold the record. Exotopia provides the tools and the data — what
+          you do with what you make, including whether and where you trade it,
+          is yours to decide.
         </p>
 
         <!-- Collection note — thematic variety, not a graded/scarcity display.
@@ -531,10 +541,13 @@
           </span>
         </div>
 
-        <!-- Free badge + chains -->
+        <!-- Free badge — chain badges (ALGO/MATIC/SOL/TEZ/HBAR/CELO) removed:
+             this page's own header comment confirms wallet/chain minting was
+             already removed from the actual mint flow below ("no wallet, no
+             chain, no gas fee" — see SETTLEMENT_ADDRESS_API.md). The badges
+             were stale copy from before that change and were no longer true. -->
         <div class="hero-meta q-mt-md">
-          <span class="free-badge">FREE TO MINT</span>
-          <span class="chain-list">ALGO · MATIC · SOL · TEZ · HBAR · CELO</span>
+          <span class="free-badge">FREE · NO WALLET REQUIRED</span>
         </div>
 
         <!-- CTAs -->
@@ -548,6 +561,12 @@
             flat color="blue-grey-4" icon="mdi-view-gallery"
             label="View Collection"
             @click="$router.push('/gallery')"
+            class="q-ml-sm"
+          />
+          <q-btn
+            flat color="purple-4" icon="mdi-palette-outline"
+            label="Design Your Own"
+            @click="$router.push('/mint-style')"
             class="q-ml-sm"
           />
         </div>
@@ -658,8 +677,16 @@
         </div>
       </div>
 
-      <div class="pc-cta-row">
-        <button class="pc-cta-btn pc-cta-btn--confirm" :disabled="!selectedFocus" @click="confirmFromPreview">
+      <label class="pc-check-row pc-check-row--consent q-mt-sm">
+        <input type="checkbox" v-model="mintConsentAccepted" />
+        <span class="pc-check-dim">
+          This creates a free address record — no wallet, no blockchain transaction, no investment
+          or expectation of profit. Exotopia doesn't guarantee exclusive claim to this address; see
+          <router-link to="/docs#exolocation">how addressing works →</router-link>
+        </span>
+      </label>
+      <div class="pc-cta-row q-mt-xs">
+        <button class="pc-cta-btn pc-cta-btn--confirm" :disabled="!selectedFocus || !mintConsentAccepted" @click="confirmFromPreview">
           ⬡ Establish Settlement
         </button>
         <button class="pc-cta-btn pc-cta-btn--back" @click="router.back()">
@@ -776,6 +803,22 @@ import { useSettlements, surfaceKey, clusterKey } from 'src/lib/settlements'
 import { consumeSuggestedFocus } from 'src/lib/settlement-focus-intent'
 import { FOCUS_OPTIONS, focusLabel } from 'src/data/settlement-focus-options'
 import { pinSettlement, hasAnyPinningConfigured, type SettlementPinMetadata } from 'src/lib/ipfs-pinning'
+
+// ── Mint consent (RISK_REDUCTION_RECOMMENDATIONS.md §1) ──────────────────────
+// Same pattern as PfasCitizenSciencePage.vue's logFieldWaiverAcceptance() — a
+// per-action, timestamped, evidentiary record beats a buried ToS clause.
+// Shared across both establish-settlement flows (confirmFromPreview,
+// proceedCwMint) below; each one guards on it and logs on success.
+const mintConsentAccepted = ref(false)
+
+function logMintConsentAcceptance(context: string) {
+  try {
+    const key = 'exo.mint-consent-log'
+    const log = JSON.parse(localStorage.getItem(key) ?? '[]') as unknown[]
+    log.push({ context, acceptedAt: new Date().toISOString() })
+    localStorage.setItem(key, JSON.stringify(log))
+  } catch { /* private mode / quota */ }
+}
 import { useSettlementProfilesStore, type SettlementProfile } from 'src/stores/settlement-profiles'
 import { useMemberStore } from 'src/stores/member'
 import { REMEDIATION_METHODS } from 'src/data/pfas-methods-library'
@@ -869,6 +912,8 @@ const isPreview = computed(() => route.query.preview === '1')
 function confirmFromPreview() {
   if (!claimHost.value || !claimPlanet.value || isNaN(claimLat.value) || isNaN(claimLon.value)) return
   if (!selectedFocus.value) return
+  if (!mintConsentAccepted.value) return
+  logMintConsentAcceptance('surface-deed')
   addSettlement({
     key:         surfaceKey(claimPlanet.value),
     type:        'surface',
@@ -926,9 +971,11 @@ const showCwAdvanced = ref(false)
 const selectedFocusLabel = computed(() => focusLabel(selectedFocus.value))
 
 function proceedCwMint() {
+  if (!mintConsentAccepted.value) return
   // Record settlement intent in browser storage
   const sKey = clusterKey(cwCluster.value, cwGalaxy.value, cwSystem.value, cwPlanet.value || 'b')
   if (!hasSettlement(sKey)) {
+    logMintConsentAcceptance('cluster-world')
     addSettlement({
       key:         sKey,
       type:        'cluster',
@@ -1586,11 +1633,6 @@ async function doPin() {
   color: rgba(34, 220, 120, 0.90);
 }
 
-.chain-list {
-  font-size: 7px;
-  letter-spacing: 0.12em;
-  color: rgba(80, 130, 160, 0.60);
-}
 
 .hero-ctas { display: flex; align-items: center; }
 
@@ -2389,6 +2431,19 @@ async function doPin() {
 }
 .pc-check-icon--dim { color: rgba(60, 110, 140, 0.50); }
 .pc-check-dim       { color: rgba(80, 130, 160, 0.50); }
+
+.pc-check-row--consent {
+  align-items: flex-start;
+  cursor: pointer;
+  max-width: 480px;
+}
+.pc-check-row--consent input[type="checkbox"] {
+  margin-top: 2px;
+  flex-shrink: 0;
+  accent-color: rgba(0, 210, 180, 0.85);
+}
+.pc-check-row--consent .pc-check-dim { color: rgba(140, 190, 215, 0.75); line-height: 1.5; }
+.pc-check-row--consent a { color: rgba(0, 200, 240, 0.80); }
 
 .pc-cta-row {
   display: flex;
