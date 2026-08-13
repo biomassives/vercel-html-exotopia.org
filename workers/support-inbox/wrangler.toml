@@ -2,6 +2,11 @@ name = "vercel-html-exotopia-org"
 main = "src/index.ts"
 compatibility_date = "2026-08-01"
 
+# No per-branch preview deploys for this worker — it writes real user data to
+# Supabase and sends real email via Resend, so a stray preview URL would hit
+# production services under the same secrets/bindings with no real benefit.
+preview_urls = false
+
 # Create with: wrangler kv namespace create RATE_LIMIT_KV
 # then paste the returned id below.
 [[kv_namespaces]]
