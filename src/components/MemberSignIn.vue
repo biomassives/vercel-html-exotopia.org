@@ -48,8 +48,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useMemberStore, initials } from 'src/stores/member'
+import { useGuestProfile } from 'src/composables/useGuestProfile'
 
 const store       = useMemberStore()
+const guestProfile = useGuestProfile()
 const email       = ref('')
 const sent        = ref(false)
 const handle      = ref('')
@@ -63,7 +65,11 @@ async function send () {
 }
 
 async function createProfile () {
-  const ok = await store.createProfile(handle.value, displayName.value)
+  // If this browser went through the onboarding wizard's age-attestation
+  // step first, carry that bracket over into the real account instead of
+  // leaving it stranded in guest-only localStorage (see 018_member_
+  // participation_mode.sql's header for why that gap mattered).
+  const ok = await store.createProfile(handle.value, displayName.value, guestProfile.profile.value.participationMode)
   if (!ok) profileError.value = 'Handle may already be taken — try another.'
 }
 </script>

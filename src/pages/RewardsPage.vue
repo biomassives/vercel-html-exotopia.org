@@ -114,8 +114,14 @@
             <option v-for="c in connections" :key="c.id" :value="c.id">{{ c.display_name }}</option>
           </select>
           <input v-model="mentorTopic" type="text" class="rw-input rw-input--wide" placeholder="Topic (e.g. water testing basics)" />
-          <button class="rw-btn" :disabled="!mentorTargetId || !mentorTopic" @click="submitMentorRequest">Request session</button>
+          <button class="rw-btn" :disabled="!mentorTargetId || !mentorTopic || (menteeIsYouth && !youthAck)" @click="submitMentorRequest">Request session</button>
         </div>
+        <label v-if="menteeIsYouth" class="rw-p rw-youth-notice">
+          <input type="checkbox" v-model="youthAck" />
+          This connection has indicated they're a youth participant (13–17). I understand conduct
+          and content standards for mentoring a minor apply, and I'll keep session topics
+          age-appropriate.
+        </label>
         <p v-else class="rw-p rw-p--dim">No green-light connections yet — connect with someone first to request or receive mentor sessions.</p>
 
         <p class="rw-p rw-p--dim">
@@ -232,6 +238,8 @@ interface ConnectionOption { id: string; display_name: string }
 const connections   = ref<ConnectionOption[]>([])
 const mentorTargetId = ref('')
 const mentorTopic    = ref('')
+const menteeIsYouth  = ref(false)
+const youthAck       = ref(false)
 
 async function loadConnections() {
   if (!supabase || !member.connectedIds.length) return
@@ -239,11 +247,22 @@ async function loadConnections() {
   connections.value = (data as ConnectionOption[]) ?? []
 }
 
+// Re-check on every target change — this is the mentor-safety surfacing
+// from 018_member_participation_mode.sql, not just a UX nicety: the request
+// button stays disabled for a youth mentee until the box below is checked.
+watch(mentorTargetId, async (id) => {
+  youthAck.value = false
+  menteeIsYouth.value = id ? await rewards.checkMenteeIsYouth(id) : false
+})
+
 async function submitMentorRequest() {
   if (!mentorTargetId.value || !mentorTopic.value) return
+  if (menteeIsYouth.value && !youthAck.value) return
   await rewards.requestMentorSession(mentorTargetId.value, mentorTopic.value)
   mentorTargetId.value = ''
   mentorTopic.value    = ''
+  menteeIsYouth.value  = false
+  youthAck.value       = false
 }
 
 // ── Impact profile — attach an unlocked object to a settlement ──────────────
@@ -320,6 +339,13 @@ function attachObject(objectKey: string) {
 .rw-p  { font-size: 10.5px; color: rgba(130,185,220,0.72); line-height: 1.6; margin: 0 0 12px; }
 .rw-p--dim { color: rgba(100,140,170,0.55); }
 .rw-attach-error { color: rgba(255,120,120,0.85); }
+.rw-youth-notice {
+  display: flex; align-items: flex-start; gap: 8px; cursor: pointer;
+  padding: 8px 10px; margin-top: -4px;
+  background: rgba(242,192,55,0.08); border: 1px solid rgba(242,192,55,0.25); border-radius: 6px;
+  color: rgba(230,210,150,0.85);
+}
+.rw-youth-notice input { margin-top: 2px; flex-shrink: 0; }
 
 .rw-pfin-row { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
 .rw-pfin-status { font-size: 10.5px; color: rgba(150,180,205,0.60); }

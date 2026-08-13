@@ -100,7 +100,17 @@ export const useMemberStore = defineStore('member', () => {
     await supabase?.auth.signOut()
   }
 
-  async function createProfile (handle: string, displayName: string) {
+  /**
+   * participationMode, if given, is written once to member_participation_mode
+   * (018_member_participation_mode.sql) — the real, server-side home for
+   * useGuestProfile.ts's self-attested age bracket. Best-effort: a failure
+   * here doesn't roll back the member row, since an unset participation mode
+   * degrades to "unknown," not to a false safety guarantee either way.
+   */
+  async function createProfile (
+    handle: string, displayName: string,
+    participationMode?: 'adult_individual' | 'group_member' | 'youth_participant' | null,
+  ) {
     if (!supabase || !userId.value) return
     const { error: e } = await supabase.from('members').insert({
       id:           userId.value,
@@ -108,6 +118,11 @@ export const useMemberStore = defineStore('member', () => {
       display_name: displayName.trim(),
       avatar_color: HANDLE_COLORS[handle.toLowerCase()] ?? '#00e5ff',
     })
+    if (!e && participationMode) {
+      await supabase.from('member_participation_mode').insert({
+        member_id: userId.value, mode: participationMode,
+      })
+    }
     if (!e) await _loadProfile()
     return !e
   }

@@ -232,6 +232,19 @@ export const useRewardsStore = defineStore('rewards', () => {
     if (!e && data) mentorSessions.value = [...mentorSessions.value, data as MentorSession]
   }
 
+  /**
+   * Minimal-disclosure youth check (018_member_participation_mode.sql) —
+   * before requesting to mentor someone, the prospective mentor can see
+   * *whether* the mentee is a youth participant (not their full record).
+   * Used by RewardsPage.vue to gate the request behind an explicit
+   * acknowledgment rather than letting it happen invisibly either way.
+   */
+  async function checkMenteeIsYouth(menteeId: string): Promise<boolean> {
+    if (!supabase) return false
+    const { data } = await supabase.rpc('is_youth_participant', { p_member_id: menteeId })
+    return data === true
+  }
+
   /** Confirms the current member's side of a mentor session. Reward emission happens server-side (see 002_rewards.sql triggers). */
   async function confirmMentorSession(sessionId: string) {
     const member = useMemberStore()
@@ -262,7 +275,7 @@ export const useRewardsStore = defineStore('rewards', () => {
     volunteerProgress, mentorProgress,
     loadMyRewards, awardQuizCompletion, logVolunteerAction, logEducatingAction,
     debitConstruction,
-    requestMentorSession, confirmMentorSession, adminGrantReward,
+    requestMentorSession, confirmMentorSession, checkMenteeIsYouth, adminGrantReward,
     checkIsAdmin, searchMembers, issueCertificate,
   }
 })

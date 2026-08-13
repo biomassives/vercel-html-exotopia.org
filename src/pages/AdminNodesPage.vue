@@ -21,10 +21,11 @@
         row-key="id"
         :filter="filter"
         :loading="loading"
+        :grid="$q.screen.lt.sm"
         flat
       >
         <template v-slot:top-right>
-          <q-input v-model="filter" outlined dense debounce="300" placeholder="Search title, type, owner..." style="width: 300px;">
+          <q-input v-model="filter" outlined dense debounce="300" placeholder="Search title, type, owner..." style="width: 300px; max-width: 100%;">
             <template v-slot:append><q-icon name="search" /></template>
           </q-input>
         </template>
@@ -42,6 +43,26 @@
             <q-btn v-else dense flat size="sm" color="positive" label="Restore"
               @click="setStatus(props.row.id, 'published')" />
           </q-td>
+        </template>
+
+        <!-- grid-mode card layout for small screens (q-table's built-in fallback) -->
+        <template v-slot:item="props">
+          <q-card flat bordered class="q-ma-xs col-12">
+            <q-card-section>
+              <div class="row items-center justify-between">
+                <div class="text-weight-bold">{{ props.row.title }}</div>
+                <q-badge :color="STATUS_COLOR[props.row.status]">{{ props.row.status }}</q-badge>
+              </div>
+              <div class="text-caption text-grey-7">{{ props.row.node_type }}</div>
+              <div class="text-caption text-grey-6">owner: {{ props.row.owner_id }}</div>
+            </q-card-section>
+            <q-card-actions align="right">
+              <q-btn v-if="props.row.status !== 'archived'" dense flat size="sm" color="negative" label="Archive"
+                @click="setStatus(props.row.id, 'archived')" />
+              <q-btn v-else dense flat size="sm" color="positive" label="Restore"
+                @click="setStatus(props.row.id, 'published')" />
+            </q-card-actions>
+          </q-card>
         </template>
       </q-table>
     </q-card>
@@ -88,3 +109,11 @@ async function setStatus(id: string, status: 'published' | 'archived') {
 
 onMounted(load)
 </script>
+
+<style scoped>
+/* See AdminSettlementProfilesPage.vue's identical rule for why this is
+ * needed: global dark theme (quasar.config.js) + this page's light
+ * bg-grey-1 background otherwise renders white-on-near-white text,
+ * confirmed via getComputedStyle during review of the sibling page. */
+.q-page { color: rgba(0, 0, 0, 0.87); }
+</style>

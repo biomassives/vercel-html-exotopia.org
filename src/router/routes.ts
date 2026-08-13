@@ -300,6 +300,12 @@ const routes: RouteRecordRaw[] = [
         meta: { title: 'Admin · Community Nodes' },
       },
       {
+        path: 'admin/settlement-profiles',
+        name: 'admin-settlement-profiles',
+        component: () => import('src/pages/AdminSettlementProfilesPage.vue'),
+        meta: { title: 'Admin · Settlement Profiles' },
+      },
+      {
         path: 'admin/video-suggestions',
         name: 'admin-video-suggestions',
         component: () => import('src/pages/AdminVideoSuggestionsPage.vue'),

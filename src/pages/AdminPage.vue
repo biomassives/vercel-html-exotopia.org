@@ -70,6 +70,21 @@
         <div class="adm-card__arrow">→</div>
       </div>
 
+      <div class="adm-card" @click="$router.push('/admin/settlement-profiles')">
+        <div class="adm-card__icon">🏘</div>
+        <div class="adm-card__body">
+          <div class="adm-card__title">Settlement Profiles — Moderation</div>
+          <div class="adm-card__desc">
+            Public settlement pages (/settlement/:slug), self-service publish with a 3/24h rate
+            limit — this is the takedown/restore view. Includes a duplicate/spam hint (E8-lattice
+            fingerprint + field similarity) and an offline-capable action path with a local audit
+            trail, opt-in via an autosync toggle on the page itself.
+          </div>
+          <div class="adm-card__meta">settlement_profiles · migration 012</div>
+        </div>
+        <div class="adm-card__arrow">→</div>
+      </div>
+
       <div class="adm-card" @click="$router.push('/admin/video-suggestions')">
         <div class="adm-card__icon">🎞️</div>
         <div class="adm-card__body">

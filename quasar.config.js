@@ -329,6 +329,31 @@ module.exports = configure(function (/* ctx */) {
             },
           },
 
+          // Settlement-profile admin moderation (archive/restore) — NetworkOnly
+          // with Background Sync, but ONLY when the admin has opted in via the
+          // autosync toggle on AdminSettlementProfilesPage.vue (settlement-
+          // profiles.ts's setProfileStatusAsAdmin sets this header per-request,
+          // using a raw fetch rather than the shared supabase-js client so a
+          // per-call header is possible at all). Default (no header) falls
+          // through unmatched, so a PATCH just fails immediately offline —
+          // same as community_nodes' admin moderation today. This is
+          // deliberately scoped to this one table/action, not a blanket
+          // "all admin writes queue offline" policy.
+          {
+            urlPattern: ({ url, request }) =>
+              request.method === 'PATCH' &&
+              /\/rest\/v1\/settlement_profiles(\?|$)/.test(url.pathname + url.search) &&
+              request.headers.get('X-Exo-Admin-Autosync') === '1',
+            method: 'PATCH',
+            handler: 'NetworkOnly',
+            options: {
+              backgroundSync: {
+                name: 'admin-settlement-mod-queue',
+                options: { maxRetentionTime: 60 * 24 }, // retry for up to 24h
+              },
+            },
+          },
+
           // IPFS gateway — CacheFirst (content-addressed, immutable)
           {
             urlPattern: /^https:\/\/[^/]+\.ipfs\.(io|dweb\.link|cloudflare-ipfs\.com)\//,
