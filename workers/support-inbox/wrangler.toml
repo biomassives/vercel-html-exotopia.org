@@ -21,3 +21,19 @@ ALLOWED_ORIGIN = "https://exotopia.org"
 #   wrangler secret put SUPPORT_REPLY_TO        shared monitored inbox, e.g. support@exotopia.org
 #   wrangler secret put TURNSTILE_SECRET_KEY
 #   wrangler secret put ADMIN_ALERT_EMAIL       where urgent (bug) alerts go
+
+[observability]
+enabled = false
+head_sampling_rate = 1
+
+[observability.logs]
+enabled = true
+head_sampling_rate = 1
+persist = true
+invocation_logs = true
+
+[observability.traces]
+enabled = false
+persist = true
+head_sampling_rate = 1
+
