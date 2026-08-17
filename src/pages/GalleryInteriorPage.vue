@@ -1,6 +1,6 @@
 <template>
   <q-page class="gi-page">
-    <canvas ref="canvasEl" class="gi-canvas" />
+    <canvas ref="canvasEl" class="gi-canvas" @mousemove="onMouseMove" @click="onCanvasClick" />
 
     <!-- ── Top bar ──────────────────────────────────────────────────────── -->
     <div class="gi-topbar">
@@ -41,6 +41,8 @@
         <div class="gi-hint-row"><q-icon name="keyboard" size="11px" class="q-mr-xs" />WASD / arrows to walk</div>
       </div>
     </Transition>
+
+    <FileCabinetOverlay v-model="fileCabinetOpen" />
   </q-page>
 </template>
 
@@ -56,15 +58,18 @@
  * (DomeInteriorPage.vue), whose buildDomeShell() lattice technique this
  * reuses at a smaller scale.
  *
- * Scope for this pass: walkable shell + lighting + entry/exit only — no
- * artwork panels, soul orbs, robot companion, or file cabinet. Those are
- * SPEC.md §18's documented follow-up, not dropped, just not built yet.
+ * Scope for this pass: walkable shell + lighting + entry/exit + a clickable
+ * file cabinet (opens FileCabinetOverlay.vue). Artwork panels, soul orbs, and
+ * a robot companion are still SPEC.md §18's documented follow-up.
  */
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { disposeScene } from 'src/lib/three-utils'
+import { useMemberStore } from 'src/stores/member'
+import { useFileCabinetStore } from 'src/stores/file-cabinet'
+import FileCabinetOverlay from 'src/components/FileCabinetOverlay.vue'
 
 // ── Route ────────────────────────────────────────────────────────────────────
 
@@ -73,13 +78,24 @@ const router = useRouter()
 
 const hostname   = computed(() => String(route.params.hostname   ?? ''))
 const planetName = computed(() => String(route.params.planetName ?? ''))
-const exolocation = computed(() => `exo-surface-v1:${hostname.value}:${planetName.value}`)
+// Moon context round-trip — mirrors DomeInteriorPage.vue's isMoonView/goBack
+// fix so exiting the gallery from a moon settlement returns to the moon's
+// surface view instead of silently dropping to the parent planet.
+const parentName = computed(() => String(route.query.parent ?? ''))
+const isMoonView = computed(() => !!parentName.value)
+const exolocation = computed(() => isMoonView.value
+  ? `exo-moon-surface-v1:${parentName.value}:${planetName.value}`
+  : `exo-surface-v1:${hostname.value}:${planetName.value}`)
 
 // ── UI state ─────────────────────────────────────────────────────────────────
 
 const sceneReady = ref(false)
 const showHints  = ref(false)
 const canvasEl   = ref<HTMLCanvasElement>()
+
+const member       = useMemberStore()
+const fileCabinet  = useFileCabinetStore()
+const fileCabinetOpen = ref(false)
 
 // ── Three.js ─────────────────────────────────────────────────────────────────
 
@@ -92,6 +108,15 @@ let controls: OrbitControls           | null = null
 let rafId:    number | null = null
 
 const keysDown = new Set<string>()
+
+// ── File cabinet click target ─────────────────────────────────────────────────
+// This page has no raycast infrastructure otherwise — one clickable object
+// doesn't need SurfaceViewPage.vue's full hitTargets system, just enough to
+// pick this one mesh (mirrors DomeInteriorPage.vue's lighter single-object
+// pattern).
+let raycaster:     THREE.Raycaster | null = null
+let cabinetMeshes: THREE.Object3D[] = []
+const mouseNDC = new THREE.Vector2()
 
 function buildShell() {
   const r   = GALLERY_INTERIOR_RADIUS
@@ -150,6 +175,62 @@ function buildShell() {
   }
 }
 
+/**
+ * The file cabinet — SPEC.md §18.5's in-world archive access point, opened via
+ * FileCabinetOverlay.vue. Procedural-only like the rest of this scene (no
+ * textures): a slate body with four stacked drawer faces, warm-amber handles
+ * matching this room's accent color, and a soft glow so it reads as "there's
+ * something here" without a label. Placed inside the planted ring (r*0.72,
+ * see buildShell()'s 10 cone plants) but pulled in to r*0.55 so it doesn't
+ * collide with them, on the far side of the room from the camera's entry
+ * facing direction so it's discovered by walking in, not stared at on arrival.
+ */
+function buildFileCabinet() {
+  const group = new THREE.Group()
+
+  const bodyMat = new THREE.MeshPhongMaterial({ color: 0x334455, shininess: 18 })
+  const body = new THREE.Mesh(new THREE.BoxGeometry(2.2, 3.4, 1.6), bodyMat)
+  body.position.y = 1.7
+  group.add(body)
+
+  const drawerMat = new THREE.MeshPhongMaterial({ color: 0x445566, shininess: 12 })
+  const handleMat = new THREE.MeshBasicMaterial({ color: 0xffaa55 })
+  const DRAWER_COUNT = 4
+  for (let i = 0; i < DRAWER_COUNT; i++) {
+    const y = 0.5 + i * 0.78
+    const drawer = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.72, 0.08), drawerMat)
+    drawer.position.set(0, y, 0.84)
+    group.add(drawer)
+
+    const handle = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.3, 6), handleMat)
+    handle.rotation.z = Math.PI / 2
+    handle.position.set(0, y, 0.90)
+    group.add(handle)
+  }
+
+  const light = new THREE.PointLight(0xffaa55, 0.5, 8)
+  light.position.set(0, 3.3, 0)
+  group.add(light)
+
+  const glow = new THREE.Mesh(
+    new THREE.RingGeometry(1.3, 1.7, 24),
+    new THREE.MeshBasicMaterial({ color: 0xffaa55, side: THREE.DoubleSide, transparent: true, opacity: 0.25, depthWrite: false, blending: THREE.AdditiveBlending })
+  )
+  glow.rotation.x = -Math.PI / 2
+  glow.position.y = 0.05
+  group.add(glow)
+
+  const angle  = Math.PI
+  const radius = GALLERY_INTERIOR_RADIUS * 0.55
+  group.position.set(Math.cos(angle) * radius, 0, Math.sin(angle) * radius)
+  group.lookAt(0, 1.7, 0)
+
+  scene!.add(group)
+
+  cabinetMeshes = []
+  group.traverse(o => { if ((o as THREE.Mesh).isMesh) cabinetMeshes.push(o) })
+}
+
 function buildLights() {
   scene!.add(new THREE.AmbientLight(0x2a1808, 1.4))
   scene!.add(new THREE.HemisphereLight(new THREE.Color(0x3a2810), new THREE.Color(0x0a0602), 0.7))
@@ -197,6 +278,9 @@ function buildScene() {
 
   buildLights()
   buildShell()
+  buildFileCabinet()
+
+  raycaster = new THREE.Raycaster()
 
   window.addEventListener('resize', onResize)
   tick()
@@ -249,8 +333,24 @@ function onResize() {
   renderer.setSize(window.innerWidth, window.innerHeight)
 }
 
+// ── File cabinet hover/click ──────────────────────────────────────────────────
+
+function onMouseMove(e: MouseEvent) {
+  mouseNDC.x =  (e.clientX / window.innerWidth) * 2 - 1
+  mouseNDC.y = -((e.clientY - 44) / (window.innerHeight - 44)) * 2 + 1
+}
+
+function onCanvasClick() {
+  if (!camera || !raycaster || cabinetMeshes.length === 0) return
+  raycaster.setFromCamera(mouseNDC, camera)
+  if (raycaster.intersectObjects(cabinetMeshes, false).length) {
+    fileCabinetOpen.value = true
+  }
+}
+
 function goBack() {
-  void router.push(`/surface/${encodeURIComponent(hostname.value)}/${encodeURIComponent(planetName.value)}`)
+  const parentQuery = isMoonView.value ? `?parent=${encodeURIComponent(parentName.value)}` : ''
+  void router.push(`/surface/${encodeURIComponent(hostname.value)}/${encodeURIComponent(planetName.value)}${parentQuery}`)
 }
 
 // ── Lifecycle ────────────────────────────────────────────────────────────────
@@ -265,6 +365,7 @@ onMounted(() => {
   window.addEventListener('keydown', keydownFn)
   window.addEventListener('keyup',   keyupFn)
   buildScene()
+  if (member.isSignedIn) void fileCabinet.loadMyFileCabinet()
 })
 
 onBeforeUnmount(() => {
@@ -277,6 +378,7 @@ onBeforeUnmount(() => {
   if (scene) disposeScene(scene)
   renderer?.dispose()
   renderer = null; scene = null; camera = null; controls = null
+  cabinetMeshes = []
 })
 </script>
 

@@ -6,13 +6,34 @@
  * pipeline, same output shape, same wall-banding logic. One real
  * geometric difference from Boötes: the Milky Way sits INSIDE the
  * Local Void (dist_mpc 23 < radius_mpc 45 — see VoidMathPage.vue's
- * "Q3 — are we actually inside?" section), so wall galaxies (NGC 6503,
- * IC 342, the Fireworks Galaxy) are scattered across the whole sky,
- * not clustered in one direction. A directional cone search (as
- * Boötes uses, viewed from well outside) would miss most of them —
- * this script queries the redshift slice with no spatial cone at all,
- * and relies on the 3-D distance-from-void-centre cut to do the real
- * filtering, same as Boötes' script already does as a secondary check.
+ * "Q3 — are we actually inside?" section), so wall galaxies (e.g.
+ * NGC 6503, the best-documented near-wall member) are scattered
+ * across the whole sky, not clustered in one direction. A directional
+ * cone search (as Boötes uses, viewed from well outside) would miss
+ * most of them — this script queries the redshift slice with no
+ * spatial cone at all, and relies on the 3-D distance-from-void-centre
+ * cut to do the real filtering, same as Boötes' script already does
+ * as a secondary check.
+ *
+ * NED TAP has a hard 60-second server-side cap on synchronous queries
+ * (confirmed via its own VOTable error response). TOP is kept at a
+ * value empirically confirmed to complete well inside that cap; if
+ * NED becomes slower, lower NED_TOP rather than raising the client
+ * timeout — the client can wait longer, but the server will still
+ * kill the query at 60s regardless.
+ *
+ * Because the MW sits inside the void, the 3-D distance-from-centre
+ * cut is geometrically permissive for anything within roughly
+ * (radius_mpc*1.10 − dist_mpc) of Earth in ANY direction — a large
+ * chunk of the nearby universe, including foreground groups that are
+ * not physically void members. INTERIOR_CATALOG_CAP guards against
+ * that: real literature-confirmed Local Void interior population is
+ * "dozens, not hundreds" (Tully et al. 2008; Nasonova & Karachentsev
+ * 2011 void-galaxy catalogs), so catalog rows classified as interior
+ * (not wall) are capped, keeping the ones closest to the void centre
+ * and dropping the rest rather than letting foreground contamination
+ * pass as void population. No such cap applies to the wall band,
+ * which is physically expected to be denser.
  *
  * Data classification:
  *   source: 'catalog'   — real object from NED, has a ned_name + coordinates
@@ -32,7 +53,6 @@
  *
  * Sources:
  *   Tully et al. 2008 — Local Void structure
- *   Kreckel et al. 2012 — Local Void galaxy survey
  *   Hamaus HSW density profile — Phys.Rev.Lett. 112, 251302 (2014)
  */
 
@@ -66,9 +86,24 @@ function distToZ (mpc)  { return mpc * H0 / C }
 function zToDist  (z)   { return z  * C  / H0 }
 
 // Redshift range: from near-zero (MW is inside the void) out to centre+radius,
-// with a 12% margin on the outer edge to catch far-wall members.
-const Z_MIN = distToZ(1) * 0.5
+// with a 12% margin on the outer edge to catch far-wall members. Z_MIN is
+// deliberately tiny (not the ~0.5 Mpc-equivalent floor this used to have) —
+// that floor excluded real, literature-confirmed near-wall members like
+// NGC 6503, whose observed velocity (~25 km/s) is peculiar-velocity-dominated
+// rather than Hubble-flow, giving it a genuinely very low z despite sitting
+// a real ~6 Mpc away. Only true foreground (z <= 0, blueshifted) is excluded,
+// via the z <= 0 check already in processCatalogRows().
+const Z_MIN = distToZ(0.3)
 const Z_MAX = distToZ(VOID.dist_mpc + VOID.radius_mpc) * 1.12
+
+// Real literature-confirmed Local Void interior population is small — Tully
+// et al. 2008 and follow-up void-galaxy catalogs report dozens, not hundreds,
+// of genuine interior members. Cap catalog rows classified as interior
+// (r_void < radius_mpc * WALL_BAND_FRAC) at this count, keeping those closest
+// to the void centre first, so foreground contamination that geometrically
+// passes the 3-D cut (see file header) doesn't get counted as void interior
+// population. The wall band has no such cap — it's physically expected denser.
+const INTERIOR_CATALOG_CAP = 40
 
 // Coordinate transform matching cosmic-structures.ts mpcToVec3()
 function mpcToCart (ra_deg, dec_deg, dist_mpc) {
@@ -97,8 +132,15 @@ const NED_TAP = 'https://ned.ipac.caltech.edu/tap/sync'
 // ADQL: no spatial cone — see file header. Redshift slice + galaxy type only;
 // the 3-D distance-from-void-centre cut in processCatalogRows() does the real
 // spatial filtering, correctly handling the MW-inside-the-void geometry.
+//
+// TOP is deliberately well under NED TAP's 60s synchronous cap — empirically,
+// TOP 4000 on this WHERE clause routinely exceeded 60s and aborted with zero
+// rows returned (the original bug this cap fixes). TOP 2500 completed but at
+// ~58s — too close to the cap to be reliable run to run (NED's own response
+// time varies with server load). TOP 1600 gives real margin.
+const NED_TOP = 1600
 const NED_QUERY = [
-  'SELECT TOP 4000',
+  `SELECT TOP ${NED_TOP}`,
   '  prefname, ra, dec, z, prefphytype',
   'FROM NEDTAP.objdir',
   `WHERE z BETWEEN ${Z_MIN.toFixed(5)} AND ${Z_MAX.toFixed(5)}`,
@@ -113,8 +155,11 @@ async function fetchNedGalaxies () {
   console.log(`  type    : G (galaxy)`)
   console.log()
 
+  // Client timeout is intentionally longer than NED's 60s server-side cap —
+  // this just gives the server room to send its own timeout error response
+  // instead of the client aborting first and masking it.
   const controller = new AbortController()
-  const timeout    = setTimeout(() => controller.abort(), 60_000)
+  const timeout    = setTimeout(() => controller.abort(), 75_000)
 
   let res
   try {
@@ -183,7 +228,7 @@ function nameHash (str) {
 // ── Void galaxy morphology distribution ──────────────────────────────────────
 // Voids select for late-type, star-forming, gas-rich disc galaxies.
 // Ellipticals are suppressed relative to clusters; irregulars elevated.
-// Sources: Kreckel+2012, Tully+2008.
+// Source: Tully et al. 2008.
 
 const MORPH_TABLE = [
   ['Sb',  0.30],
@@ -234,7 +279,7 @@ function morphAxisRatio (morph, rng) {
 // ── Process NED rows into catalog galaxy entries ──────────────────────────────
 
 function processCatalogRows (rows) {
-  const galaxies = []
+  const candidates = []
   let skipped = 0
 
   for (let i = 0; i < rows.length; i++) {
@@ -256,15 +301,30 @@ function processCatalogRows (rows) {
     if (rMpc > VOID.radius_mpc * 1.10) { skipped++; continue }
 
     const is_wall = rMpc > VOID.radius_mpc * WALL_BAND_FRAC
-    const pos_void = scale3(rel, MPC_SCALE)
+    candidates.push({ name, ra, dec, z, dist_mpc, rMpc, is_wall })
+  }
+
+  // Literature-informed contamination guard — see INTERIOR_CATALOG_CAP above.
+  // Wall-band candidates pass through untouched; interior candidates are
+  // capped, keeping those closest to the void centre first.
+  const wallCandidates = candidates.filter(c => c.is_wall)
+  const interiorCandidates = candidates
+    .filter(c => !c.is_wall)
+    .sort((a, b) => a.rMpc - b.rMpc)
+    .slice(0, INTERIOR_CATALOG_CAP)
+  const droppedInterior = candidates.filter(c => !c.is_wall).length - interiorCandidates.length
+
+  const kept = [...wallCandidates, ...interiorCandidates]
+  const galaxies = kept.map(({ name, ra, dec, z, dist_mpc, rMpc, is_wall }, idx) => {
+    const pos_void = scale3(subtract3(mpcToCart(ra, dec, dist_mpc), VOID_CART), MPC_SCALE)
 
     // Per-galaxy appearance — seeded on the NED name for reproducibility
     const rng     = mulberry32(nameHash(name))
     const morph   = pickMorph(rng)
     const col_hex = morphToColor(morph, rng)
 
-    galaxies.push({
-      gid:        `local-void_cat_${String(galaxies.length).padStart(4, '0')}`,
+    return {
+      gid:        `local-void_cat_${String(idx).padStart(4, '0')}`,
       source:     'catalog',
       ned_name:   name,
       ra_deg:     parseFloat(ra.toFixed(5)),
@@ -281,10 +341,11 @@ function processCatalogRows (rows) {
       axis_ratio: parseFloat(morphAxisRatio(morph, rng).toFixed(3)),
       is_wall,
       has_agn:    rng() < 0.07,
-    })
-  }
+    }
+  })
 
   if (skipped > 0) console.log(`  Skipped ${skipped} rows (bad coords or outside void volume)`)
+  if (droppedInterior > 0) console.log(`  Capped ${droppedInterior} interior candidates as likely foreground contamination (INTERIOR_CATALOG_CAP=${INTERIOR_CATALOG_CAP})`)
   return galaxies
 }
 
@@ -405,7 +466,7 @@ async function main () {
     catalog_source:    'NASA/IPAC NED TAP (NEDTAP.objdir) — all-sky redshift slice, no spatial cone (MW is inside this void)',
     catalog_refs: [
       'Tully et al. 2008 — Local Void structure',
-      'Kreckel et al. 2012 — Local Void galaxy survey',
+      'NASA/IPAC NED TAP (NEDTAP.objdir) — live-queried at generation time',
     ],
     agn_refs: [
       'arXiv:2512.14825 — Void Galaxies and AGN Activity in ZOBOV-identified TNG300 Voids',

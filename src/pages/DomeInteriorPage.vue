@@ -150,7 +150,7 @@ import {
   type ItemAcquisitionType,
   type SettlementItem,
 } from 'src/lib/settlement-items'
-import { surfaceKey } from 'src/lib/settlements'
+import { surfaceKey, moonKey } from 'src/lib/settlements'
 import SettlementInventory from 'src/components/SettlementInventory.vue'
 
 // ── Route ──────────────────────────────────────────────────────────────────────
@@ -162,6 +162,14 @@ const hostname   = computed(() => String(route.params.hostname   ?? ''))
 const planetName = computed(() => String(route.params.planetName ?? ''))
 const eqtK       = computed(() => Number(route.query.eqt ?? 285))
 
+// Moon context — mirrors SurfaceViewPage.vue's isMoonView/settlementKey so a
+// moon settlement's dome interior resolves to the SAME settlement key (and
+// therefore the same placed items / claim state) as its exterior view. Lost
+// when navigating here without ?parent, which is why enterDome()/goBack()
+// must round-trip it.
+const parentName = computed(() => String(route.query.parent ?? ''))
+const isMoonView = computed(() => !!parentName.value)
+
 // ── Settlement store ───────────────────────────────────────────────────────────
 
 const galaxyStore  = useGalaxyStore()
@@ -169,8 +177,12 @@ const planet       = computed(() => galaxyStore.getPlanet(planetName.value) ?? n
 const system       = computed(() => galaxyStore.getSystem(hostname.value)  ?? null)
 const effectiveEqt = computed(() => planet.value?.pl_eqt ?? eqtK.value)
 
-const settlementKey = computed(() => surfaceKey(planetName.value))
-const exolocation   = computed(() => `exo-surface-v1:${hostname.value}:${planetName.value}`)
+const settlementKey = computed(() => isMoonView.value
+  ? moonKey(parentName.value, 1, 'exo-moon-surface-v1')
+  : surfaceKey(planetName.value))
+const exolocation   = computed(() => isMoonView.value
+  ? `exo-moon-surface-v1:${parentName.value}:${planetName.value}`
+  : `exo-surface-v1:${hostname.value}:${planetName.value}`)
 
 const { items, removeItem } = useSettlementItems(settlementKey)
 
@@ -682,7 +694,8 @@ function onResize() {
 }
 
 function goBack() {
-  void router.push(`/surface/${encodeURIComponent(hostname.value)}/${encodeURIComponent(planetName.value)}`)
+  const parentQuery = isMoonView.value ? `?parent=${encodeURIComponent(parentName.value)}` : ''
+  void router.push(`/surface/${encodeURIComponent(hostname.value)}/${encodeURIComponent(planetName.value)}${parentQuery}`)
 }
 
 // ── Lifecycle ──────────────────────────────────────────────────────────────────

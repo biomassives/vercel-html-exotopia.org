@@ -56,6 +56,31 @@
           </div>
         </div>
 
+        <div class="am-chart-card">
+          <div class="am-chart-eyebrow">Systems &amp; black holes — current stats, August 2026</div>
+          <div class="am-chart-title">What's real, what's modeled, and how much of each</div>
+
+          <div class="am-stat-grid">
+            <div class="am-stat-row" v-for="s in systemStats" :key="s.label">
+              <div class="am-stat-label">
+                <span class="am-catname">{{ s.label }}</span>
+                <span class="am-catnote">{{ s.note }}</span>
+              </div>
+              <div class="am-stat-value">{{ s.value }}</div>
+            </div>
+          </div>
+
+          <p class="am-chart-note">
+            "Frontier" systems are a statistically modeled extension of the real Hipparcos catalog
+            — a population model, not individual detections. Same rule for the two black-hole
+            rows: 11 real, individually cited objects (Sgr A* plus the 10 in our catalog, spanning
+            EHT direct imaging, megamaser disk dynamics, astrometric binary orbit-fitting, X-ray
+            binary radial velocity, and hypervelocity tracer stars) versus the standard
+            galaxy-wide stellar-mass black hole population estimate — which we cite for context but
+            don't render as individual objects, since it isn't one.
+          </p>
+        </div>
+
         <p class="am-lead am-lead--tight">
           Exotopia is also built to minimize surfaces where one person could locate, track, or
           harass another — nothing here shows another user's live location, and social features
@@ -102,6 +127,7 @@ const ACTIONS: { to: string; label: string; desc: string }[] = [
   { to: '/settlements', label: 'Browse published settlements', desc: 'See what other settlers have built and published' },
   { to: '/pfas-citizen-science', label: 'Do citizen science', desc: 'Log real PFAS/PFOA decontamination progress, or propose a method' },
   { to: '/learn', label: 'Learn & earn a certificate', desc: 'Financial-literacy and other quizzes that pay real settlement points' },
+  { to: '/sky-lessons', label: 'Take a sky lesson', desc: 'Navigation, orbital math, and galactic-center astrophysics, from beginner to grad level' },
   { to: '/rewards', label: 'Volunteer, mentor, track points', desc: 'Log field work, confirm a mentor session, see your reward tracks' },
   { to: '/eco-library', label: 'Browse the eco-ops library', desc: 'Field-tested methods for water, soil, and habitat work' },
   { to: '/gallery', label: 'Visit the community gallery', desc: 'Businesses, creative pages, and places other members have listed' },
@@ -117,6 +143,19 @@ const catalogs = [
   { name: 'Tycho-2 (2000)',             value: 2539913,     note: 'complete to V ≈ 11.5' },
   { name: '2MASS Point Source',         value: 470000000,   note: 'near-infrared, all-sky' },
   { name: 'Gaia DR3 (2022)',            value: 1800000000,  note: '~1.46B with full astrometry' },
+]
+
+// Verified directly against the shipped data files (public/exoplanets-viz.json,
+// candidate-exoplanets.json, frontier-exoplanets.json — NOT frontier-exoplanets-
+// detail.json, which exists in public/ but isn't actually fetched anywhere in
+// the app, so it's not a "current" figure) and src/data/black-holes.ts. Keep in
+// sync with those sources if the shipped catalogs change.
+const systemStats: { label: string; value: string; note: string }[] = [
+  { label: 'Confirmed',                        value: '6,298 planets · 4,716 systems', note: 'NASA Exoplanet Archive' },
+  { label: 'Candidate',                        value: '6,830 planets · 6,623 systems', note: 'TESS/KOI, awaiting confirmation' },
+  { label: 'Frontier',                         value: '5,000 planets · 2,885 systems', note: 'modeled extension of Hipparcos, not detections' },
+  { label: 'Black holes — cataloged',          value: '11 (Sgr A* + 10)',              note: 'EHT imaging, megamaser dynamics, astrometric & X-ray binaries' },
+  { label: 'Black holes — galaxy-wide estimate', value: '~100 million (est.)',          note: 'stellar-mass BH population model — not individually shown' },
 ]
 
 const minLog = Math.log10(1000)
@@ -218,6 +257,18 @@ function formatNum(n: number): string {
 }
 
 .am-chart-note { font-size: 10.5px; line-height: 1.6; color: #7888a0; margin: 14px 0 10px; }
+
+.am-stat-grid { display: flex; flex-direction: column; gap: 9px; }
+.am-stat-row {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+  padding-bottom: 7px; border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.am-stat-row:last-child { border-bottom: none; padding-bottom: 0; }
+.am-stat-label { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.am-stat-value {
+  font-family: 'Courier New', monospace; font-variant-numeric: tabular-nums;
+  font-size: 11px; color: #ffd873; text-align: right; white-space: nowrap; flex-shrink: 0;
+}
 
 .am-chart-links { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 11px; }
 .am-chart-links a { color: #4fb8e8; text-decoration: none; }

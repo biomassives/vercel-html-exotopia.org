@@ -1,55 +1,60 @@
 <template>
-  <div class="nav-inset">
+  <div class="nav-inset" :class="{ 'nav-inset--collapsed': collapsed }">
     <div class="nav-bar">
       <span class="nav-icon" :class="{ 'nav-icon-pulse': isScanning && activeTab === 'local' }">{{ modeIcon }}</span>
       <span class="nav-title">{{ title }}</span>
-      <span class="nav-count" v-if="activeTab === 'local' && mode === 'orbital' && planetCount > 1">
+      <span class="nav-count" v-if="!collapsed && activeTab === 'local' && mode === 'orbital' && planetCount > 1">
         {{ planetCount }} pl
       </span>
+      <button class="nav-collapse-btn" @click="collapsed = !collapsed" :title="collapsed ? 'Expand' : 'Minimize'">
+        {{ collapsed ? '▲' : '▼' }}
+      </button>
     </div>
 
-    <!-- Location scale tabs -->
-    <div class="nav-tabs">
-      <button :class="['nav-tab', activeTab === 'local'  && 'nav-tab--active']" @click="setTab('local')">LOCAL</button>
-      <button :class="['nav-tab', activeTab === 'galaxy' && 'nav-tab--active']" @click="setTab('galaxy')">GALAXY</button>
-      <button :class="['nav-tab', activeTab === 'cosmic' && 'nav-tab--active']" @click="setTab('cosmic')">COSMIC</button>
-    </div>
-
-    <canvas
-      ref="navCanvas"
-      :width="W * 2"
-      :height="H * 2"
-      class="nav-canvas"
-      :class="{ 'canvas-active-target': activeTab === 'local' && !!hoveredPlanet }"
-      @click="onCanvasClick"
-      @mousemove="onCanvasHover"
-      @mouseleave="onCanvasLeave"
-    />
-
-    <div v-if="activeTab === 'local' && hoveredPlanet" class="nav-tooltip" :style="tooltipStyle">
-      <div class="tooltip-header">{{ hoveredPlanet.pl_name }}</div>
-      <div class="tooltip-meta">
-        <span v-if="hoveredPlanet.pl_eqt">🌡️ {{ Math.round(hoveredPlanet.pl_eqt) }}K</span>
-        <span v-if="hoveredPlanet.pl_orbsmax"> · 🌌 {{ hoveredPlanet.pl_orbsmax.toFixed(2) }} AU</span>
+    <template v-if="!collapsed">
+      <!-- Location scale tabs -->
+      <div class="nav-tabs">
+        <button :class="['nav-tab', activeTab === 'local'  && 'nav-tab--active']" @click="setTab('local')">LOCAL</button>
+        <button :class="['nav-tab', activeTab === 'galaxy' && 'nav-tab--active']" @click="setTab('galaxy')">GALAXY</button>
+        <button :class="['nav-tab', activeTab === 'cosmic' && 'nav-tab--active']" @click="setTab('cosmic')">COSMIC</button>
       </div>
-    </div>
 
-    <div class="nav-footer">
-      <template v-if="activeTab === 'local'">
-        <span class="nav-scale-hint">{{ scaleHint }}</span>
-        <span v-if="mode === 'orbital' && moonCount > 0" class="nav-moons">⟳ {{ moonCount }}</span>
-      </template>
-      <template v-else-if="activeTab === 'galaxy'">
-        <button class="nav-nav-btn" @click="emit('nav-galaxy')">
-          <q-icon name="scatter_plot" size="9px" class="q-mr-xs" />Milky Way map
-        </button>
-      </template>
-      <template v-else>
-        <button class="nav-nav-btn" @click="emit('nav-cosmic')">
-          <q-icon name="mdi-weather-night" size="9px" class="q-mr-xs" />Cosmic View
-        </button>
-      </template>
-    </div>
+      <canvas
+        ref="navCanvas"
+        :width="W * 2"
+        :height="H * 2"
+        class="nav-canvas"
+        :class="{ 'canvas-active-target': activeTab === 'local' && !!hoveredPlanet }"
+        @click="onCanvasClick"
+        @mousemove="onCanvasHover"
+        @mouseleave="onCanvasLeave"
+      />
+
+      <div v-if="activeTab === 'local' && hoveredPlanet" class="nav-tooltip" :style="tooltipStyle">
+        <div class="tooltip-header">{{ hoveredPlanet.pl_name }}</div>
+        <div class="tooltip-meta">
+          <span v-if="hoveredPlanet.pl_eqt">🌡️ {{ Math.round(hoveredPlanet.pl_eqt) }}K</span>
+          <span v-if="hoveredPlanet.pl_orbsmax"> · 🌌 {{ hoveredPlanet.pl_orbsmax.toFixed(2) }} AU</span>
+        </div>
+      </div>
+
+      <div class="nav-footer">
+        <template v-if="activeTab === 'local'">
+          <span class="nav-scale-hint">{{ scaleHint }}</span>
+          <span v-if="mode === 'orbital' && moonCount > 0" class="nav-moons">⟳ {{ moonCount }}</span>
+        </template>
+        <template v-else-if="activeTab === 'galaxy'">
+          <button class="nav-nav-btn" @click="emit('nav-galaxy')">
+            <q-icon name="scatter_plot" size="9px" class="q-mr-xs" />Milky Way map
+          </button>
+        </template>
+        <template v-else>
+          <button class="nav-nav-btn" @click="emit('nav-cosmic')">
+            <q-icon name="mdi-weather-night" size="9px" class="q-mr-xs" />Cosmic View
+          </button>
+        </template>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -81,6 +86,7 @@ const router        = useRouter()
 const hoveredPlanet = ref<Planet | null>(null)
 const tooltipStyle  = ref({ left: '0px', top: '0px' })
 const activeTab     = ref<'local' | 'galaxy' | 'cosmic'>('local')
+const collapsed     = ref(false)
 
 // ── Interactive Animation States ─────────────────────────────────────────────
 const isScanning    = ref(true)
@@ -292,9 +298,17 @@ function drawGalaxyMiniMap(ctx: CanvasRenderingContext2D) {
 }
 
 // ── Cosmic minimap (RA/Dec sky map) ──────────────────────────────────────────
+// Shows where this system sits on Earth's sky (equatorial coordinates), with
+// the Milky Way's galactic plane overlaid for orientation. Previously just an
+// unlabeled grid + curve + dot — added a legend, Dec ticks, and a name label
+// on the system's own dot so the two lines and the dot are each identifiable
+// without prior astronomy knowledge.
 function drawCosmicMiniMap(ctx: CanvasRenderingContext2D) {
   const sys = galaxyStore.getSystem(props.hostname)
   if (!sys) return
+
+  const EQUATOR_COLOR = 'rgba(90,150,220,0.85)'
+  const GALPLANE_COLOR = 'rgba(225,180,80,0.85)'
 
   // Grid lines
   ctx.strokeStyle = 'rgba(28,52,88,0.52)'; ctx.lineWidth = 0.5
@@ -323,7 +337,8 @@ function drawCosmicMiniMap(ctx: CanvasRenderingContext2D) {
   }
   ctx.stroke()
 
-  // System position dot
+  // System position dot, labeled with its own name so it isn't just an
+  // anonymous mark on the grid.
   const ra = sys.ra, dec = sys.dec
   const sx = (ra/360)*W, sy = ((90-dec)/180)*H
   ctx.beginPath(); ctx.arc(sx, sy, 5, 0, Math.PI*2)
@@ -331,13 +346,43 @@ function drawCosmicMiniMap(ctx: CanvasRenderingContext2D) {
   ctx.beginPath(); ctx.arc(sx, sy, 2.5, 0, Math.PI*2)
   ctx.fillStyle = '#00ddff'; ctx.fill()
 
-  // Axis and coord labels
+  ctx.font = '6px monospace'
+  ctx.fillStyle = 'rgba(0,220,255,0.85)'
+  const labelLeft = sx > W - 40
+  ctx.textAlign = labelLeft ? 'right' : 'left'
+  ctx.fillText(sys.hostname, sx + (labelLeft ? -7 : 7), sy + 2)
+
+  // RA ticks (top edge)
   ctx.fillStyle = 'rgba(55,95,145,0.58)'; ctx.font = '6px monospace'; ctx.textAlign = 'left'
   ctx.fillText('0h', 2, 8)
   ctx.textAlign = 'center'
   ctx.fillText('12h', W/2, 8)
+  ctx.textAlign = 'right'
+  ctx.fillText('24h', W-2, 8)
+
+  // Dec ticks (left edge) — same grid rows as the horizontal lines above
+  ctx.textAlign = 'left'
+  for (const d of [60, 30, 0, -30, -60]) {
+    const y = ((90-d)/180)*H
+    ctx.fillText(`${d>0?'+':''}${d}°`, 2, y - 2)
+  }
+
+  // Legend — identifies the two lines so they aren't just unexplained marks
+  const legendY = H - 20
+  ctx.textAlign = 'left'
+  ctx.strokeStyle = EQUATOR_COLOR; ctx.lineWidth = 1.2
+  ctx.beginPath(); ctx.moveTo(W-58, legendY); ctx.lineTo(W-46, legendY); ctx.stroke()
+  ctx.fillStyle = EQUATOR_COLOR
+  ctx.fillText('Equator', W-44, legendY + 2)
+
+  ctx.strokeStyle = GALPLANE_COLOR
+  ctx.beginPath(); ctx.moveTo(W-58, legendY+9); ctx.lineTo(W-46, legendY+9); ctx.stroke()
+  ctx.fillStyle = GALPLANE_COLOR
+  ctx.fillText('Gal. plane', W-44, legendY + 11)
+
+  // Coordinate readout
   ctx.fillStyle = 'rgba(0,182,212,0.62)'; ctx.textAlign = 'left'
-  ctx.fillText(`${(ra/15).toFixed(1)}h  ${dec>=0?'+':''}${dec.toFixed(1)}°`, 3, H-3)
+  ctx.fillText(`RA ${(ra/15).toFixed(1)}h  Dec ${dec>=0?'+':''}${dec.toFixed(1)}°`, 3, H-3)
 }
 
 function drawOrbital(ctx: CanvasRenderingContext2D) {
@@ -514,6 +559,22 @@ watch(() => props.mode, (newMode) => { lastMode = newMode })
 .nav-inset:hover {
   border-color: rgba(0, 210, 245, 0.5);
 }
+
+.nav-inset--collapsed {
+  width: auto;
+}
+
+.nav-collapse-btn {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  color: rgba(0, 180, 220, 0.55);
+  font-size: 8px;
+  cursor: pointer;
+  padding: 0 2px;
+  line-height: 1;
+}
+.nav-collapse-btn:hover { color: rgba(0, 220, 255, 0.9); }
 
 .nav-bar {
   display: flex;

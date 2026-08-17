@@ -8,7 +8,7 @@
     <!-- Status overlay — top left -->
     <div class="space-overlay" style="top:12px;left:12px;max-width:320px">
       <div class="text-caption text-cyan-3" style="letter-spacing:0.1em">
-        {{ mode === 'system' ? 'SYSTEM VIEW' : 'GALAXY VIEW' }}
+        {{ mode === 'system' ? 'SYSTEM VIEW' : 'MILKY WAY GALAXY' }}
       </div>
       <div class="text-caption text-blue-grey-4 q-mt-xs">{{ statusText }}</div>
     </div>
@@ -844,8 +844,63 @@ function initScene() {
 // TESS/ground surveys concentrate near galactic latitude 0° and should align
 // with this band.
 
-function makeGalacticDiskTexture(): THREE.CanvasTexture {
+// ── Real Milky Way spiral structure ──────────────────────────────────────────
+// Reid et al. 2019 (ApJ 885:131, VLBI trigonometric parallaxes of ~200 masers)
+// per-arm pitch angle(s), reference radius, and azimuthal extent — replacing
+// the old model (4 arms at exactly 90° apart, one shared 12° pitch, invented
+// colour-per-arm-identity). Azimuth follows that paper's convention: 0° is
+// the Sun's direction from the Galactic Centre. Several arms measurably change
+// pitch partway along their length ("kink") — kept here rather than flattened
+// to one pitch, since matching the real kinked shape is the point of doing
+// this from real data. Kink azimuth itself isn't tabulated in the summary
+// used to build this — approximated as the range midpoint.
+// Bar angle (27° from the Sun–GC line) is Wegg & Gerhard 2013 (MNRAS 450:4050).
+const DEG2RAD    = Math.PI / 180
+const SUN_KPC    = 8.15    // Reid et al. 2019 fit A5 (Gravity Collaboration agrees, ~8.18 kpc)
+const BAR_ANGLE_DEG = 27
+const MAX_ARM_KPC   = 16   // disk's visible edge, past the Outer arm's 12.24 kpc
+
+interface SpiralArmDef {
+  name:       string
+  refKpc:     number    // radius at azStartDeg
+  azStartDeg: number
+  azEndDeg:   number
+  pitch1Deg:  number
+  pitch2Deg?: number    // second segment past the kink, if the arm has one
+  prominence: number    // 0-1 relative visual weight — a display judgement, not from the paper
+}
+
+const MILKY_WAY_ARMS: SpiralArmDef[] = [
+  { name: '3-kpc',              refKpc: 3.52,  azStartDeg: 15,  azEndDeg: 18,  pitch1Deg: -4.2,                   prominence: 0.35 },
+  { name: 'Norma-Outer',        refKpc: 4.46,  azStartDeg: 5,   azEndDeg: 54,  pitch1Deg: -1.0, pitch2Deg: 19.5,  prominence: 0.55 },
+  { name: 'Scutum-Centaurus',   refKpc: 4.91,  azStartDeg: 0,   azEndDeg: 104, pitch1Deg: 14.1, pitch2Deg: 12.1,  prominence: 0.90 },
+  { name: 'Sagittarius-Carina', refKpc: 6.04,  azStartDeg: 2,   azEndDeg: 97,  pitch1Deg: 17.1, pitch2Deg: 1.0,   prominence: 0.95 },
+  { name: 'Local (Orion Spur)', refKpc: 8.26,  azStartDeg: -8,  azEndDeg: 34,  pitch1Deg: 11.4,                   prominence: 0.30 },
+  { name: 'Perseus',            refKpc: 8.87,  azStartDeg: -23, azEndDeg: 115, pitch1Deg: 10.3, pitch2Deg: 8.7,   prominence: 0.85 },
+  { name: 'Outer',              refKpc: 12.24, azStartDeg: -16, azEndDeg: 71,  pitch1Deg: 3.0,  pitch2Deg: 9.4,   prominence: 0.45 },
+]
+
+// Shared young-population palette — real arms are distinguished by hot blue
+// O/B stars + pink HII knots on every arm's ridgeline, not by each arm having
+// its own hue (that was the old model's biggest color-physics error).
+const YOUNG_ARM_RGB    = '150,190,255'
+const YOUNG_ARM_BRIGHT = '205,225,255'
+const HII_RGB          = '255,140,190'
+
+/** Galactocentric radius (in caller-chosen units) at azimuth `azDeg` along `arm`. */
+function armRadiusAtAz(arm: SpiralArmDef, azDeg: number, unitsPerKpc: number): number {
+  const kinkAz = arm.pitch2Deg != null ? (arm.azStartDeg + arm.azEndDeg) / 2 : arm.azEndDeg + 1
+  const clampedAz = Math.min(azDeg, kinkAz)
+  let rKpc = arm.refKpc * Math.exp((clampedAz - arm.azStartDeg) * DEG2RAD * Math.tan(arm.pitch1Deg * DEG2RAD))
+  if (arm.pitch2Deg != null && azDeg > kinkAz) {
+    rKpc *= Math.exp((azDeg - kinkAz) * DEG2RAD * Math.tan(arm.pitch2Deg * DEG2RAD))
+  }
+  return rKpc * unitsPerKpc
+}
+
+function makeGalacticDiskTexture(localAz0Rad: number): THREE.CanvasTexture {
   const S = 1024, cx = S / 2
+  const unitsPerKpc = cx / MAX_ARM_KPC
   const cv = document.createElement('canvas')
   cv.width = cv.height = S
   const ctx = cv.getContext('2d')!
@@ -860,8 +915,9 @@ function makeGalacticDiskTexture(): THREE.CanvasTexture {
   diskGrad.addColorStop(1.00, 'rgba(0,0,0,0)')
   ctx.fillStyle = diskGrad; ctx.fillRect(0, 0, S, S)
 
-  // Galactic bar
-  ctx.save(); ctx.translate(cx, cx); ctx.rotate(44 * Math.PI / 180)
+  // Galactic bar — 27° from the Sun–GC line (Wegg & Gerhard 2013), same
+  // azimuth-0 convention as the arms so it's oriented consistently with them.
+  ctx.save(); ctx.translate(cx, cx); ctx.rotate(localAz0Rad + BAR_ANGLE_DEG * DEG2RAD)
   const barGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, S * 0.13)
   barGrad.addColorStop(0.0, 'rgba(255,250,210,0.80)')
   barGrad.addColorStop(0.4, 'rgba(255,220,120,0.45)')
@@ -870,83 +926,72 @@ function makeGalacticDiskTexture(): THREE.CanvasTexture {
   ctx.fillRect(-S * 0.20, -S * 0.20, S * 0.40, S * 0.40)
   ctx.restore()
 
-  // Four spiral arms — each with a distinct colour signature
-  const ARMS: [number, string, string, number, number][] = [
-    [0.00,          '80,160,255',  '100,200,255', 0.38, 32],  // Scutum-Centaurus — blue (OB-rich)
-    [Math.PI * 0.5, '255,200, 80', '255,240,140', 0.30, 28],  // Sagittarius — amber (older pops)
-    [Math.PI * 1.0, '220, 80,180', '255,140,220', 0.26, 26],  // Perseus — pink (HII regions)
-    [Math.PI * 1.5, '60, 200,160', '100,240,200', 0.20, 22],  // Norma-Outer — teal
-  ]
-  const PITCH = Math.tan(12 * Math.PI / 180)
-  const rngK  = (seed: number) => { let s = seed; return () => { s=s*1664525+1013904223|0; return (s>>>0)/4294967296 } }
+  const rngK = (seed: number) => { let s = seed; return () => { s=s*1664525+1013904223|0; return (s>>>0)/4294967296 } }
 
-  for (const [startAngle, rgb, rgbBright, alpha, width] of ARMS) {
-    // Wide outer glow
-    ctx.beginPath()
-    let first = true
-    for (let t = 0; t < Math.PI * 2.9; t += 0.025) {
-      const r = S * 0.048 * Math.exp(t * PITCH); if (r > S * 0.49) break
-      const a = t + startAngle
-      const x = cx + r * Math.cos(a), y = cx + r * Math.sin(a)
-      first ? (ctx.moveTo(x, y), first = false) : ctx.lineTo(x, y)
+  for (const arm of MILKY_WAY_ARMS) {
+    const steps = 80
+    const tracePath = (rScale: number) => {
+      ctx.beginPath()
+      for (let i = 0; i <= steps; i++) {
+        const az = arm.azStartDeg + (arm.azEndDeg - arm.azStartDeg) * (i / steps)
+        const r  = armRadiusAtAz(arm, az, unitsPerKpc) * rScale
+        const theta = localAz0Rad + az * DEG2RAD
+        const x = cx + r * Math.cos(theta), y = cx + r * Math.sin(theta)
+        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)
+      }
     }
-    ctx.strokeStyle = `rgba(${rgb},${(alpha * 0.55).toFixed(3)})`; ctx.lineWidth = width * 1.4; ctx.lineCap = 'round'; ctx.stroke()
 
-    // Bright core of arm
-    ctx.beginPath(); first = true
-    for (let t = 0.15; t < Math.PI * 2.7; t += 0.025) {
-      const r = S * 0.048 * Math.exp(t * PITCH); if (r > S * 0.47) break
-      const a = t + startAngle
-      const x = cx + r * Math.cos(a), y = cx + r * Math.sin(a)
-      first ? (ctx.moveTo(x, y), first = false) : ctx.lineTo(x, y)
-    }
-    ctx.strokeStyle = `rgba(${rgbBright},${alpha.toFixed(3)})`; ctx.lineWidth = width * 0.38; ctx.stroke()
+    const alpha = 0.16 + arm.prominence * 0.24
+    const width = 9 + arm.prominence * 25
 
-    // HII knots
-    const rk = rngK(Math.round(startAngle * 999 + 1))
-    for (let k = 0; k < 14; k++) {
-      const t2 = rk() * Math.PI * 2.2 + 0.3
-      const r2 = S * 0.048 * Math.exp(t2 * PITCH) * (0.80 + rk() * 0.40)
-      if (r2 > S * 0.48) continue
-      const kx = cx + r2 * Math.cos(t2 + startAngle + (rk() - 0.5) * 0.3)
-      const ky = cx + r2 * Math.sin(t2 + startAngle + (rk() - 0.5) * 0.3)
-      const ks = 5 + rk() * 18
+    // Wide outer glow (shared young-population hue — see comment above)
+    tracePath(1)
+    ctx.strokeStyle = `rgba(${YOUNG_ARM_RGB},${(alpha * 0.5).toFixed(3)})`; ctx.lineWidth = width * 1.5; ctx.lineCap = 'round'; ctx.stroke()
+
+    // Bright ridgeline
+    tracePath(1)
+    ctx.strokeStyle = `rgba(${YOUNG_ARM_BRIGHT},${alpha.toFixed(3)})`; ctx.lineWidth = width * 0.35; ctx.stroke()
+
+    // Dust lane on the inner (Galactic-Centre-facing) edge — real placement.
+    // "Inner" is just slightly smaller radius at the same azimuth, which is
+    // sign-independent (works whether this segment's pitch is + or −).
+    ctx.globalCompositeOperation = 'multiply'
+    tracePath(0.90)
+    ctx.strokeStyle = 'rgba(20,8,0,0.55)'; ctx.lineWidth = width * 0.55; ctx.stroke()
+    ctx.globalCompositeOperation = 'source-over'
+
+    // HII knots (pink emission nebulae) — shared palette, scattered on every arm
+    const rk = rngK(Math.round(arm.refKpc * 9973) + 1)
+    const knotCount = Math.round(6 + arm.prominence * 14)
+    for (let k = 0; k < knotCount; k++) {
+      const az = arm.azStartDeg + rk() * (arm.azEndDeg - arm.azStartDeg)
+      const r  = armRadiusAtAz(arm, az, unitsPerKpc) * (0.94 + rk() * 0.14)
+      const theta = localAz0Rad + az * DEG2RAD + (rk() - 0.5) * 0.06
+      const kx = cx + r * Math.cos(theta), ky = cx + r * Math.sin(theta)
+      const ks = 4 + rk() * 14
       const kg = ctx.createRadialGradient(kx, ky, 0, kx, ky, ks)
-      kg.addColorStop(0, `rgba(${rgbBright},${(alpha * 2.2).toFixed(2)})`); kg.addColorStop(1, 'rgba(0,0,0,0)')
+      kg.addColorStop(0, `rgba(${HII_RGB},${(alpha * 2.4).toFixed(2)})`); kg.addColorStop(1, 'rgba(0,0,0,0)')
       ctx.fillStyle = kg; ctx.beginPath(); ctx.arc(kx, ky, ks, 0, Math.PI * 2); ctx.fill()
     }
   }
 
-  // Dust lanes between arms
-  ctx.globalCompositeOperation = 'multiply'
-  for (let arm = 0; arm < 4; arm++) {
-    const dAngle = (arm + 0.5) / 4 * Math.PI * 2
-    ctx.beginPath(); let first2 = true
-    for (let t = 0.4; t < Math.PI * 2.6; t += 0.035) {
-      const r = S * 0.055 * Math.exp(t * PITCH); if (r > S * 0.45) break
-      const x = cx + r * Math.cos(t + dAngle), y = cx + r * Math.sin(t + dAngle)
-      first2 ? (ctx.moveTo(x, y), first2 = false) : ctx.lineTo(x, y)
-    }
-    ctx.strokeStyle = 'rgba(20,8,0,0.60)'; ctx.lineWidth = 12; ctx.stroke()
-  }
-  ctx.globalCompositeOperation = 'source-over'
-
-  // Star dust points
+  // Star dust points, scattered along the real arms
   const rngS = rngK(77777)
   const SCOLS: [string, number][] = [['80,140,255',0.9],['180,200,255',0.7],['255,255,230',0.6],['255,220,140',0.5],['255,160,80',0.5],['220,100,80',0.4]]
   for (let i = 0; i < 6000; i++) {
-    const arm2 = Math.floor(rngS() * 4), t3 = rngS() * Math.PI * 2.5
-    const r3 = S * 0.048 * Math.exp(t3 * PITCH) * (0.65 + rngS() * 0.70)
-    if (r3 > S * 0.49) continue
-    const spread3 = (rngS() - 0.5) * S * 0.15
-    const sx = cx + r3 * Math.cos(t3 + (arm2/4)*Math.PI*2 + (rngS()-0.5)*0.5) + spread3
-    const sy = cx + r3 * Math.sin(t3 + (arm2/4)*Math.PI*2 + (rngS()-0.5)*0.5) + spread3
+    const arm = MILKY_WAY_ARMS[Math.floor(rngS() * MILKY_WAY_ARMS.length)]!
+    const az  = arm.azStartDeg + rngS() * (arm.azEndDeg - arm.azStartDeg)
+    const r   = armRadiusAtAz(arm, az, unitsPerKpc) * (0.75 + rngS() * 0.5)
+    const theta = localAz0Rad + az * DEG2RAD + (rngS() - 0.5) * 0.5
+    const spread = (rngS() - 0.5) * S * 0.04
+    const sx = cx + r * Math.cos(theta) + spread, sy = cx + r * Math.sin(theta) + spread
+    if (Math.hypot(sx - cx, sy - cx) > S * 0.49) continue
     const [scol, sopac] = SCOLS[Math.floor(rngS() * SCOLS.length)]!
     ctx.fillStyle = `rgba(${scol},${(sopac * (0.3 + rngS() * 0.7)).toFixed(2)})`
     ctx.beginPath(); ctx.arc(sx, sy, 0.4 + rngS() * 1.4, 0, Math.PI * 2); ctx.fill()
   }
 
-  // Nuclear cluster + bulge
+  // Nuclear cluster + bulge (already correctly at the texture centre = GC)
   const nucGrad = ctx.createRadialGradient(cx, cx, 0, cx, cx, S * 0.022)
   nucGrad.addColorStop(0, 'rgba(255,255,240,1.0)'); nucGrad.addColorStop(1, 'rgba(255,200,80,0)')
   ctx.fillStyle = nucGrad; ctx.fillRect(0, 0, S, S)
@@ -956,14 +1001,24 @@ function makeGalacticDiskTexture(): THREE.CanvasTexture {
   bulgeGrad.addColorStop(1,  'rgba(0,0,0,0)')
   ctx.fillStyle = bulgeGrad; ctx.fillRect(0, 0, S, S)
 
+  // Sun marker — "you are here," at the real Sun position (8.15 kpc, azimuth 0
+  // in this convention). Absent before; added so the backdrop has an anchor
+  // point instead of just floating spiral art.
+  const sunR = SUN_KPC * unitsPerKpc
+  const sx = cx + sunR * Math.cos(localAz0Rad), sy = cx + sunR * Math.sin(localAz0Rad)
+  ctx.beginPath(); ctx.arc(sx, sy, 4, 0, Math.PI * 2)
+  ctx.fillStyle = '#fff6d0'; ctx.fill()
+  ctx.strokeStyle = 'rgba(255,240,190,0.6)'; ctx.lineWidth = 1.5
+  ctx.beginPath(); ctx.arc(sx, sy, 9, 0, Math.PI * 2); ctx.stroke()
+
   const tex = new THREE.CanvasTexture(cv)
   tex.generateMipmaps = false; tex.minFilter = THREE.LinearFilter
   return tex
 }
 
 function buildGalacticBackground() {
-  const NGP_RA  = 192.85 * Math.PI / 180
-  const NGP_DEC =  27.13 * Math.PI / 180
+  const NGP_RA  = 192.85 * DEG2RAD
+  const NGP_DEC =  27.13 * DEG2RAD
   const galNormal = new THREE.Vector3(
     Math.cos(NGP_DEC) * Math.cos(NGP_RA),
     Math.sin(NGP_DEC),
@@ -974,58 +1029,72 @@ function buildGalacticBackground() {
     new THREE.Vector3(0, 0, 1), galNormal,
   )
 
-  const DISK_R = 580
+  // Real direction from the Galactic Centre toward the Sun — same RA/Dec
+  // buildGalacticCenterMarker() uses for the Sgr A* marker below. Un-rotate it
+  // into the disk's local pre-rotation frame so "azimuth 0" in the arm/bar
+  // data (which per Reid et al. 2019 IS the Sun's direction from the GC)
+  // lines up with the true sky direction instead of an arbitrary angle.
+  const sgrADirWorld   = raDecToVec3(266.4168, -29.0078, 1).normalize()
+  const sunFromGCWorld = sgrADirWorld.clone().negate()
+  const sunFromGCLocal = sunFromGCWorld.clone().applyQuaternion(diskQuat.clone().invert())
+  const localAz0Rad    = Math.atan2(sunFromGCLocal.y, sunFromGCLocal.x)
+
+  const DISK_R      = 580
+  const unitsPerKpc = DISK_R / MAX_ARM_KPC
+
+  // Place the Galactic Centre at its real position instead of at the Sun's
+  // (previously the disk had no position offset at all, i.e. its bright
+  // bulge/nucleus sat right on top of the Sun/scene-origin — every real star
+  // and the Sgr A* marker are anchored there via raDecToVec3()). Derived from
+  // the disk's own internal kpc scale (not distToViz's log-compressed scale,
+  // which real stars use — the two are different, incompatible distance
+  // conventions) so the Sun lands exactly at scene origin: sunLocal is the
+  // Sun's position in the GC-centred local frame (azimuth 0, radius 8.15 kpc);
+  // negating and rotating it gives the GC's world position relative to a
+  // Sun fixed at the origin.
+  const sunLocal = new THREE.Vector3(Math.cos(localAz0Rad), Math.sin(localAz0Rad), 0)
+    .multiplyScalar(SUN_KPC * unitsPerKpc)
+  const gcWorldPos = sunLocal.clone().negate().applyQuaternion(diskQuat)
 
   // Canvas-texture disk
   const diskMesh = new THREE.Mesh(
     new THREE.CircleGeometry(DISK_R, 128),
     new THREE.MeshBasicMaterial({
-      map: makeGalacticDiskTexture(), transparent: true, depthWrite: false,
+      map: makeGalacticDiskTexture(localAz0Rad), transparent: true, depthWrite: false,
       blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
     }),
   )
   diskMesh.quaternion.copy(diskQuat)
+  diskMesh.position.copy(gcWorldPos)
   scene.add(diskMesh)
 
-  // 3-D star particle field distributed in the galactic disk plane
+  // 3-D star particle field — same real arm data as the texture, same
+  // GC-centred local frame, so the two views can't drift apart.
   const STAR_N  = 14000
   const starPos: number[] = [], starCol: number[] = []
   let   rngSt   = 55441
   const rngNext = () => { rngSt = rngSt * 1664525 + 1013904223 | 0; return (rngSt >>> 0) / 4294967296 }
-  const PITCH   = Math.tan(12 * Math.PI / 180)
-
-  // Arm colour palette — matches disk texture arms
-  const ARM_COLS: [number, number, number][][] = [
-    [[0.31,0.63,1.00],[0.20,0.50,0.88]],   // blue arm
-    [[1.00,0.78,0.31],[1.00,0.94,0.55]],   // amber arm
-    [[0.86,0.31,0.71],[1.00,0.55,0.86]],   // pink arm
-    [[0.24,0.78,0.63],[0.39,0.94,0.78]],   // teal arm
-  ]
 
   for (let i = 0; i < STAR_N; i++) {
-    const arm  = Math.floor(rngNext() * 4)
-    const t    = rngNext() * Math.PI * 2.8
-    const r    = DISK_R * 0.070 * Math.exp(t * PITCH) * (0.55 + rngNext() * 0.90)
+    const arm = MILKY_WAY_ARMS[Math.floor(rngNext() * MILKY_WAY_ARMS.length)]!
+    const az  = arm.azStartDeg + rngNext() * (arm.azEndDeg - arm.azStartDeg)
+    const r   = armRadiusAtAz(arm, az, unitsPerKpc) * (0.7 + rngNext() * 0.5)
     if (r > DISK_R * 0.97) continue
-    const spreadX = (rngNext() - 0.5) * DISK_R * 0.20
-    const spreadY = (rngNext() - 0.5) * DISK_R * 0.20
-    const angle   = t + (arm / 4) * Math.PI * 2 + (rngNext() - 0.5) * 0.55
-    // Use XY plane to match the canvas texture (CircleGeometry lies in XY plane)
-    const lx  = r * Math.cos(angle) + spreadX
-    const ly  = r * Math.sin(angle) + spreadY
-    const lz  = (rngNext() - 0.5) * DISK_R * 0.055  // disk scale height (perpendicular)
-    const lv  = new THREE.Vector3(lx, ly, lz).applyQuaternion(diskQuat)
+    const theta   = localAz0Rad + az * DEG2RAD + (rngNext() - 0.5) * 0.35
+    const spreadX = (rngNext() - 0.5) * DISK_R * 0.06
+    const spreadY = (rngNext() - 0.5) * DISK_R * 0.06
+    const lx = r * Math.cos(theta) + spreadX
+    const ly = r * Math.sin(theta) + spreadY
+    const lz = (rngNext() - 0.5) * DISK_R * 0.05   // disk scale height (perpendicular)
+    const lv = new THREE.Vector3(lx, ly, lz).applyQuaternion(diskQuat).add(gcWorldPos)
     starPos.push(lv.x, lv.y, lv.z)
 
-    // Colour: arm tint blended with stellar type randomness
-    const [colA, colB] = ARM_COLS[arm]!
-    const blend = rngNext()
-    const br    = 0.25 + rngNext() * 0.75
-    starCol.push(
-      (colA[0]! * (1 - blend) + colB[0]! * blend) * br,
-      (colA[1]! * (1 - blend) + colB[1]! * blend) * br,
-      (colA[2]! * (1 - blend) + colB[2]! * blend) * br,
-    )
+    // Young blue-white ridgeline colour + occasional pink HII tint — colour by
+    // population, not by "which of the 4 arms" like the old model.
+    const isHII = rngNext() < 0.12
+    const [baseR, baseG, baseB] = isHII ? [1.0, 0.55, 0.74] : [0.55, 0.70, 1.0]
+    const br = 0.35 + rngNext() * 0.65
+    starCol.push(baseR * br, baseG * br, baseB * br)
   }
 
   const starGeo = new THREE.BufferGeometry()
@@ -1037,11 +1106,13 @@ function buildGalacticBackground() {
     blending: THREE.AdditiveBlending,
   })))
 
-  // Halo glow
-  scene.add(Object.assign(new THREE.Mesh(
+  // Halo glow — centred on the GC along with everything else now
+  const halo = new THREE.Mesh(
     new THREE.SphereGeometry(DISK_R * 0.70, 10, 8),
     new THREE.MeshBasicMaterial({ color: 0xffe090, transparent: true, opacity: 0.025, depthWrite: false, blending: THREE.AdditiveBlending }),
-  )))
+  )
+  halo.position.copy(gcWorldPos)
+  scene.add(halo)
 }
 
 // ── Galaxy view ───────────────────────────────────────────────────────────────

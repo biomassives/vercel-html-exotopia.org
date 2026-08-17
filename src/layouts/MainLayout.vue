@@ -706,6 +706,20 @@
                 <span class="mob-nav-sub">Curriculum · Modules</span>
               </span>
             </button>
+            <button class="mob-nav-item" @click="navTo('/sky-lessons')">
+              <span class="mob-nav-icon">🔭</span>
+              <span class="mob-nav-text">
+                <span class="mob-nav-label">Sky Lessons</span>
+                <span class="mob-nav-sub">Navigation · Orbital math · Astrophysics</span>
+              </span>
+            </button>
+            <button class="mob-nav-item" @click="navTo('/eco-library')">
+              <span class="mob-nav-icon">🌿</span>
+              <span class="mob-nav-text">
+                <span class="mob-nav-label">Eco-Ops Library</span>
+                <span class="mob-nav-sub">Field-tested WATSAN &amp; habitat methods</span>
+              </span>
+            </button>
             <button class="mob-nav-item" @click="navTo('/rewards')">
               <span class="mob-nav-icon">🏅</span>
               <span class="mob-nav-text">
@@ -972,6 +986,40 @@ const NAV_GROUPS: NavGroup[] = [
         },
       },
       {
+        title: 'Sky Lessons',
+        desc:  'Astronomy & navigation lessons — reading skies from another world, orbital math, galactic-center astrophysics.',
+        cta:   'Start lesson',
+        route: '/sky-lessons',
+        color: 'rgba(120,180,255,0.90)',
+        art: {
+          vb: '0 0 80 50',
+          svg: `<circle cx="40" cy="24" r="16" fill="none" stroke="rgba(120,180,255,0.30)" stroke-width="0.7"/>
+                <circle cx="30" cy="16" r="1.2" fill="rgba(200,220,255,0.85)"/>
+                <circle cx="48" cy="12" r="0.9" fill="rgba(200,220,255,0.70)"/>
+                <circle cx="52" cy="26" r="1.4" fill="rgba(200,220,255,0.85)"/>
+                <circle cx="34" cy="34" r="1.0" fill="rgba(200,220,255,0.65)"/>
+                <line x1="30" y1="16" x2="52" y2="26" stroke="rgba(150,190,255,0.35)" stroke-width="0.4" stroke-dasharray="1.2 1"/>
+                <line x1="52" y1="26" x2="34" y2="34" stroke="rgba(150,190,255,0.35)" stroke-width="0.4" stroke-dasharray="1.2 1"/>
+                <path d="M40 6 L40 2 M40 42 L40 46 M64 24 L68 24 M12 24 L16 24" stroke="rgba(120,180,255,0.35)" stroke-width="0.6"/>`,
+        },
+      },
+      {
+        title: 'Eco-Ops Library',
+        desc:  'Field-tested WATSAN, biodiversity, and remediation methods — protocols and field guides your group can use today.',
+        cta:   'Browse library',
+        route: '/eco-library',
+        color: 'rgba(90,220,150,0.90)',
+        art: {
+          vb: '0 0 80 50',
+          svg: `<rect x="16" y="8" width="20" height="34" rx="1.5" fill="rgba(20,45,30,0.75)" stroke="rgba(90,220,150,0.45)" stroke-width="0.7" transform="rotate(-4 26 25)"/>
+                <rect x="32" y="6" width="20" height="34" rx="1.5" fill="rgba(15,40,26,0.80)" stroke="rgba(90,220,150,0.55)" stroke-width="0.7"/>
+                <rect x="48" y="8" width="20" height="34" rx="1.5" fill="rgba(20,45,30,0.75)" stroke="rgba(90,220,150,0.45)" stroke-width="0.7" transform="rotate(4 58 25)"/>
+                <line x1="36" y1="14" x2="48" y2="14" stroke="rgba(90,220,150,0.30)" stroke-width="0.4"/>
+                <line x1="36" y1="20" x2="48" y2="20" stroke="rgba(90,220,150,0.30)" stroke-width="0.4"/>
+                <line x1="36" y1="26" x2="48" y2="26" stroke="rgba(90,220,150,0.30)" stroke-width="0.4"/>`,
+        },
+      },
+      {
         title: 'Registry',
         desc:  'Settlement identity records — hashmarks, sphere properties, Mule tiers.',
         cta:   'Enter',
@@ -1053,6 +1101,13 @@ const NAV_GROUPS: NavGroup[] = [
     label:      'DOCS',
     cards:      [],
     directLink: '/docs',
+  },
+  // Blog index has its own filtering/series UI — this is a direct nav link only
+  {
+    id:         'blog',
+    label:      'BLOG',
+    cards:      [],
+    directLink: '/blog',
   },
 ]
 
@@ -1263,6 +1318,16 @@ const ITEM_PANELS: Record<string, ItemPanel> = {
     actions: [{ label: 'Start quiz', route: '/learn', primary: true }, { label: 'Continue', route: '/learn' }],
     sessionKey: 'exo_quiz_score', sessionLabel: 'Your score',
   },
+  'Sky Lessons': {
+    style: 'quiz', headline: 'Astronomy & navigation lessons',
+    subline: 'Reading skies from another world, orbital math, galactic-center astrophysics — L1 through L3.',
+    actions: [{ label: 'Start lesson', route: '/sky-lessons', primary: true }, { label: 'Galactic center', route: '/sky-lessons?lesson=3' }],
+  },
+  'Eco-Ops Library': {
+    style: 'eco', headline: 'Field-tested eco-ops methods',
+    subline: 'WATSAN, biodiversity, and remediation protocols and field guides — not a quiz, real reference material.',
+    actions: [{ label: 'Browse library', route: '/eco-library', primary: true }],
+  },
   'Registry': {
     style: 'chain', headline: 'Settlement registry',
     subline: 'Sphere properties, airdrop bundles, Mule tiers — identity records, not a trading floor.',
@@ -1342,6 +1407,14 @@ const PARTICIPATE_PANEL: Record<string, ParticipatePanelData> = {
     vb: '24 6 32 34', filter: 'saturate(1.6) brightness(1.18)',
     caption: 'SCIENCE · PROTOCOL · ECOLOGY', cta: 'Start a quiz →', route: '/learn',
     sessionKey: 'exo_quiz_score',
+  },
+  'Sky Lessons': {
+    vb: '18 4 44 40', filter: 'saturate(1.5) hue-rotate(200deg) brightness(1.16)',
+    caption: 'NAVIGATION · ORBITAL MATH · ASTROPHYSICS', cta: 'Start lesson →', route: '/sky-lessons',
+  },
+  'Eco-Ops Library': {
+    vb: '14 4 54 40', filter: 'saturate(1.9) hue-rotate(78deg) brightness(1.1)',
+    caption: 'WATSAN · BIODIVERSITY · REMEDIATION', cta: 'Browse library →', route: '/eco-library',
   },
   'Registry': {
     vb: '24 4 32 40', filter: 'saturate(1.8) hue-rotate(148deg) brightness(1.1)',
@@ -1470,7 +1543,10 @@ const currentLevelLabel = computed((): string => {
   if (p.startsWith('/gallery'))      return 'L6 GALLERY'
   if (p.startsWith('/mint'))         return 'MINT'
   if (p.startsWith('/learn'))        return 'LEARN'
+  if (p.startsWith('/sky-lessons'))  return 'SKY LESSONS'
+  if (p.startsWith('/eco-library'))  return 'ECO LIBRARY'
   if (p.startsWith('/docs'))         return 'DOCS'
+  if (p.startsWith('/blog'))         return 'BLOG'
   if (p.startsWith('/data-coverage'))return 'DATA'
   if (p.startsWith('/admin'))        return 'ADMIN'
   if (p.startsWith('/black-holes'))  return 'OBSERVATORY'

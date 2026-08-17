@@ -60,6 +60,10 @@
           icon="place" :color="showZones ? 'cyan-5' : 'blue-grey-6'"
           size="sm" title="Toggle zone labels"
           @click="showZones = !showZones" />
+        <q-btn flat dense round
+          icon="explore" :color="showGuide ? 'cyan-5' : 'blue-grey-6'"
+          size="sm" title="Station guide"
+          @click="showGuide = !showGuide" />
         <q-separator vertical color="blue-grey-8" />
         <span class="si-hud-count text-caption text-blue-grey-5">
           {{ items.length }} item{{ items.length !== 1 ? 's' : '' }} placed
@@ -77,6 +81,41 @@
         <div class="si-hint-row"><q-icon name="scroll" size="11px" class="q-mr-xs" />Scroll / pinch to zoom</div>
         <div class="si-hint-row"><q-icon name="keyboard" size="11px" class="q-mr-xs" />WASD / arrows to walk</div>
         <div class="si-hint-row"><q-icon name="ads_click" size="11px" class="q-mr-xs" />Click item to inspect</div>
+      </div>
+    </Transition>
+
+    <!-- ── Station guide: deck map + status board ─────────────────────── -->
+    <Transition name="si-guide-slide">
+      <div v-if="showGuide" class="si-guide-panel">
+        <div class="si-guide-tabs">
+          <button :class="['si-guide-tab', guideTab === 'map' && 'si-guide-tab--active']" @click="guideTab = 'map'">MAP</button>
+          <button :class="['si-guide-tab', guideTab === 'schedule' && 'si-guide-tab--active']" @click="guideTab = 'schedule'">SCHEDULE</button>
+          <q-space />
+          <q-btn flat dense round icon="close" size="xs" color="blue-grey-5" @click="showGuide = false" />
+        </div>
+
+        <div v-if="guideTab === 'map'" class="si-guide-body">
+          <svg viewBox="-70 -70 140 140" class="si-guide-map">
+            <rect x="-60" y="-64" width="120" height="128" rx="10" fill="rgba(0,80,130,0.08)" stroke="rgba(0,150,200,0.30)" stroke-width="1" />
+            <circle cx="0" cy="0" r="2" fill="#00ccee" />
+            <text x="0" y="-6" text-anchor="middle" font-size="5" fill="rgba(0,200,240,0.65)">YOU ARE HERE</text>
+            <g v-for="(pos, zone) in CYLINDER_ZONE_POSITIONS" :key="zone">
+              <circle :cx="pos.cx" :cy="pos.cz" :r="pos.radius * 0.5" fill="rgba(0,150,200,0.14)" stroke="rgba(0,190,230,0.45)" stroke-width="0.6" />
+              <text :x="pos.cx" :y="pos.cz + 2" text-anchor="middle" font-size="5.5" fill="rgba(150,210,235,0.85)">{{ zone }}</text>
+            </g>
+            <text x="0" y="-58" text-anchor="middle" font-size="4.5" fill="rgba(100,170,210,0.55)">◎ AEGIS-PANE (FAR)</text>
+            <text x="0" y="62" text-anchor="middle" font-size="4.5" fill="rgba(100,170,210,0.55)">◎ AEGIS-PANE (NEAR)</text>
+          </svg>
+          <div class="si-guide-note">Deck layout — both hulls share this zone plan.</div>
+        </div>
+
+        <div v-else class="si-guide-body">
+          <div class="si-sched-row"><span>Ring rotation</span><span>{{ spinPeriodLabel }} / rev</span></div>
+          <div class="si-sched-row"><span>Host system</span><span>{{ hostname }}{{ system?.st_spectype ? ` · ${system.st_spectype}` : '' }}</span></div>
+          <div class="si-sched-row" v-if="system?.sy_dist"><span>Distance</span><span>{{ system.sy_dist.toFixed(1) }} pc</span></div>
+          <div class="si-sched-row"><span>Viewport status</span><span>4 AEGIS-panes · nominal</span></div>
+          <div class="si-sched-row"><span>Composite mode</span><span>{{ viewStyleLabel }}</span></div>
+        </div>
       </div>
     </Transition>
 
@@ -229,6 +268,21 @@ const CYL_SEP = CYL_R * 2 + CYL_GAP
 const sceneReady = ref(false)
 const showHints  = ref(false)
 const showZones  = ref(false)
+const showGuide  = ref(false)
+const guideTab   = ref<'map' | 'schedule'>('map')
+
+const VIEW_STYLE_LABELS: Record<ViewStyle, string> = {
+  'gas-bands':     'Gas-giant cloud bands',
+  'lava':          'Magma-flow thermal',
+  'ocean-clouds':  'Hycean cloud composite',
+  'accretion-disk': 'Accretion-disk composite',
+  'deep-field':    'Deep-field starscape',
+}
+const viewStyleLabel = computed(() => VIEW_STYLE_LABELS[viewStyleFor()])
+
+// Hull spin rate is fixed at 0.06 rad/s in tick() below — a real derived stat
+// from that, not an invented number, for the schedule tab's flavour text.
+const spinPeriodLabel = computed(() => `${(2 * Math.PI / 0.06).toFixed(0)}s`)
 
 // ── Three.js ──────────────────────────────────────────────────────────────────
 
@@ -311,7 +365,7 @@ function buildScene() {
 
   buildLights(starColor)
   buildHullPair()
-  buildEndCaps()
+  buildEndCapWindows()
   buildConnectingTruss()
   deckY = buildInteriorGround(palette)
   camera.position.set(0, deckY + 6, 40)
@@ -375,18 +429,230 @@ function buildHullPair() {
   scene!.add(wireB)
 }
 
-function buildEndCaps() {
-  const capMat = new THREE.MeshBasicMaterial({ color: 0x081018, transparent: true, opacity: 0.6, side: THREE.DoubleSide, depthWrite: false })
+// ── Viewport windows ─────────────────────────────────────────────────────────
+// Real windows onto real space would show either a featureless black gas-giant
+// silhouette (surface too cold to self-illuminate) or nothing at all (bodyless
+// orbital addresses, black-hole zones). "Infrared filter" is the in-universe
+// excuse for what these actually render: a false-colour composite driven by
+// the same surfaceType classification that routed the visitor here in the
+// first place (see src/lib/surface-classify.ts), so the view at least means
+// something rather than being decorative noise.
+
+type ViewStyle = 'gas-bands' | 'lava' | 'ocean-clouds' | 'accretion-disk' | 'deep-field'
+
+function viewStyleFor(): ViewStyle {
+  if (isBlackHole.value) return 'accretion-disk'
+  const st = surfaceTypeQ.value ?? ''
+  if (st === 'gas_giant' || st === 'hot_gas_giant' || st === 'sub_neptune') return 'gas-bands'
+  if (st === 'magma_ocean' || st === 'lava') return 'lava'
+  if (st === 'hycean' || st === 'ocean') return 'ocean-clouds'
+  return 'deep-field'   // bodyless orbital / unresolved — nothing solid to false-colour
+}
+
+function mulberry32(seed: number) {
+  return function () {
+    seed |= 0; seed = (seed + 0x6D2B79F5) | 0
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed)
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+}
+
+/** Seeded per-hostname so a given station always shows the same "sensor read." */
+function seedFromHostname(): number {
+  return hostname.value.split('').reduce((a, c) => (a * 31 + c.charCodeAt(0)) | 0, 0) || 1
+}
+
+function drawGasBands(ctx: CanvasRenderingContext2D, w: number, h: number, rng: () => number) {
+  const hues = [28, 200, 320, 45, 260]   // amber / cyan / magenta / gold / violet — IR false-colour, not a real albedo
+  const bandCount = 7 + Math.floor(rng() * 4)
+  let y = 0
+  for (let i = 0; i < bandCount; i++) {
+    const bandH = h / bandCount
+    const hue = hues[Math.floor(rng() * hues.length)]!
+    const light = 30 + rng() * 30
+    ctx.fillStyle = `hsl(${hue}, 70%, ${light}%)`
+    ctx.fillRect(0, y, w, bandH + 1)
+    // Turbulent edge between bands instead of a hard line
+    ctx.beginPath(); ctx.moveTo(0, y + bandH)
+    for (let x = 0; x <= w; x += 16) ctx.lineTo(x, y + bandH + Math.sin(x * 0.02 + rng() * 6) * bandH * 0.18)
+    ctx.lineTo(w, y); ctx.lineTo(0, y); ctx.closePath()
+    ctx.fillStyle = `hsla(${hues[(Math.floor(rng() * hues.length))]}, 70%, ${light + 12}%, 0.35)`
+    ctx.fill()
+    y += bandH
+  }
+  // One storm spot
+  const sx = w * (0.25 + rng() * 0.5), sy = h * (0.3 + rng() * 0.4)
+  const grad = ctx.createRadialGradient(sx, sy, 4, sx, sy, w * 0.09)
+  grad.addColorStop(0, 'hsla(0, 85%, 60%, 0.9)')
+  grad.addColorStop(1, 'hsla(0, 85%, 60%, 0)')
+  ctx.fillStyle = grad
+  ctx.beginPath(); ctx.ellipse(sx, sy, w * 0.09, w * 0.055, 0, 0, Math.PI * 2); ctx.fill()
+}
+
+function drawLava(ctx: CanvasRenderingContext2D, w: number, h: number, rng: () => number) {
+  ctx.fillStyle = '#180404'; ctx.fillRect(0, 0, w, h)
+  for (let i = 0; i < 6; i++) {
+    ctx.strokeStyle = `hsla(${20 + rng() * 20}, 100%, ${55 + rng() * 20}%, 0.9)`
+    ctx.lineWidth = 3 + rng() * 5
+    ctx.beginPath()
+    let x = rng() * w, y = 0
+    ctx.moveTo(x, y)
+    while (y < h) {
+      x += (rng() - 0.5) * 60
+      y += h / 10
+      ctx.lineTo(x, y)
+    }
+    ctx.stroke()
+  }
+  const grad = ctx.createRadialGradient(w / 2, h / 2, 4, w / 2, h / 2, w * 0.6)
+  grad.addColorStop(0, 'rgba(255,120,20,0.18)')
+  grad.addColorStop(1, 'rgba(255,120,20,0)')
+  ctx.fillStyle = grad
+  ctx.fillRect(0, 0, w, h)
+}
+
+function drawOceanClouds(ctx: CanvasRenderingContext2D, w: number, h: number, rng: () => number) {
+  const grad = ctx.createLinearGradient(0, 0, 0, h)
+  grad.addColorStop(0, 'hsl(200, 70%, 25%)')
+  grad.addColorStop(1, 'hsl(210, 80%, 12%)')
+  ctx.fillStyle = grad; ctx.fillRect(0, 0, w, h)
+  for (let i = 0; i < 40; i++) {
+    const cx = rng() * w, cy = rng() * h, r = 14 + rng() * 46
+    const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, r)
+    g.addColorStop(0, `hsla(190, 60%, 92%, ${0.10 + rng() * 0.12})`)
+    g.addColorStop(1, 'hsla(190, 60%, 92%, 0)')
+    ctx.fillStyle = g
+    ctx.beginPath(); ctx.ellipse(cx, cy, r, r * 0.4, rng() * Math.PI, 0, Math.PI * 2); ctx.fill()
+  }
+}
+
+function drawAccretionDisk(ctx: CanvasRenderingContext2D, w: number, h: number, rng: () => number) {
+  ctx.fillStyle = '#020103'; ctx.fillRect(0, 0, w, h)
+  const cx = w / 2, cy = h / 2
+
+  // Soft glow wash before the particle disk so the window still reads at a
+  // glance/distance, not just up close where individual specks are visible.
+  const wash = ctx.createRadialGradient(cx, cy, w * 0.05, cx, cy, w * 0.5)
+  wash.addColorStop(0, 'rgba(255,170,60,0.28)')
+  wash.addColorStop(0.5, 'rgba(255,110,30,0.14)')
+  wash.addColorStop(1, 'rgba(255,110,30,0)')
+  ctx.fillStyle = wash
+  ctx.beginPath(); ctx.ellipse(cx, cy, w * 0.5, w * 0.5 * 0.32, 0, 0, Math.PI * 2); ctx.fill()
+
+  for (let i = 0; i < 420; i++) {
+    const a = rng() * Math.PI * 2
+    const r = (w * 0.08) + rng() * w * 0.42
+    const x = cx + Math.cos(a) * r
+    const y = cy + Math.sin(a) * r * 0.32
+    const hot = 1 - Math.min(1, (r - w * 0.08) / (w * 0.42))
+    ctx.fillStyle = `hsla(${28 - hot * 20}, 100%, ${50 + hot * 35}%, ${0.6 + hot * 0.4})`
+    ctx.fillRect(x, y, 2 + hot, 2 + hot)
+  }
+  ctx.fillStyle = '#000000'
+  ctx.beginPath(); ctx.ellipse(cx, cy, w * 0.07, w * 0.07, 0, 0, Math.PI * 2); ctx.fill()
+}
+
+function drawDeepField(ctx: CanvasRenderingContext2D, w: number, h: number, rng: () => number) {
+  ctx.fillStyle = '#01030a'; ctx.fillRect(0, 0, w, h)
+  const neb = ctx.createRadialGradient(w * 0.4, h * 0.5, 0, w * 0.4, h * 0.5, w * 0.5)
+  neb.addColorStop(0, 'rgba(90,60,160,0.18)')
+  neb.addColorStop(1, 'rgba(90,60,160,0)')
+  ctx.fillStyle = neb; ctx.fillRect(0, 0, w, h)
+  for (let i = 0; i < 140; i++) {
+    const b = rng()
+    ctx.fillStyle = `rgba(${200 + b * 55},${200 + b * 55},255,${0.3 + b * 0.6})`
+    ctx.fillRect(rng() * w, rng() * h, 1 + b, 1 + b)
+  }
+}
+
+function buildWindowTexture(): THREE.CanvasTexture {
+  const w = 512, h = 512   // square — these now fill a circular end-cap, not a wall strip
+  const canvas = document.createElement('canvas')
+  canvas.width = w; canvas.height = h
+  const ctx = canvas.getContext('2d')!
+  const rng = mulberry32(seedFromHostname())
+
+  switch (viewStyleFor()) {
+    case 'gas-bands':      drawGasBands(ctx, w, h, rng);      break
+    case 'lava':            drawLava(ctx, w, h, rng);          break
+    case 'ocean-clouds':    drawOceanClouds(ctx, w, h, rng);   break
+    case 'accretion-disk':  drawAccretionDisk(ctx, w, h, rng); break
+    case 'deep-field':      drawDeepField(ctx, w, h, rng);     break
+  }
+
+  // Thin scanline overlay + corner readout — sells the "sensor display" framing
+  ctx.fillStyle = 'rgba(0,0,0,0.06)'
+  for (let y = 0; y < h; y += 3) ctx.fillRect(0, y, w, 1)
+  ctx.font = '15px monospace'
+  ctx.fillStyle = 'rgba(120,255,220,0.55)'
+  ctx.fillText('AEGIS-PANE COMPOSITE · IR FALSE-COLOUR', 14, h - 16)
+
+  const tex = new THREE.CanvasTexture(canvas)
+  tex.wrapS = THREE.RepeatWrapping
+  tex.colorSpace = THREE.SRGBColorSpace
+  return tex
+}
+
+// Two large end-cap windows per cylinder — "some substance and technology not
+// yet revealed" stands in for how an engineered structure could ever put a
+// window this size at the load-bearing end of a spinning hull; the previous
+// design (many small windows on the curved wall) is gone. With the cylinder
+// lying on its side, these end-caps read as the tube's "top and bottom" —
+// the two faces you'd call top/bottom if it stood upright — capping the view
+// straight down the long axis in both directions instead of off to the side.
+const WINDOW_RADIUS = CYL_R * 0.93
+const MULLION_COUNT = 8
+
+let windowMaterial: THREE.MeshBasicMaterial | null = null
+
+function buildEndCapWindows() {
+  const tex = buildWindowTexture()
+  windowMaterial = new THREE.MeshBasicMaterial({ map: tex, side: THREE.DoubleSide, toneMapped: false })
+  const frameMat = new THREE.MeshPhongMaterial({ color: 0x1a2432, shininess: 40 })
+  const mullionMat = new THREE.MeshPhongMaterial({ color: 0x141c28, shininess: 20 })
+  const glowMat  = new THREE.MeshBasicMaterial({
+    color: 0x66ddff, transparent: true, opacity: 0.09, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
+  })
+
   for (const cx of [0, CYL_SEP]) {
     for (const z of [-CYL_LEN / 2, CYL_LEN / 2]) {
-      const cap = new THREE.Mesh(new THREE.CircleGeometry(CYL_R, 32), capMat)
-      cap.position.set(cx, 0, z)
-      scene!.add(cap)
+      // Front-to-back from a viewer standing inside the tube looking toward
+      // this end: glow (nearest) > pane (texture) > frame ring (farthest).
+      // A viewer at z=+40 looking toward the z=-100 end has "nearer" == less
+      // negative z; toward the z=+100 end "nearer" == less positive z — i.e.
+      // nearer is always *toward the tube's centre* (z=0), same idea as the
+      // old radial ordering, just along the axis instead of across it.
+      const inward = z < 0 ? 1 : -1
 
-      const hub = new THREE.Mesh(new THREE.CylinderGeometry(4, 4, 6, 10), new THREE.MeshPhongMaterial({ color: 0x223344 }))
-      hub.rotation.x = Math.PI / 2
-      hub.position.set(cx, 0, z + (z < 0 ? 3 : -3))
-      scene!.add(hub)
+      const frame = new THREE.Mesh(new THREE.RingGeometry(WINDOW_RADIUS, WINDOW_RADIUS + 5, 48), frameMat)
+      frame.position.set(cx, 0, z - inward * 0.6)
+      scene!.add(frame)
+
+      const pane = new THREE.Mesh(new THREE.CircleGeometry(WINDOW_RADIUS, 48), windowMaterial)
+      pane.position.set(cx, 0, z)
+      if (z > 0) pane.rotation.y = Math.PI   // face inward, not away from the tube
+      scene!.add(pane)
+
+      const glow = new THREE.Mesh(new THREE.CircleGeometry(WINDOW_RADIUS * 1.25, 48), glowMat)
+      glow.position.set(cx, 0, z + inward * 0.6)
+      scene!.add(glow)
+
+      // Radial mullions — structural read (this is meant to look like an
+      // engineered viewport, not a sticker) and a visual scale reference so a
+      // window this large doesn't flatten into an abstract colour field. Must
+      // sit IN FRONT of the pane (nearer the camera, same side as glow) — the
+      // pane is opaque, so anything placed behind it is simply invisible.
+      for (let i = 0; i < MULLION_COUNT; i++) {
+        const a = (i / MULLION_COUNT) * Math.PI * 2
+        const beam = new THREE.Mesh(new THREE.BoxGeometry(0.5, WINDOW_RADIUS * 2, 0.5), mullionMat)
+        beam.position.set(cx, 0, z + inward * 0.3)
+        beam.rotation.z = a
+        scene!.add(beam)
+      }
+      const hubRing = new THREE.Mesh(new THREE.TorusGeometry(3, 0.6, 8, 20), mullionMat)
+      hubRing.position.set(cx, 0, z + inward * 0.3)
+      scene!.add(hubRing)
     }
   }
 }
@@ -501,6 +767,12 @@ function tick() {
 
   if (hullA) hullA.rotation.z = t * 0.06
   if (hullB) hullB.rotation.z = -t * 0.06
+
+  // Slow cloud/plasma drift across every window — same texture, so this alone
+  // keeps 18 windows from reading as one static repeated photo.
+  if (windowMaterial?.map) {
+    windowMaterial.map.offset.x = (t * 0.006) % 1
+  }
 
   for (const [id, group] of itemMeshes) {
     const item = items.value.find(i => i.id === id)
@@ -683,6 +955,7 @@ onBeforeUnmount(() => {
   if (scene) disposeScene(scene)
   renderer?.dispose()
   renderer = null; scene = null; camera = null; controls = null
+  windowMaterial = null
 })
 </script>
 
@@ -739,6 +1012,47 @@ onBeforeUnmount(() => {
 
 .fade-enter-active, .fade-leave-active { transition: opacity 0.20s ease; }
 .fade-enter-from, .fade-leave-to { opacity: 0; }
+
+/* ── Station guide: deck map + status board ──────────────────────────────── */
+
+.si-guide-panel {
+  position: absolute; top: 44px; right: 12px; z-index: 15;
+  width: 230px;
+  background: rgba(1, 5, 20, 0.94);
+  border: 1px solid rgba(0, 140, 200, 0.24);
+  border-radius: 6px;
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+}
+.si-guide-tabs {
+  display: flex; align-items: center;
+  padding: 4px 4px 4px 8px;
+  border-bottom: 1px solid rgba(0, 70, 120, 0.25);
+  background: rgba(0, 8, 28, 0.60);
+}
+.si-guide-tab {
+  padding: 3px 9px; margin-right: 2px; border-radius: 3px;
+  font-size: 9px; letter-spacing: 0.08em; font-family: monospace;
+  color: rgba(100, 150, 190, 0.65); background: none; border: none; cursor: pointer;
+}
+.si-guide-tab:hover { color: rgba(160, 210, 235, 0.9); }
+.si-guide-tab--active { background: rgba(0, 100, 160, 0.28); color: #00ccee; }
+
+.si-guide-body { padding: 10px; }
+.si-guide-map { width: 100%; height: auto; display: block; }
+.si-guide-note { font-size: 8px; color: rgba(90, 135, 165, 0.55); margin-top: 6px; text-align: center; }
+
+.si-sched-row {
+  display: flex; justify-content: space-between; gap: 10px;
+  font-size: 9.5px; padding: 5px 0;
+  border-bottom: 1px solid rgba(0, 60, 100, 0.20);
+}
+.si-sched-row:last-child { border-bottom: none; }
+.si-sched-row span:first-child { color: rgba(90, 145, 185, 0.70); }
+.si-sched-row span:last-child  { color: rgba(180, 220, 240, 0.88); text-align: right; }
+
+.si-guide-slide-enter-active, .si-guide-slide-leave-active { transition: transform 0.20s ease, opacity 0.20s ease; }
+.si-guide-slide-enter-from, .si-guide-slide-leave-to { transform: translateY(-8px); opacity: 0; }
 
 .si-inspect-panel {
   position: absolute; left: 0; top: 50%; transform: translateY(-50%);

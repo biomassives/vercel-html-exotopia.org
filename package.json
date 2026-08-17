@@ -4,7 +4,7 @@
   "description": "Exotopia — interactive exoplanet visualization and virtual real estate under the PON INK protocol",
   "private": true,
   "scripts": {
-    "dev": "quasar dev",
+    "dev": "supabase start && quasar dev",
     "build": "quasar build",
     "lint": "eslint --ext .js,.ts,.vue src",
     "parse-exoplanets": "python3 parse_exoplanet_export.py",

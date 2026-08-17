@@ -10,6 +10,7 @@ import {
   MENTOR_CYCLE_THRESHOLD,
   PFAS_RESEARCHER_LOG_THRESHOLD,
 } from 'src/data/rewards-catalog'
+import { classifyMentorTopic } from 'src/data/domain-competency'
 
 export type RewardTrack = 'volunteering' | 'finance_literacy' | 'educating_others'
 
@@ -100,6 +101,56 @@ export const useRewardsStore = defineStore('rewards', () => {
       if (s.mentee_id === myId) return !s.confirmed_mentee
       return false
     })
+  })
+
+  /**
+   * Group-leader view (SPEC_DOMAIN_COMPETENCY.md): aggregates mentor_sessions
+   * rows where the current member is the mentor into one row per mentee, so a
+   * mentor running several people through WATSAN/biodiversity/remediation/etc.
+   * work can see who's working in which domain at a glance. Deliberately reads
+   * mentor_sessions as-is (1:1 rows, no groups table) — see SPEC_DOMAIN_
+   * COMPETENCY.md discussion in the mentor-tooling plan for why a schema change
+   * wasn't taken here. "Domain" is inferred client-side from the free-text
+   * topic via classifyMentorTopic(); it's a best-effort label, not a
+   * certified assignment.
+   */
+  interface MenteeGroup {
+    menteeId:        string
+    sessions:        MentorSession[]
+    confirmedCount:  number
+    pendingCount:    number
+    domains:         string[]        // distinct domain codes touched, most recent first
+    lastSessionAt:   string          // created_at of the most recent session
+  }
+
+  const mentorMenteeGroups = computed<MenteeGroup[]>(() => {
+    const myId = useMemberStore().userId
+    if (!myId) return []
+    const mine = mentorSessions.value.filter(s => s.mentor_id === myId)
+    const byMentee = new Map<string, MentorSession[]>()
+    for (const s of mine) {
+      const list = byMentee.get(s.mentee_id) ?? []
+      list.push(s)
+      byMentee.set(s.mentee_id, list)
+    }
+    const groups: MenteeGroup[] = []
+    for (const [menteeId, sessions] of byMentee) {
+      const sorted = [...sessions].sort((a, b) => b.created_at.localeCompare(a.created_at))
+      const domains: string[] = []
+      for (const s of sorted) {
+        const d = classifyMentorTopic(s.topic)
+        if (!domains.includes(d)) domains.push(d)
+      }
+      groups.push({
+        menteeId,
+        sessions:       sorted,
+        confirmedCount: sorted.filter(s => s.confirmed_at).length,
+        pendingCount:   sorted.filter(s => !s.confirmed_at).length,
+        domains,
+        lastSessionAt:  sorted[0]!.created_at,
+      })
+    }
+    return groups.sort((a, b) => b.lastSessionAt.localeCompare(a.lastSessionAt))
   })
 
   async function loadMyRewards() {
@@ -272,7 +323,7 @@ export const useRewardsStore = defineStore('rewards', () => {
   return {
     rewardEvents, certificates, mentorSessions, loading, error, isAdmin,
     totalPoints, pointsByTrack, certificateTypes, unlockedObjects, pendingMentorConfirmations,
-    volunteerProgress, mentorProgress,
+    volunteerProgress, mentorProgress, mentorMenteeGroups,
     loadMyRewards, awardQuizCompletion, logVolunteerAction, logEducatingAction,
     debitConstruction,
     requestMentorSession, confirmMentorSession, checkMenteeIsYouth, adminGrantReward,

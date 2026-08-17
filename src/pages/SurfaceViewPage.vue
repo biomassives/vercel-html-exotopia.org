@@ -1525,7 +1525,12 @@ function initScene() {
   camera.near = 0.1
   camera.far  = 2000
   camera.aspect = window.innerWidth / (window.innerHeight - 44)
-  camera.position.set(0, 4, 85)
+  // z=130 matches the 'surface' spatial preset (spatial-scopes.ts) — ~50 units
+  // in front of the dome equator (r=70). Closer than that (previously z=85,
+  // only 15 units off the shell) puts the camera almost against the wireframe
+  // lattice, so its dense crosshatch fills the frame and reads as a station
+  // interior instead of a dome sitting on the horizon under open sky.
+  camera.position.set(0, 4, 130)
   camera.updateProjectionMatrix()
 
   controls.target.set(0, 2, 0)
@@ -1562,6 +1567,7 @@ function initScene() {
   }
 
   addAmbientLight()
+  addGalacticBand()
   addStarField()
   addBrightStars()
   addHostStar()
@@ -1596,6 +1602,106 @@ function addAmbientLight() {
   const e = eqt ?? 285
   const skyColor = e > 800 ? new THREE.Color(0x1a0808) : e < 200 ? new THREE.Color(0x080818) : new THREE.Color(0x060e18)
   pageGroup.add(new THREE.HemisphereLight(skyColor, new THREE.Color(0x020408), 0.6))
+}
+
+// ── Galactic band ────────────────────────────────────────────────────────────
+// Standing inside the galactic disk, the Milky Way isn't scattered stars — it's
+// a glowing band running all the way around the sky along the galactic plane's
+// great circle, brightest toward the galactic centre, with a dark dust lane
+// splitting it. The star field below had none of this (just uniform scatter),
+// which is the gap this fixes. Same real geometry as the disk rebuild in
+// GalaxyPage.vue's buildGalacticBackground() — the true IAU North Galactic
+// Pole RA/Dec, and Sgr A*'s real RA/Dec for "which way is the bright side" —
+// reused here as a texture wrapped on the sky sphere instead of a face-on disk,
+// since from inside the disk the same structure reads as a band, not a spiral.
+const DEG2RAD_SKY = Math.PI / 180
+
+function makeGalacticBandTexture(gcPhiLocal: number): THREE.CanvasTexture {
+  const W = 1024, H = 512
+  const cv = document.createElement('canvas')
+  cv.width = W; cv.height = H
+  const ctx = cv.getContext('2d')!
+  ctx.clearRect(0, 0, W, H)
+
+  const rng = (() => { let s = 91011; return () => { s = (s*1664525+1013904223)|0; return (s>>>0)/4294967296 } })()
+
+  // u = 0..1 around the sky (galactic longitude-equivalent), v = 0..1 from pole
+  // to pole (galactic latitude-equivalent, 0.5 = the plane itself).
+  const uOfPhi = (phi: number) => (((phi + Math.PI) / (Math.PI * 2)) % 1 + 1) % 1
+  const gcU = uOfPhi(gcPhiLocal)
+
+  for (let x = 0; x < W; x++) {
+    const u = x / W
+    // Angular distance (wrapped) from the galactic-centre direction — the real
+    // Milky Way is markedly brighter toward Sagittarius than toward the
+    // anti-centre (Auriga/Taurus), not uniform around the ring.
+    let du = Math.abs(u - gcU); if (du > 0.5) du = 1 - du
+    const centreBoost = Math.exp(-(du * du) / 0.02)          // sharp peak at the GC
+    const wideBoost   = Math.exp(-(du * du) / 0.35)          // gentle bulge the rest of the way round
+    const longBrightness = 0.30 + 0.85 * centreBoost + 0.35 * wideBoost
+
+    for (let y = 0; y < H; y++) {
+      const v = y / H
+      const latOffset = (v - 0.5) * 2   // -1..1, 0 = the plane
+      // Thin-disk falloff perpendicular to the plane, seen edge-on.
+      const diskFalloff = Math.exp(-(latOffset * latOffset) / (0.045 + du * 0.02))
+      let brightness = longBrightness * diskFalloff
+
+      // Dust lane: a darker, narrower band riding right down the centre of the
+      // bright one (the real "Great Rift"), strongest near the galactic centre
+      // where the disk is thickest along the line of sight.
+      const riftDepth = Math.exp(-(latOffset * latOffset) / 0.006) * (0.35 + 0.5 * centreBoost)
+      brightness *= (1 - riftDepth)
+
+      if (brightness < 0.006) continue
+      const speck = rng() < 0.985 ? 0 : rng() * 0.6   // sparse brighter star-dust flecks
+      const b = Math.min(1, brightness + speck)
+      const warm = 0.5 + 0.5 * centreBoost   // warmer/whiter toward the core, cooler blue-white further round
+      const r = Math.round(150 + 90 * warm)
+      const g = Math.round(160 + 80 * warm)
+      const bl = Math.round(200 + 40 * (1 - warm))
+      ctx.fillStyle = `rgba(${r},${g},${bl},${(b * 0.9).toFixed(3)})`
+      ctx.fillRect(x, y, 1, 1)
+    }
+  }
+
+  const tex = new THREE.CanvasTexture(cv)
+  tex.generateMipmaps = false
+  tex.minFilter = THREE.LinearFilter
+  tex.colorSpace = THREE.SRGBColorSpace
+  return tex
+}
+
+function addGalacticBand() {
+  const NGP_RA  = 192.85 * DEG2RAD_SKY
+  const NGP_DEC =  27.13 * DEG2RAD_SKY
+  const galNormal = new THREE.Vector3(
+    Math.cos(NGP_DEC) * Math.cos(NGP_RA),
+    Math.sin(NGP_DEC),
+    -Math.cos(NGP_DEC) * Math.sin(NGP_RA),
+  ).normalize()
+  // SphereGeometry's default equirectangular UVs use local +Y as the pole —
+  // align that to the true galactic pole so the texture's equator (the bright
+  // band) lands exactly on the real galactic plane's great circle.
+  const skyQuat = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), galNormal)
+
+  // Where the real galactic centre (Sgr A*, RA 266.4168° Dec -29.0078°) falls
+  // in this sphere's local pre-rotation frame — so the texture's brightness
+  // peak can be drawn at the column that ends up pointing the right way.
+  const gcDirWorld = raDecToVec3(266.4168, -29.0078, 1).normalize()
+  const gcDirLocal = gcDirWorld.clone().applyQuaternion(skyQuat.clone().invert())
+  const gcPhiLocal = Math.atan2(gcDirLocal.z, gcDirLocal.x)
+
+  const band = new THREE.Mesh(
+    new THREE.SphereGeometry(880, 96, 48),
+    new THREE.MeshBasicMaterial({
+      map: makeGalacticBandTexture(gcPhiLocal),
+      transparent: true, depthWrite: false, side: THREE.BackSide,
+      blending: THREE.AdditiveBlending, toneMapped: false,
+    }),
+  )
+  band.quaternion.copy(skyQuat)
+  pageGroup.add(band)
 }
 
 function addStarField() {
@@ -2700,9 +2806,10 @@ function setLookMode(mode: string) {
     controls.minPolarAngle = 0.05
     controls.maxPolarAngle = Math.PI * 0.68
   } else {
-    // Orbit mode — camera outside dome, full turntable rotation
+    // Orbit mode — camera outside dome, full turntable rotation. z=130 matches
+    // initScene()'s resting default (see comment there).
     const eyeY = Math.max(terrainBaseY + 4, 4)
-    camera.position.set(0, eyeY, 85)
+    camera.position.set(0, eyeY, 130)
     controls.target.set(0, eyeY * 0.5, 0)
     controls.minPolarAngle = 0.10
     controls.maxPolarAngle = Math.PI * 0.54
@@ -2919,7 +3026,10 @@ function enterDome() {
   void router.push({
     name: 'dome-interior',
     params: { hostname: hostname.value, planetName: planetName.value },
-    query: { eqt: String(planet.value?.pl_eqt ?? 285) },
+    query: {
+      eqt: String(planet.value?.pl_eqt ?? 285),
+      ...(isMoonView.value ? { parent: parentName.value } : {}),
+    },
   })
 }
 
@@ -2928,7 +3038,10 @@ function enterGallery() {
   void router.push({
     name: 'gallery-interior',
     params: { hostname: hostname.value, planetName: planetName.value },
-    query: { eqt: String(planet.value?.pl_eqt ?? 285) },
+    query: {
+      eqt: String(planet.value?.pl_eqt ?? 285),
+      ...(isMoonView.value ? { parent: parentName.value } : {}),
+    },
   })
 }
 
@@ -3067,9 +3180,10 @@ function playEntryAnimation() {
 
   // ── Animation sequence ───────────────────────────────────────────────────
 
-  // Phase 1 (0–4.5s): camera sweeps down to orbit position
+  // Phase 1 (0–4.5s): camera sweeps down to orbit position — z=130 matches
+  // initScene()'s resting default and the 'surface' spatial preset.
   gsap.to(camera.position, {
-    x: 0, y: 4, z: 85,
+    x: 0, y: 4, z: 130,
     duration: 4.5, ease: 'power2.inOut',
     onUpdate: () => controls.update(),
   })

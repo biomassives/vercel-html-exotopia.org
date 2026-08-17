@@ -534,6 +534,42 @@ export const BLOG_POSTS: BlogPostMeta[] = [
       'Exotopia no longer needs a wallet or a blockchain to run: a fresh instance is Supabase (for the schema), a git host of your choice (GitLab, Gitea, or GitHub — no vendor lock-in), and Vercel (to deploy). Walks through why that baseline stack was chosen, the optional refinements layer (Cloudflare, Redis, or a fully standalone Appwrite deployment for a home-network setup with zero external SaaS dependency), and the actual pitch behind making self-hosting this easy: independent instances doing their own visualization and citizen-science work in the humanitarian-engineering and biodiversity space, while staying part of the same collaborative effort rather than a fork nobody talks to again. Companion to SPEC_SELF_HOSTED_NETWORK.md, which has the open engineering questions this post deliberately doesn\'t pretend are settled.',
     editorialNote: 'The instance-to-instance data-sharing mechanism is not yet designed — see the spec\'s Open Questions section. This post describes the deploy path, which is real and working today, not the federation layer, which isn\'t.',
   },
+  {
+    slug:     'local-first-by-default',
+    title:    'Your Browser Is the Database',
+    subtitle: 'Why most of Exotopia runs on localStorage, what that buys you, and where the line to a server actually sits',
+    date:     'August 2026',
+    audience: ['dev', 'community', 'ecosystem'],
+    series:   'protocol',
+    status:   'public-draft',
+    description:
+      'Walks through the local-first storage architecture underneath settlements, staged items, mint styles, onboarding progress, and the block list: localStorage as the always-on source of truth, Supabase writes as fire-and-forget background sync that only activates once a member signs in, and a one-time merge-not-replace step on login (server wins per-key for settlements, union for the block list) that reconciles anonymous local data with the server copy. Distinguishes the two separate ciphers in the codebase on purpose — storage-cipher.ts\'s E8-lattice localStorage obfuscation (explicitly not real security, by its own header comment) versus encrypted-backup.ts\'s real AES-256-GCM+PBKDF2 export flow — and is direct about the real limits: no cross-device sync while signed out, a silent no-op past the localStorage quota, and clearing site data being unrecoverable without an exported backup.',
+    editorialNote: 'Companion to self-hosted-exotopia — describes the client-side half of "server as optional sync layer, not custodian." Written after a member asked what a specific /rest/v1/blocked_members call in local dev actually was.',
+  },
+  {
+    slug:     'the-lessons-are-real',
+    title:    'The Lessons Are Real',
+    subtitle: "A status check on Learn, Sky Lessons, and the Eco-Ops Library — the mentoring tools next to them, and the citizen-science roadmap items that aren't built yet",
+    date:     'August 2026',
+    audience: ['community', 'field'],
+    series:   'field',
+    status:   'public-draft',
+    description:
+      "A direct status check on the three lessons surfaces (finance/science quizzes at /learn, astronomy/navigation at /sky-lessons, and the 104-video Eco-Ops Library), why two of them were nearly invisible in the main nav until this post's companion fix, the new group-leader view on the Rewards page for mentors running several mentees through WATSAN/biodiversity/remediation work, and the community_nodes business_listing/business_location directory as the real, shipped hook for small-business earth-services listings. Includes a short Q&A on what the platform is and isn't, and a clearly separated roadmap section — simulation-strategy sharing, decontamination target-setting, deeper business integration — labeled as not yet built.",
+    editorialNote: 'Written alongside the MainLayout.vue nav-prominence fix and the mentor group-leader view it describes — both shipped in the same change as this post, not pre-existing.',
+  },
+  {
+    slug:     'milky-way-rebuild',
+    title:    'We Rebuilt the Milky Way',
+    subtitle: "Real spiral arm data, a bug that put our galaxy's core on top of the Sun, and a night sky that finally looks like one",
+    date:     'August 2026',
+    audience: ['dev', 'community'],
+    series:   'science',
+    status:   'public-draft',
+    description:
+      "How GalaxyPage.vue's face-on spiral disk and the new SurfaceViewPage.vue sky band were rebuilt on real data: Reid et al. 2019's per-arm pitch/azimuth structure (7 real arms, including the previously-missing 3-kpc arm and Local Arm/Orion Spur) replacing an invented 4-arms-at-90° model, Wegg & Gerhard 2013's bar angle (27°, not 44°), a structural fix that had been drawing the galactic core on top of the Sun's own position, population-based star coloring instead of per-arm hues, and a new all-sky galactic band for planet-surface views oriented via the real IAU North Galactic Pole. Ends with a researched 'what's next' list — real datasets and Three.js techniques evaluated for fit with the existing stack.",
+    editorialNote: 'Companion to SPEC_MILKY_WAY_VISUALIZATION.md, which has the exact file/line citations this post summarizes in plain language.',
+  },
 ]
 
 export function getRelatedPosts (post: BlogPostMeta, limit = 3): BlogPostMeta[] {

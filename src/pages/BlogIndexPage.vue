@@ -93,7 +93,7 @@ const filteredPosts = computed(() =>
 )
 
 const visibleSeries = computed<BlogSeries[]>(() => {
-  const order: BlogSeries[] = ['navigation', 'science', 'economy', 'ecosystem', 'field']
+  const order: BlogSeries[] = ['navigation', 'science', 'economy', 'ecosystem', 'field', 'protocol']
   return order.filter(s => filteredPosts.value.some(p => p.series === s))
 })
 

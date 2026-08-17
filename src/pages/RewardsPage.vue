@@ -141,6 +141,46 @@
         </div>
       </section>
 
+      <!-- ── Group leader view — your mentees, by domain ─────────────────── -->
+      <section v-if="rewards.mentorMenteeGroups.length" class="rw-section">
+        <div class="rw-section__eyebrow">MENTORING · GROUP VIEW</div>
+        <h2 class="rw-h2">Your Mentees</h2>
+        <p class="rw-p">
+          Everyone you've run a mentor session with, grouped by domain (guessed from each
+          session's topic — see the domain framework in
+          <a href="https://github.com/biomassives/vercel-html-exotopia.org/blob/main/SPEC_DOMAIN_COMPETENCY.md" target="_blank" rel="noopener">SPEC_DOMAIN_COMPETENCY.md</a>).
+          Leading a group through WATSAN, biodiversity, remediation, or library-research work?
+          This is the same underlying mentor_sessions data, just rolled up per person instead of per request.
+        </p>
+
+        <div class="rw-form">
+          <select v-model="menteeDomainFilter" class="rw-input">
+            <option value="">All domains</option>
+            <option v-for="d in menteeDomainsPresent" :key="d" :value="d">{{ domainInfo(d).label }}</option>
+          </select>
+        </div>
+
+        <div class="rw-mentee-list">
+          <div v-for="g in filteredMenteeGroups" :key="g.menteeId" class="rw-mentee">
+            <div class="rw-mentee__head">
+              <span class="rw-mentee__name">{{ menteeName(g.menteeId) }}</span>
+              <span class="rw-mentee__count">{{ g.confirmedCount }} confirmed{{ g.pendingCount ? ` · ${g.pendingCount} pending` : '' }}</span>
+            </div>
+            <div class="rw-mentee__domains">
+              <router-link v-for="d in g.domains" :key="d" :to="domainInfo(d).route"
+                class="rw-domain-badge" :style="{ '--dcolor': domainInfo(d).color }">
+                {{ domainInfo(d).label }}
+              </router-link>
+            </div>
+            <div class="rw-mentee__topics">
+              <span v-for="s in g.sessions" :key="s.id" class="rw-mentee__topic" :class="{ 'rw-mentee__topic--pending': !s.confirmed_at }">
+                {{ s.topic }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- ── Impact profile ──────────────────────────────────────────────── -->
       <section class="rw-section">
         <div class="rw-section__eyebrow">IMPACT PROFILE</div>
@@ -184,6 +224,7 @@ import { useSettlements } from 'src/lib/settlements'
 import { useSettlementItems } from 'src/lib/settlement-items'
 import { SETTLEMENT_OBJECT_MESH } from 'src/data/rewards-catalog'
 import { setSuggestedFocus } from 'src/lib/settlement-focus-intent'
+import { DOMAINS } from 'src/data/domain-competency'
 import MemberSignIn from 'src/components/MemberSignIn.vue'
 
 const member  = useMemberStore()
@@ -264,6 +305,42 @@ async function submitMentorRequest() {
   menteeIsYouth.value  = false
   youthAck.value       = false
 }
+
+// ── Group leader view — mentee display names + domain filter ────────────────
+
+const menteeNames = ref<Record<string, string>>({})
+
+// mentor_sessions gives us mentee ids, not names — same public members-table
+// read used by loadConnections() above, just keyed by whoever's in the group.
+watch(() => rewards.mentorMenteeGroups.map(g => g.menteeId).join(','), async () => {
+  const ids = rewards.mentorMenteeGroups.map(g => g.menteeId).filter(id => !menteeNames.value[id])
+  if (!supabase || !ids.length) return
+  const { data } = await supabase.from('members').select('id, display_name').in('id', ids)
+  for (const row of (data ?? []) as { id: string; display_name: string }[]) {
+    menteeNames.value[row.id] = row.display_name
+  }
+}, { immediate: true })
+
+function menteeName(id: string): string {
+  return menteeNames.value[id] ?? `Member ${id.slice(0, 8)}`
+}
+
+function domainInfo(code: string) {
+  return DOMAINS[code] ?? DOMAINS.unclassified!
+}
+
+const menteeDomainFilter = ref('')
+
+const menteeDomainsPresent = computed(() => {
+  const set = new Set<string>()
+  for (const g of rewards.mentorMenteeGroups) for (const d of g.domains) set.add(d)
+  return [...set]
+})
+
+const filteredMenteeGroups = computed(() => {
+  if (!menteeDomainFilter.value) return rewards.mentorMenteeGroups
+  return rewards.mentorMenteeGroups.filter(g => g.domains.includes(menteeDomainFilter.value))
+})
 
 // ── Impact profile — attach an unlocked object to a settlement ──────────────
 
@@ -395,6 +472,29 @@ function attachObject(objectKey: string) {
 .rw-event-key  { color: rgba(200,230,255,0.85); min-width: 160px; }
 .rw-event-meta { color: rgba(120,170,205,0.60); flex: 1; }
 .rw-event-pts  { color: rgba(80,230,130,0.85); }
+
+.rw-mentee-list { display: flex; flex-direction: column; gap: 10px; }
+.rw-mentee {
+  background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 6px; padding: 10px 12px;
+}
+.rw-mentee__head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+.rw-mentee__name  { font-size: 11px; color: rgba(210,235,255,0.90); }
+.rw-mentee__count { font-size: 9.5px; color: rgba(120,170,205,0.60); }
+.rw-mentee__domains { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
+.rw-domain-badge {
+  font-size: 9px; letter-spacing: 0.03em; padding: 3px 8px; border-radius: 10px;
+  color: var(--dcolor, #78909c); border: 1px solid var(--dcolor, #78909c);
+  background: color-mix(in srgb, var(--dcolor, #78909c) 12%, transparent);
+  text-decoration: none;
+}
+.rw-domain-badge:hover { background: color-mix(in srgb, var(--dcolor, #78909c) 24%, transparent); }
+.rw-mentee__topics { display: flex; flex-wrap: wrap; gap: 6px; }
+.rw-mentee__topic {
+  font-size: 9.5px; color: rgba(140,190,215,0.70); background: rgba(255,255,255,0.03);
+  border-radius: 4px; padding: 2px 6px;
+}
+.rw-mentee__topic--pending { color: rgba(230,190,90,0.75); }
 
 .rw-cert-list, .rw-object-list { display: flex; flex-direction: column; gap: 8px; }
 .rw-cert { font-size: 10.5px; color: rgba(200,170,60,0.85); }
