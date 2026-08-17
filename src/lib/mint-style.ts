@@ -19,11 +19,12 @@
 
 import { STANDARD_SPLIT, toSunlightShape } from './resonance-split'
 
-// erc721-metadata.ts moved to lib/chains/evm/ (repo root) — relocated out of
-// the app tree as a standalone, portable-elsewhere blockchain module. This
-// Mint Style / Gallery feature is unrelated to the settlement/mint journey
-// that prompted the move and still uses it as-is; only the path changed.
-import type { Erc721Metadata, Erc721Attribute } from '../../lib/chains/evm/erc721-metadata'
+// erc721-metadata.ts lives in archive/chains/evm/ (repo root) — relocated
+// out of the app tree as a standalone, portable-elsewhere blockchain module,
+// then into archive/ alongside the rest of lib/chains. This Mint Style /
+// Gallery feature is unrelated to the settlement/mint journey that prompted
+// the original move and still uses it as-is; only the path changed.
+import type { Erc721Metadata, Erc721Attribute } from '../../archive/chains/evm/erc721-metadata'
 
 // ── Source catalogue — Ecocity sustainable models ─────────────────────────────
 

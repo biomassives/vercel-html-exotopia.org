@@ -264,7 +264,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import type { EvmChain } from '../../lib/chains/evm/chains'
+import type { EvmChain } from '../chains/evm/chains'
 import BrowserWalletCreate from 'src/components/BrowserWalletCreate.vue'
 import BrowserWalletUnlock from 'src/components/BrowserWalletUnlock.vue'
 import { hasStoredWallet  } from './browser-wallet'

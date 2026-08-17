@@ -789,7 +789,7 @@
  * claim registry — see SETTLEMENT_ADDRESS_API.md.
  *
  * The removed per-chain mint code (EVM/Solana/Algorand) was relocated, not
- * deleted — see /lib/chains for reuse in other projects.
+ * deleted — see /archive/chains for reuse in other projects.
  */
 
 import { ref, computed, onMounted, nextTick } from 'vue'

@@ -1,5 +1,5 @@
 /**
- * lib/chains/evm/erc721-metadata.ts
+ * archive/chains/evm/erc721-metadata.ts
  *
  * ERC-721 / OpenSea-compatible metadata builders for all EVM-chain NFT types
  * in the PON INK protocol.
@@ -21,7 +21,7 @@
  * src/lib/evm/) so it can be reused by other projects without depending on
  * app-specific code. The contribution-split shape/default below used to be
  * imported from the app's src/lib/resonance-split.ts; inlined here instead
- * so this module has no dependency outside /lib/chains.
+ * so this module has no dependency outside /archive/chains.
  */
 
 /** Fractional allocation of a contribution across creator/community/platform. */

@@ -5,7 +5,7 @@ Security-model documentation that used to live in `src/pages/DocPage0.vue`'s
 docs when the wallet/on-chain-minting flow moved off blockchain minting onto
 IPFS pinning (see `README.md` in this folder). Not deleted outright — this is
 genuinely useful reference material if a future chain module (here or in
-another project built on `/lib/chains`) needs an in-browser wallet or an
+another project built on `/archive/chains`) needs an in-browser wallet or an
 on-chain threat model again.
 
 ---

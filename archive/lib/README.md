@@ -4,7 +4,7 @@ Unused app-specific wallet/minting UI, kept rather than deleted. Removed from
 the active app when the settlement/mint journey moved off blockchain minting
 onto IPFS pinning (see `src/lib/ipfs-pinning.ts`, `SETTLEMENT_ADDRESS_API.md`).
 
-Unlike `/lib/chains` (portable, chain-interaction code with no app
+Unlike `archive/chains` (portable, chain-interaction code with no app
 dependencies, meant for reuse in other projects), everything here is
 Exotopia-app-specific UI that nothing currently imports:
 
@@ -28,6 +28,6 @@ Exotopia-app-specific UI that nothing currently imports:
   `DEFAULT_CHAIN`, `ENABLED_PATHWAY_IDS`) for the old mint forms.
 
 Internal imports between these files were fixed to be relative (`./...`)
-rather than reaching back into `src/`, so this folder — like `/lib/chains` —
-can be copied elsewhere if a future project wants a working in-browser EVM
+rather than reaching back into `src/`, so this folder — like `archive/chains`
+— can be copied elsewhere if a future project wants a working in-browser EVM
 wallet implementation.

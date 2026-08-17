@@ -1,4 +1,4 @@
-# lib/chains
+# archive/chains
 
 Standalone blockchain-interaction code, relocated out of the Exotopia app
 tree (`src/`) so it can be reused in other projects without depending on
@@ -6,6 +6,14 @@ anything app-specific (Vue, Quasar, Pinia, or this repo's own `src/lib/*`
 modules). Exotopia itself no longer uses any of this — the settlement/mint
 journey now runs on IPFS pinning instead (see `src/lib/ipfs-pinning.ts`).
 Kept here as working reference/reusable code, not deleted.
+
+Moved here from `lib/chains/` (previously top-level, implying "still in
+active use") when the app's own Solana/Metaplex npm dependencies were
+removed — no crypto-chain minting work is planned in the immediate future.
+Nothing in this folder depended on those packages being installed at the
+repo root; it's self-contained (see "Using this elsewhere" below), so the
+removal has no effect on this code beyond needing its own `npm install` in
+whatever project it's copied into next.
 
 ## `evm/`
 
@@ -38,6 +46,6 @@ moon-relative trophic-level coordinate systems L4-L6). Same story as
 
 ## Using this elsewhere
 
-Each subdirectory is self-contained — copy the whole `lib/chains/` folder,
-or just one chain's subfolder, into another project. No path back into this
-repo's `src/` tree exists in any of these files.
+Each subdirectory is self-contained — copy the whole `archive/chains/`
+folder, or just one chain's subfolder, into another project. No path back
+into this repo's `src/` tree exists in any of these files.

@@ -41,7 +41,7 @@ export interface PinningService {
 
 // ── Pinata implementation ─────────────────────────────────────────────────────
 // Generalized from the settlement-specific uploadToPinata() that used to live
-// in (now-relocated) lib/chains/evm/mint-evm.ts, built for ERC-721 metadata.
+// in (now-relocated) archive/chains/evm/mint-evm.ts, built for ERC-721 metadata.
 //
 // Uses the v3 Files API (uploads.pinata.cloud), not the legacy /pinning/*
 // endpoints — v3 scoped keys (Files: write) don't carry the separate legacy

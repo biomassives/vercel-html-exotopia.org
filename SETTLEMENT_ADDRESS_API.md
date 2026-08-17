@@ -14,7 +14,7 @@ from someone keeping a settlement's content pinned to IPFS, not from exclusive o
 ownership. There is no server API and no shared database behind a settlement address; this repo
 previously used blockchain minting to make a settlement durable and (informally) contested, but
 that's been removed in favour of IPFS pinning — see `src/lib/ipfs-pinning.ts`. The relocated
-per-chain minting code that used to sit here lives on at `/lib/chains`, kept for reuse in other
+per-chain minting code that used to sit here lives on at `/archive/chains`, kept for reuse in other
 projects rather than deleted.
 
 ---
@@ -81,7 +81,7 @@ is pinned for address X" without already knowing the CID. That would need one of
 
 - [SPEC_EXOLOC_ADDRESS.md](SPEC_EXOLOC_ADDRESS.md) — canonical address grammar, all eight scopes, versioning
 - `src/lib/ipfs-pinning.ts` — the pinning module this pipeline hands off to at stage 4
-- `/lib/chains/README.md` — the relocated per-chain minting code this repo no longer uses, kept for reuse elsewhere
+- `/archive/chains/README.md` — the relocated per-chain minting code this repo no longer uses, kept for reuse elsewhere
 - [SPEC_WORLDBRIDGER_ONE.md](SPEC_WORLDBRIDGER_ONE.md) — if a future node type needs multi-author attribution/royalty-split
   (a `cooperative` or `dao`-ownership node with several contributors), defer to that mechanism
   rather than inventing a second one here
