@@ -16,7 +16,7 @@
           placeholder="Search docs…"
           color="cyan"
           input-class="dp-search-input"
-          style="min-width:220px"
+          class="dp-search-field"
           @update:model-value="onQuery"
           @focus="searchFocused = true"
           @blur="onBlur"
@@ -67,15 +67,15 @@
 
         <section :id="'getting-started'" class="dp-section">
           <h1 class="dp-h1">Getting Started</h1>
-          <p class="dp-p">Exotopia is an open, browser-based platform for virtual settlement on confirmed exoplanets, community-owned NFT minting, and real-world eco-ops field work. The standard Resonance Split for fee-carrying mints is <strong>99 / 0.75 / 0.25</strong> — 99% to creator, 0.75% to the Community Hardware Fund, 0.25% platform maintenance. Settlement deeds are <strong>100 / 0 / 0</strong> and primary minting is free (gas only).</p>
+          <p class="dp-p">Exotopia is an open, browser-based platform for virtual settlement on confirmed exoplanets and real-world eco-ops field work. Settlements are local-first: claiming and personalizing one is a free, device-resident record — no wallet, blockchain, or account required. An optional NFT deed and creative-economy layer are available through pon.ink / Worldbridger One for anyone who wants to monetize their work, but neither is required to create, own, or use a settlement.</p>
 
           <div :id="'what-is'" class="dp-sub">
             <h2 class="dp-h2">What is Exotopia?</h2>
             <p class="dp-p">Exotopia connects three things:</p>
             <ul class="dp-ul">
               <li><strong>NASA Exoplanet Archive data</strong> — 6,158 confirmed planets rendered in a navigable 3D cosmic web</li>
-              <li><strong>Virtual land deeds</strong> — Exolocation NFTs that anchor a settlement to a specific coordinate on an exoplanet</li>
-              <li><strong>SCD Hub eco-ops network</strong> — real-world water quality, farm mapping, and community field work recorded on-chain</li>
+              <li><strong>Local-first settlement addresses</strong> — an Exolocation address (<code class="dp-code">exotopia:{scope}:{path}</code>) anchors a settlement to a specific coordinate on an exoplanet, stored on the owner's own device with no wallet or blockchain required (optional IPFS pinning for durability)</li>
+              <li><strong>SCD Hub eco-ops network</strong> — real-world water quality, farm mapping, and community field work, recorded as tamper-evident Supabase + IPFS check-ins</li>
             </ul>
           </div>
 
@@ -106,10 +106,63 @@ npx quasar build        # production build to dist/spa/</div>
           </div>
 
           <div :id="'free-platform'" class="dp-sub">
-            <h2 class="dp-h2">Platform model — 99 / 0.75 / 0.25</h2>
-            <p class="dp-p">The standard Resonance Split applies to <em>fee-carrying</em> transactions — $SUNLIGHT recordings and generative compositions: <strong>99%</strong> to the creator/artist/worker wallet, <strong>0.75%</strong> to the Community Hardware Fund (WATSAN, mapping, field infrastructure), <strong>0.25%</strong> to platform maintenance. Exoloc settlement deeds use a different allocation — <strong>100 / 0 / 0</strong>, no platform cut. Primary settlement minting is free (network gas only), so on that path there is no fee to divide at all. None of these figures is a yield, a revenue share, or a claim on future platform revenue. Special mintings and airdrop events may use different parameters via additional contracts — any custom split requires co-sign approval and is logged on-chain.</p>
+            <h2 class="dp-h2">Platform model — how value actually flows</h2>
+            <p class="dp-p">Claiming, personalizing, and using a settlement is free, local-first, and carries no split of anything — there is no fee on that path, so there's nothing to divide. A separate, optional allocation called the <strong>Resonance Split</strong> exists for the one place real money can flow through the ecosystem today: pon.ink's creative-economy layer ($SUNLIGHT recordings, generative compositions). It only ever applies where a transaction actually carries a fee — never as an ongoing revenue share, a yield, or a claim on future platform income.</p>
+            <table class="dp-table">
+              <thead><tr><th>Path</th><th>Split (creator / community fund / platform)</th><th>When it applies</th></tr></thead>
+              <tbody>
+                <tr><td>Settlement creation</td><td>{{ primaryMintIsFree ? 'No split — free, no fee to divide' : 'No split defined' }}</td><td>Always, on the core (non-pon.ink) path</td></tr>
+                <tr><td>Exoloc deed, if minted via pon.ink</td><td>{{ settlementSplitDisplay }}</td><td>Only if the owner opts into an on-chain deed</td></tr>
+                <tr><td>$SUNLIGHT / generative works</td><td>{{ standardSplitDisplay }}</td><td>Only on a fee-carrying pon.ink sale</td></tr>
+              </tbody>
+            </table>
+            <p class="dp-p">These numbers are pulled live from <code class="dp-code">src/lib/resonance-split.ts</code>, this codebase's single source of truth for the split — that file's own header rule is "do not inline percentages anywhere, including in copy," so this page computes them rather than restating them by hand. Special mintings and airdrop events on pon.ink may use different parameters via additional contracts; any custom split there requires Group Manager + Admin co-sign and is logged in the <code class="dp-code">payment_splits_ledger</code>, not on a blockchain.</p>
             <div class="dp-callout">
-              <strong>Fee isolation rule:</strong> Gas costs are always displayed separately and never combined with creator payouts. The resonance split (99 / 0.75 / 0.25) is computed independently of gas.
+              <strong>Fee isolation rule:</strong> Gas costs are always displayed separately and never combined with creator payouts. The resonance split is computed independently of gas, and is never shown next to a free path as if it implies a revenue stream that doesn't exist there.
+            </div>
+
+            <div class="dp-qa">
+              <div class="dp-qa-item">
+                <p class="dp-qa-q">Do I have to pay anything to claim or keep a settlement?</p>
+                <p class="dp-qa-a">No. The core settlement path — claiming a location, personalizing it, running eco-ops check-ins, earning points — is free and local-first: no wallet, no blockchain, no account, no gas fee. The Resonance Split above never applies to it.</p>
+              </div>
+              <div class="dp-qa-item">
+                <p class="dp-qa-q">So when would the split ever actually apply to me?</p>
+                <p class="dp-qa-a">Only if you choose to use pon.ink's optional layer — minting a tradeable Exoloc deed, or selling a $SUNLIGHT recording or generative composition. If you never touch pon.ink, you'll never see a split figure that means anything for you.</p>
+              </div>
+              <div class="dp-qa-item">
+                <p class="dp-qa-q">Can the platform quietly take a bigger cut later?</p>
+                <p class="dp-qa-a">Not without it showing up here first. The numbers on this page are computed from the same file (<code class="dp-code">resonance-split.ts</code>) every payment path in the app reads from — there's no separate, hidden figure used elsewhere. A custom split for a special event still requires two-person (Group Manager + Admin) co-sign and a ledger entry, not a unilateral change.</p>
+              </div>
+              <div class="dp-qa-item">
+                <p class="dp-qa-q">Why does the settlement deed split (100/0/0-equivalent) differ from the creative-work split?</p>
+                <p class="dp-qa-a">They're deliberately separate constants in the code, not two views of the same number — collapsing them would risk silently changing what a settlement deed transaction actually pays out. A settlement deed is meant to cost its owner nothing beyond network gas; a creative-work sale is meant to overwhelmingly favor the creator while still funding shared field infrastructure.</p>
+              </div>
+            </div>
+
+            <h3 class="dp-h3">Validated against our guiding principles</h3>
+            <p class="dp-p">This model is checked against the same five principles that govern the rest of Exotopia (<code class="dp-code">SPEC.md</code> §0) — not as marketing copy, but as a pathway anyone can re-verify against the actual code.</p>
+            <div class="dp-principles">
+              <div class="dp-principle">
+                <p class="dp-principle-name">Real data, real stakes</p>
+                <p class="dp-principle-body">The split only ever governs real value changing hands on pon.ink. It has no effect on the astronomical data pipeline or eco-ops records, which stay real and unmonetized either way.</p>
+              </div>
+              <div class="dp-principle">
+                <p class="dp-principle-name">Reward the doers</p>
+                <p class="dp-principle-body">The default, guaranteed reward path is the free points-and-certificate ledger (<code class="dp-code">SPEC.md</code> §21) — it doesn't require touching pon.ink at all. When a fee-carrying sale does happen, the split sends the overwhelming majority to the creator, not the platform.</p>
+              </div>
+              <div class="dp-principle">
+                <p class="dp-principle-name">Accessible first</p>
+                <p class="dp-principle-body">Primary settlement creation has no split to understand, no wallet to fund, and no gas to budget for — it works the same on a mid-range Android handset on 3G as it does anywhere else.</p>
+              </div>
+              <div class="dp-principle">
+                <p class="dp-principle-name">Open by default</p>
+                <p class="dp-principle-body">The split math lives in one open-source file with a stated no-inlining rule, so this page (and every other surface that shows it) is provably reading the same number — not a black box, and not something that can drift out of sync without the source changing first.</p>
+              </div>
+              <div class="dp-principle">
+                <p class="dp-principle-name">Culture is the vehicle</p>
+                <p class="dp-principle-body">The one place the split actually applies today is creative work — recordings and generative compositions — with a mandatory slice routed to the Community Hardware Fund rather than platform margin.</p>
+              </div>
             </div>
           </div>
         </section>
@@ -224,6 +277,30 @@ npx quasar build        # production build to dist/spa/</div>
             <router-link to="/void-math" class="dp-link dp-link--btn" style="margin-left:8px">Void &amp; conduit math →</router-link>
             <router-link to="/blog" class="dp-link dp-link--btn" style="margin-left:8px">Working notes &amp; blog →</router-link>
           </div>
+
+          <div :id="'contract-workshop-lesson'" class="dp-sub">
+            <h2 class="dp-h2">Educational workshop — creative contracts &amp; chemistry</h2>
+            <p class="dp-p">A two-part teaching demo: a plain-language, hand-writable example of a creative-reference agreement (media &amp; rights literacy, referencing the File Cabinet's Creative Assets drawer), paired with an interactive chemistry-and-number-theory lesson on converting a mass of butane gas into a molecule count via moles and Avogadro's number.</p>
+            <table class="dp-table">
+              <thead><tr><th>Part</th><th>Audience</th><th>Topics</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td><strong>Writing a Plain-Language Creative Reference</strong></td>
+                  <td>Media &amp; rights literacy</td>
+                  <td>What a creative-reference note should cover, a worked example document, the File Cabinet's <code class="dp-code">creativeAssetsDrawer</code> connection, spot-the-gaps activity</td>
+                </tr>
+                <tr>
+                  <td><strong>How Many Molecules Are in a Lighter?</strong></td>
+                  <td>Grades 9–12</td>
+                  <td>Molar mass, Avogadro's number, mass→moles→molecule count, scientific notation, the short-scale naming ladder, a live interactive calculator</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="dp-callout dp-callout--info">
+              This is a low-risk, purely illustrative teaching demo — no real contract is formed, no real item changes hands, and it is independent of the platform's real points/certificate reward system (<code class="dp-code">SPEC.md</code> §21).
+            </div>
+            <router-link to="/contract-workshop" class="dp-link dp-link--btn">Open the workshop →</router-link>
+          </div>
         </section>
 
         <section :id="'protocol'" class="dp-section">
@@ -231,9 +308,9 @@ npx quasar build        # production build to dist/spa/</div>
 
           <div :id="'exolocation'" class="dp-sub">
             <h2 class="dp-h2">Exolocation address system</h2>
-            <p class="dp-p">Every settlement has a permanent on-chain address:</p>
-            <div class="dp-code-block">exo-surface-v1 : Kepler-442b : 15N,23W</div>
-            <p class="dp-p">Three components: <strong>coordinate system</strong> · <strong>reference body</strong> · <strong>location descriptor</strong> (lat/lon for surface, L4/L5 for Lagrange, altitude band for orbital).</p>
+            <p class="dp-p">Every settlement has a permanent, local-first address — a device-resident record with no wallet, blockchain, or account required (optional IPFS pinning for durability):</p>
+            <div class="dp-code-block">exotopia:surface:kepler-442/kepler-442b/aurora-basin</div>
+            <p class="dp-p">Three components: <strong>scope</strong> (e.g. <code class="dp-code">surface</code>, matching the coordinate system below) · <strong>reference body</strong> (host star / body) · <strong>region</strong> (a named zone; lat/lon for surface, L4/L5 for Lagrange, altitude band for orbital — see <code class="dp-code">SPEC_EXOLOC_ADDRESS.md</code>). Owners who want a tradeable on-chain deed can optionally mint one through pon.ink; it is not required to create or use a settlement.</p>
             <table class="dp-table">
               <thead><tr><th>Trophic level</th><th>Name</th><th>Coordinate system</th></tr></thead>
               <tbody>
@@ -249,19 +326,19 @@ npx quasar build        # production build to dist/spa/</div>
 
           <div :id="'sunlight-nft'" class="dp-sub">
             <h2 class="dp-h2">$SUNLIGHT NFT</h2>
-            <p class="dp-p">The sound and creative recording NFT standard on Polygon. $SUNLIGHT NFTs represent ownership of a recorded sound, track, or creative work — with on-chain licensing terms (personal use, commercial, sync, exclusive). Royalty enforcement is on-chain. The name reflects the free-flowing, illuminating nature of creative energy in the network.</p>
+            <p class="dp-p">An optional pon.ink / Worldbridger One layer, not part of the core Exotopia settlement system — the sound and creative recording NFT standard on Polygon. $SUNLIGHT NFTs represent ownership of a recorded sound, track, or creative work — with on-chain licensing terms (personal use, commercial, sync, exclusive). Royalty enforcement is on-chain. Nothing here is required to create, own, or use a settlement; it's available for creators who choose to monetize field recordings or compositions through pon.ink.</p>
             <p class="dp-p">Metadata fields: title, artist, duration_sec, BPM, key, genre, IPFS audio CID, license, co-artists, sample credits.</p>
           </div>
 
           <div :id="'art-tokens'" class="dp-sub">
-            <h2 class="dp-h2">Activity Reward Tokens (ART)</h2>
-            <p class="dp-p">Sponsors of eco-ops field activities receive ART tokens proportional to verified impact. Token rates:</p>
+            <h2 class="dp-h2">Eco-ops Rewards (Points Ledger)</h2>
+            <p class="dp-p">Eco-ops field activities feed a Supabase-backed points-and-certificate ledger (<code class="dp-code">SPEC.md</code> §21/§24) — not a blockchain token. Verified submissions post into the <code class="dp-code">volunteering</code> and <code class="dp-code">educating_others</code> reward tracks:</p>
             <ul class="dp-ul">
-              <li>💧 Water quality check-in → +12 ART</li>
-              <li>🌱 Farm map submission → +8 ART</li>
-              <li>◈ Eco-ops verified on-chain → +5 ART</li>
+              <li>💧 Eco-ops check-in — water quality, farm map, or any of the eight field-survey types, synced from an offline record → <strong>+10 pts</strong> (<code class="dp-code">eco_submission</code>)</li>
+              <li>🌱 Self-reported volunteer entry (e.g. a plastics-collection log) → <strong>+8 pts</strong> (<code class="dp-code">volunteer_self_report</code>)</li>
+              <li>◈ PFAS/PFOA decontamination-project progress log entry → <strong>+6 pts</strong> (<code class="dp-code">decon_progress_log</code>)</li>
             </ul>
-            <p class="dp-p">ARTs are a non-tradable record of contribution — Exotopia does not operate a secondary market or exchange for them, and they carry no cash value or expectation of return.</p>
+            <p class="dp-p">Points are a non-tradable record of contribution — Exotopia does not operate a secondary market or exchange for them, and they carry no cash value or expectation of return. Sustained volunteering points unlock a Field Volunteer settlement object. A separate token, <strong>ART</strong>, exists specifically for the Security Bulletin's verification chain — see <a class="dp-link" href="#" @click.prevent="scrollTo('cve-bulletin')">Security Bulletin</a>.</p>
           </div>
 
           <div :id="'robot-mule'" class="dp-sub">
@@ -324,6 +401,18 @@ npx quasar build        # production build to dist/spa/</div>
               <li><strong>In-app data-gap signal</strong> — Cluster Interior's granular zoom (LOD) prints <code class="dp-code">[LOD] DATA REQUEST</code> to the browser console, naming any galaxy that lacks a real star-system catalog entry. These are the same targets reviewed in Citizen Data Verification science-outreach sessions — see <a class="dp-link" href="#" @click.prevent="scrollTo('science-outreach')">Events &amp; Outreach</a></li>
             </ul>
           </div>
+        </section>
+
+        <section :id="'api-section'" class="dp-section">
+          <h1 class="dp-h1">API &amp; Data Surface</h1>
+          <p class="dp-p">Everything above this section documents individual pieces of the data surface
+            (catalogs, glossary, protocol). This page is a full, explorable map of the whole thing as one
+            system — every Supabase table grouped by domain with an honest RLS note, the static JSON data
+            files, the exolocation address grammar, and the pure-function settlement SDK — with anything
+            not yet built clearly labelled as such rather than presented as live.</p>
+          <router-link to="/api-surface" class="dp-link dp-link--btn">Open the API &amp; Data Surface map →</router-link>
+          <p class="dp-p" style="margin-top:10px">See also <code class="dp-code">SPEC_API_PRODUCT.md</code> for the
+            refined data-model and distribution/federation plan built on top of this inventory.</p>
         </section>
 
         <section :id="'pipeline-section'" class="dp-section">
@@ -522,9 +611,18 @@ Scene units: 1 Mpc = 1/15 scene units (MPC_SCALE)</div>
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter }     from 'vue-router'
+import {
+  STANDARD_SPLIT, SETTLEMENT_SPLIT, PRIMARY_MINT_IS_FREE, formatSplit,
+} from 'src/lib/resonance-split'
 
 const route  = useRoute()
 const router = useRouter()
+
+// Pulled live from resonance-split.ts, never inlined — see that file's own
+// header rule ("do not inline percentages anywhere, including in copy").
+const standardSplitDisplay   = formatSplit(STANDARD_SPLIT)
+const settlementSplitDisplay = formatSplit(SETTLEMENT_SPLIT)
+const primaryMintIsFree      = PRIMARY_MINT_IS_FREE
 
 // ── Navigation structure ──────────────────────────────────────────────────────
 
@@ -534,7 +632,7 @@ const NAV = [
     { id: 'what-is',         label: 'What is Exotopia?'     },
     { id: 'new-user',        label: 'Run Your Own Instance' },
     { id: 'refinements',     label: 'Refinements'           },
-    { id: 'free-platform',   label: '99/0.75/0.25 Model'         },
+    { id: 'free-platform',   label: 'Platform Model'             },
   ]},
   { id: 'visualization', icon: '🌌', label: 'Visualization', items: [
     { id: 'visualization',       label: 'Overview'               },
@@ -550,12 +648,13 @@ const NAV = [
     { id: 'event-types',      label: 'Event Types & Beacons'          },
     { id: 'science-outreach', label: 'Science & Education Outreach'   },
     { id: 'edu-lessons',      label: 'Educational Lessons →'          },
+    { id: 'contract-workshop-lesson', label: 'Contracts & Chemistry Workshop →' },
   ]},
   { id: 'protocol', icon: '⬡', label: 'Protocol & Economy', items: [
     { id: 'protocol',     label: 'Overview'              },
     { id: 'exolocation',  label: 'Exolocation Addresses' },
     { id: 'sunlight-nft', label: '$SUNLIGHT NFT'         },
-    { id: 'art-tokens',   label: 'ART Tokens'            },
+    { id: 'art-tokens',   label: 'Eco-ops Rewards'       },
     { id: 'robot-mule',   label: 'mule-bot'         },
   ]},
   { id: 'glossary-section', icon: '📖', label: 'Glossary', items: [
@@ -566,6 +665,9 @@ const NAV = [
     { id: 'catalogs',            label: 'Input Catalog Sources' },
     { id: 'generated-inventory', label: 'Generated Inventory'   },
     { id: 'data-gaps',           label: 'Known Gaps'            },
+  ]},
+  { id: 'api-section', icon: '🗂', label: 'API & Data Surface', items: [
+    { id: 'api-section', label: 'Full explorable map →' },
   ]},
   { id: 'pipeline-section', icon: '⚗', label: 'Data Pipeline', items: [
     { id: 'pipeline-section',   label: 'Overview'              },
@@ -639,7 +741,7 @@ const DOC_INDEX: DocHint[] = [
   { id: 'what-is',         section: 'Getting Started', title: 'What is Exotopia?',     text: 'exoplanet virtual land nft community eco-ops field work nasa catalog' },
   { id: 'new-user',        section: 'Getting Started', title: 'Run Your Own Instance', text: 'self host supabase git gitlab gitea github vercel deploy no blockchain three steps' },
   { id: 'refinements',     section: 'Getting Started', title: 'Refinements',           text: 'cloudflare redis appwrite standalone autonomous home network public stand up federation' },
-  { id: 'free-platform',   section: 'Getting Started', title: '99/0.75/0.25 Model',          text: 'fee model resonance split creator platform free zero percent' },
+  { id: 'free-platform',   section: 'Getting Started', title: 'Platform Model',             text: 'fee model resonance split creator platform free zero percent guiding principles qa faq' },
   { id: 'cosmic-view',     section: 'Visualization',   title: 'Cosmic Web & Voids',     text: 'laniakea void bootes local sculptor supercluster filament dark energy blob timular' },
   { id: 'galaxy-clusters', section: 'Visualization',   title: 'Galaxy Clusters & LOD', text: 'lod level detail cluster virgo coma norma xray morphology elliptical spiral' },
   { id: 'system-view',     section: 'Visualization',   title: 'Star Systems',           text: 'planet orbit multiplanet multimoon lagrange l4 l5 camera co-orbit' },
@@ -650,14 +752,16 @@ const DOC_INDEX: DocHint[] = [
   { id: 'event-types',     section: 'Events',          title: 'Event Types & Beacons', text: 'live event workshop gallery sound session settlement science outreach beacon colour' },
   { id: 'science-outreach',section: 'Events',          title: 'Science & Education Outreach', text: 'international education research citizen science data verification sprint cluster tour data request' },
   { id: 'edu-lessons',     section: 'Events',          title: 'Educational Lessons — Sky Generation', text: 'parallax sky lessons kepler k2-90 pleiades constellation math exomoon black hole isco hill sphere roche raDecToVec3 grade school classroom' },
+  { id: 'contract-workshop-lesson', section: 'Events', title: 'Contracts & Chemistry Workshop', text: 'creative reference agreement rights literacy media file cabinet avogadro butane moles molecules scientific notation sextillion chemistry number theory teaching demo' },
   { id: 'exolocation',     section: 'Protocol',        title: 'Exolocation Addresses', text: 'coordinate system trophic level sublunary syzygy liminal exo-surface-v1 lagrange' },
   { id: 'sunlight-nft',    section: 'Protocol',        title: '$SUNLIGHT NFT',         text: 'sound music creative recording polygon license royalty bars' },
-  { id: 'art-tokens',      section: 'Protocol',        title: 'ART Tokens',            text: 'activity reward eco-ops sponsor water farm field work token contribution record' },
+  { id: 'art-tokens',      section: 'Protocol',        title: 'Eco-ops Rewards',       text: 'activity reward eco-ops points ledger sponsor water farm field work contribution record supabase' },
   { id: 'robot-mule',      section: 'Protocol',        title: 'mule-bot',         text: 'mule ai local corpus sovereign knowledge assistant settlement specialist domain' },
   { id: 'glossary-section',section: 'Glossary',        title: 'Key Terms',             text: 'glossary definitions terms protocol trophic astronomy settlement nft' },
   { id: 'catalogs',            section: 'Data',     title: 'Input Catalog Sources',    text: 'nasa exoplanet archive xmm newton takey hyg virgo vcc fcc rc3 laniakea' },
   { id: 'generated-inventory',section: 'Data',     title: 'Generated Data Inventory', text: 'star systems cluster members galaxy oracle generated json pipeline public' },
   { id: 'data-gaps',           section: 'Data',     title: 'Known Gaps',               text: 'missing distance sy_dist null coverage gap southern hemisphere moon data' },
+  { id: 'api-section',         section: 'API',      title: 'API & Data Surface',       text: 'api surface supabase schema tables rls migrations settlements sdk exoloc address grammar eco_ops rewards ledger community nodes' },
   { id: 'pipeline-section',    section: 'Pipeline', title: 'Data Pipeline Overview',   text: 'pipeline python datagathering generation deterministic json static ingest enrich' },
   { id: 'pipeline-overview',   section: 'Pipeline', title: 'Three-Stage Pipeline',     text: 'fetch enrich architecture starsystem generate king profile schechter titius bode' },
   { id: 'pipeline-scripts',    section: 'Pipeline', title: 'Script Reference',         text: 'python script datagathering fetch_cluster generate_cluster enrich_with rc3 architecture oracle' },
@@ -708,10 +812,10 @@ const KEY_TERMS = [
   { id:  6,  term: 'Trophic Level', short: 'A settlement\'s position in the gravitational hierarchy of a star system (L1–L6).' },
   { id: 10,  term: 'L4 SUBLUNARY',  short: 'Trophic level 4 — on the surface of a moon. Coordinate system: exo-moon-surface-v1.' },
   { id: 11,  term: 'L5 SYZYGY',     short: 'Trophic level 5 — at a moon–planet Lagrange equilibrium point.' },
-  { id: 24,  term: 'Exolocation',   short: 'Permanent on-chain address anchoring a settlement to a specific location on an exoplanet.' },
+  { id: 24,  term: 'Exolocation',   short: 'Permanent, local-first address anchoring a settlement to a specific location on an exoplanet — no wallet or blockchain required.' },
   { id: 29,  term: 'Stone Circle',  short: 'Cultural landmark at the centre of each settlement. Marks cardinal directions and carries the intention statement.' },
   { id: 31,  term: 'Resonance Split', short: '99 / 0.75 / 0.25 on fee-carrying mints; 100 / 0 / 0 on settlement deeds. Primary minting is free — gas only.' },
-  { id: 40,  term: 'PON INK',       short: 'Primary operations portal for the SCD Hub — records every action on-chain.' },
+  { id: 40,  term: 'PON INK',       short: 'Optional creative-economy portal (sound tools, payments, NFT minting) — not required to create or use a settlement.' },
   { id: 41,  term: 'SCD Hub',       short: 'Sustainable Community Development Hub — US non-profit building digital infrastructure for community resilience.' },
   { id: 42,  term: 'E8 Coxeter Lattice', short: 'Mathematical basis for the wormhole conduit network transit routing geometry.' },
   { id: 45,  term: 'Hub Approvideo', short: 'SCD Hub curated video resource library — maintained by mule-bot.' },
@@ -810,6 +914,7 @@ onUnmounted(() => {
 .dp-topbar-title { font-size: 9px; letter-spacing: 0.18em; color: rgba(80,140,180,0.50); flex: 1; }
 
 .dp-search-wrap { position: relative; }
+.dp-search-field { min-width: 220px; }
 .dp-hints {
   position: absolute; top: calc(100% + 4px); right: 0; left: 0;
   background: rgba(1,6,22,0.99); border: 1px solid rgba(0,140,200,0.28);
@@ -890,6 +995,10 @@ onUnmounted(() => {
   font-size: 14px; font-weight: 600; color: rgba(180, 220, 245, 0.88);
   letter-spacing: 0.05em; margin: 0 0 8px;
 }
+.dp-h3 {
+  font-size: 11px; font-weight: 600; color: rgba(170, 210, 235, 0.82);
+  letter-spacing: 0.06em; margin: 16px 0 6px;
+}
 .dp-p  { font-size: 10.5px; color: rgba(120, 175, 215, 0.72); line-height: 1.75; margin: 0 0 10px; }
 .dp-p strong { color: rgba(200, 230, 255, 0.85); }
 
@@ -935,10 +1044,80 @@ onUnmounted(() => {
 .dp-table tr:last-child td { border-bottom: none; }
 .dp-table td:first-child { color: rgba(180, 220, 245, 0.85); }
 
+/* Inline help Q&A */
+.dp-qa { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 6px; }
+.dp-qa-item {
+  background: rgba(0, 8, 22, 0.55); border: 1px solid rgba(0, 70, 120, 0.20);
+  border-radius: 5px; padding: 9px 12px;
+}
+.dp-qa-q {
+  font-size: 10px; font-weight: 600; color: rgba(0, 210, 255, 0.85);
+  line-height: 1.5; margin: 0 0 4px;
+}
+.dp-qa-q::before { content: 'Q · '; color: rgba(0, 160, 210, 0.55); }
+.dp-qa-a { font-size: 10px; color: rgba(120, 175, 215, 0.72); line-height: 1.65; margin: 0; }
+.dp-qa-a::before { content: 'A · '; color: rgba(0, 200, 150, 0.50); }
+
+/* Guiding-principles validation grid */
+.dp-principles {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 8px; margin: 6px 0 10px;
+}
+.dp-principle {
+  background: rgba(0, 50, 40, 0.22); border: 1px solid rgba(0, 150, 110, 0.22);
+  border-radius: 5px; padding: 9px 12px;
+}
+.dp-principle-name {
+  font-size: 8.5px; font-weight: 600; letter-spacing: 0.10em; text-transform: uppercase;
+  color: rgba(0, 200, 150, 0.75); margin: 0 0 4px;
+}
+.dp-principle-body { font-size: 10px; color: rgba(130, 215, 190, 0.78); line-height: 1.6; margin: 0; }
+
 /* Glossary mini-grid */
 .dp-gloss-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 8px; }
 .dp-gloss-item { background: rgba(0, 8, 22, 0.70); border: 1px solid rgba(0, 70, 120, 0.18); border-radius: 4px; padding: 8px 10px; display: flex; flex-direction: column; gap: 2px; }
 .dp-gloss-num  { font-size: 7px; letter-spacing: 0.14em; color: rgba(0, 180, 220, 0.45); }
 .dp-gloss-term { font-size: 10.5px; font-weight: 600; color: rgba(190, 225, 250, 0.88); }
 .dp-gloss-short { font-size: 8.5px; color: rgba(110, 165, 205, 0.62); line-height: 1.55; }
+
+/* ── Mobile — the desktop layout is a fixed 220px sidebar + 720px content
+   column + 48px side padding (~1036px minimum), which forced horizontal
+   scroll on any phone-width viewport. Stack the sidebar above the content
+   and shrink padding/grids instead of changing any of the nav/search/table
+   behavior. ────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .dp-topbar-title { display: none; }
+  .dp-search-wrap  { flex: 1; min-width: 0; }
+  .dp-search-field { min-width: 0; width: 100%; }
+
+  .dp-layout { flex-direction: column; }
+
+  .dp-nav {
+    width: 100%;
+    position: static;
+    /* All accordion sections start expanded (see openNav init) — on the
+       desktop sidebar that's fine since it scrolls independently of the
+       content column, but stacked full-width here it would push the
+       actual page content down by several screens. Cap it and let it
+       scroll on its own, same idea as the desktop sidebar just capped
+       by viewport height instead of full height. */
+    max-height: 38vh;
+    overflow-y: auto;
+    border-right: none;
+    border-bottom: 1px solid rgba(0, 70, 120, 0.20);
+    padding: 8px 0 12px;
+  }
+
+  .dp-content { padding: 20px 16px 60px; }
+  .dp-section { max-width: 100%; }
+
+  .dp-table { display: block; overflow-x: auto; }
+
+  .dp-gloss-grid { grid-template-columns: 1fr; }
+
+  /* Added with the Platform Model section — same overflow-prone patterns
+     as .dp-gloss-grid and .dp-table above, same fix. */
+  .dp-qa-item, .dp-principle { padding: 9px 10px; }
+  .dp-principles { grid-template-columns: 1fr; }
+}
 </style>

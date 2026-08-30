@@ -393,7 +393,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'docs',
         name: 'docs',
-        component: () => import('src/pages/DocPage0.vue'),
+        component: () => import('src/pages/DocPage.vue'),
         meta: { title: 'Docs' },
       },
       {
