@@ -582,6 +582,18 @@ export const BLOG_POSTS: BlogPostMeta[] = [
       'A plain-language snapshot of the project as it actually stands, written to hand to someone who\'s never seen it before: still pre-launch, still zero users, everything below is "what\'s real and working," not "what people are using." Covers a week of shipped work — the Milky Way rebuilt on real Reid et al. 2019 spiral-arm data with a new all-sky galactic band from a settlement\'s surface, station interiors getting real circular "porthole" windows and a deck-map guide panel, settlement gallery structures becoming enterable File Cabinets backed by the same Supabase tables as the rest of the platform, /sky-lessons and the 104-video Eco-Ops field library finally getting nav entries after being reachable only through onboarding or a buried deep link, a mentor group-leader rollup view on the Rewards page, a new /my-listings business directory, a fix to the Local Void detail page that was silently failing over to an empty catalog on a NASA/IPAC NED query timeout, and a cleanup that archived unused Hardhat/Solana/Metaplex blockchain tooling to archive/chains/ rather than deleting it outright. Just as direct about what isn\'t done: the sky-data "regime" architecture is specced but not built, the installable PWA identity still only covers the citizen-science module, and the onboarding welcome-letter template still describes settlement addresses as "recorded on the blockchain" — stale relative to the actual local-first/IPFS architecture, flagged but not yet fixed.',
     editorialNote: 'Supersedes the August 10 status report; nothing in that one was wrong, this one is just more current. Published alongside an open call for testers, mentors, and technical collaborators.',
   },
+  {
+    slug:     'visual-library-proposal',
+    title:    'The Fourth Track',
+    subtitle: 'A proposal for a Visual Library of settlement objects and design elements — and an open question about what the Financial Literacy Power-Up actually delivers today',
+    date:     'August 2026',
+    audience: ['community', 'dev', 'ecosystem'],
+    series:   'protocol',
+    status:   'public-draft',
+    description:
+      'A review of the P-Fin 8/28 financial-literacy incentive system against SPEC.md §21/§21.5, followed by a concrete proposal for the fourth RewardTrack §21.5 already named as the shortest path to a "library curation" and "model contribution" track: a public, browsable Visual Library of the settlement-object catalog (src/lib/settlement-items.ts), built on the same submission/endorsement pattern PFAS method proposals already use (no formal peer-reviewer role invented, matching SPEC.md §24.3\'s honest gap), feeding the same points/certificate/settlement-object plumbing the finance-literacy and volunteering tracks already use. Also reports, as an open question rather than a fix, that PlatformPage.vue\'s live "Financial Literacy Power-Up" callout describes a personal link-page settlement seed and a numbered parallel-universe upgrade with a full Train & Certify toolset — none of which exists in src/stores/rewards.ts or src/lib/settlements.ts today. What actually happens on quiz completion is a real points award, a real server-issued certificate, and a real decorative object (Seed Vault / Signal Beacon) added to the member\'s existing settlement.',
+    editorialNote: 'The PlatformPage.vue / rewards-catalog.ts copy finding needs a maintainer decision before any correction ships — this post deliberately does not rewrite that copy. See SPEC.md §23, which already corrected one earlier version of this same promise.',
+  },
 ]
 
 export function getRelatedPosts (post: BlogPostMeta, limit = 3): BlogPostMeta[] {
