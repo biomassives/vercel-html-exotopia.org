@@ -26,7 +26,7 @@ federation protocol that doesn't exist.
 
 ## 2. Architecture: the three-step baseline
 
-Already documented in `DocPage0.vue`'s "Run Your Own Instance" section and
+Already documented in `DocPage.vue`'s "Run Your Own Instance" section and
 `blog-self-hosted-exotopia.md`; captured here for the technical record:
 
 1. **Supabase** — a project, plus the migrations already in `supabase/migrations/` run
@@ -72,7 +72,7 @@ goal, not a shipped mechanism. Concretely unresolved:
 - **Conflict resolution.** Two independently-run instances editing overlapping data (e.g.
   the same real-world site logged from two communities) need a reconciliation model that
   doesn't currently exist anywhere in this codebase.
-- **Trust/identity between instances.** `DocPage0.vue`'s "API & mule-bot Security" section
+- **Trust/identity between instances.** `DocPage.vue`'s "API & mule-bot Security" section
   already flags a related, narrower version of this same problem for its own federation
   phase — "per-node pubkey pinning and cross-settlement corpus queries with
   privacy-preserving aggregation" — which is the closest existing design thinking to what
@@ -111,7 +111,7 @@ treating them as one federation problem.
 
 - `blog-self-hosted-exotopia.md` — the public-facing version of §1/§4's pitch
 - `README.md` → Developer setup — the exact commands §2 points to rather than restates
-- `DocPage0.vue` → "Run Your Own Instance" / "Refinements" — the in-app version of §2/§3
+- `DocPage.vue` → "Run Your Own Instance" / "Refinements" — the in-app version of §2/§3
 - `SPEC_COMMUNITY_NODES.md` §4 — `exportForSelfHost()`, the closest existing prior art for §4/Q1
 - `vercel.json` — deploy config, CSP, and cache policy referenced in §2/§3
 - `.env.example` — the two Supabase env vars §2 requires

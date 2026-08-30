@@ -49,18 +49,19 @@
           <span class="rf-icon">⬡</span>
           <div class="rf-titles">
             <div class="rf-title">GET A PROPERTY</div>
-            <div class="rf-tag rf-tag--green">FREE TO MINT</div>
+            <div class="rf-tag rf-tag--green">FREE TO CLAIM</div>
           </div>
         </div>
         <div class="rf-desc">
           Claim 40 virtual acres on any confirmed exoplanet. Choose your
-          settlement pathway, select your plot, and mint your Exolocation
-          deed on-chain. No purchase required, no resale market attached.
+          settlement pathway, select your plot, and create your Exolocation
+          address — a free, local-first record with no wallet or blockchain
+          required. No purchase required, no resale market attached.
         </div>
         <div class="rf-links">
           <span class="rf-link" @click.stop="go('/galaxy')">Find a planet</span>
           <span class="rf-sep">·</span>
-          <span class="rf-link" @click.stop="go('/mint')">Mint deed</span>
+          <span class="rf-link" @click.stop="go('/mint')">Claim address</span>
           <span class="rf-sep">·</span>
           <span class="rf-link" @click.stop="go('/gallery')">Buy from gallery</span>
         </div>

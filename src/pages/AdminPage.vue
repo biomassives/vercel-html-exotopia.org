@@ -47,8 +47,7 @@
           <div class="adm-card__title">Eco-Ops Management</div>
           <div class="adm-card__desc">
             Field check-in protocol management. Configure activity types, review
-            GPS-tagged submissions, and manage water quality certificate issuance
-            on-chain.
+            GPS-tagged submissions, and manage water quality certificate issuance.
           </div>
           <div class="adm-card__meta">WATSAN · farmMap · garbageMap · eco-ops</div>
         </div>

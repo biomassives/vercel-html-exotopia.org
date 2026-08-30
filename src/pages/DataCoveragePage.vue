@@ -105,8 +105,10 @@
         <h2 class="dc-section-title">⬡ Lagrange Addressing — how exolocation coordinates work</h2>
 
         <div class="dc-body">
-          Every virtual settlement in Exotopia has a permanent on-chain address built from
-          a coordinate system identifier, a reference body, and a location descriptor.
+          Every virtual settlement in Exotopia has a permanent, local-first exolocation address
+          built from a coordinate system identifier, a reference body, and a location
+          descriptor — no wallet or blockchain required. An optional on-chain NFT anchor
+          for the same address is available via pon.ink.
           The address encodes both <strong>where</strong> the settlement is and
           <strong>what gravitational environment</strong> it inhabits.
         </div>

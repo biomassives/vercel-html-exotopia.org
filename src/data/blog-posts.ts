@@ -513,14 +513,14 @@ export const BLOG_POSTS: BlogPostMeta[] = [
   {
     slug:     'settlement-address-api',
     title:    'The Settlement URL Is an Address, Not Yet an API',
-    subtitle: 'SPEC_EXOLOC_ADDRESS.md documents a public API for looking up a settlement. We went looking for it. Here\'s the actual dependency chain, and the gap.',
-    date:     'July 2026',
+    subtitle: 'SPEC_EXOLOC_ADDRESS.md documents a public API for looking up a settlement. We went looking for it. Here\'s the actual dependency chain, and what changed since blockchain minting was removed.',
+    date:     'August 2026',
     audience: ['dev', 'ecosystem'],
     series:   'protocol',
     status:   'public-draft',
     description:
-      'Traces what actually happens when a settlement address gets "placed" — from the NASA Exoplanet Archive reference data, through the pure string-building functions in settlements.ts/moon-settlement.ts, into a client-only localStorage record, and out through three independent chain-specific metadata writers (EVM, Solana, Algorand) to a pon.ink mint. Confirms two real gaps found while writing this: the `GET /api/v1/exoloc` endpoint named in SPEC_EXOLOC_ADDRESS.md\'s header does not exist anywhere in the codebase (the /api folder holds one static gallery JSON file), and there is no settlements table in any Supabase migration — the blockchain itself is the only durable, shared record once a settlement is minted. Frames this as the deliberate "tool, not custodian" architecture already stated in compliance/INDEX.md rather than an oversight, and lays out what a read-only lookup API versus a write-side address-reservation ledger would each actually require.',
-    editorialNote: 'Companion to the new SETTLEMENT_ADDRESS_API.md reference doc. Describes current implementation status, not a roadmap commitment — the read/write API gap is an open design question, not yet scheduled work.',
+      'Traces what actually happens when a settlement address gets "placed" — from the NASA Exoplanet Archive reference data, through the pure string-building functions in settlements.ts/moon-settlement.ts, into a client-only localStorage record (obfuscated, not encrypted, by the E8-lattice-keyed storage-cipher.ts — explicitly not a cryptographic primitive by its own header comment), and out through an optional IPFS pin via ipfs-pinning.ts. Updated from its original July 2026 draft, which described three chain-specific NFT metadata writers (EVM, Solana, Algorand) as the real source of truth — that path has been removed, not just deprecated, and this version explains why the address-collision question is now a closed design decision rather than an open one. Confirms two real gaps found while writing this: the `GET /api/v1/exoloc` endpoint named in SPEC_EXOLOC_ADDRESS.md\'s header does not exist anywhere in the codebase, and there is still no settlements table in any Supabase migration. Also draws an explicit line between this cipher and the unrelated, unbuilt E8/Λ₂₄ zero-knowledge-proof design in SPEC_ECO_OPS_API.md, the same distinction the project\'s own Kenya press-release correction post exists to reinforce.',
+    editorialNote: 'Companion to the updated SETTLEMENT_ADDRESS_API.md reference doc, which this post was rewritten to match after the blockchain/NFT scope correction in SPEC.md §26. Describes current implementation status, not a roadmap commitment — the read-side lookup directory is an open design question, not yet scheduled work; the collision-authority question is not open, see the post itself.',
   },
   {
     slug:     'self-hosted-exotopia',
@@ -569,6 +569,18 @@ export const BLOG_POSTS: BlogPostMeta[] = [
     description:
       "How GalaxyPage.vue's face-on spiral disk and the new SurfaceViewPage.vue sky band were rebuilt on real data: Reid et al. 2019's per-arm pitch/azimuth structure (7 real arms, including the previously-missing 3-kpc arm and Local Arm/Orion Spur) replacing an invented 4-arms-at-90° model, Wegg & Gerhard 2013's bar angle (27°, not 44°), a structural fix that had been drawing the galactic core on top of the Sun's own position, population-based star coloring instead of per-arm hues, and a new all-sky galactic band for planet-surface views oriented via the real IAU North Galactic Pole. Ends with a researched 'what's next' list — real datasets and Three.js techniques evaluated for fit with the existing stack.",
     editorialNote: 'Companion to SPEC_MILKY_WAY_VISUALIZATION.md, which has the exact file/line citations this post summarizes in plain language.',
+  },
+  {
+    slug:     'status-report-aug17-2026',
+    title:    'Status Report: August 17, 2026',
+    subtitle: 'A navigable 3D universe, zero users, built in the open — what shipped this week, what\'s honestly still missing, and what\'s next',
+    date:     'August 2026',
+    audience: ['community', 'dev', 'field'],
+    series:   'ecosystem',
+    status:   'public-draft',
+    description:
+      'A plain-language snapshot of the project as it actually stands, written to hand to someone who\'s never seen it before: still pre-launch, still zero users, everything below is "what\'s real and working," not "what people are using." Covers a week of shipped work — the Milky Way rebuilt on real Reid et al. 2019 spiral-arm data with a new all-sky galactic band from a settlement\'s surface, station interiors getting real circular "porthole" windows and a deck-map guide panel, settlement gallery structures becoming enterable File Cabinets backed by the same Supabase tables as the rest of the platform, /sky-lessons and the 104-video Eco-Ops field library finally getting nav entries after being reachable only through onboarding or a buried deep link, a mentor group-leader rollup view on the Rewards page, a new /my-listings business directory, a fix to the Local Void detail page that was silently failing over to an empty catalog on a NASA/IPAC NED query timeout, and a cleanup that archived unused Hardhat/Solana/Metaplex blockchain tooling to archive/chains/ rather than deleting it outright. Just as direct about what isn\'t done: the sky-data "regime" architecture is specced but not built, the installable PWA identity still only covers the citizen-science module, and the onboarding welcome-letter template still describes settlement addresses as "recorded on the blockchain" — stale relative to the actual local-first/IPFS architecture, flagged but not yet fixed.',
+    editorialNote: 'Supersedes the August 10 status report; nothing in that one was wrong, this one is just more current. Published alongside an open call for testers, mentors, and technical collaborators.',
   },
 ]
 

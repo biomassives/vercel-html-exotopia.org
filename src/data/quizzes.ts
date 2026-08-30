@@ -118,7 +118,7 @@ export const QUIZ_AREAS: QuizArea[] = [
 
   {
     id: 'ecoops', title: 'Eco-Ops Protocol', emoji: '◈',
-    description: 'The SCD Hub field check-in system — activity types, on-chain logging, and the WATSAN verification workflow.',
+    description: 'The SCD Hub field check-in system — activity types, tamper-evident Supabase/IPFS logging, and the WATSAN verification workflow.',
     difficulty: 'intermediate', color: 'rgba(0,200,160,0.80)',
     badge: 'Field Operator', questionCount: 5,
     questions: [
@@ -130,15 +130,15 @@ export const QUIZ_AREAS: QuizArea[] = [
       },
       {
         question: 'What makes an eco-ops field reading "tamper-evident"?',
-        options: ['It is stored on paper', 'GPS + timestamp + on-chain hash create a verifiable record that cannot be changed retroactively', 'Admin approval', 'Photograph attachment'],
+        options: ['It is stored on paper', 'GPS + a cryptographic timestamp + a content-addressed Supabase/IPFS record create a verifiable trail that cannot be changed retroactively', 'Admin approval', 'Photograph attachment'],
         correct: 1,
-        explanation: 'When a reading is submitted, a hash of its data (GPS, timestamp, measurement values) is stored on-chain. Any change to the data would produce a different hash, revealing tampering.',
+        explanation: 'No blockchain required: each submission is signed with a cryptographic timestamp and stored via Supabase, content-addressed on IPFS (SPEC.md §6.3). Any change to the data would produce a different content address, revealing tampering.',
       },
       {
-        question: 'In the Exotopia ecosystem, what does a Water Quality Certificate NFT represent?',
-        options: ['Ownership of a water source', 'On-chain proof of a specific field measurement at a specific GPS location and time', 'A water subscription', 'A government permit'],
+        question: 'In the Exotopia ecosystem, what does a Water Quality Certificate represent?',
+        options: ['Ownership of a water source', 'A tamper-evident Supabase ledger certificate for a specific field measurement at a specific GPS location and time', 'A water subscription', 'A government permit'],
         correct: 1,
-        explanation: 'The Water Quality Certificate NFT encodes pH, turbidity, conductivity, nitrate, and coliform readings with GPS coordinates and timestamp — a permanent, tamper-evident record stored on Polygon.',
+        explanation: 'The Water Quality Certificate encodes pH, turbidity, conductivity, nitrate, and coliform readings with GPS coordinates and timestamp as a Supabase ledger certificate (SPEC.md §21.2/§24.1) — no minting required. An optional Polygon NFT wrapper is available through pon.ink, but it is not the certification itself.',
       },
       {
         question: 'Which eco-ops activity type would a community use to log a waste collection event?',
@@ -150,7 +150,7 @@ export const QUIZ_AREAS: QuizArea[] = [
         question: 'Why does the Eco-Ops protocol require offline-capable data entry?',
         options: ['To reduce server costs', 'Many field locations have unreliable or no internet connectivity', 'Blockchain requires offline data', 'For privacy reasons'],
         correct: 1,
-        explanation: 'Field workers in rural areas (borehole sites, farms, remote waterways) often have no internet access. The app queues readings locally and syncs to the chain when connectivity is available.',
+        explanation: 'Field workers in rural areas (borehole sites, farms, remote waterways) often have no internet access. The app queues readings locally and syncs to Supabase — no blockchain involved — once connectivity is available.',
       },
     ],
   },
@@ -159,7 +159,7 @@ export const QUIZ_AREAS: QuizArea[] = [
 
   {
     id: 'blockchain', title: 'Blockchain Basics', emoji: '🔗',
-    description: 'NFTs, wallets, smart contracts, and the on-chain primitives used by PON INK and Exotopia.',
+    description: 'NFTs, wallets, smart contracts, and the on-chain primitives used by pon.ink — Exotopia\'s optional creator/monetization layer. None of this is required to create, own, or use a settlement.',
     difficulty: 'beginner', color: 'rgba(160,100,255,0.80)',
     badge: 'Chain Literate', questionCount: 5,
     questions: [

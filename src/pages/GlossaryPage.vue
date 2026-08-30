@@ -98,6 +98,7 @@
           class="gloss-section"
         >
           <div class="gloss-section-label">{{ cat.label }}</div>
+          <p v-if="cat.note" class="gloss-section-note">{{ cat.note }}</p>
           <div
             v-for="t in cat.terms"
             :key="t.id"
@@ -157,8 +158,8 @@ const TERMS: GlossTerm[] = [
   },
   {
     id: 4, category: 'protocol', term: 'ARC-3 / ARC-69',
-    short: 'Algorand NFT metadata standards used for Exolocation NFTs.',
-    body: 'Two complementary NFT metadata standards on the Algorand blockchain. ARC-3 stores rich JSON metadata off-chain (typically on IPFS), referenced by the ASA URL field. ARC-69 stores compact identifying metadata directly in the on-chain note field (≤ 1 KB). Exolocation NFTs use both: ARC-3 for full property data, ARC-69 for the tamper-evident on-chain fingerprint.',
+    short: 'Algorand NFT metadata standards used by the optional Exolocation NFT (pon.ink layer, not required for a settlement).',
+    body: 'Two complementary NFT metadata standards on the Algorand blockchain. ARC-3 stores rich JSON metadata off-chain (typically on IPFS), referenced by the ASA URL field. ARC-69 stores compact identifying metadata directly in the on-chain note field (≤ 1 KB). The optional Exolocation NFT (see [39]) uses both: ARC-3 for full property data, ARC-69 for the tamper-evident on-chain fingerprint. This is part of pon.ink\'s optional creator layer — a settlement itself needs neither.',
     related: [39],
   },
   {
@@ -290,8 +291,8 @@ const TERMS: GlossTerm[] = [
   // ── SETTLEMENT & GOVERNANCE ───────────────────────────────────────────────
   {
     id: 24, category: 'settlement', term: 'Exolocation',
-    short: 'A permanent on-chain address anchoring a virtual settlement to a NASA-catalogued location.',
-    body: 'A permanent, on-chain address anchoring a virtual settlement to a specific location in the NASA Exoplanet Archive. Format: [coordinate-system]:[reference-body]:[location-descriptor]. Six coordinate systems support six trophic levels. The Exolocation NFT (ARC-3 / ARC-69 on Algorand) is the virtual land deed.',
+    short: 'A local-first address anchoring a virtual settlement to a NASA-catalogued location — no wallet or blockchain required.',
+    body: 'An address anchoring a virtual settlement to a specific location in the NASA Exoplanet Archive. Format: [coordinate-system]:[reference-body]:[location-descriptor]. Six coordinate systems support six trophic levels. The record lives on the owner\'s own device, optionally pinned to IPFS for durability — no wallet, blockchain, or account is required to create or hold one. An Exolocation NFT (ARC-3 / ARC-69 on Algorand, via pon.ink) is available as an optional on-chain anchor for creators who want one, but it is not part of the core settlement system.',
     related: [3, 39, 6],
   },
   {
@@ -382,8 +383,8 @@ const TERMS: GlossTerm[] = [
   },
   {
     id: 39, category: 'nft', term: 'Exolocation NFT',
-    short: 'The virtual land deed — ARC-3 / ARC-69 on Algorand, free to mint.',
-    body: 'Encodes the full exolocation address, coordinate system, reference body, boundary descriptor, and owner attribution. Free to mint (network gas only). Not resellable through any Exotopia-hosted market.',
+    short: 'An optional on-chain anchor for an Exolocation address — ARC-3 / ARC-69 on Algorand, free to mint.',
+    body: 'Encodes the full exolocation address, coordinate system, reference body, boundary descriptor, and owner attribution. Optional — a settlement is created and held as a local, device-resident record (see [24]) with no minting step required. Creators who want an on-chain record can mint one via pon.ink for network gas only. Not resellable through any Exotopia-hosted market.',
     related: [4, 24, 31],
   },
 
@@ -440,14 +441,18 @@ const TERMS: GlossTerm[] = [
 
 // ── Categories ────────────────────────────────────────────────────────────────
 
-interface Category { id: string; label: string; terms: GlossTerm[] }
+interface Category { id: string; label: string; note?: string; terms: GlossTerm[] }
 
 const CATEGORIES: Category[] = [
   { id: 'protocol',      label: 'PROTOCOL IDENTIFIERS', terms: TERMS.filter(t => t.category === 'protocol')     },
   { id: 'trophic',       label: 'TROPHIC HIERARCHY',    terms: TERMS.filter(t => t.category === 'trophic')      },
   { id: 'astronomical',  label: 'ASTRONOMICAL TERMS',   terms: TERMS.filter(t => t.category === 'astronomical') },
   { id: 'settlement',    label: 'SETTLEMENT & GOVERNANCE', terms: TERMS.filter(t => t.category === 'settlement') },
-  { id: 'nft',           label: 'NFT & CHAIN',           terms: TERMS.filter(t => t.category === 'nft')         },
+  {
+    id: 'nft', label: 'NFT & CHAIN',
+    note: 'Every entry in this section describes pon.ink / Worldbridger One\'s optional monetization layer, not the core settlement system. None of these tokens are required to create, own, personalize, or use a settlement in the core Exotopia distro.',
+    terms: TERMS.filter(t => t.category === 'nft'),
+  },
   { id: 'platform',      label: 'PROTOCOL & PLATFORM',  terms: TERMS.filter(t => t.category === 'platform')    },
 ]
 
@@ -720,6 +725,14 @@ const TermEntry = defineComponent({
   margin-bottom: 10px;
   padding-bottom: 6px;
   border-bottom: 1px solid rgba(0, 80, 120, 0.20);
+}
+
+.gloss-section-note {
+  font-size: 11px;
+  line-height: 1.5;
+  color: rgba(180, 200, 210, 0.65);
+  margin: -4px 0 14px;
+  font-style: italic;
 }
 
 /* Empty / error state */

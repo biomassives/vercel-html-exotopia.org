@@ -61,7 +61,7 @@
         </div>
         <div class="text-caption text-blue-grey-6 q-mb-sm" style="font-size:9px;line-height:1.5">
           Theoretical system in {{ memberDisplayName }}, {{ clusterDisplayName }}.
-          Create a settlement to establish a deed anchored to this cosmic address.
+          Create a settlement to establish a free, local-first address anchored to this cosmic location.
         </div>
 
         <div class="row q-gutter-xs">

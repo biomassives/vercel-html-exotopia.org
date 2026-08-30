@@ -17,7 +17,7 @@ All variables use `{{double_brace}}` syntax (Mailgun Handlebars / Supabase Edge 
 | `{{planet_name}}` | user_addresses.pl_name | `Kepler-442b` |
 | `{{hostname}}` | user_addresses.hostname | `Kepler-442` |
 | `{{settlement_name}}` | user_addresses.region_name | `Mpeketoni Basin Station` |
-| `{{exo_address}}` | user_addresses.exo_address | `exo-surface-v1:Kepler-442b:14.5,-23.1` |
+| `{{exo_address}}` | user_addresses.exo_address | `exotopia:surface:kepler-442/kepler-442b/aurora-basin` |
 | `{{dist_pc}}` | exoplanets-viz.json sy_dist | `342` |
 | `{{eqt_k}}` | exoplanets-viz.json pl_eqt | `233` |
 | `{{mule_tier}}` | mule_corpus.tier | `Foal` |
@@ -78,9 +78,11 @@ All variables use `{{double_brace}}` syntax (Mailgun Handlebars / Supabase Edge 
       {{exo_address}}
     </div>
     <div style="font-size:8px; color:#335566; margin-top:6px; line-height:1.6;">
-      This address is yours. It lives on the Algorand blockchain — tamper-evident,
-      permanently linked to {{hostname}} ({{eqt_k}} K equilibrium temperature,
-      {{dist_pc}} parsecs from Earth). Nobody can revoke it.
+      This address is yours. It's computed directly from real astronomical data — permanently
+      linked to {{hostname}} ({{eqt_k}} K equilibrium temperature, {{dist_pc}} parsecs from
+      Earth) — and lives on your own device, no account or blockchain required. Nobody can
+      revoke it. You can also pin your settlement to IPFS for extra durability, any time you
+      choose — no wallet, no gas fee, entirely optional.
     </div>
   </div>
 
@@ -292,7 +294,8 @@ part of the {{hostname}} star system, {{dist_pc}} parsecs from Earth.
 
 Your permanent address is: {{exo_address}}.
 
-This address is recorded on the blockchain. It is yours permanently.
+This address is computed from real astronomical data and lives on your own device.
+It is yours permanently, with no account and no blockchain required.
 
 Here is what to do next.
 

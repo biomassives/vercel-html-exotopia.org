@@ -321,7 +321,7 @@
 
         <div class="moon-hero__meta">
           <span class="moon-hero__free">FREE TO MINT · 0 USDC</span>
-          <span class="moon-hero__protocol">PON INK PROTOCOL · ALGORAND ARC-3</span>
+          <span class="moon-hero__protocol">PON INK PROTOCOL</span>
         </div>
       </div>
     </div>

@@ -688,8 +688,8 @@
             <button class="mob-nav-item" @click="navTo('/mint')">
               <span class="mob-nav-icon">🪐</span>
               <span class="mob-nav-text">
-                <span class="mob-nav-label">Mint a Planet</span>
-                <span class="mob-nav-sub">Reserve your settlement</span>
+                <span class="mob-nav-label">Claim a Planet</span>
+                <span class="mob-nav-sub">Reserve your settlement — free, no wallet</span>
               </span>
             </button>
             <button class="mob-nav-item" @click="navTo('/mint-style')">
@@ -901,7 +901,7 @@ const NAV_GROUPS: NavGroup[] = [
     cards: [
       {
         title: 'Start a Settlement',
-        desc:  'Claim 40 virtual acres on a confirmed exoplanet — your permanent on-chain home.',
+        desc:  'Claim 40 virtual acres on a confirmed exoplanet — a free, local-first home, no wallet required.',
         cta:   'Begin',
         route: '/mint',
         color: 'rgba(60,230,140,0.95)',
@@ -1034,7 +1034,7 @@ const NAV_GROUPS: NavGroup[] = [
       },
       {
         title: 'Benefit Earth',
-        desc:  'Connect with a community that matters — wallet, land, and real-world good in three steps.',
+        desc:  'Connect with a community that matters — claim land and do real-world good, no wallet needed.',
         cta:   'Begin',
         route: '/onboard',
         color: 'rgba(60,200,255,0.90)',
@@ -1335,7 +1335,7 @@ const ITEM_PANELS: Record<string, ItemPanel> = {
   },
   'Benefit Earth': {
     style: 'onboard', headline: 'Benefit Earth — begin here',
-    subline: 'Set up your wallet, claim land, and connect with a community that matters.',
+    subline: 'Claim land, pick a cause, and connect with a community that matters — no wallet needed.',
     actions: [{ label: 'Begin →', route: '/onboard', primary: true }],
     sessionKey: 'exo_onboard_step', sessionLabel: 'Progress',
   },

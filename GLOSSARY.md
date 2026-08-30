@@ -49,11 +49,11 @@ The prefix used in on-chain Station Core NFT identifiers (e.g. `STA-0001`). Uniq
 → See [37] Station Core
 
 **[3] EXOLOC** — *Exolocation address prefix*
-The `exo-` namespace used in all virtual property addresses (e.g. `exo-surface-v1:Kepler-442b:14.5,-23.1`). Six coordinate systems are currently defined: `exo-surface-v1`, `exo-orbital-v1`, `exo-lunar-orbital-v1`, `exo-stellar-orbital-v1`, `exo-moon-surface-v1`, `exo-moon-lagrange-v1`, `exo-moon-interface-v1`.
+The `exo-` namespace used as internal scope aliases within virtual property addresses. Canonical format is `exotopia:{scope}:{path}` (e.g. `exotopia:surface:kepler-442/kepler-442b/aurora-basin`) — see `SPEC_EXOLOC_ADDRESS.md`. Six coordinate systems are currently defined: `exo-surface-v1`, `exo-orbital-v1`, `exo-lunar-orbital-v1`, `exo-stellar-orbital-v1`, `exo-moon-surface-v1`, `exo-moon-lagrange-v1`, `exo-moon-interface-v1`.
 → See [24] Exolocation, [6] Trophic Level
 
 **[4] ARC-3 / ARC-69** — *Algorand Request for Comment*
-Two complementary NFT metadata standards on the Algorand blockchain. ARC-3 stores rich JSON metadata off-chain (typically on IPFS), referenced by the ASA URL field. ARC-69 stores compact identifying metadata directly in the on-chain note field (≤ 1 KB). Exolocation NFTs use both: ARC-3 for full property data, ARC-69 for the tamper-evident on-chain fingerprint.
+Two complementary NFT metadata standards on the Algorand blockchain. ARC-3 stores rich JSON metadata off-chain (typically on IPFS), referenced by the ASA URL field. ARC-69 stores compact identifying metadata directly in the on-chain note field (≤ 1 KB). Relevant only to pon.ink's optional Exolocation NFT wrapper (`SPEC_PON_INK.md`) — not used by the core Exotopia address system, which is local-first (see [24]).
 
 **[5] cNFT** — *Compressed NFT (Solana Metaplex Bubblegum)*
 A Solana NFT standard that stores token data in a Merkle tree rather than individual accounts. Reduces mint cost from ~0.01 SOL to ~0.000005 SOL, enabling large-scale community airdrops. Used for Station Core, Station Module, and EcocitySolution NFTs.
@@ -128,7 +128,7 @@ In a circumbinary system, the region around the stellar barycentre within approx
 ### SETTLEMENT & GOVERNANCE
 
 **[24] Exolocation**
-A permanent, on-chain address anchoring a virtual settlement to a specific location in the NASA Exoplanet Archive. Format: `[coordinate-system]:[reference-body]:[location-descriptor]`. Six coordinate systems support six trophic levels. The Exolocation NFT (ARC-3 / ARC-69 on Algorand) is the virtual land deed.
+A permanent, local-first address anchoring a virtual settlement to a specific location in the NASA Exoplanet Archive — computed from real astronomical data and stored on the owner's own device, no wallet or blockchain required (optional IPFS pinning for durability). Canonical format: `exotopia:{scope}:{path}` (e.g. `exotopia:surface:kepler-442/kepler-442b/aurora-basin`) — see `SPEC_EXOLOC_ADDRESS.md`. Six coordinate systems support six trophic levels. Owners who want to mint a tradeable NFT deed of their exolocation can optionally do so through pon.ink — see [39] Exolocation NFT — but it is not required to own or use a settlement.
 
 **[25] Settlement Dome**
 The primary physical structure of a Level 4/5 settlement in Exotopia. A geodesic hemisphere containing the library building, water feature, food production, vegetation, and the stone circle. The dome is the visible landmark of a community's presence on an exoplanet surface.
@@ -138,59 +138,58 @@ An AI-powered knowledge assistant living in the settlement gallery. In V1, corpu
 → See STN-015, STN-019, blog-mule-v2-specialist.md
 
 **[27] Eco-ops**
-Short for *ecological operations*. The check-in protocol connecting real-world community field work to on-chain records and virtual rewards. Eight activity types: `wqMap` (water quality), `garbageMap`, `farmMap`, `productMap`, `transportMap`, `storageMap`, `sourceMap`, `cleaningMap`.
+Short for *ecological operations*. The check-in protocol connecting real-world community field work to tamper-evident records (Supabase + IPFS, see §6.3/§21.2 of `SPEC.md`) and virtual rewards. Eight activity types: `wqMap` (water quality), `garbageMap`, `farmMap`, `productMap`, `transportMap`, `storageMap`, `sourceMap`, `cleaningMap`.
 
 **[28] 40 Acres**
-*"40 acres and a mule"* — a reference to the unfulfilled 1865 promise of land redistribution to freed enslaved people in the United States. In Exotopia, 40 virtual acres is the standard land claim unit attached to an Exolocation NFT. The mule is the mule-bot — the knowledge assistant that comes with the settlement.
+*"40 acres and a mule"* — a reference to the unfulfilled 1865 promise of land redistribution to freed enslaved people in the United States. In Exotopia, 40 virtual acres is the standard land claim unit attached to a settlement's exolocation address (see [24]) — free, local-first, no NFT required. An optional NFT deed can be minted via pon.ink (see [39]). The mule is the mule-bot — the knowledge assistant that comes with the settlement.
 
 **[29] Stone Circle**
 The cultural landmark placed at the centre of each settlement in Exotopia. Marks the settlement's cardinal directions, functions as a time capsule, and carries the community's intention statement. The spiral pattern and standing stone heights are seeded from the settlement's hostname. The E8 Pyramid (wormhole access point) is hidden inside the stone circle, visible only in DK.MAT (dark matter) view mode.
 
 **[30] Ecommunity DAO**
-The self-evolving governance layer for settlement collectives in Exotopia. Principles: privacy by design, anti-harassment enforcement with community-controlled moderation, collective direction of technology resources toward local Earth-based projects. Governance tokens earned through participation, facilitation, and mentorship.
+The self-evolving governance layer for settlement collectives in Exotopia. Principles: privacy by design, anti-harassment enforcement with community-controlled moderation, collective direction of technology resources toward local Earth-based projects. In the core distro this is community-controlled moderation, not token-based. A token-weighted voting variant (governance tokens earned through participation, facilitation, and mentorship) is a `SPEC_WORLDBRIDGER_ONE.md` integration, not core.
 
 **[31] Resonance Split**
-The standard fee allocation applied to all transactions through the PON INK / Exotopia / Ecocity / Worldbridger network. Always displayed before confirmation; never combined in a single expression with community payout amounts (fee isolation rule). Three paths, computed independently:
-- **99%** → Artist / participant wallet (direct creator compensation)
-- **0.75%** → Community Hardware Fund (WATSAN / mapping / field infrastructure)
-- **0.25%** → Platform Maintenance (network ops, security, hosting)
+The standard fee allocation applied to transactions through the PON INK / Exotopia / Ecocity / Worldbridger network — implemented in `src/lib/resonance-split.ts`, the single source of truth. Always displayed before confirmation; never combined in a single expression with community payout amounts (fee isolation rule). Three paths, computed independently: Artist/participant wallet (direct creator compensation), Community Hardware Fund (WATSAN / mapping / field infrastructure), and Platform Maintenance (network ops, security, hosting). Current percentages are defined only in `resonance-split.ts` — its own header comment states the rule explicitly ("do not inline percentages anywhere, including in copy") after five inconsistent hardcoded copies of this split once existed across the app; this entry intentionally doesn't restate a number for the same reason.
 
-Special mintings and airdrop events may use different parameters via additional contracts. Any custom split requires Group Manager + Admin co-sign and is logged in the `payment_splits_ledger`. The standard 99/0.75/0.25 is the network-wide default and applies unless a custom contract is explicitly in place.
+In the core Exotopia distro the split is a general-purpose, non-chain contribution-allocation calculation (used by the IPFS-pinning/settlement-support model, not minting). Special mintings and airdrop events on pon.ink may use different parameters via additional contracts; any custom split there requires Group Manager + Admin co-sign and is logged in the `payment_splits_ledger`.
 
 ---
 
 ### NFT & CHAIN
 
+*Every entry in this section describes pon.ink / Worldbridger One's optional monetization layer (see `SPEC.md` §26). None of these tokens are required to create, own, personalize, or use a settlement in the core Exotopia distro.*
+
 **[32] $SUNLIGHT**
 Sound / music NFT standard in the PON INK protocol. Represents ownership and licensing rights to a recorded track or soundbank. Minted on Polygon or Solana. Includes: title, duration, BPM, key, genre, sample credits, license terms, collaboration credits, and IPFS audio CID. Royalty enforcement is on-chain.
 
 **[33] Water Quality Certificate**
-On-chain proof of a water quality field measurement. Fields: pH, turbidity (NTU), conductivity (µS/cm), nitrate (mg/L), coliform (CFU/100mL), GPS coordinates, timestamp, potability assessment. Stored on Polygon; backup on Arweave. Tamper-evident by design. Feeds the mule-bot's community water system health domain.
+The core distro's actual certification mechanism is the Supabase-backed ledger certificate described in `SPEC.md` §21.2/§24.1 (fields: pH, turbidity (NTU), conductivity (µS/cm), nitrate (mg/L), coliform (CFU/100mL), GPS coordinates, timestamp, potability assessment; tamper-evident via Supabase + IPFS). An on-chain NFT version (Polygon, Arweave-backed) is available as an optional pon.ink wrapper, not the certification itself. Feeds the mule-bot's community water system health domain.
 
 **[34] Health Card ID**
 Decentralised health credential on Polygon. Encrypted. Portable to employers and health systems independent of the SCD Hub platform.
 
 **[35] POAP**
-*Proof of Attendance Protocol.* Event participation proof used for voting weight in the Ecommunity DAO and for event coordination. Multi-chain.
+*Proof of Attendance Protocol.* Event participation proof used for voting weight in pon.ink/Worldbridger One governance and for event coordination. Multi-chain.
 
 **[36] EcocitySolution NFT**
 A collectible virtual object (displayable in the settlement dome) that also certifies learning, construction, or support of a real-world sustainable design. Categories: WATSAN, ENERGY, SHELTER, HEALTHCARE, FOOD. Each object has a 3D GLTF model reference (< 5,000 triangles), impact metrics, and an origin path (earned / airdropped / purchased). Minted on Solana via Metaplex Bubblegum.
 
 **[37] Station Core**
-The root NFT of a settlement station — a named, on-chain record anchoring the station to a specific exoplanet location. Contains the Exolocation reference and a map of installed module mint addresses. Minted on Solana. Identifier prefix: `STA`.
+pon.ink's optional on-chain infrastructure record: a named Solana NFT anchoring a station to a specific exoplanet location, containing the Exolocation reference and a map of installed module mint addresses. Not required to create, own, or run a working settlement — the core settlement needs no Station Core. Identifier prefix: `STA`.
 
 **[38] Station Module**
-A functional zone within a Station Core — gallery, watsan, energy, shelter, healthcare, food, or command. Each module is a separate Solana cNFT minted independently. Modules can be added over time.
+A functional zone within an optional pon.ink Station Core — gallery, watsan, energy, shelter, healthcare, food, or command. Each module is a separate Solana cNFT minted independently. Modules can be added over time. Like the Station Core itself, this belongs to the optional monetization layer, not a requirement for a core settlement.
 
 **[39] Exolocation NFT**
-The virtual land deed. An Algorand ARC-3 / ARC-69 NFT encoding the full exolocation address, coordinate system, reference body, boundary descriptor, and owner attribution. Free to mint (network gas only). Secondary sales apply the Resonance Split.
+pon.ink's optional NFT wrapper around a settlement's exolocation address (see `SPEC_PON_INK.md`) — an Algorand ARC-3 / ARC-69 NFT encoding the full exolocation address, coordinate system, reference body, boundary descriptor, and owner attribution. Not required to own or use a settlement; the exolocation address itself (see [24]) is local-first and free. Free to mint if used (network gas only). Secondary sales apply the Resonance Split.
 
 ---
 
 ### PROTOCOL & PLATFORM
 
 **[40] PON INK**
-*"Put it on ink."* The primary operations portal for the SCD Hub ecosystem — the daily-use tool for artists, field workers, and community builders. Every action taken in the network (check-in, performance, water quality reading, sale) is permanently recorded on-chain. Hosts: sound tools, cultural events, M-Pesa / Stripe payments, NFT minting, airdrop campaigns, and user dashboards.
+*"Put it on ink."* The primary operations portal for the optional pon.ink / Worldbridger One monetization layer (see `SPEC.md` §26) — the daily-use tool for artists, field workers, and community builders who choose to use it. Every action taken through it (check-in, performance, water quality reading, sale) is permanently recorded on-chain. Hosts: sound tools, cultural events, M-Pesa / Stripe payments, NFT minting, airdrop campaigns, and user dashboards. Not required to create, own, or use a core Exotopia settlement.
 
 **[41] SCD Hub**
 *Sustainable Community Development Hub.* US non-profit dedicated to improving lives through mentor networks in environmental engineering, community resilience, reliable income, and capacity development. The Exotopia, pon.ink, and ecocity.com platforms are the SCD Hub's digital infrastructure.
@@ -476,7 +475,7 @@ A decentralised protocol for storing and sharing files on a peer-to-peer network
 A cryptocurrency wallet that requires multiple private keys (key-holders) to authorise any transaction — for example, 3 of 5 key-holders must sign before funds move. Multi-sig is the standard governance mechanism for shared treasuries because it eliminates single points of failure and single points of corruption: no one person can drain the wallet alone. SCD Hub's root DID and treasury wallet are multi-sig controlled. Used in the DAO treasury distribution model described in POLYNOMICS-CONTRIBUTION.md §3E.
 
 **[116] DID — Decentralized Identifier**
-A W3C standard for globally unique, cryptographically verifiable identifiers that are controlled by their subject — not by a central authority (like a domain registrar or certificate authority). A DID looks like: `did:algo:ABC123...`. The `did:algo` prefix indicates it is anchored on the Algorand blockchain. SCD Hub's root issuer identity is a DID (`did:algo:SCDHUB_ROOT`). Certificate recipients can also have DIDs (tied to their wallet address), making the credential relationship fully decentralised: issuer DID signs credential about subject DID.
+A W3C standard for globally unique, cryptographically verifiable identifiers that are controlled by their subject — not by a central authority (like a domain registrar or certificate authority). A DID looks like: `did:algo:ABC123...`. The `did:algo` prefix indicates it is anchored on the Algorand blockchain. This is a pon.ink-side identity option (`SPEC_PON_INK.md`), not part of the core Exotopia distro, which does not require a wallet or blockchain identity. SCD Hub's root issuer identity is a DID (`did:algo:SCDHUB_ROOT`). Certificate recipients can also have DIDs (tied to their wallet address), making the credential relationship fully decentralised: issuer DID signs credential about subject DID.
 
 **[117] Open Source**
 Software whose source code is made available under a licence permitting anyone to study, modify, and distribute it. Our platform is licensed under GPL v3 (General Public License version 3) — the most prominent "copyleft" open source licence, which requires that any modified version distributed publicly must also be released under GPL v3. Open source is not just a legal condition — it is a governance stance: it means the community can always run, inspect, and fork the platform if SCD Hub as an organisation ceases to maintain it. The address coordinate specification is an open standard for the same reason.

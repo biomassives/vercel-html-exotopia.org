@@ -3,7 +3,7 @@
 *SCD Hub · pon.ink · ecocity.com · exotopia.org*
 *Living document — updated through collaborative Q&A, April 2026 · statuses and §21–22 added July 2026 · §23–25 added July 2026*
 
-> **A note on how to read this document.** Sections 1–10 and 14–20 describe the full intended system, including large pieces (avatar/presence, gallery customisation, robot companions, pon.ink identity bridge) that remain design specification, not shipped code — their status tables say so plainly. Section 11's MVP Scope table was audited against the live codebase in July 2026 and corrected where it had drifted from reality in both directions (some things marked "to build" already existed; nothing was found to be over-stated in that table). Sections 21, 22, and 24 document three systems that did not exist when this document was first written and were built independently of the original MVP plan. Section 25 audits a fourth area — camera/navigation continuity — where the honest answer is split: part of it shipped, part of it is a fully-written module that nothing calls yet.
+> **A note on how to read this document.** Sections 1–10 and 14–20 describe the full intended system, including large pieces (avatar/presence, gallery customisation, robot companions, pon.ink identity bridge) that remain design specification, not shipped code — their status tables say so plainly. Section 11's MVP Scope table was audited against the live codebase in July 2026 and corrected where it had drifted from reality in both directions (some things marked "to build" already existed; nothing was found to be over-stated in that table). Sections 21, 22, and 24 document three systems that did not exist when this document was first written and were built independently of the original MVP plan. Section 25 audits a fourth area — camera/navigation continuity — where the honest answer is split: part of it shipped, part of it is a fully-written module that nothing calls yet. Section 26 (August 2026) records a scope decision: the NFT/blockchain economy §5–7, §10.3, and §18.5 originally described has been edited to match what §21 already established as shipped reality, and relocated to `SPEC_PON_INK.md` / `SPEC_WORLDBRIDGER_ONE.md` — it is no longer part of the Exotopia public distro's core scope.
 
 ---
 
@@ -12,7 +12,7 @@
 - **Real data, real stakes.** The cosmos rendered here is built from NASA exoplanet archive data. The eco-ops activities tracked here represent real field work by real people. Neither is decorative.
 - **Reward the doers.** Virtual real estate and rare NFTs flow toward participants who perform eco-ops work, produce art, complete modules, and build community — not toward speculators who arrive first.
 - **Accessible first.** Every feature must be reachable on a mid-range Android handset on 3G. Desktop polish follows mobile-first function.
-- **Open by default.** GPL v3. Community owns its data. On-chain records are public and tamper-evident. No black boxes.
+- **Open by default.** GPL v3. Community owns its data. Records are stored openly (Supabase + IPFS content-hashing) and are tamper-evident without requiring a blockchain. No black boxes.
 - **Culture is the vehicle.** Music, visual art, and spatial storytelling are not decoration — they are how the mission travels.
 
 ---
@@ -22,17 +22,17 @@
 Exotopia is a **metaverse visualization and cosmic object navigation system** built on real astronomical data, designed to:
 
 1. Give SCD Hub participants a permanent, meaningful address in the universe — a virtual settlement at a confirmed exoplanet, exomoon, or orbital zone.
-2. Reward real-world eco-ops field work and community development with virtual real estate, NFT objects, and settlement features.
+2. Reward real-world eco-ops field work and community development with virtual real estate and settlement features (see §21 for the reward ledger actually shipping this).
 3. Provide a 3D navigable environment for virtual workshops, cultural events, gallery exhibitions, and educational activities rooted in ecocity.com's sustainable design library.
-4. Interoperate with **pon.ink** (sound, events, payments, NFT minting) and **ecocity.com** (sustainable infrastructure education) as the cosmic layer of the SCD Hub ecosystem.
+4. Interoperate with **ecocity.com** (sustainable infrastructure education) as the cosmic layer of the SCD Hub ecosystem, and optionally with **pon.ink** for anyone who wants to mint, sell, or monetize settlement work — that layer is not required to own or use a settlement (see §26).
 
 ### 1.1 The Three Platforms
 
 | Platform | Primary function | Relationship to Exotopia |
 |---|---|---|
-| **pon.ink** | Sound tools, cultural events, M-Pesa/Stripe payments, NFT minting, user dashboard | Primary ops panel for all users; shares wallet, identity, and NFT infrastructure |
-| **ecocity.com** | Sustainable infrastructure design models, educational modules, workshop curriculum | Supplies settlement objects (EcocitySolution NFTs) and vocational learning content |
-| **exotopia.org** | Cosmic visualization, virtual real estate, settlement environments, wormhole transit | The metaverse layer; virtual address + reward destination for all ecosystem activity |
+| **pon.ink** | Sound tools, cultural events, M-Pesa/Stripe payments, optional NFT minting, user dashboard | Optional monetization/creator layer — see §26. Not required for a settlement to exist or function |
+| **ecocity.com** | Sustainable infrastructure design models, educational modules, workshop curriculum | Supplies settlement objects and vocational learning content |
+| **exotopia.org** | Cosmic visualization, virtual real estate, settlement environments, wormhole transit | The metaverse layer; local-first address + reward destination for all ecosystem activity |
 
 ### 1.2 Organizational Context
 
@@ -50,20 +50,20 @@ Current active community groups:
 
 ## 2. User Roles
 
-Each role has a distinct pathway through the ecosystem, receives role-specific NFT types, and is represented in their settlement with attributes relevant to their community development and career path.
+Each role has a distinct pathway through the ecosystem, earns role-relevant settlement rewards (see §21's points/certificate ledger for what's actually shipped), and is represented in their settlement with attributes relevant to their community development and career path.
 
-| Role | Core activity | Primary NFT rewards | Settlement character |
+| Role | Core activity | Settlement rewards (§21) | Settlement character |
 |---|---|---|---|
-| **Participant** | Eco-ops check-ins, module completion | Activity badges, settlement objects | Home base; education + production hub |
-| **Facilitator** | Runs sessions and workshops | Session POAPs, venue NFTs | Workshop amphitheatre dome |
-| **Visual Artist** | NFT production, gallery exhibition | $ART collectibles, gallery module | Orbital gallery + exhibition space |
-| **DJ / Sound Artist** | $BARS production, pon.ink events | $BARS soundbank NFTs, stage objects | Stage dome, sound lab |
-| **Eco / Health Educator** | Field data collection, module delivery | Water Quality Certs, Health Card IDs | Research station + field data node |
-| **Mentor** | Guides participants, credited on minted assets | Mentor attribution tokens, rare drops | Mentor hall in settlement |
-| **Promoter** | Audience growth, campaign management | Channel attribution NFTs | Broadcast node |
+| **Participant** | Eco-ops check-ins, module completion | Points, activity badges, settlement objects | Home base; education + production hub |
+| **Facilitator** | Runs sessions and workshops | Session credit, venue objects | Workshop amphitheatre dome |
+| **Visual Artist** | Art production, gallery exhibition | Gallery module, featured display (pon.ink minting optional — §26) | Orbital gallery + exhibition space |
+| **DJ / Sound Artist** | Sound production, pon.ink events | Stage objects (pon.ink $BARS optional — §26) | Stage dome, sound lab |
+| **Eco / Health Educator** | Field data collection, module delivery | Water Quality Certs, credentials | Research station + field data node |
+| **Mentor** | Guides participants (§21.5 `educating_others` track) | Mentorship Beacon at confirmed-session thresholds | Mentor hall in settlement |
+| **Promoter** | Audience growth, campaign management | Channel attribution credit | Broadcast node |
 | **Fund Raiser** | Resource mobilisation for community projects | Impact certificates | Treasury room |
 | **Technical Support** | System maintenance, field node uptime | Uptime/reliability badges | Command module |
-| **Administrator** | Financial transparency, compliance, governance | Governance tokens | DAO council chamber |
+| **Administrator** | Financial transparency, compliance, governance | Admin allow-list access | Council chamber |
 
 ---
 
@@ -121,19 +121,19 @@ Every user receives a permanent **Exotopia Address** on their first eco-ops chec
 [coordinate_system]:[reference_body_key]:[location_descriptor]
 ```
 
-Examples:
+Examples (canonical slash format — see `SPEC_EXOLOC_ADDRESS.md` for the full spec):
 ```
-exo-surface-v1:Kepler-452b:14.5,-23.1        (surface lat/long polygon)
-exo-orbital-v1:Proxima-Cen-b:200-500km-i30   (orbital altitude band)
-exo-stellar-orbital-v1:Alpha-Centauri:1.1-1.3au  (stellar habitable zone)
+exotopia:surface:kepler-442/kepler-442b/aurora-basin       (surface region)
+exotopia:orbital:proxima-cen/proxima-cen-b/200-500km-i30   (orbital altitude band)
+exotopia:stellar-orbital:alpha-centauri/1.1-1.3au          (stellar habitable zone)
 ```
 
 **Properties:**
 - Tied to a confirmed or proposed exoplanet / exomoon / stellar system from the NASA Exoplanet Archive (or the proposed-objects registry)
 - Unique per user-role-location combination
-- Linked to the same wallet identity used across exotopia, pon.ink, and ecocity
+- Computed from real astronomical data and stored locally on the owner's own device — no account, wallet, or blockchain required (optionally pinned to IPFS for durability)
 - Human-readable **settlement nickname** assigned by the user (e.g. `"Aurora Basin Workshop"`, `"Proxima Sound Lab"`)
-- Displayed in the user's pon.ink dashboard profile and on their virtual settlement in Exotopia
+- Displayed on the user's virtual settlement in Exotopia, and optionally on a linked pon.ink profile if that integration is used
 
 **Coordinate systems supported** — see [SPEC_EXOLOC_ADDRESS.md](SPEC_EXOLOC_ADDRESS.md) for the full specification including black hole orbital zones, trajectory addresses, parallel branch instances, and collaborative planning spaces:
 
@@ -172,10 +172,10 @@ Objects are acquired through three paths:
 | Path | Source | Examples |
 |---|---|---|
 | **Earned** (eco-ops activity) | Automatic reward on milestone | Water filter object, solar array, garden bed |
-| **Airdropped** | SCD Hub / pon.ink events, planet confirmations | Rare artist collab objects, science event commemoratives |
-| **Purchased / traded** | Aftermarket (pon.ink NFT marketplace) | Premium ecocity designs, artist editions |
+| **Airdropped** | SCD Hub events, planet confirmations | Rare artist collab objects, science event commemoratives |
+| **Purchased / traded** (optional) | pon.ink aftermarket — see §26; not part of the core distro | Premium ecocity designs, artist editions |
 
-Object types map to **EcocitySolution NFT categories**: watsan, energy, shelter, healthcare, food. Each object has visual presence in the settlement dome and on-chain metadata confirming its origin and attributes.
+Object types map to **EcocitySolution categories**: watsan, energy, shelter, healthcare, food. Each object has visual presence in the settlement dome and a record confirming its origin and attributes (see §21).
 
 ### 5.3 Personalisation (Non-NFT Features)
 
@@ -201,11 +201,12 @@ Each settlement has a **pyramid landmark** at a fixed prominent position on the 
 
 ### 5.5 Settlement Governance (Ecommunity DAO)
 
-Settlements can form collectives — the **Ecommunity DAO** is the self-evolving governance layer. Core principles:
+Settlements can form collectives — **Ecommunity** governance is the self-evolving moderation layer. Core principles:
 - Privacy protection by design
 - Anti-harassment and anti-misuse enforcement with community-controlled moderation
 - Users collectively decide how technology resources are directed toward local Earth-based projects
-- DAO governance tokens earned through participation, facilitation, and mentorship
+
+A token-weighted DAO version of this governance layer — where participation, facilitation, and mentorship earn on-chain voting weight — is a `SPEC_WORLDBRIDGER_ONE.md` integration, not part of the core distro (see §26).
 
 ---
 
@@ -253,47 +254,35 @@ Activity data published as open data (anonymised)
   · Field notes → potential input to policy briefs
 ```
 
-### 6.3 On-Chain Proof
+### 6.3 Tamper-Evident Proof
 
-Environmental data with public interest value is stored permanently:
-- **Arweave** — tamper-evident, survives government data deletion
+Environmental data with public interest value is stored durably, no blockchain required:
+- **Supabase + IPFS** — the actual storage path for check-in data (see §21.2/§24.1); content-addressed, tamper-evident
 - **Cryptographic timestamp** — each submission signed at time of entry
-- **Water Quality Certifications** — minted as NFTs (Polygon / Solana)
+- **Water Quality Certifications** — issued as ledger certificates (§21.2), not minted tokens. A pon.ink-side NFT wrapper is available optionally (§26) but is not the certification mechanism itself
 
 ---
 
-## 7. NFT Economy
+## 7. Settlement Rewards & Optional Monetization
 
-### 7.1 NFT Types
+*This section originally specced a fully NFT-backed token economy (Exolocation NFT, Station Core/Module NFTs, EcocitySolution cNFTs, $BARS, on-chain Water Quality Certs). That economy was never fully built for the core distro; §21 documents what actually shipped instead — a Supabase-backed points and certificate ledger. See §26 for the scope decision behind this rewrite.*
 
-| Token | Chain | Purpose |
-|---|---|---|
-| **Exolocation NFT** | Algorand (ARC-3 / ARC-69) | Virtual real estate title; one per settlement location |
-| **Station Core NFT** | Solana (Bubblegum cNFT) | Orbital station root; references exolocation |
-| **Station Module NFT** | Solana (Bubblegum cNFT) | Functional zone (gallery / watsan / energy / shelter / healthcare / food / command) |
-| **EcocitySolution NFT** | Solana (Bubblegum cNFT) | Installable sustainable design object; materials + impact metrics on-chain |
-| **$BARS** | Polygon / Solana | Soundbank / music ownership and licensing |
-| **POAP** | Any | Event participation proof; used for voting and event coordination |
-| **Health Card ID** | Polygon (encrypted) | Decentralised health credential |
-| **Water Quality Cert** | Polygon / Solana | On-chain proof of environmental testing |
-| **Rare Airdrop NFTs** | TBD | Celebration drops: planet confirmations, milestone events, artist collaborations |
+### 7.1 What the core distro rewards with
 
-### 7.2 Revenue Split
+See §21.2 for the shipped mechanism: points by track (`finance_literacy`, `volunteering`, `educating_others`), certificates, mentor-session credit, and settlement-object unlocks. No wallet, chain, or token is involved.
 
-All transactions through the platform apply the **Resonance Split**:
+### 7.2 Optional monetization layer
 
-| Recipient | Share | Purpose |
-|---|---|---|
-| Artist / participant wallet | 80% | Direct creator compensation |
-| Community Hardware Fund | 15% | WATSAN / mapping infrastructure |
-| Platform maintenance | 5% | Hosting, security, administration |
+Anyone who wants to mint, sell, or license settlement-related creative work (art, sound, event assets) can do so through:
+- **`SPEC_PON_INK.md`** — individual minting, wallet-based aftermarket, $BARS soundbank, and the **Resonance Split** revenue rule (also used internally by `src/lib/resonance-split.ts` for non-chain contribution splits — see §10.4; percentages live in that file, not restated here, per its own no-inline-percentages rule)
+- **`SPEC_WORLDBRIDGER_ONE.md`** — multi-author/collaborative assets and DAO-style resource-return splits
 
-The net-to-artist amount in local currency (KES or USD) is **always displayed before confirmation** — no exceptions.
+Neither is required to create, own, personalize, or use a settlement.
 
 ### 7.3 Proposed Planet Speculation Protocol *(to develop)*
 
-Token holders who stake a claim on a *proposed* exoplanet location (not yet in the NASA archive) are celebrated and rewarded when a real confirmation occurs in that region:
-- Celebrated airdrop of rare NFTs tied to the confirmed planet's scientific data
+Participants who publicly stake a claim on a *proposed* exoplanet location (not yet in the NASA archive) are celebrated and rewarded when a real confirmation occurs in that region:
+- Celebrated recognition tied to the confirmed planet's scientific data (settlement badge, visibility boost — §21-style reward, not a token drop)
 - Increased visibility for the holder's eco-ops activities and settlement
 - Science event tie-in (new findings, host star data, distance)
 
@@ -401,19 +390,14 @@ Events are **rooted in real physical locations** with **remote participation** w
 
 ### 10.3 Blockchain
 
-| Chain | Use |
-|---|---|
-| **Algorand** | Exolocation NFTs (ARC-3 metadata on IPFS, ARC-69 on-chain note) |
-| **Solana** | Station Core / Module / EcocitySolution cNFTs (Metaplex Bubblegum) |
-| **Polygon** | $BARS, Health Card IDs, Water Quality Certifications |
+No blockchain dependency in the core distro. The settlement/address system runs on local device storage with optional IPFS pinning (`src/lib/ipfs-pinning.ts`, `SETTLEMENT_ADDRESS_API.md`) — no wallet, no gas fee, no chain. Algorand/Solana/Polygon minting code that previously lived in `src/lib/` has been archived to `archive/chains/` as reusable reference, not wired into this app. See `SPEC_PON_INK.md` / `SPEC_WORLDBRIDGER_ONE.md` for the optional chain-based monetization layer (§26).
 
 ### 10.4 Payments
 
 | Provider | Use |
 |---|---|
-| Africa's Talking / M-Pesa | STK Push for KES transactions; full audit log, 3 attempts/5 min rate limit |
-| Stripe | Global USD/card transactions |
-| Split | 80 / 15 / 5 (artist / hardware fund / platform) — net shown pre-confirm |
+| Split (`src/lib/resonance-split.ts`) | Creator / community fund / platform allocation — general-purpose, not chain-specific; net shown pre-confirm wherever it's used. Current percentages are defined only in that file (not restated here — see its own no-inline-percentages rule) |
+| Africa's Talking / M-Pesa, Stripe | pon.ink-side payment rails for the optional monetization layer (§26) — not part of the core distro's payment surface |
 
 ### 10.5 Data Sources
 
@@ -435,8 +419,8 @@ The minimum viable product that can be demonstrated to Uni-Kibaoni-Peace-Youth-S
 | System view — host star + orbiting planets on click | ✅ Implemented |
 | Surface view — sky from planet surface, host star animation, terrain | ✅ Implemented (SurfaceViewPage.vue) |
 | Quasar app shell — nav, dark theme, page routing | ✅ Implemented |
-| Exolocation NFT metadata builder (Algorand ARC-3/ARC-69) | ✅ Implemented (src/lib/algorand/) |
-| Station/Module/EcocitySolution NFT metadata builder (Solana) | ✅ Implemented (src/lib/solana/) |
+| ~~Exolocation NFT metadata builder (Algorand ARC-3/ARC-69)~~ | Out of core-distro scope (§26) — standalone code, never wired into the deployed app, archived to `archive/chains/algorand/`. Available for pon.ink to pick up if needed |
+| ~~Station/Module/EcocitySolution NFT metadata builder (Solana)~~ | Out of core-distro scope (§26) — same story, archived to `archive/chains/solana/`, not part of `src/` |
 | Eco-ops check-in page with activity type selection | 🟡 Partial — built, but with a different activity taxonomy than §6.1's list. `src/stores/eco-offline.ts` ships an offline-first (IndexedDB queue, syncs on reconnect) check-in flow for water quality, macroinvertebrate sampling, tick drag, phenology, PFAS sampling, and CSO events — real field-science categories, not `garbageMap`/`wqMap`/etc. The backing Supabase `eco_ops` schema tables the client writes to are not yet migrated anywhere in the repo, so sync currently fails safely rather than actually persisting server-side. |
 | Wallet creation flow (pon.ink — new-user-safe) | ✅ Implemented — as a self-contained browser wallet, not a pon.ink dependency: `BrowserWalletCreate.vue`, `BrowserWalletUnlock.vue`, `WalletOnboardingGuide.vue` |
 | First eco-ops check-in → Exotopia address assignment | 🔲 Still to build — settlement creation (via `MintPage.vue`) and eco-ops check-ins are separate, unlinked flows today |
@@ -449,11 +433,11 @@ The minimum viable product that can be demonstrated to Uni-Kibaoni-Peace-Youth-S
 |---|---|
 | Wormhole transit (E8 mandala + 7-second portal animation) | High |
 | Cosmic / Level 1 view (galaxy clusters, great voids) | High |
-| Settlement object library (ecocity NFT objects rendered in dome) | High |
+| Settlement object library (ecocity objects rendered in dome) | High |
 | Gallery interior (Level 6) — artwork panels, planetary color schema | High |
 | Robot companion — 3D figure in gallery, corpus-driven greeting, artwork guide | High |
-| File cabinet — NFTs and eco-ops records tabs (read-only first pass) | High |
-| pon.ink ↔ exotopia identity bridge (shared wallet/address) | High |
+| File cabinet — certificates and eco-ops records tabs (read-only first pass) | High |
+| pon.ink ↔ exotopia identity bridge (optional, for users who opt into monetization — §26) | Low |
 | Settlement personalisation (surface colour/pattern) | Medium |
 | Gallery customisation interface (layout, atmosphere, drag-and-drop hang) | Medium |
 | Workshop hosting at settlement | Medium |
@@ -1763,23 +1747,22 @@ The **file cabinet** is a persistent, in-world interface to the user's complete 
 
 | Drawer | Contents |
 |---|---|
-| **NFTs** | All minted and owned tokens: Exolocation NFT, Station Core/Module NFTs, EcocitySolution objects, $BARS soundbank, POAPs, Health Card, Water Quality Certs, Rare Airdrops |
-| **Eco-Ops Records** | Complete log of all eco-ops check-ins: activity type, location, timestamp, photo, group tag, on-chain proof link |
-| **Certifications** | Module completion certificates from ecocity.com educational content; Water Quality Certifications; POAP archive |
-| **Settlement Documents** | Settlement nickname history, address assignment record, wormhole whitelist, governance votes cast |
-| **Creative Assets** | Artworks (linked to NFTs), sound files (linked to $BARS), uploaded content (IPFS CID references) |
-| **Event Records** | Events attended (POAP), events hosted, ghost replay links, participant lists |
+| **Certificates & Credentials** | Module completion certificates, Water Quality Certs, method-proposal endorsements, mentorship credit — the §21/§24 reward-ledger artifacts. A pon.ink-minted NFT wrapper, if the owner chose to make one, links from here optionally (§26) |
+| **Eco-Ops Records** | Complete log of all eco-ops check-ins: activity type, location, timestamp, photo, group tag, IPFS/content-hash reference |
+| **Settlement Documents** | Settlement nickname history, address assignment record, wormhole whitelist |
+| **Creative Assets** | Artworks, sound files, uploaded content (IPFS CID references) |
+| **Event Records** | Events attended, events hosted, ghost replay links, participant lists |
 | **Messages** | Whisper history from settlement text chat; Robot companion conversation log |
 
 **File cabinet UX:**
 - Opens as a full-screen 2D overlay when clicked (not a new 3D scene — performance priority)
-- Drawer tabs across the top; search bar; sort by date / type / on-chain status
-- Each item shows: title, type chip, date, on-chain proof link (Algorand / Solana / Polygon explorer), IPFS/Arweave CID
+- Drawer tabs across the top; search bar; sort by date / type
+- Each item shows: title, type chip, date, IPFS/content-hash reference
 - Items can be **pinned to the gallery walls** from within the file cabinet (drag item → "Display in gallery")
-- Items can be **shared**: generates a pon.ink-compatible shareable link that includes the item's metadata + settlement context
+- Items can be **shared**: generates a shareable link that includes the item's metadata + settlement context (a pon.ink-compatible variant is available if that optional integration is used — §26)
 
 **File cabinet access control:**
-- NFTs and certifications: public read (anyone visiting the gallery can browse these — it is a portfolio)
+- Certificates & credentials: public read (anyone visiting the gallery can browse these — it is a portfolio)
 - Eco-ops records: public by default; user can mark individual records private
 - Messages: always private; never visible to other visitors
 - Settlement documents: public
@@ -1795,9 +1778,9 @@ The **file cabinet** is a persistent, in-world interface to the user's complete 
 |---|---|
 | `GalleryInteriorPage.vue` — rendered 3D gallery scene with planetary color schema | 🔲 To build |
 | Gallery building clickable from Level 5 Settlement View | 🔲 To build |
-| Artwork panels on walls — display up to 8 NFT images from user's collection | 🔲 To build |
+| Artwork panels on walls — display up to 8 images from user's creative assets | 🔲 To build |
 | Soul orbs inside gallery — connected to settlement presence data | 🔲 To build |
-| File cabinet overlay — NFTs and eco-ops records tabs (read-only in v1.1) | 🔲 To build |
+| File cabinet overlay — certificates and eco-ops records tabs (read-only in v1.1) | 🔲 To build |
 | Gallery color schema computed from planet data | 🔲 To build |
 | Gallery name and statement (text customization) | 🔲 To build |
 
@@ -2205,6 +2188,30 @@ There is no live guest-parking or multiplayer presence system — this remains e
 | "Land adjacent to settlement via portal" user flow | 🔲 Not built — button still does a flat wipe |
 | Named community-orb camera viewpoints | ✅ Implemented — 5 static bookmarks |
 | Live guest parking / multiplayer presence | 🔲 Not built — see §17.3/17.8 Phase 1+ |
+
+---
+
+## 26. Blockchain/NFT Scope Correction (August 2026)
+
+### 26.1 Why this section exists
+
+§21.1 already stated, in July 2026, that the "fully NFT-backed reward economy" described in §5–7 was superseded by a leaner Supabase-backed points ledger — "not NFTs, not on pon.ink." That correction was never carried back into the sections it corrected: §5.2, §5.5, §6.3, §7, §10.3, and §18.5 continued to describe Exolocation NFTs, Algorand/Solana/Polygon minting, DAO governance tokens, and on-chain proof links as though they were the current or intended core system. This section records that those sections have now been edited to match.
+
+### 26.2 What changed
+
+- §5.2 (Settlement Objects), §5.5 (Settlement Governance), §6.3 (renamed from "On-Chain Proof" to "Tamper-Evident Proof"), §7 (renamed from "NFT Economy" to "Settlement Rewards & Optional Monetization"), §10.3 (Blockchain), and §18.5 (The File Cabinet) no longer describe blockchain/NFT mechanics as part of the core Exotopia distro.
+- The Exotopia public distro's actual focus — and the thing this document should be read as specifying going forward — is the quality video/knowledge library, coordination tools (mentor sessions, event scheduling, group management), and citizen-science reporting/data-archive tooling documented in §21, §22, and §24, all running on Supabase + local-first/IPFS storage with no wallet, chain, or token required.
+
+### 26.3 Where the blockchain vision went
+
+It wasn't deleted — it moved to the two platforms already scoped for it:
+
+- **`SPEC_PON_INK.md`** — the individual-creator economy: wallet-based identity, NFT minting (Exolocation NFT wrapper, Station Core/Module, EcocitySolution, $BARS), the aftermarket, and crypto/M-Pesa/Stripe payment rails. Optional integration for anyone who wants to monetize settlement work; not required to create, own, or use a settlement.
+- **`SPEC_WORLDBRIDGER_ONE.md`** — multi-author/collaborative assets and DAO-style resource-return splits (the token-weighted governance layer referenced in §5.5).
+
+### 26.4 What did not move
+
+The **Resonance Split** survives in §7.2/§10.4 as a core-distro concept — `src/lib/resonance-split.ts` documents it as a general-purpose contribution-allocation calculation, no longer minting-specific since IPFS pinning replaced on-chain minting in this app. It's kept available for whatever the local-first/IPFS support model needs next, independent of whether pon.ink's chain-based version is ever used. (Note: `GLOSSARY.md` [31] currently states 99/0.75/0.25 as the split, against the code's own rule not to inline percentages in copy — worth reconciling in the next glossary pass rather than repeating the number here.)
 
 ---
 

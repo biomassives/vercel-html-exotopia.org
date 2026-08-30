@@ -30,7 +30,7 @@
         />
         <q-btn
           flat dense size="xs" color="blue-grey-5"
-          icon="mdi-hexagon-outline" label="Mint deed"
+          icon="mdi-hexagon-outline" label="Claim settlement"
           class="q-mt-xs"
           @click="$router.push('/mint')"
         />
@@ -59,8 +59,10 @@
           Your Exolocation
         </h2>
         <p>
-          When you mint a settlement deed, the NFT's metadata encodes an <strong>exolocation</strong>
-          — a precise coordinate record linking your property to a real astronomical body.
+          Every settlement has an <strong>exolocation</strong> — a precise coordinate record
+          linking your property to a real astronomical body. It's created and held as a free,
+          local-first record with no wallet or blockchain required. If you optionally mint a
+          settlement deed via pon.ink, the NFT's metadata encodes this same exolocation record.
           Four coordinate systems cover every settlement type:
         </p>
 
@@ -74,9 +76,10 @@
 
         <p class="q-mt-md">
           The most common type is <code>exo-surface-v1</code>, used for ground settlements.
-          The NFT stores your region's boundary as a polygon of surface latitude/longitude pairs,
-          plus the host star's real RA/Dec coordinates — making your deed verifiably unique
-          in the observable universe.
+          Your local record stores your region's boundary as a polygon of surface
+          latitude/longitude pairs, plus the host star's real RA/Dec coordinates — making
+          your settlement verifiably unique in the observable universe. If you mint an
+          optional deed, the NFT carries the same boundary data.
         </p>
 
         <div class="ps-code-block">
@@ -252,11 +255,13 @@
 
         <h3 class="ps-sub-title">Metadata visibility</h3>
         <p>
-          NFT metadata is published to IPFS / Arweave as part of the minting process.
-          The exolocation block — including your boundary polygon and host star RA/Dec —
-          is permanently public and immutable once minted.
-          Off-chain profile data (email, contact handles, field-op notes) is stored
-          only in the SCD Hub CRM and is never written on-chain.
+          Your exolocation record — including your boundary polygon and host star RA/Dec —
+          lives on your own device by default, with optional IPFS pinning for durability;
+          no wallet or minting step is required to hold or share it. If you choose to mint
+          an optional pon.ink deed, that same block is additionally published to IPFS /
+          Arweave as part of the minting process and becomes permanently public and
+          immutable on-chain. Off-chain profile data (email, contact handles, field-op
+          notes) is stored only in the SCD Hub CRM and is never written on-chain.
         </p>
 
         <h3 class="ps-sub-title">Settlement surface view</h3>
@@ -473,7 +478,7 @@
       <div class="ps-footer">
         <q-btn
           unelevated rounded color="cyan-9"
-          icon="mdi-rocket-launch" label="Mint a settlement deed"
+          icon="mdi-rocket-launch" label="Claim a settlement"
           @click="$router.push('/mint')"
         />
         <q-btn

@@ -19,7 +19,7 @@ This reframing doesn't just reduce risk — it's why this feature is buildable a
 
 ## 1. What's actually there today (grounding)
 
-- **`SPEC_SELF_HOSTED_NETWORK.md` §2** and `src/pages/DocPage0.vue`'s "Run Your Own Instance" section (`:id="'new-user'"`) already document the manual 3-step baseline: create a Supabase project and run `supabase/migrations/` (13 files today) against it; fork/clone the repo to GitHub, GitLab, or Gitea; connect the repo in Vercel, set `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON`, deploy. `vercel.json` owns build config, headers, and CSP already — nothing to hand-configure there.
+- **`SPEC_SELF_HOSTED_NETWORK.md` §2** and `src/pages/DocPage.vue`'s "Run Your Own Instance" section (`:id="'new-user'"`) already document the manual 3-step baseline: create a Supabase project and run `supabase/migrations/` (13 files today) against it; fork/clone the repo to GitHub, GitLab, or Gitea; connect the repo in Vercel, set `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON`, deploy. `vercel.json` owns build config, headers, and CSP already — nothing to hand-configure there.
 - There is **zero in-app tooling** for any of this today. It's prose in a docs page. The user does all three steps by hand, across three separate vendor dashboards, with no state tracking, no pre-filled values, no progress indicator.
 - **`.env.example`** already documents the exact two Supabase vars and one optional Pinata var (`VITE_PINATA_JWT`) needed, and already carries a security note worth repeating here because it's directly relevant to this spec's security lens (§4.2): *"this is a `VITE_` var, so it ships in the public client bundle and is readable by anyone who opens devtools... do NOT use an Admin key."* The app's existing convention is already "use a narrowly-scoped, write-only key that's safe to expose client-side" — this spec's BYOA design is a natural extension of a pattern already in place, not a new philosophy.
 - **`src/lib/ipfs-pinning.ts`** ships one working `PinningService` implementation today: **Pinata**, via `VITE_PINATA_JWT`, using a v3 scoped "Files: write" key the user generates themselves in Pinata's own dashboard. The interface is explicitly designed (see its header comment) to accept additional providers — "Web3.Storage, self-hosted, etc." — without callers changing. **nft.storage is not currently one of them.** The backlog framing that named nft.storage specifically should be read as "the pinning-provider step, generalized" rather than a commitment to that one vendor — see §4.5 open question.
@@ -196,7 +196,7 @@ Explicitly not resolved by this document — see §4.1. The copy in §3.3 is a s
 - `compliance/INDEX.md` — "Our operating strategy" section, the "cannot un-publish open-source code" and "be a tool, not a custodian" language §4.1 leans on
 - `src/lib/ipfs-pinning.ts` — the shipped `PinningService` interface and Pinata implementation §2.5 is grounded in
 - `src/pages/PfasCitizenSciencePage.vue` — `logFieldWaiverAcceptance()`, the exact pattern §3.3's consent log reuses
-- `src/pages/DocPage0.vue` → "Run Your Own Instance" — the in-app docs prose this wizard would eventually sit alongside or replace
+- `src/pages/DocPage.vue` → "Run Your Own Instance" — the in-app docs prose this wizard would eventually sit alongside or replace
 - `.env.example` — the env-var names §2.3/§3.2 reference; also the source of the "scoped, `VITE_`-safe key" convention this spec extends to every vendor credential
 
 ---

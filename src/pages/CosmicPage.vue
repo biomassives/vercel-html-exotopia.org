@@ -333,7 +333,7 @@
       <div class="ctx-claim">
         <div class="ctx-claim-title">CLAIM A WORLD</div>
         <div class="ctx-claim-sub">
-          40 acres · one mule · permanent deed
+          40 acres · one mule · free & permanent
         </div>
 
         <div class="row q-gutter-xs q-mt-sm">
@@ -341,7 +341,7 @@
             label="Browse Worlds" style="flex:1"
             @click="$router.push(galaxyNavTarget)" />
           <q-btn dense unelevated size="xs" color="amber-8" icon="mdi-map-marker-plus"
-            label="Mint Deed" style="flex:1"
+            label="Claim World" style="flex:1"
             @click="$router.push('/mint')" />
         </div>
       </div>
@@ -482,7 +482,7 @@
             @click="$router.push({ path: `/cluster-galaxy/${clusterSlug(selected.memberClusterName ?? '')}/${encodeURIComponent(selected.memberId ?? selected.memberName ?? selected.name)}`, query: { morph: selected.memberMorph ?? 'E' } })"
           />
 
-          <!-- Secondary action: jump straight to minting a deed -->
+          <!-- Secondary action: jump straight to claiming a settlement -->
           <q-btn
             flat dense size="xs" color="blue-grey-5" class="full-width"
             icon="mdi-map-marker-plus"
@@ -493,7 +493,7 @@
           <div class="text-caption text-blue-grey-6 q-mt-xs" style="font-size:9px;line-height:1.5">
             {{ selected.isBrightGalaxy
               ? 'Luminous catalogued galaxy — explore generated star systems and settle an exoplanet or orbital position.'
-              : 'Generated galaxy with star systems designed for exploration and settlement. Each world can be claimed as an exolocation deed.' }}
+              : 'Generated galaxy with star systems designed for exploration and settlement. Each world can be claimed as a free, local-first exolocation settlement.' }}
           </div>
 
           <div v-if="selected.details?.['Notes']" class="q-mt-xs text-caption text-cyan-8" style="font-size:8px;line-height:1.4">

@@ -30,7 +30,7 @@ because the blog post's own framing is imprecise in one place:
 1. The blog post says "replacing the HYG base layer." In the code that's live today, HYG
    (`public/stars/hyg-compact.json`, 7.3 MB, 61,817 stars per the August 2026 real-vs-generated
    ledger) is **not actually fetched by any page** — `grep -rn "hyg-compact" src/` matches only
-   documentation/stat pages (`DataCoveragePage.vue`, `DocPage0.vue`, `AboutExotopiaModal.vue`)
+   documentation/stat pages (`DataCoveragePage.vue`, `DocPage.vue`, `AboutExotopiaModal.vue`)
    that cite the count, never a runtime `fetch()`. The star catalog that actually drives the
    live parallax sky is Hipparcos, consumed by `datagathering/generate_sky_data.py` (see §1).
    HYG's only other real consumer is `src/pages/CosmicPage.vue`'s per-cluster

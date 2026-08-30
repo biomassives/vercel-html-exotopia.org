@@ -28,45 +28,73 @@ body's name, coordinates, and a region label into the canonical string. No netwo
 database write. Just deterministic string-building, the same inputs always producing the same
 output.
 
-What happens next is where it gets interesting. There is no settlement table anywhere in our
+What happens next is simpler than it used to be. There is no settlement table anywhere in our
 Supabase schema — we checked every migration. A settlement address exists in exactly two places:
-whatever the current browser's `localStorage` remembers (encrypted with our E8-lattice cipher, but
-still just a local cache, not a shared registry), and — once someone actually mints it — the NFT
-metadata written to a public blockchain by one of three independent, chain-specific writers (EVM,
-Solana, Algorand). The chain is the real source of truth. Our own client-side record is a
-convenience, not an authority.
+whatever the current browser's `localStorage` remembers, and — if the owner chooses — an IPFS
+pin. That's it; there is no third, chain-based step anymore. The localStorage record is run
+through `storage-cipher.ts`, an E8-lattice-keyed stream cipher — worth being precise about what
+that actually is: its own header comment says outright, "this is not a cryptographic primitive —
+the key is in the source." It's obfuscation against casual reading (browser extensions, analytics
+scripts, dev-tools inspection), not encryption, and it makes no security claim beyond that. The
+IPFS pin, via `src/lib/ipfs-pinning.ts`, is durability infrastructure, not a claim registry — it
+keeps a settlement's content retrievable as long as someone (the owner, or anyone else who cares
+to) keeps it pinned. Neither localStorage nor an IPFS pin is a shared source of truth; both are
+exactly what they look like, nothing more.
+
+This repo used to route a settlement through blockchain minting instead — three independent,
+chain-specific metadata writers (EVM, Solana, Algorand) — and that used to be the durable, shared
+record once minted. That path has been removed. The per-chain minting code hasn't been deleted,
+just relocated to `archive/chains/` in case another project wants it; nothing in the live
+settlement flow calls it anymore.
 
 That's not an oversight we're patching. It's the architecture we already committed to elsewhere:
 our compliance notes describe Exotopia as "a tool, not a custodian" — we don't hold user funds, we
 don't run a wallet, and we don't take custody of NFTs. A server-side settlements database with the
 authority to say "this address is taken" would quietly turn us into exactly the kind of custodian
-we've deliberately avoided becoming. So today, if two people independently construct and mint the
-same address on two different chains, nothing in our stack stops them — whatever collision
-resolution exists is whatever the destination chain's own mint logic enforces, which is outside
-this repo entirely.
+we've deliberately avoided becoming — and so would a blockchain-based collision authority, for the
+same reason, just enforced by someone else's chain instead of our own server. Removing the
+blockchain path means there is no longer any mechanism, anywhere, that *could* arbitrate address
+collisions even in principle. We're stating that as an accepted design decision, not a gap we
+still owe an answer to: if two people independently construct and pin the same address, nothing in
+our stack stops them, and nothing is meant to.
 
-## What it would take to close the gap
+## A note on E8, since it comes up twice in this codebase and means two very different things
 
-A **read-only** version of `/api/v1/exoloc` is the easy half: an indexer per chain that watches for
-mints carrying our exolocation metadata schema and serves them back by address string. That's an
-aggregator over three formats that already exist — no new state, no new authority claimed.
+The obfuscation cipher above is one of two unrelated things in this repo that both use "E8" in
+their name, and it's worth being explicit about the difference so nobody reasonably conflates
+them. The other one is a genuine zero-knowledge-proof design — E8/Λ₂₄ lattice points verified with
+PLONK/halo2 proofs — written up in `SPEC_ECO_OPS_API.md` and referenced on the Platform page as a
+planned item requiring a Rust circuit implementation and a Solana program deployment. **It is not
+built.** No circuit exists, nothing is deployed, and — notably — even if it were built, it would
+verify on-chain (Solana), which is a different tradeoff than the local-first, chain-free path this
+post describes for settlement addresses. We're calling this out on purpose: a June 2026 press
+release once described a "working" zero-knowledge payment system for our Kenya field partners that
+didn't actually exist, and we published a correction admitting it. We'd rather over-explain the
+difference between "a cipher named after E8" and "an unbuilt E8-based ZK proof spec" here than
+risk that happening again.
 
-A **write-side** reservation — actually being able to ask "is this address free?" before minting —
-is the harder half, and the one that would force a real decision. Either we accept collisions are
-resolved entirely on-chain, first-mint-wins, and document that plainly as the honest current
-behavior. Or we stand up a lightweight, non-custodial reservation ledger — short-TTL, so a
-reservation expires automatically if the mint never completes, and holds no funds and no identity,
-just "this string is provisionally claimed for the next N minutes." We haven't made that call yet.
-It's a real product decision, not a technical one, and it should happen with eyes open about what
-each option costs.
+## What it would take to close the remaining gap
+
+The collision question above is closed, by decision. What's still genuinely open is discovery: IPFS
+is content-addressed, so any pinned settlement is directly retrievable by its CID from any public
+gateway (`https://ipfs.io/ipfs/<cid>`) — but only if you already know the CID. Exotopia doesn't
+provide a directory mapping "address X" to "whatever CID is currently pinned for it," and building
+one would mean standing up new state (an `address → CID` index) that carries the same
+custodial-liability tradeoff `compliance/INDEX.md` already argues against — just for a directory
+instead of a claim registry, so it's not a decision to make lightly. The lower-cost alternative
+already exists: a settlement owner can publish their own CID somewhere discoverable, and
+`SPEC_COMMUNITY_NODES.md` describes exactly this as a community node's role. We haven't built a
+directory, and doing so would need to clear the same bar the collision-authority question already
+didn't.
 
 ## Where this leaves us
 
 The settlement address system works exactly as advertised for what it's used for today: a
-human-readable, deterministic, chain-embeddable identifier. What it isn't, yet, is a service — the
-"API" in the spec's header is a plan, not a deployed thing. We think that's worth saying out loud,
-both because it's more honest than letting the spec's phrasing stand unchallenged, and because it's
-a genuinely open design question — not a bug tracker item — for whoever picks up the read/write API
-work next.
+human-readable, deterministic, locally-held identifier, durable for as long as someone keeps it
+pinned to IPFS. What it isn't, yet, is a service — the "API" in the spec's header is a plan, not a
+deployed thing, and a lookup directory is a real open design question rather than a bug-tracker
+item. What it also no longer is: blockchain-backed. That question has been answered, on purpose,
+and this post is the update to say so plainly rather than leaving the chain-based version of this
+story standing unchallenged.
 
 *See `SETTLEMENT_ADDRESS_API.md` for the full dependency breakdown this post is based on.*

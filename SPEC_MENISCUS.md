@@ -25,7 +25,7 @@ These decisions were confirmed in Q&A on 2026-07-15 and are treated as fixed for
 | DefenderNav meta-tabs (`+1`/`+2`) | `DefenderNav.vue` `drawMetaOrrery` / `drawMetaGalaxy` | Built. Full-canvas zoom-out views, not composited with the strip. |
 | Earth↔System inset | `DefenderNav.vue` `drawContextInset` | Built. Shows **only** Sol vs. current system (RA/Dec/distPc → 2D direction). No neighbor systems, no history. |
 | View-mode pills (NAT/X-RAY/DK.MAT) | `DefenderNav.vue` `VIEW_MODES` | Built as **exclusive** picks (`viewMode` single ref) — not composited layers. Out of scope here; noted for future work. |
-| Quick-transit strip / visit history | `DocPage0.vue` docs reference; local storage, most-recent-12, de-duped by route | Built and running today. This *is* the seed of a navigation graph — reuse it, don't rebuild it. |
+| Quick-transit strip / visit history | `DocPage.vue` docs reference; local storage, most-recent-12, de-duped by route | Built and running today. This *is* the seed of a navigation graph — reuse it, don't rebuild it. |
 | Wormhole conduits | `src/data/cosmic-structures.ts` `buildConduits`, `WormholeConduit` type | Built. Placed at void peripheries; one conduit per void. |
 | Activity-score economy (DRK-E / QNT-P) | `SPEC_GAMETHEORY.md` §2–3 | Built spec, non-purchasable, earned via dwell/capture. Has defined unlock ladders — extend, don't fork. |
 | Bounty / field-record workflow | `.github/ISSUE_TEMPLATE/bounty-field-record.yml`, `data/submissions/`, `docs/eco-ops-workflow-guide.md` | Built. `data/templates/water-quality-record.json` already has a `bounty_issue` field — citation field is a natural sibling. |
@@ -77,7 +77,7 @@ function pickSurpriseSystem(recentlyVisited: string[]): SystemKey {
 }
 ```
 
-`recentlyVisited` is read directly from the existing quick-transit local-storage list (`DocPage0.vue`'s documented mechanism) — do not create a second history store.
+`recentlyVisited` is read directly from the existing quick-transit local-storage list (`DocPage.vue`'s documented mechanism) — do not create a second history store.
 
 ### §2.4 Transit and reward
 
