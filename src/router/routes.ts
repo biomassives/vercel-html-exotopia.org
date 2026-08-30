@@ -403,6 +403,15 @@ const routes: RouteRecordRaw[] = [
         meta: { title: 'Sky Generation — Educational Lessons' },
       },
       {
+        // Teaching demo only — see the page's own status disclaimer. No real
+        // contract is formed, no real item changes hands, and this is not
+        // wired to the real reward/settlement-item system (SPEC.md §21).
+        path: 'contract-workshop',
+        name: 'contract-workshop',
+        component: () => import('src/pages/ContractWorkshopPage.vue'),
+        meta: { title: 'Creative Contracts & Chemistry — Educational Workshop' },
+      },
+      {
         path: 'void-math',
         name: 'void-math',
         component: () => import('src/pages/VoidMathPage.vue'),

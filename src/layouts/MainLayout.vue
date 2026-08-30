@@ -713,6 +713,13 @@
                 <span class="mob-nav-sub">Navigation · Orbital math · Astrophysics</span>
               </span>
             </button>
+            <button class="mob-nav-item" @click="navTo('/contract-workshop')">
+              <span class="mob-nav-icon">🔥</span>
+              <span class="mob-nav-text">
+                <span class="mob-nav-label">Contracts &amp; Chemistry</span>
+                <span class="mob-nav-sub">Teaching demo · Rights literacy · Avogadro's number</span>
+              </span>
+            </button>
             <button class="mob-nav-item" @click="navTo('/eco-library')">
               <span class="mob-nav-icon">🌿</span>
               <span class="mob-nav-text">
@@ -1015,6 +1022,22 @@ const NAV_GROUPS: NavGroup[] = [
                 <line x1="30" y1="16" x2="52" y2="26" stroke="rgba(150,190,255,0.35)" stroke-width="0.4" stroke-dasharray="1.2 1"/>
                 <line x1="52" y1="26" x2="34" y2="34" stroke="rgba(150,190,255,0.35)" stroke-width="0.4" stroke-dasharray="1.2 1"/>
                 <path d="M40 6 L40 2 M40 42 L40 46 M64 24 L68 24 M12 24 L16 24" stroke="rgba(120,180,255,0.35)" stroke-width="0.6"/>`,
+        },
+      },
+      {
+        title: 'Contracts & Chemistry',
+        desc:  'Teaching demo — a plain-language creative-reference agreement, plus an interactive lesson on Avogadro\'s number. Not a real contract or item.',
+        cta:   'Open workshop',
+        route: '/contract-workshop',
+        color: 'rgba(255,170,60,0.90)',
+        art: {
+          vb: '0 0 80 50',
+          svg: `<path d="M40 10 C34 18 30 26 30 32 C30 39 34.5 44 40 44 C45.5 44 50 39 50 32 C50 26 46 18 40 10 Z" fill="rgba(255,170,60,0.14)" stroke="rgba(255,170,60,0.55)" stroke-width="0.9"/>
+                <path d="M40 20 C37 25 35 29 35 33 C35 37 37.2 40 40 40 C42.8 40 45 37 45 33 C45 29 43 25 40 20 Z" fill="rgba(255,205,110,0.35)"/>
+                <rect x="10" y="6" width="20" height="14" rx="1.5" fill="rgba(20,16,8,0.65)" stroke="rgba(200,190,150,0.40)" stroke-width="0.6"/>
+                <line x1="13" y1="10" x2="27" y2="10" stroke="rgba(200,190,150,0.30)" stroke-width="0.4"/>
+                <line x1="13" y1="13.5" x2="24" y2="13.5" stroke="rgba(200,190,150,0.24)" stroke-width="0.4"/>
+                <line x1="13" y1="17" x2="26" y2="17" stroke="rgba(200,190,150,0.24)" stroke-width="0.4"/>`,
         },
       },
       {
@@ -1353,6 +1376,11 @@ const ITEM_PANELS: Record<string, ItemPanel> = {
     subline: 'Reading skies from another world, orbital math, galactic-center astrophysics — L1 through L3.',
     actions: [{ label: 'Start lesson', route: '/sky-lessons', primary: true }, { label: 'Galactic center', route: '/sky-lessons?lesson=3' }],
   },
+  'Contracts & Chemistry': {
+    style: 'quiz', headline: 'Creative contracts & lighter chemistry',
+    subline: 'Teaching demo — plain-language rights literacy, plus Avogadro\'s number and scientific notation. Not a real contract or item.',
+    actions: [{ label: 'Open workshop', route: '/contract-workshop', primary: true }, { label: 'Chemistry module', route: '/contract-workshop?module=2' }],
+  },
   'Eco-Ops Library': {
     style: 'eco', headline: 'Field-tested eco-ops methods',
     subline: 'WATSAN, biodiversity, and remediation protocols and field guides — not a quiz, real reference material.',
@@ -1446,6 +1474,10 @@ const PARTICIPATE_PANEL: Record<string, ParticipatePanelData> = {
   'Sky Lessons': {
     vb: '18 4 44 40', filter: 'saturate(1.5) hue-rotate(200deg) brightness(1.16)',
     caption: 'NAVIGATION · ORBITAL MATH · ASTROPHYSICS', cta: 'Start lesson →', route: '/sky-lessons',
+  },
+  'Contracts & Chemistry': {
+    vb: '14 4 52 40', filter: 'saturate(1.6) hue-rotate(-10deg) brightness(1.12)',
+    caption: 'TEACHING DEMO · RIGHTS LITERACY · AVOGADRO\'S NUMBER', cta: 'Open workshop →', route: '/contract-workshop',
   },
   'Eco-Ops Library': {
     vb: '14 4 54 40', filter: 'saturate(1.9) hue-rotate(78deg) brightness(1.1)',
@@ -1583,6 +1615,7 @@ const currentLevelLabel = computed((): string => {
   if (p.startsWith('/mint'))         return 'MINT'
   if (p.startsWith('/learn'))        return 'LEARN'
   if (p.startsWith('/sky-lessons'))  return 'SKY LESSONS'
+  if (p.startsWith('/contract-workshop')) return 'WORKSHOP'
   if (p.startsWith('/eco-library'))  return 'ECO LIBRARY'
   if (p.startsWith('/docs'))         return 'DOCS'
   if (p.startsWith('/blog'))         return 'BLOG'
