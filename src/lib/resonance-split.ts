@@ -69,6 +69,42 @@ export const SETTLEMENT_SPLIT: ResonanceSplit = Object.freeze({
  */
 export const PRIMARY_MINT_IS_FREE = true
 
+/**
+ * Bookstore & Media Orders — proposed default split for creator-listed
+ * items (books, zines, prints, audio) ordered through /bookstore.
+ *
+ * Unlike SETTLEMENT_SPLIT (free) and STANDARD_SPLIT ($SUNLIGHT, on the rare
+ * fee-carrying pon.ink sale), every bookstore order is a real transaction
+ * with real proceeds by design — the whole point of this page is durable
+ * income for creatives and for the small group of people maintaining the
+ * software itself ("Home Team"), not a side effect of an otherwise-free path.
+ * `community_fund` here is read as "Home Team / core maintainer support"
+ * rather than the WATSAN/field-kit fund STANDARD_SPLIT feeds — same shape,
+ * different destination, so it is NOT an alias of STANDARD_SPLIT.
+ *
+ * These numbers are a starting proposal, not yet ratified — confirm with
+ * Group Manager + Admin co-sign before any real payment flow reads this
+ * constant for money movement (see SPEC_BOOKSTORE_MEDIA_ORDERS.md §Open
+ * Questions). Until then this only drives display copy on /bookstore.
+ */
+export const BOOKSTORE_SPLIT: ResonanceSplit = Object.freeze({
+  creator:        0.80,
+  community_fund: 0.20,   // → Home Team / core maintainer support, this context only
+  platform:       0,
+})
+
+/**
+ * A bookstore item may be listed by the Home Team itself (maintainer-authored
+ * media, e.g. a project zine) rather than by an individual creator — in that
+ * case there's no separate creator to pay, so the full proceeds go to the
+ * same maintainer-support destination `community_fund` names above.
+ */
+export const HOME_TEAM_LISTING_SPLIT: ResonanceSplit = Object.freeze({
+  creator:        0,
+  community_fund: 1.00,
+  platform:       0,
+})
+
 /** Legacy alias kept for $SUNLIGHT metadata, which names the field differently. */
 export function toSunlightShape(s: ResonanceSplit) {
   return { creator: s.creator, hardware_fund: s.community_fund, platform: s.platform }

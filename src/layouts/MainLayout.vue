@@ -727,6 +727,13 @@
                 <span class="mob-nav-sub">Points · Certificates</span>
               </span>
             </button>
+            <button class="mob-nav-item" @click="navTo('/bookstore')">
+              <span class="mob-nav-icon">📖</span>
+              <span class="mob-nav-text">
+                <span class="mob-nav-label">Bookstore & Media</span>
+                <span class="mob-nav-sub">Support creatives &amp; Home Team</span>
+              </span>
+            </button>
             <button class="mob-nav-item" @click="navTo('/pfas-citizen-science')">
               <span class="mob-nav-icon">🧪</span>
               <span class="mob-nav-text">
@@ -1066,6 +1073,22 @@ const NAV_GROUPS: NavGroup[] = [
         },
       },
       {
+        title: 'Bookstore & Media',
+        desc:  'Books, zines, prints, and recordings from people on this network — orders support the creator and the Home Team maintaining this software.',
+        cta:   'Browse',
+        route: '/bookstore',
+        color: 'rgba(220,175,90,0.90)',
+        art: {
+          vb: '0 0 80 50',
+          svg: `<rect x="18" y="9" width="17" height="32" rx="1.2" fill="rgba(220,175,90,0.14)" stroke="rgba(220,175,90,0.50)" stroke-width="0.7" transform="rotate(-5 26.5 25)"/>
+                <rect x="34" y="7" width="17" height="32" rx="1.2" fill="rgba(220,175,90,0.20)" stroke="rgba(220,175,90,0.60)" stroke-width="0.7"/>
+                <rect x="50" y="9" width="17" height="32" rx="1.2" fill="rgba(220,175,90,0.14)" stroke="rgba(220,175,90,0.50)" stroke-width="0.7" transform="rotate(5 58.5 25)"/>
+                <line x1="38" y1="15" x2="47" y2="15" stroke="rgba(220,175,90,0.35)" stroke-width="0.4"/>
+                <line x1="38" y1="20" x2="47" y2="20" stroke="rgba(220,175,90,0.35)" stroke-width="0.4"/>
+                <line x1="38" y1="25" x2="47" y2="25" stroke="rgba(220,175,90,0.35)" stroke-width="0.4"/>`,
+        },
+      },
+      {
         title: 'PFAS Cleanup',
         desc:  'Citizen-science PFAS/PFOA decontamination — log project progress, propose methods, and mark real work in your settlement.',
         cta:   'Explore',
@@ -1344,6 +1367,11 @@ const ITEM_PANELS: Record<string, ItemPanel> = {
     subline: 'Volunteering, educating others, finance literacy — points and certificates in one place.',
     actions: [{ label: 'Open rewards', route: '/rewards', primary: true }, { label: 'How it works', route: '/rewards-guide' }],
   },
+  'Bookstore & Media': {
+    style: 'quiz', headline: 'Bookstore & Media Orders',
+    subline: 'Books, zines, prints, and recordings from network creatives — orders support the creator plus the Home Team maintaining this software. Order requests, not live checkout, in v1.',
+    actions: [{ label: 'Browse', route: '/bookstore', primary: true }],
+  },
   'PFAS Cleanup': {
     style: 'eco', headline: 'PFAS/PFOA citizen science',
     subline: 'Real remediation methods, public method proposals, and decon-project logging.',
@@ -1428,6 +1456,10 @@ const PARTICIPATE_PANEL: Record<string, ParticipatePanelData> = {
   'Rewards & Certificates': {
     vb: '20 4 40 40', filter: 'saturate(1.7) brightness(1.12)',
     caption: 'POINTS · CERTIFICATES · IMPACT', cta: 'Open rewards →', route: '/rewards',
+  },
+  'Bookstore & Media': {
+    vb: '16 6 48 38', filter: 'saturate(1.6) hue-rotate(28deg) brightness(1.1)',
+    caption: 'BOOKS · ZINES · PRINTS · AUDIO', cta: 'Browse →', route: '/bookstore',
   },
   'PFAS Cleanup': {
     vb: '20 4 40 42', filter: 'saturate(1.9) hue-rotate(6deg) brightness(1.1)',

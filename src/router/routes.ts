@@ -342,6 +342,15 @@ const routes: RouteRecordRaw[] = [
         meta: { title: 'How Rewards Work · Exotopia' },
       },
       {
+        // Bookstore & Media Orders — income support for network creatives and
+        // Home Team (core program maintainers). v1 is order-intake, not live
+        // checkout — see SPEC_BOOKSTORE_MEDIA_ORDERS.md.
+        path: 'bookstore',
+        name: 'bookstore',
+        component: () => import('src/pages/BookstorePage.vue'),
+        meta: { title: 'Bookstore & Media Orders · Exotopia' },
+      },
+      {
         path: 'pfas-citizen-science',
         name: 'pfas-citizen-science',
         component: () => import('src/pages/PfasCitizenSciencePage.vue'),
