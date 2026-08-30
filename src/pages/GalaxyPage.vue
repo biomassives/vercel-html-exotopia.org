@@ -3458,6 +3458,15 @@ onUnmounted(() => {
   box-shadow: 0 0 5px currentColor;
 }
 
+/* Mobile — RecordWidget.vue's FAB parks at bottom:88px/right:16px (~80x44px)
+   on screens <=640px, which sat directly on top of the bottom pill in this
+   stack. Raise the stack clear of it. */
+@media (max-width: 640px) {
+  .gl-controls {
+    bottom: 148px;
+  }
+}
+
 /* ── System-mode controls — bottom-right, ABOVE the NavigatorInset ──
    NavigatorInset: bottom 142 px, height ~190 px → top edge ~332 px.
    Buttons sit at bottom: 340 px so there is a clear gap above the inset.

@@ -1739,7 +1739,12 @@ async function doPin() {
     min-height: auto;
   }
   .hero-copy   { flex: 0 0 auto; max-width: 100%; }
-  .hero-fan    { height: 240px; }
+  /* Card fan floats above its own box (rotated/offset fan-slot children,
+     center card ~277px tall inside a 240px box) — in the stacked mobile
+     layout that overflow was landing on top of the hero-ctas button row
+     above it, hiding the "View Collection" label. Push the fan down clear
+     of the buttons instead of shrinking/restructuring the fan itself. */
+  .hero-fan    { height: 240px; margin-top: 64px; }
 }
 
 /* ══════════════════════════════════════════════════════════════
