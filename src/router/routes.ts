@@ -288,6 +288,16 @@ const routes: RouteRecordRaw[] = [
         meta: { title: 'Data Coverage · Exotopia' },
       },
       {
+        // Explorable map of the current-state data/API surface: Supabase schema by
+        // domain, static JSON data files, exolocation address grammar, and the
+        // pure-function settlement SDK. See SPEC_API_PRODUCT.md for the companion
+        // refined-data-model/distribution plan built on top of this inventory.
+        path: 'api-surface',
+        name: 'api-surface',
+        component: () => import('src/pages/ApiSurfacePage.vue'),
+        meta: { title: 'API & Data Surface · Exotopia' },
+      },
+      {
         path: 'admin',
         name: 'admin',
         component: () => import('src/pages/AdminPage.vue'),

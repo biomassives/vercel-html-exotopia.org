@@ -769,6 +769,13 @@
                 <span class="mob-nav-sub">Protocol · Guides</span>
               </span>
             </button>
+            <button class="mob-nav-item" @click="navTo('/api-surface')">
+              <span class="mob-nav-icon">🗂</span>
+              <span class="mob-nav-text">
+                <span class="mob-nav-label">API &amp; Data Surface</span>
+                <span class="mob-nav-sub">Schema · SDK · address grammar</span>
+              </span>
+            </button>
           </nav>
         </div>
       </div>
