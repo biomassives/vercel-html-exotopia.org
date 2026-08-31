@@ -32,6 +32,9 @@ In body text use superscript notation: `sublunary⁶` links to entry [6] below.
 **Security**
 [52] CVE · [53] CWE · [54] CVSS · [55] Reentrancy Attack · [56] Front-running / MEV · [57] Honeypot Contract · [58] Rug Pull · [59] Phishing / Address Poisoning · [60] Exotopia Security Bulletin · [61] Responsible Disclosure
 
+**Platform Features & Data Sources (August 2026)**
+[147] File Cabinet · [148] Twin-Cylinder Station Interior · [149] Mentor Session · [150] Your Mentees View · [151] Community Node · [152] Local Void · [153] NED / NED TAP · [154] Sky-Data Regime · [155] archive/chains
+
 ---
 
 ## DEFINITIONS
@@ -132,6 +135,7 @@ A permanent, local-first address anchoring a virtual settlement to a specific lo
 
 **[25] Settlement Dome**
 The primary physical structure of a Level 4/5 settlement in Exotopia. A geodesic hemisphere containing the library building, water feature, food production, vegetation, and the stone circle. The dome is the visible landmark of a community's presence on an exoplanet surface.
+→ See [147] File Cabinet (the enterable gallery structure near the dome)
 
 **[26] mule-bot**
 An AI-powered knowledge assistant living in the settlement gallery. In V1, corpus-driven — speaks in the owner's words, assembled from items added to the knowledge base. In V2, a land-connected, replicable, programmable electronic mule — Natural & Regenerative Land Care Specialist. Tracks your $SUNLIGHT earnings, plans eco-ops participation for maximum rewards, curates your Hub Approvideo feed, helps build the settlement, and bridges virtual activity to real-world earth care recognition. Local-network only — no cloud, no LLM, corpus stays sovereign..
@@ -601,5 +605,44 @@ All data submitted through SCD Hub eco-ops channels is licensed CC BY 4.0 unless
 
 ---
 
-*Index continues — entries [62]–[146] added June 2026*  
+### PLATFORM FEATURES & DATA SOURCES (AUGUST 2026 ADDITIONS)
+
+**[147] File Cabinet**
+A browsable in-scene inventory interface reached by entering a settlement's gallery structure — six drawers (Eco-Ops, Certifications, Rewards, Settlement Documents, Creative Assets, Coming Soon) surfacing records a member has already earned or created elsewhere on the platform (mentor certificates, reward-track completions, settlement documents, voxel-sculpture designs), not a separate content system of its own. Backed by the same Supabase tables the rest of the platform already writes to — nothing is duplicated or newly stored just for the cabinet.
+→ See [25] Settlement Dome, [26] mule-bot
+
+**[148] Twin-Cylinder Station Interior**
+The interior architecture used for settlements with no solid ground to build a dome on — orbital claims, black hole environments, gas giants. Two counter-rotating cylinders provide artificial gravity via centripetal force, researched against real O'Neill-cylinder/Stanford-Torus literature rather than invented from scratch. Each cylinder's end caps carry two large circular "porthole" windows — full-diameter glazing rather than small rectangular ports — rendered with a surface-type-specific view (gas bands, lava, ocean/clouds, accretion disk, or a deep starfield) depending on the destination world. A collapsible guide panel shows a deck map and schedule for the station's zones.
+→ See [37] Station Core, [38] Station Module, `blog-twin-cylinder-station-interior.md`
+
+**[149] Mentor Session**
+A confirmed instance of one platform member (the mentor) guiding another (the mentee) through domain-specific work — WATSAN, biodiversity habitat creation, remediation, or library/policy research. Both sides must independently confirm a session before it counts; a session cannot be self-confirmed by one party or silently reassigned, enforced server-side rather than trusted to the client. Four confirmed mentor sessions earns a Mentorship certificate.
+→ See [150] Your Mentees View, [27] Eco-ops
+
+**[150] Your Mentees View**
+A Rewards-page section for members mentoring more than one person at once — rolls up every mentor-session record where the viewer is the mentor into one row per mentee, with a best-effort domain guess per session and a link to the relevant Eco-Ops Library area, PFAS tracker, or Knowledge Keeper record. A read on data that already existed (one record per mentor session), not a new table.
+→ See [149] Mentor Session
+
+**[151] Community Node**
+A general-purpose directory-listing record type supporting several node kinds, including `business_listing` and `business_location` — a member's real-world business, physical location, or creative page, submitted at `/my-listings` and shown in the public community gallery directory alongside other members' pages. The concrete, shipped hook for small businesses (a water-filtration operation, a composting business, a native-plant nursery) to demonstrate real-world earth-services work through the platform.
+→ See [30] Ecommunity DAO
+
+**[152] Local Void**
+A real, large cosmic void roughly 45 Mpc in radius, centred about 23 Mpc away — the Milky Way itself sits inside its near edge rather than outside looking in, an unusual geometry among the voids in Exotopia's catalog. The platform's Local Void detail page blends real catalogued galaxies (queried live from NASA/IPAC's NED database at data-generation time) with a small, literature-bounded amount of generated filler for the void's interior, which real surveys report as genuinely sparse — dozens of confirmed members, not hundreds. The two populations are labelled distinctly in the underlying data (`source: 'catalog'` vs. `'generated'`), never presented as equally real.
+→ See [153] NED / NED TAP
+
+**[153] NED / NED TAP**
+The NASA/IPAC Extragalactic Database — a real, continuously updated catalog of galaxies and other extragalactic objects, queried by this platform's data-generation scripts through its Table Access Protocol (TAP), a standardised astronomical query interface using ADQL, a SQL-like query language. NED TAP enforces a hard 60-second timeout on synchronous queries; the platform's fetch scripts size their queries to complete comfortably inside that limit rather than requesting more data than the endpoint can reliably return in one request.
+→ See [152] Local Void
+
+**[154] Sky-Data Regime**
+A specced-but-not-yet-built architecture for sharing computed local-sky data (star positions, constellation lines) across settlements close enough together in space to see nearly the same sky, instead of generating and storing one full-precision file per settlement. Intended to cut the sky-data storage footprint roughly 25–30× while keeping full precision where it matters — the constellation layer. Named in project status reports as the top remaining architecture gap in the local-sky pipeline; not yet started.
+
+**[155] archive/chains**
+A repo-root directory holding standalone, portable blockchain-interaction code (EVM, Solana, Algorand minting and metadata scripts) that the deployed app neither imports nor depends on — moved here, not deleted, when the app's own Solana/Metaplex npm dependencies were removed because no chain-minting work was planned in the near term. A future maintainer who finds unfamiliar chain-SDK code in this folder should read it as reusable reference material for a future project, not as part of the live app's dependency graph — nothing in `src/` reaches into it.
+→ See [117] Open Source
+
+---
+
+*Index continues — entries [62]–[146] added June 2026, entries [147]–[155] added August 2026*  
 *Return to: [README.md](../README.md) · [SPEC_DOMAIN_COMPETENCY.md](SPEC_DOMAIN_COMPETENCY.md) · [SPEC_LEARNING_CURRICULUM.md](SPEC_LEARNING_CURRICULUM.md)*
