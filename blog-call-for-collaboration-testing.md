@@ -1,7 +1,3 @@
-**[DRAFT — not reviewed, not sent, not published. Placeholders marked in brackets.]**
-
----
-
 # Exotopia Is Looking for People to Try to Break It
 
 ## An open call for testers, mentors, and technical collaborators — pre-launch, zero users, built in the open
@@ -104,20 +100,3 @@ name (or not) exactly as you prefer.
 SCD Hub
 ecocommunity@protonmail.com
 `github.com/biomassives/vercel-html-exotopia.org`
-
----
-
-*[Notes for review, not part of the published text:]*
-- *Bug-report routing decided: GitHub Issues (in-app flow or direct) for testers with GitHub
-  accounts, ecocommunity@protonmail.com — the existing privacy-policy-covered support channel,
-  not a new one — for everyone else. Deliberately did not stand up a new form/service, to avoid
-  adding an undocumented data-collection surface outside what `legal-privacy.md` already covers.*
-- *This assumes `blog-status-report-aug17-2026.md` gets linked from somewhere public (a blog post
-  wrapper, or the About modal) — right now it's a bare repo file with no route. Can turn it
-  into a proper blog post entry (registered in `src/data/blog-posts.ts`) if you want it
-  publicly linkable rather than just a file in the repo.*
-- *Before this goes out anywhere public, the onboarding welcome-letter template's stale
-  blockchain language (flagged in the status report) is worth fixing first — a cold-start
-  tester following that email would get information that contradicts what they'll actually
-  see in the app.*
-- *Happy to turn this into a shareable one-pager (PDF-style artifact) once approved.*

@@ -583,6 +583,18 @@ export const BLOG_POSTS: BlogPostMeta[] = [
     editorialNote: 'Supersedes the August 10 status report; nothing in that one was wrong, this one is just more current. Published alongside an open call for testers, mentors, and technical collaborators.',
   },
   {
+    slug:     'call-for-collaboration-testing',
+    title:    'Exotopia Is Looking for People to Try to Break It',
+    subtitle: 'An open call for testers, mentors, and technical collaborators — pre-launch, zero users, built in the open',
+    date:     'August 2026',
+    audience: ['community', 'dev', 'field'],
+    series:   'ecosystem',
+    status:   'public-draft',
+    description:
+      "A direct ask, distinct from the conservation-biology co-authorship call: pre-launch software needs people willing to actually drive it and try to break it, not review scientific content. Names concrete flows ready to test today (the five-level cosmic descent, no-account settlement persistence, the rebuilt Milky Way, station interiors, the File Cabinet, mentor group tooling, /my-listings) and what kind of help is wanted — click-through testers with no technical background, mentors/group leaders, developers willing to read src/ rather than just click through it, and anyone willing to try onboarding cold. Bug reports route to GitHub Issues (already wired via the in-app report modal and bug_report.yml) for testers with a GitHub account, or ecocommunity@protonmail.com — the existing privacy-policy-covered support channel, not a new intake surface — for everyone else. Explicit about what's not being asked for (money, a long commitment, forced public credit) and what's honestly still rough before you start.",
+    editorialNote: 'Companion to status-report-aug17-2026 — read that first for the full current-state snapshot this call points to.',
+  },
+  {
     slug:     'visual-library-proposal',
     title:    'The Fourth Track',
     subtitle: 'A proposal for a Visual Library of settlement objects and design elements — and an open question about what the Financial Literacy Power-Up actually delivers today',
