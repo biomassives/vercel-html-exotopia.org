@@ -18,7 +18,7 @@ In body text use superscript notation: `sublunary⁶` links to entry [6] below.
 [13] Sublunary · [14] Syzygy · [15] Liminal · [16] Hill Sphere · [17] Roche Limit · [18] Tidal Lock · [19] Lagrange Points · [20] Barycentre · [21] Equilibrium Temperature · [22] Circumbinary (P-type / S-type) · [23] Forbidden Zone
 
 **Settlement & Governance**
-[24] Exolocation · [25] Settlement Dome · [26] mule-bot · [27] Eco-ops · [28] 40 Acres · [29] Stone Circle · [30] Ecommunity DAO · [31] Resonance Split
+[24] Exolocation · [25] Settlement Dome · [26] Mule (Holographic Intelligence Profiles) · [27] Eco-ops · [28] 40 Acres · [29] Stone Circle · [30] Ecommunity DAO · [31] Resonance Split
 
 **NFT & Chain**
 [32] $SUNLIGHT · [33] Water Quality Certificate · [34] Health Card ID · [35] POAP · [36] EcocitySolution NFT · [37] Station Core · [38] Station Module · [39] Exolocation NFT
@@ -137,15 +137,15 @@ A permanent, local-first address anchoring a virtual settlement to a specific lo
 The primary physical structure of a Level 4/5 settlement in Exotopia. A geodesic hemisphere containing the library building, water feature, food production, vegetation, and the stone circle. The dome is the visible landmark of a community's presence on an exoplanet surface.
 → See [147] File Cabinet (the enterable gallery structure near the dome)
 
-**[26] mule-bot**
-An AI-powered knowledge assistant living in the settlement gallery. In V1, corpus-driven — speaks in the owner's words, assembled from items added to the knowledge base. In V2, a land-connected, replicable, programmable electronic mule — Natural & Regenerative Land Care Specialist. Tracks your $SUNLIGHT earnings, plans eco-ops participation for maximum rewards, curates your Hub Approvideo feed, helps build the settlement, and bridges virtual activity to real-world earth care recognition. Local-network only — no cloud, no LLM, corpus stays sovereign..
-→ See STN-015, STN-019, blog-mule-v2-specialist.md
+**[26] Mule**
+The private, personally-owned AI assistant that comes with every settlement's 40-acre claim (see `[28] 40 Acres`) — lives in the settlement gallery, corpus-driven, speaks in the owner's words. As of August 2026's redesign (`SPEC_MULE_HOLOGRAPHIC_PROFILES.md`), the Mule is a grouping of six selectable "Holographic Intelligence Profiles" — Land Steward, Water Guardian, Biodiversity Scout, Commons Keeper, Knowledge Elder, and a General default — one shared local LLM backend with a different persona/visual accent per profile, each oriented toward a real platform feature in service of a real-world goal (less toxic, more biodiverse, safely governed, more peaceful). Target is a real local language model sized for modest hardware — this **supersedes** the earlier "no cloud, no LLM" description: the corpus-sovereignty principle (nothing leaves the device) is kept, but "no LLM" is no longer accurate or the goal. Not yet built — see the spec's §6 "What this spec does not do."
+→ See [28] 40 Acres, [149] Mentor Session, `SPEC_MULE_HOLOGRAPHIC_PROFILES.md`, `SPEC_MULEBOT_API.md`, STN-015, STN-019, `blog-mule-v2-specialist.md`
 
 **[27] Eco-ops**
 Short for *ecological operations*. The check-in protocol connecting real-world community field work to tamper-evident records (Supabase + IPFS, see §6.3/§21.2 of `SPEC.md`) and virtual rewards. Eight activity types: `wqMap` (water quality), `garbageMap`, `farmMap`, `productMap`, `transportMap`, `storageMap`, `sourceMap`, `cleaningMap`.
 
 **[28] 40 Acres**
-*"40 acres and a mule"* — a reference to the unfulfilled 1865 promise of land redistribution to freed enslaved people in the United States. In Exotopia, 40 virtual acres is the standard land claim unit attached to a settlement's exolocation address (see [24]) — free, local-first, no NFT required. An optional NFT deed can be minted via pon.ink (see [39]). The mule is the mule-bot — the knowledge assistant that comes with the settlement.
+*"40 acres and a mule"* — a reference to the unfulfilled 1865 promise of land redistribution to freed enslaved people in the United States. In Exotopia, 40 virtual acres is the standard land claim unit attached to a settlement's exolocation address (see [24]) — free, local-first, no NFT required. An optional NFT deed can be minted via pon.ink (see [39]). The mule is the Mule (see `[26]`) — the private assistant that comes with the settlement.
 
 **[29] Stone Circle**
 The cultural landmark placed at the centre of each settlement in Exotopia. Marks the settlement's cardinal directions, functions as a time capsule, and carries the community's intention statement. The spiral pattern and standing stone heights are seeded from the settlement's hostname. The E8 Pyramid (wormhole access point) is hidden inside the stone circle, visible only in DK.MAT (dark matter) view mode.
@@ -168,7 +168,7 @@ In the core Exotopia distro the split is a general-purpose, non-chain contributi
 Sound / music NFT standard in the PON INK protocol. Represents ownership and licensing rights to a recorded track or soundbank. Minted on Polygon or Solana. Includes: title, duration, BPM, key, genre, sample credits, license terms, collaboration credits, and IPFS audio CID. Royalty enforcement is on-chain.
 
 **[33] Water Quality Certificate**
-The core distro's actual certification mechanism is the Supabase-backed ledger certificate described in `SPEC.md` §21.2/§24.1 (fields: pH, turbidity (NTU), conductivity (µS/cm), nitrate (mg/L), coliform (CFU/100mL), GPS coordinates, timestamp, potability assessment; tamper-evident via Supabase + IPFS). An on-chain NFT version (Polygon, Arweave-backed) is available as an optional pon.ink wrapper, not the certification itself. Feeds the mule-bot's community water system health domain.
+The core distro's actual certification mechanism is the Supabase-backed ledger certificate described in `SPEC.md` §21.2/§24.1 (fields: pH, turbidity (NTU), conductivity (µS/cm), nitrate (mg/L), coliform (CFU/100mL), GPS coordinates, timestamp, potability assessment; tamper-evident via Supabase + IPFS). An on-chain NFT version (Polygon, Arweave-backed) is available as an optional pon.ink wrapper, not the certification itself. Feeds the Mule's Water Guardian profile (see `[26]`).
 
 **[34] Health Card ID**
 Decentralised health credential on Polygon. Encrypted. Portable to employers and health systems independent of the SCD Hub platform.
@@ -208,7 +208,7 @@ The persistent horizontal minimap strip at the bottom of every page in Exotopia,
 A transit node placed at the periphery of a great cosmic void in the large-scale structure of the universe — the E8 lattice routing point for long-distance settlement transit. Visible in the cosmic view as a pulsing cyan tetrahedron. In DK.MAT (dark matter) view mode, the E8 Pyramid in settlements becomes visible, revealing the local entry point to the conduit network.
 
 **[45] Hub Approvideo**
-The SCD Hub's curated video resource library. Maintained by the mule-bot as one of its land care specialist domains — new materials surfaced, outdated content flagged, existing catalogue kept organised and findable for field communities.
+The SCD Hub's curated video resource library. Maintained by the Mule (see `[26]`) as one of its Land Steward profile's domains — new materials surfaced, outdated content flagged, existing catalogue kept organised and findable for field communities.
 
 ---
 
@@ -609,7 +609,7 @@ All data submitted through SCD Hub eco-ops channels is licensed CC BY 4.0 unless
 
 **[147] File Cabinet**
 A browsable in-scene inventory interface reached by entering a settlement's gallery structure — six drawers (Eco-Ops, Certifications, Rewards, Settlement Documents, Creative Assets, Coming Soon) surfacing records a member has already earned or created elsewhere on the platform (mentor certificates, reward-track completions, settlement documents, voxel-sculpture designs), not a separate content system of its own. Backed by the same Supabase tables the rest of the platform already writes to — nothing is duplicated or newly stored just for the cabinet.
-→ See [25] Settlement Dome, [26] mule-bot
+→ See [25] Settlement Dome, [26] Mule
 
 **[148] Twin-Cylinder Station Interior**
 The interior architecture used for settlements with no solid ground to build a dome on — orbital claims, black hole environments, gas giants. Two counter-rotating cylinders provide artificial gravity via centripetal force, researched against real O'Neill-cylinder/Stanford-Torus literature rather than invented from scratch. Each cylinder's end caps carry two large circular "porthole" windows — full-diameter glazing rather than small rectangular ports — rendered with a surface-type-specific view (gas bands, lava, ocean/clouds, accretion disk, or a deep starfield) depending on the destination world. A collapsible guide panel shows a deck map and schedule for the station's zones.
