@@ -1,6 +1,17 @@
 # SPEC_ECOCITY.md — ecocity.com Platform
 ### Sustainable Infrastructure Education, Workshop Curriculum & Settlement Object Library
-*SCD Hub · GPL v3 · Living document — April 2026*
+*SCD Hub · GPL v3 · Living document — April 2026, blockchain/NFT scope corrected August 2026 (see SPEC.md §26)*
+
+> **Scope correction (August 2026):** earlier drafts of this document described every Ecocity
+> settlement object as an on-chain **EcocitySolution NFT**, minted to a wallet as the only
+> acquisition path. That contradicted the local-first architecture confirmed in SPEC.md §26:
+> settlement objects — Ecocity ones included — are unlocked as free, device-resident /
+> Supabase-backed records via the same reward-track mechanism as everything else in the app.
+> No wallet, blockchain, or account is required to earn, hold, or display one. An **optional**
+> on-chain NFT anchor remains available via pon.ink for anyone who wants a portable, tradeable
+> token — it is additive, never the only path. This pass corrects §0, §1.2, §2.2–2.3, §3, and
+> §5.1 to match; the educational content in §2.1/§2.4 and the object catalogue in §3.2 were
+> never blockchain-dependent and are unchanged.
 
 ---
 
@@ -10,9 +21,9 @@
 
 ecocity.com serves two purposes simultaneously:
 
-1. **Educational platform**: A library of sustainable infrastructure design models, workshop curriculum, and vocational training content — delivered through the SCD Hub's mentor network and verifiable via on-chain completion certificates.
+1. **Educational platform**: A library of sustainable infrastructure design models, workshop curriculum, and vocational training content — delivered through the SCD Hub's mentor network and verifiable via completion certificates (local-first records, optional on-chain anchor via pon.ink).
 
-2. **Settlement object library**: The source catalogue from which all **EcocitySolution NFTs** are derived. Every object that can be placed in an Exotopia settlement — a water filter, a solar array, an aquaponics system, a composting unit — begins as a design specification on ecocity.com.
+2. **Settlement object library**: The source catalogue from which all **Ecocity settlement objects** are derived. Every object that can be placed in an Exotopia settlement — a water filter, a solar array, an aquaponics system, a composting unit — begins as a design specification on ecocity.com, and is unlocked in-settlement the same free, local-first way as every other settlement object (see SPEC.md §21/§26). An optional on-chain NFT anchor is available via pon.ink for anyone who wants a portable, tradeable credential; it is not required to earn, hold, or display the object.
 
 The platform makes the connection explicit: learning about a water filtration system in an ecocity module is the same act as earning the right to place a water filter object in your virtual settlement. Real knowledge → virtual reward → real-world replication.
 
@@ -34,7 +45,7 @@ The platform makes the connection explicit: learning about a water filtration sy
 
 - **Design for where people are.** Every design specification must include a low-resource variant suitable for construction in Lamu, Nairobi, and similar contexts. Not every solution needs grid electricity or imported materials.
 - **Curriculum follows the work.** Educational modules are sequenced around what communities are actually doing — if a community is building a recycling center, the relevant modules are water/waste management, circular resource economics, and composting. Theory follows practice.
-- **Credentials are portable.** Module completion certificates are minted as NFTs. They can be presented to employers, funders, and NGOs independent of the SCD Hub platform. No platform lock-in on credentials.
+- **Credentials are portable.** Module completion certificates are local-first, server-issued records — the same certificate mechanism used everywhere else in the app (SPEC.md §21/§24) — with a durable, shareable reference. They can be presented to employers, funders, and NGOs independent of the SCD Hub platform. An optional on-chain anchor via pon.ink is available for anyone who wants one. No platform lock-in on credentials, on-chain or off.
 - **Open specifications.** All design documents are GPL v3. Community members can adapt, improve, and redistribute them. The SCD Hub does not own the designs — it curates and maintains them.
 - **Earth first.** The virtual (Exotopia settlement objects) is derivative of the real (ecocity design specs). The platform does not celebrate building virtual water filters — it celebrates building real ones, with the virtual as a record and reward mechanism.
 
@@ -44,7 +55,7 @@ The platform makes the connection explicit: learning about a water filtration sy
 
 ### 2.1 Module Categories
 
-Modules are organised around the five EcocitySolution NFT categories, which map directly to settlement object types in Exotopia:
+Modules are organised around the five Ecocity settlement object categories, which map directly to settlement object types in Exotopia:
 
 | Category | Module topics | Settlement object examples |
 |---|---|---|
@@ -61,29 +72,29 @@ Each module includes:
 - **Assessment**: 5–10 questions per module; passing score ≥ 70%
 - **Field connection**: link to the relevant eco-ops check-in activity types (e.g., WATSAN module links to `wqMap` and `garbageMap` check-in types)
 
-### 2.2 Module Completion → On-Chain Certification
+### 2.2 Module Completion → Certification
 
-When a participant completes a module (passing the assessment), ecocity.com mints an on-chain completion certificate:
+When a participant completes a module (passing the assessment), ecocity.com issues a completion certificate — a local-first, server-issued record, the same mechanism used for every other Exotopia certificate:
 
 ```
-Certificate NFT:
-  type:           "ecocity_module_completion"
-  module_id:      "watsan-biosand-filter-v2"
-  module_name:    "Biosand Filter Construction and Water Quality Testing"
-  category:       "WATSAN"
-  participant_id: [user's ecosystem ID]
-  mentor_id:      [facilitator who ran the session, if applicable]
-  completed_at:   [timestamp]
-  score:          82
-  chain:          Polygon
-  ipfs_cid:       [certificate PDF on IPFS]
+Certificate record:
+  type:                  "ecocity_module_completion"
+  module_id:             "watsan-biosand-filter-v2"
+  module_name:           "Biosand Filter Construction and Water Quality Testing"
+  category:              "WATSAN"
+  participant_id:        [user's ecosystem ID]
+  mentor_id:              [facilitator who ran the session, if applicable]
+  completed_at:          [timestamp]
+  score:                 82
+  pdf_ref:               [certificate PDF — locally hosted, optionally pinned to IPFS]
+  optional_chain_anchor: [pon.ink NFT reference, only if the participant chose to mint one]
 ```
 
 The certificate is:
-- Displayed in the participant's pon.ink NFT portfolio
-- Linked from the participant's Exotopia file cabinet (Certifications drawer)
+- Linked from the participant's Exotopia file cabinet (Certifications drawer) — no wallet or pon.ink account required
 - Readable by the Robot Mule corpus (eco-ops summary includes certifications earned)
-- Portable: the IPFS link is a permanent reference usable in job applications or funding proposals
+- Portable: a permanent reference usable in job applications or funding proposals, optionally pinned to IPFS for durability
+- Optionally also displayed in the participant's pon.ink NFT portfolio, if they chose to mint the optional on-chain anchor
 
 ### 2.3 Workshop Delivery System
 
@@ -109,14 +120,14 @@ Modules are designed for **facilitated workshop delivery** — not solely for se
 4. ASSESSMENT
    Participants complete the 5–10 question assessment on their mobile browser
    Passing participants automatically trigger:
-     · On-chain certificate minted
-     · EcocitySolution NFT dispatched (the relevant settlement object)
-     · POAP minted for attendance
-     · pon.ink airdrop bundle dispatched if configured
+     · Completion certificate issued (local-first record, see §2.2)
+     · The matching Ecocity settlement object unlocked in their Exotopia settlement
+     · Optional, if configured: POAP minted for attendance, pon.ink airdrop
+       bundle dispatched, on-chain certificate anchor minted
 
 5. POST-WORKSHOP
    Facilitator receives participant completion list with scores
-   Each completer's settlement gains the corresponding EcocitySolution object
+   Each completer's settlement gains the corresponding Ecocity settlement object
    Session recorded in pon.ink event archive with participant list + IPFS proof
 ```
 
@@ -135,17 +146,17 @@ Modules are not abstract — each module is explicitly connected to one or more 
 
 ---
 
-## 3. EcocitySolution NFT Library
+## 3. Ecocity Settlement Object Library
 
-### 3.1 What an EcocitySolution NFT Is
+### 3.1 What an Ecocity Settlement Object Is
 
-An **EcocitySolution NFT** is both a collectible virtual object (displayable in an Exotopia settlement) and a certified proof that a design specification was learned, built, or supported. It is the intersection of the virtual and the real.
+An **Ecocity settlement object** is both a collectible virtual object (displayable in an Exotopia settlement) and a certified proof that a design specification was learned, built, or supported. It is the intersection of the virtual and the real. Earning one requires no wallet, blockchain, or account — it is unlocked by the same local-first reward mechanism as every other settlement object (SPEC.md §21). An optional NFT anchor is available via pon.ink for participants who want a portable, tradeable on-chain token; that anchor is not the object itself, and the object works identically without it.
 
-Each EcocitySolution NFT has:
-- **Visual asset**: a 3D-renderable GLTF model for display in the Exotopia settlement dome (simplified for mobile — < 5,000 triangles)
-- **On-chain metadata**: category, design version, materials specification reference, ecocity.com module link
+Each Ecocity settlement object has:
+- **Visual asset**: a voxel-vector model for display in the Exotopia settlement dome — a blocky base built with the same voxel builder used elsewhere, layered with smooth vector-path elements (domes, tanks, pipes) for the curved forms these designs need. A full authored GLTF model (simplified for mobile — < 5,000 triangles) can replace the voxel-vector preset later via the art-asset pipeline without changing how the object is earned or displayed.
+- **Metadata**: category, design version, materials specification reference, ecocity.com module link — stored with the settlement record; optionally mirrored into NFT metadata if the participant mints the optional pon.ink anchor
 - **Impact metrics**: estimated CO₂ offset, water volume processed, energy generated, or people served per year (from the design spec data)
-- **Origin path**: how this NFT was acquired (earned / airdropped / purchased) and the module completion or eco-ops milestone that triggered it
+- **Origin path**: how this object was acquired (earned via reward track / unlocked via a facilitated workshop) and the module completion or eco-ops milestone that triggered it
 
 ### 3.2 Object Catalogue — Current and Planned
 
@@ -181,7 +192,7 @@ Each EcocitySolution NFT has:
 | Object | Visual | Impact metric |
 |---|---|---|
 | Health post | Small covered structure with basic equipment | Serves 50 households for primary screening |
-| Water quality test station | Portable testing kit + data terminal | Generates on-chain Water Quality Certs |
+| Water quality test station | Portable testing kit + data terminal | Generates Water Quality Certs (Supabase ledger record; optional on-chain anchor) |
 | Herb garden | Medicinal plant cultivation beds | 15 species; reduces OTC medicine dependence |
 
 **FOOD:**
@@ -197,15 +208,26 @@ Each EcocitySolution NFT has:
 
 ```
 1. Design specification created by ecocity.com team + community input
-2. 3D model created: GLTF, < 5,000 triangles, UV-mapped for planet color schema overlay
-3. NFT metadata schema defined: category, version, impact metrics, IPFS asset CID
+2. 3D model created: a voxel-vector preset (voxel grid + vector-path curves,
+   see settlement-items.ts) for MVP; a full GLTF model (< 5,000 triangles,
+   UV-mapped for planet color schema overlay) can replace it later without
+   changing the acquisition path
+3. Settlement-object metadata defined: category, version, impact metrics,
+   asset reference — the same catalogue shape as every other settlement item
 4. Module written: curriculum content linking the design to the vocational skill
 5. Acquisition path defined:
-   a. Earned: eco-ops activity milestone (e.g., 10 water quality readings → water filter)
-   b. Airdrop: workshop completion (facilitator deploys the campaign in pon.ink)
-   c. Purchased: listed in pon.ink aftermarket
-6. Smart contract (Solana Bubblegum cNFT) deployed with correct metadata
-7. Object appears in settlement when NFT lands in user's wallet
+   a. Earned: reward-track completion (e.g., a PFAS/WATSAN check-in milestone
+      → water filter) — the same local-first mechanism as every other
+      settlement object, no wallet required
+   b. Facilitated: workshop completion (facilitator runs the module; passing
+      participants are unlocked the object directly, same mechanism as (a))
+   c. Optional on-chain anchor: participants who want a portable, tradeable
+      token can additionally mint one via pon.ink — additive, never the
+      only path
+6. Object appears in the settlement the moment it's unlocked (a Supabase
+   settlement_items record) — no wallet, minting step, or NFT required
+7. Optional: if the participant chose the on-chain anchor in step 5c, it
+   also appears in their pon.ink NFT portfolio
 ```
 
 This pipeline creates a direct connection: the design on ecocity.com, the module that teaches it, the eco-ops field work that validates it, and the virtual object that celebrates it are all one thread.
@@ -225,7 +247,7 @@ The current ecocity.com site is primarily informational — a design library and
 | Assessment system | Not yet implemented |
 | On-chain certification minting | Not yet connected |
 | Workshop scheduling (pon.ink integration) | Not yet connected |
-| EcocitySolution NFT catalogue | Designed in metadata schema; 3D models not yet created |
+| Ecocity settlement object catalogue | Designed in metadata schema; voxel-vector presets in progress (see settlement-items.ts), full authored 3D models not yet created |
 | 3D settlement object integration (Exotopia) | Specced; not yet deployed |
 | Community project case studies | Some documentation exists; not yet on-site |
 | Impact data dashboard | Not yet built |
@@ -233,24 +255,24 @@ The current ecocity.com site is primarily informational — a design library and
 ### 4.2 Improvements Needed — Prioritised
 
 #### Priority 1 — Module Delivery Integration with pon.ink (3 days)
-The most impactful immediate improvement: connect ecocity.com module completion to the pon.ink event system so that workshop facilitators can schedule a module delivery from within pon.ink, and completion automatically triggers the certificate + EcocitySolution NFT dispatch.
+The most impactful immediate improvement: connect ecocity.com module completion to the pon.ink event system so that workshop facilitators can schedule a module delivery from within pon.ink, and completion automatically triggers the certificate + Ecocity settlement object unlock (with an optional on-chain NFT anchor for participants who want one).
 
 **Required:**
-- Module catalogue API endpoint (`GET /api/modules` → list with ID, title, category, NFT object linked)
+- Module catalogue API endpoint (`GET /api/modules` → list with ID, title, category, settlement object linked)
 - Completion webhook (`POST /api/module/complete` ← called by pon.ink after assessment score confirmed)
 - Assessment UI: 5–10 question form embedded in the pon.ink event flow or ecocity.com module page
 
-#### Priority 2 — EcocitySolution 3D Model Creation (ongoing)
-Create GLTF models for the 15 highest-priority settlement objects (the catalogue in Section 3.2). Models must be < 5,000 triangles and UV-mapped to accept the planetary color schema overlay from Exotopia (see SPEC.md §18.2).
+#### Priority 2 — Ecocity Settlement Object 3D Model Creation (ongoing)
+Two tiers: an MVP voxel-vector preset (voxel grid + vector-path curves, built with the existing in-app voxel builder pipeline — see settlement-items.ts) gets an object rendering and reward-unlockable quickly; a full authored GLTF model can replace any preset later without changing how the object is earned. Full models must be < 5,000 triangles and UV-mapped to accept the planetary color schema overlay from Exotopia (see SPEC.md §18.2).
 
-Suggested toolchain: Blender → GLTF export → Draco compression → Exotopia Three.js loader.
+Suggested toolchain for the full-model tier: Blender → GLTF export → Draco compression → Exotopia Three.js loader.
 
 This is an ongoing art/design task, not a single sprint item. Start with the 5 WATSAN objects as they are the most closely tied to active community projects (Mpeketoni recycling center).
 
 #### Priority 3 — Design Specification Digital Library (2 days)
 Structure the existing design content into a browsable library with:
 - Category filters (WATSAN / ENERGY / SHELTER / HEALTHCARE / FOOD)
-- Each spec page: description, material list, construction notes, impact metrics, linked module, linked NFT
+- Each spec page: description, material list, construction notes, impact metrics, linked module, linked settlement object (+ optional NFT anchor reference if minted)
 - Download link for PDF version (IPFS-hosted, permanent)
 - "Teach this module" button → routes to pon.ink event creation pre-filled with this module
 
@@ -265,8 +287,8 @@ These pages serve double duty: community storytelling for new participants, and 
 #### Priority 5 — Impact Dashboard (2 days)
 Public-facing `/impact` page (mirroring the pon.ink impact dashboard, with the educational lens):
 - Module completions by category and region
-- Certifications issued (count + on-chain links)
-- EcocitySolution NFTs in circulation (count by type)
+- Certifications issued (count + optional on-chain anchor links)
+- Ecocity settlement objects unlocked (count by type; optional on-chain anchors minted, if tracked separately)
 - Community project milestone progress (% complete for Mpeketoni, etc.)
 - Aggregate eco-ops field data linked from Arweave
 
@@ -281,7 +303,7 @@ Priority language order: Swahili, then Patois (for OT Kulcha and Fana Ka Jamaica
 
 ### 5.1 How ecocity Objects Appear in Settlements
 
-When a user owns one or more EcocitySolution NFTs, the corresponding 3D objects appear in their Level 5 settlement dome view automatically. The settlement renderer queries the user's wallet for EcocitySolution NFTs and places each object at a procedurally determined position within the dome (outside the central walking path but within the dome radius).
+When a user has unlocked one or more Ecocity settlement objects (via a completed reward track or facilitated workshop — see §3.3), the corresponding 3D objects appear in their Level 5 settlement dome view automatically. The settlement renderer reads the user's unlocked settlement-items record (Supabase, no wallet or blockchain query involved) and places each object at a procedurally determined position within the dome (outside the central walking path but within the dome radius).
 
 Object placement rules:
 - WATSAN objects cluster near the water feature zone
@@ -290,7 +312,7 @@ Object placement rules:
 - SHELTER objects appear as structures within the dome perimeter
 - HEALTHCARE objects appear near the library building
 
-Users can **reposition objects** using the settlement customisation interface (drag-and-drop grid, non-NFT preference stored in Supabase).
+Users can **reposition objects** using the settlement customisation interface (drag-and-drop grid, position stored in Supabase).
 
 ### 5.2 Settlement Library Building
 
@@ -307,7 +329,7 @@ The library building thus becomes a portal into ecocity.com's curriculum — the
 The **water feature zone** in the settlement (Section 17.9 of SPEC.md) connects to live eco-ops field data. When a user approaches the water feature:
 - Panel shows the user's water quality check-in history (if any)
 - For Uni-Kibaoni members: shows the Lamu County water quality dataset from the field network
-- Link to the on-chain Water Quality Certification for each reading
+- Link to the Water Quality Certification for each reading (Supabase ledger record; optional on-chain anchor via pon.ink)
 - "Run a water quality reading" button → routes to the eco-ops check-in form with `wqMap` pre-selected
 
 The water feature is a live data terminal, not decoration. It is the physical representation of WATSAN work in the virtual space.
@@ -317,13 +339,13 @@ The water feature is a live data terminal, not decoration. It is the physical re
 ## 6. User Stories — ecocity.com Specific
 
 ### 6.1 Uni-Kibaoni Field Worker (Mpeketoni, Lamu)
-> *As a field worker submitting water quality readings for the Mpeketoni recycling center proposal, I want to complete the WATSAN biosand filter module and receive an on-chain certificate that I can present to the county government as evidence of my technical training — so that my participation in the SCD Hub network qualifies me for formal project roles and helps the community win the grant.*
+> *As a field worker submitting water quality readings for the Mpeketoni recycling center proposal, I want to complete the WATSAN biosand filter module and receive a certificate that I can present to the county government as evidence of my technical training — so that my participation in the SCD Hub network qualifies me for formal project roles and helps the community win the grant.*
 
 ### 6.2 Facilitator Running an Aquaponics Workshop
-> *As a facilitator running the Food Aquaponics module at a Fana Ka settlement workshop in Nairobi, I want to schedule the session in pon.ink, deliver the module content using ecocity.com's diagrams and assessment, and automatically dispatch EcocitySolution Aquaponics Tank NFTs to participants who pass the assessment — so that the learning has a permanent, visible result in each participant's virtual settlement.*
+> *As a facilitator running the Food Aquaponics module at a Fana Ka settlement workshop in Nairobi, I want to schedule the session in pon.ink, deliver the module content using ecocity.com's diagrams and assessment, and automatically unlock the Aquaponics Tank settlement object for participants who pass the assessment — so that the learning has a permanent, visible result in each participant's virtual settlement.*
 
 ### 6.3 Community Builder (Mpeketoni Recycling Center Proposal)
-> *As the lead community builder for the Uni-Kibaoni-Peace-Youth-SHG project, I want to reference the ecocity.com design specifications for composting systems and water quality testing stations in the project proposal — so that funders can see that the infrastructure plan is based on documented, tested designs, and that the community has the training (on-chain certificates) to implement them.*
+> *As the lead community builder for the Uni-Kibaoni-Peace-Youth-SHG project, I want to reference the ecocity.com design specifications for composting systems and water quality testing stations in the project proposal — so that funders can see that the infrastructure plan is based on documented, tested designs, and that the community has the training (certificates) to implement them.*
 
 ### 6.4 Visual Artist Seeking Reference
 > *As a visual artist creating paintings and Exotopia settlement designs, I want to browse the ecocity.com object catalogue to understand what settlement objects look like and what they represent — so that my paintings and NFT art can visually reference real sustainable infrastructure and give the work cultural and educational depth.*
