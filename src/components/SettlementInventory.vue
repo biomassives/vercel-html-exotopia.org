@@ -639,6 +639,7 @@ function doRedeem() {
     donorStarColor: decoded.donorStarColor,
     ...(decoded.donorName ? { donorName: decoded.donorName } : {}),
     ...(decoded.voxels ? { voxels: decoded.voxels } : {}),
+    ...(decoded.vectorPaths ? { vectorPaths: decoded.vectorPaths } : {}),
   })
   resetAcquire()
 }

@@ -14,6 +14,12 @@
  *   localStorage  — source of truth for constructed/placed items
  *   pon.ink events (future) — authoritative for generated/traded items
  *                             read-only imported into the same store
+ *
+ * A builder-designed item's visual is "voxel-vector": an optional VoxelPayload
+ * (blocky per-cell grid) and an optional VectorPayload (smooth spline-swept
+ * tubes) on the same item, composed into one mesh by buildItemMesh(). Either
+ * can be present alone; SPEC_ECOCITY.md's settlement-object catalogue is the
+ * first intended consumer of the combined form.
  */
 
 import { reactive, computed, watch } from 'vue'
@@ -61,6 +67,13 @@ export interface SettlementItem {
   // colour-grid sculpture. Absent (or empty) means "not yet designed": buildItemMesh()
   // falls back to that preset's plain placeholder shape.
   voxels?:         VoxelPayload
+  // Vector-path elements — smooth curved forms (domes, tanks, pipes) layered
+  // alongside (or instead of) voxels? on the same builder preset. Together
+  // these are a settler's "voxel-vector" design: blocky mass + smooth curved
+  // form. Same trust model as voxels? — peer-to-peer, no admin review needed
+  // (numeric point/radius/color data only, nothing that could carry
+  // objectionable text or images).
+  vectorPaths?:    VectorPayload
   // Metadata
   acquiredAt:      number        // unix ms
   settlementKey:   string
@@ -89,6 +102,49 @@ export function hasVoxelContent(voxels: VoxelPayload | undefined): voxels is Vox
     && Array.isArray(voxels.palette) && voxels.palette.length > 0
     && Array.isArray(voxels.cells) && voxels.cells.length === voxels.size ** 3
     && voxels.cells.some(c => c > 0)
+}
+
+/**
+ * A single smooth curved element layered on top of (or instead of) a voxel
+ * grid — the "vector" half of a settler's voxel-vector design. Domes, tanks,
+ * pipes, and other curved ecocity forms a blocky voxel grid can't represent
+ * cleanly. Rendered as a tube swept along a Catmull-Rom spline through
+ * `points`, in the same local, grid-unit coordinate space as VoxelPayload
+ * (see buildVectorPathMesh()) so the two compose into one mesh.
+ */
+export interface VectorPath {
+  points: { x: number; y: number; z: number }[]   // ordered spline control points
+  radius: number                                   // tube radius, in grid units
+  color:  string                                   // '#RRGGBB'
+}
+
+export type VectorPayload = VectorPath[]
+
+export const VECTOR_MAX_PATHS            = 6     // per item — keeps builder UI and gift-code payload bounded
+export const VECTOR_MIN_POINTS_PER_PATH  = 2
+export const VECTOR_MAX_POINTS_PER_PATH  = 8
+export const VECTOR_MIN_RADIUS           = 0.05  // grid units
+export const VECTOR_MAX_RADIUS           = 3     // grid units — roughly the voxel grid's own footprint
+
+function isValidVectorPath(p: unknown): p is VectorPath {
+  if (!p || typeof p !== 'object') return false
+  const d = p as Partial<VectorPath>
+  return Array.isArray(d.points)
+    && d.points.length >= VECTOR_MIN_POINTS_PER_PATH && d.points.length <= VECTOR_MAX_POINTS_PER_PATH
+    && d.points.every(pt => !!pt
+      && Number.isFinite(pt.x) && Number.isFinite(pt.y) && Number.isFinite(pt.z))
+    && typeof d.radius === 'number' && Number.isFinite(d.radius)
+    && d.radius >= VECTOR_MIN_RADIUS && d.radius <= VECTOR_MAX_RADIUS
+    && typeof d.color === 'string' && /^#[0-9a-fA-F]{6}$/.test(d.color)
+}
+
+function isValidVectorPayload(v: unknown): v is VectorPayload {
+  return Array.isArray(v) && v.length > 0 && v.length <= VECTOR_MAX_PATHS && v.every(isValidVectorPath)
+}
+
+/** True if the payload has valid shape and at least one path. */
+export function hasVectorContent(paths: VectorPayload | undefined): paths is VectorPayload {
+  return isValidVectorPayload(paths)
 }
 
 // ── Mesh preset catalogue ─────────────────────────────────────────────────────
@@ -291,7 +347,30 @@ export function buildVoxelInstancedMesh(voxels: VoxelPayload): THREE.InstancedMe
   return mesh
 }
 
-export function buildItemMesh(presetKey: string, colorHex: string, withLight = true, voxels?: VoxelPayload): THREE.Group {
+/**
+ * One TubeGeometry mesh per vector path, swept along a Catmull-Rom spline
+ * through its control points — the "vector" half of a voxel-vector design.
+ * Same local coordinate space as buildVoxelInstancedMesh() (grid-unit scale,
+ * centered on local origin), so the two compose into one mesh when an item
+ * has both. Used both for the placed art-sphere mesh and the (upcoming)
+ * builder's live preview, so the two render identically.
+ */
+export function buildVectorPathMesh(paths: VectorPayload): THREE.Group {
+  const group = new THREE.Group()
+  for (const path of paths) {
+    if (path.points.length < VECTOR_MIN_POINTS_PER_PATH) continue
+    const curve = new THREE.CatmullRomCurve3(path.points.map(p => new THREE.Vector3(p.x, p.y, p.z)))
+    const tubularSegments = Math.max(8, path.points.length * 6)
+    const geometry = new THREE.TubeGeometry(curve, tubularSegments, path.radius, 8, false)
+    const material = new THREE.MeshPhongMaterial({ color: new THREE.Color(path.color), shininess: 35 })
+    group.add(new THREE.Mesh(geometry, material))
+  }
+  return group
+}
+
+export function buildItemMesh(
+  presetKey: string, colorHex: string, withLight = true, voxels?: VoxelPayload, vectorPaths?: VectorPayload,
+): THREE.Group {
   const col   = new THREE.Color(colorHex)
   const group = new THREE.Group()
 
@@ -389,13 +468,27 @@ export function buildItemMesh(presetKey: string, colorHex: string, withLight = t
       break
     }
     case 'art-sphere': {
-      // A settler's voxel sculpture, on display — falls back to a plain sphere
-      // placeholder for items with no design yet (freshly traded/generated, or
-      // pre-dating this feature).
+      // A settler's voxel-vector sculpture, on display — falls back to a plain
+      // sphere placeholder for items with no design yet (freshly traded/
+      // generated, or pre-dating this feature). Voxels (blocky mass) and
+      // vector paths (smooth curved form) compose into one display when both
+      // are present, sharing the same fit-to-footprint scale.
       let display: THREE.Object3D
-      if (hasVoxelContent(voxels)) {
-        display = buildVoxelInstancedMesh(voxels)
-        display.scale.setScalar(2.6 / voxels.size)   // fit the grid to roughly the old sphere's footprint
+      if (hasVoxelContent(voxels) || hasVectorContent(vectorPaths)) {
+        const combined  = new THREE.Group()
+        const gridSize  = hasVoxelContent(voxels) ? voxels.size : VOXEL_GRID_SIZE
+        const gridScale = 2.6 / gridSize   // fit to roughly the old sphere's footprint
+        if (hasVoxelContent(voxels)) {
+          const voxelMesh = buildVoxelInstancedMesh(voxels)
+          voxelMesh.scale.setScalar(gridScale)
+          combined.add(voxelMesh)
+        }
+        if (hasVectorContent(vectorPaths)) {
+          const vectorMesh = buildVectorPathMesh(vectorPaths)
+          vectorMesh.scale.setScalar(gridScale)
+          combined.add(vectorMesh)
+        }
+        display = combined
       } else {
         display = new THREE.Mesh(
           new THREE.SphereGeometry(1.4, 18, 18),
@@ -561,6 +654,7 @@ export interface GiftCodePayload {
   donorStarColor: string
   donorName?:     string
   voxels?:        VoxelPayload
+  vectorPaths?:   VectorPayload
 }
 
 export function exportItemGiftCode(
@@ -576,6 +670,7 @@ export function exportItemGiftCode(
     donorStarColor: starterLightColorHex(fromSettlementKey),
     ...(designerName ? { donorName: designerName } : {}),
     ...(hasVoxelContent(item.voxels) ? { voxels: item.voxels } : {}),
+    ...(hasVectorContent(item.vectorPaths) ? { vectorPaths: item.vectorPaths } : {}),
   }
   return encryptForStorage(JSON.stringify(payload))
 }
@@ -604,6 +699,7 @@ export function importItemGiftCode(code: string): GiftCodePayload | null {
     if (typeof d.color !== 'string' || !/^#[0-9a-fA-F]{6}$/.test(d.color)) return null
     if (typeof d.donorKey !== 'string' || !d.donorKey) return null
     if (d.voxels !== undefined && !isValidVoxelPayload(d.voxels)) return null
+    if (d.vectorPaths !== undefined && !isValidVectorPayload(d.vectorPaths)) return null
     return {
       meshPreset:     d.meshPreset,
       zone:           d.zone as ItemZone,
@@ -612,6 +708,7 @@ export function importItemGiftCode(code: string): GiftCodePayload | null {
       donorStarColor: typeof d.donorStarColor === 'string' ? d.donorStarColor : d.color,
       ...(typeof d.donorName === 'string' && d.donorName ? { donorName: d.donorName } : {}),
       ...(d.voxels ? { voxels: d.voxels } : {}),
+      ...(d.vectorPaths ? { vectorPaths: d.vectorPaths } : {}),
     }
   } catch {
     return null
@@ -785,7 +882,7 @@ export function useSettlementItems(settlementKey: Ref<string>) {
 
   function updateItem(
     id: string,
-    patch: Partial<Pick<SettlementItem, 'color' | 'zone' | 'label' | 'voxels'>>,
+    patch: Partial<Pick<SettlementItem, 'color' | 'zone' | 'label' | 'voxels' | 'vectorPaths'>>,
   ) {
     items.value = items.value.map(i => i.id === id ? { ...i, ...patch } : i)
     persist()
