@@ -5,9 +5,12 @@ import { recordFingerprint } from './record-fingerprint'
 
 const STORAGE_KEY = 'e8.1'   // opaque — was 'exotopia_settlements_v1'
 
+/** Per SPEC_EXOLOC_ADDRESS.md §3.7's branch-type registry. */
+export type BranchType = 'public' | 'private' | 'branded' | 'research' | 'educational'
+
 export interface SettlementRecord {
   key: string           // unique ID — see makeSettlementKey()
-  type: 'surface' | 'cluster' | 'moon' | 'orbital' | 'bh-orbital' | 'stellar-orbital' | 'lunar-orbital'
+  type: 'surface' | 'cluster' | 'moon' | 'orbital' | 'bh-orbital' | 'stellar-orbital' | 'lunar-orbital' | 'branch'
   planetName: string
   hostname: string
   exolocation: string   // full address string for the deed
@@ -28,6 +31,11 @@ export interface SettlementRecord {
    * stays stable even if focus/items change later.
    */
   fingerprint?: string
+  // ── branch (type: 'branch') fields only — see SPEC_EXOLOC_ADDRESS.md §3.7 ──
+  branchId?: string        // e.g. "uni-kibaoni-aspire-2030" — the {owner-slug}-{purpose}-{version} convention
+  branchType?: BranchType
+  baseKey?: string         // the source settlement's own `key` — this branch's parent
+  divergenceNote?: string  // how/why this branch differs from its base
 }
 
 /**
@@ -118,6 +126,65 @@ export function orbitalKey(coordSystem: string, hostname: string, refName?: stri
   return refName ? `${coordSystem}:${hostname}:${refName}` : `${coordSystem}:${hostname}`
 }
 
+/**
+ * Canonical key for a branch (parallel-dimension) settlement, per
+ * SPEC_EXOLOC_ADDRESS.md §3.7.
+ *
+ * This is the one deliberate exception to every builder above's no-nesting
+ * guard — a branch key IS its base settlement's own key nested inside, by
+ * design (the spec's own wording: "the branch address always includes the
+ * full base address"). `baseKey` is intentionally NOT passed through
+ * assertBareField; only `branchId` is required to be a bare designation.
+ */
+export function branchKey(branchId: string, baseKey: string): string {
+  assertBareField('branchKey', 'branchId', branchId)
+  if (typeof baseKey !== 'string' || baseKey.length === 0) {
+    throw new Error(`branchKey: baseKey must be a non-empty string (got ${typeof baseKey}: ${String(baseKey)}).`)
+  }
+  return `branch:${branchId}:${baseKey}`
+}
+
+/**
+ * Full `exotopia:branch:{branch-id}/{base-address}` deed address string, per
+ * SPEC_EXOLOC_ADDRESS.md §3.7. `baseAddress` is the base settlement's full
+ * exolocation string — its own `exotopia:` prefix is stripped before
+ * nesting, matching the spec's own examples.
+ */
+export function branchAddress(branchId: string, baseAddress: string): string {
+  assertBareField('branchAddress', 'branchId', branchId)
+  const basePath = baseAddress.startsWith('exotopia:') ? baseAddress.slice('exotopia:'.length) : baseAddress
+  return `exotopia:branch:${branchId}/${basePath}`
+}
+
+/**
+ * Creates a branch (parallel-dimension) settlement from an existing one —
+ * same location, cloned decorative starting state, new branch identity.
+ * Modeled on mint-style.ts's duplicateStyle(): deep-clone, mint fresh
+ * identity, leave the source completely untouched. Returns the same shape
+ * useSettlements().addSettlement() expects — callers persist it themselves:
+ *   settlements.addSettlement(forkSettlement(source, branchId, 'private'))
+ */
+export function forkSettlement(
+  source: SettlementRecord,
+  branchId: string,
+  branchType: BranchType,
+  divergenceNote?: string,
+): Omit<SettlementRecord, 'createdAt'> {
+  const cloned = JSON.parse(JSON.stringify(source)) as SettlementRecord
+  const { createdAt: _createdAt, fingerprint: _fingerprint, ...rest } = cloned
+  return {
+    ...rest,
+    key:            branchKey(branchId, source.key),
+    type:           'branch',
+    exolocation:    branchAddress(branchId, source.exolocation),
+    displayName:    `${source.displayName} — ${branchId}`,
+    branchId,
+    branchType,
+    baseKey:        source.key,
+    divergenceNote,
+  }
+}
+
 // ── Reverse routing (address → route path) ───────────────────────────────────
 //
 // Used by GalleryNodePage.vue's "visit this settlement" link. Only handles key
@@ -148,6 +215,20 @@ export function resolveExolocRoute(
     const hostname    = planetName ? getPlanetHostname(planetName) : undefined
     if (!hostname) return null
     return { path: `/surface/${encodeURIComponent(hostname)}/${encodeURIComponent(planetName)}` }
+  }
+
+  // branch:<branchId>:<baseKey> — baseKey itself contains ':', so it's every
+  // remaining segment rejoined, not just parts[2]. Resolves recursively via
+  // the base key's own route, then appends ?branch= so the branch-aware page
+  // (see GalleryInteriorPage.vue) knows to render this dimension, not the base.
+  if (prefix === 'branch') {
+    const branchId = parts[1]
+    const baseKey   = parts.slice(2).join(':')
+    if (!branchId || !baseKey) return null
+    const baseRoute = resolveExolocRoute(baseKey, getPlanetHostname)
+    if (!baseRoute) return null
+    const sep = baseRoute.path.includes('?') ? '&' : '?'
+    return { path: `${baseRoute.path}${sep}branch=${encodeURIComponent(branchId)}` }
   }
 
   if (prefix.startsWith('exo-') && prefix.endsWith('-v1')) {
@@ -206,6 +287,10 @@ interface SettlementRow {
   objects: string[] | null
   focus: string | null
   fingerprint: string | null
+  branch_id: string | null
+  branch_type: string | null
+  base_key: string | null
+  divergence_note: string | null
 }
 
 function recordToRow(r: SettlementRecord, ownerId: string) {
@@ -217,6 +302,8 @@ function recordToRow(r: SettlementRecord, ownerId: string) {
     cluster_slug: r.clusterSlug ?? null, cluster_member_id: r.memberId ?? null,
     objects: r.objects ?? [], focus: r.focus ?? null,
     fingerprint: r.fingerprint ?? null,
+    branch_id: r.branchId ?? null, branch_type: r.branchType ?? null,
+    base_key: r.baseKey ?? null, divergence_note: r.divergenceNote ?? null,
   }
 }
 
@@ -228,6 +315,8 @@ function rowToRecord(row: SettlementRow): SettlementRecord {
     clusterSlug: row.cluster_slug ?? undefined, memberId: row.cluster_member_id ?? undefined,
     objects: row.objects ?? undefined, focus: row.focus ?? undefined,
     fingerprint: row.fingerprint ?? undefined,
+    branchId: row.branch_id ?? undefined, branchType: (row.branch_type as BranchType) ?? undefined,
+    baseKey: row.base_key ?? undefined, divergenceNote: row.divergence_note ?? undefined,
   }
 }
 

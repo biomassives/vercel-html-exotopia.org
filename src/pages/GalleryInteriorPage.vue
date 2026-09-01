@@ -10,8 +10,16 @@
         <q-icon name="mdi-hexagon-multiple-outline" size="12px" color="amber-5" class="q-mr-xs" />
         <span class="gi-title">GALLERY</span>
         <span class="gi-hostname q-ml-sm">{{ hostname }}</span>
+        <q-chip v-if="branchIdParam" dense size="10px" color="deep-purple-8" text-color="purple-3"
+          icon="mdi-hexagon-multiple" class="q-ml-sm gi-branch-chip"
+          :title="activeSettlement?.divergenceNote || 'A parallel dimension of this gallery'">
+          {{ branchIdParam }}
+        </q-chip>
       </div>
-      <div class="gi-exoloc">{{ exolocation }}</div>
+      <div class="gi-exoloc">
+        {{ exolocation }}
+        <span v-if="settlementItems.length" class="gi-item-count"> · {{ settlementItems.length }} placed</span>
+      </div>
     </div>
 
     <!-- ── Loading ─────────────────────────────────────────────────────── -->
@@ -43,6 +51,10 @@
     </Transition>
 
     <FileCabinetOverlay v-model="fileCabinetOpen" />
+    <ParallelDimensionsOverlay v-model="parallelDimensionsOpen"
+      :base-key="baseSettlementKey" :base-exolocation="exolocation"
+      :hostname="hostname" :planet-name="planetName"
+      :current-key="settlementKey" :current-branch-id="branchIdParam" />
   </q-page>
 </template>
 
@@ -69,7 +81,10 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { disposeScene } from 'src/lib/three-utils'
 import { useMemberStore } from 'src/stores/member'
 import { useFileCabinetStore } from 'src/stores/file-cabinet'
+import { useSettlements, surfaceKey, branchKey } from 'src/lib/settlements'
+import { useSettlementItems } from 'src/lib/settlement-items'
 import FileCabinetOverlay from 'src/components/FileCabinetOverlay.vue'
+import ParallelDimensionsOverlay from 'src/components/ParallelDimensionsOverlay.vue'
 
 // ── Route ────────────────────────────────────────────────────────────────────
 
@@ -87,6 +102,33 @@ const exolocation = computed(() => isMoonView.value
   ? `exo-moon-surface-v1:${parentName.value}:${planetName.value}`
   : `exo-surface-v1:${hostname.value}:${planetName.value}`)
 
+// ── Branch (parallel-dimension) identity ────────────────────────────────────
+// Surface-only for now — moon galleries don't carry the moonIdx/coordVariant
+// components moonKey() needs from route params alone, so branch support
+// there is a follow-up, not a gap introduced here.
+//
+// settlementKey drives useSettlementItems() below, which stores/loads a
+// distinct items array per key (settlement-items.ts:743-746) — a branch
+// therefore gets independently divergeable decorative state "for free" just
+// by having its own key, no new storage mechanism needed.
+
+const settlements = useSettlements()
+
+const baseSettlementKey = computed(() => surfaceKey(planetName.value))
+
+const branchIdParam = computed(() => {
+  const v = route.query.branch
+  return typeof v === 'string' && v.length > 0 ? v : null
+})
+
+const settlementKey = computed(() => branchIdParam.value
+  ? branchKey(branchIdParam.value, baseSettlementKey.value)
+  : baseSettlementKey.value)
+
+const activeSettlement = computed(() => settlements.getSettlement(settlementKey.value))
+
+const { items: settlementItems } = useSettlementItems(settlementKey)
+
 // ── UI state ─────────────────────────────────────────────────────────────────
 
 const sceneReady = ref(false)
@@ -96,6 +138,7 @@ const canvasEl   = ref<HTMLCanvasElement>()
 const member       = useMemberStore()
 const fileCabinet  = useFileCabinetStore()
 const fileCabinetOpen = ref(false)
+const parallelDimensionsOpen = ref(false)
 
 // ── Three.js ─────────────────────────────────────────────────────────────────
 
@@ -116,6 +159,7 @@ const keysDown = new Set<string>()
 // pattern).
 let raycaster:     THREE.Raycaster | null = null
 let cabinetMeshes: THREE.Object3D[] = []
+let portalMeshes:  THREE.Object3D[] = []
 const mouseNDC = new THREE.Vector2()
 
 function buildShell() {
@@ -231,6 +275,67 @@ function buildFileCabinet() {
   group.traverse(o => { if ((o as THREE.Mesh).isMesh) cabinetMeshes.push(o) })
 }
 
+/**
+ * The parallel-dimensions portal — a clickable hexagonal arch opening
+ * ParallelDimensionsOverlay.vue, following buildFileCabinet()'s exact
+ * pattern (own group, own mesh array, discovered by walking in). Placed at
+ * angle = Math.PI/2 (90° around from the file cabinet's Math.PI slot) so the
+ * two in-world objects don't compete for the same sightline on arrival —
+ * violet/purple accent distinguishes it from the file cabinet's warm amber.
+ */
+function buildParallelDimensionsPortal() {
+  const group = new THREE.Group()
+
+  const ringMat = new THREE.MeshBasicMaterial({
+    color: 0xaa66ff, transparent: true, opacity: 0.55, side: THREE.DoubleSide,
+    depthWrite: false, blending: THREE.AdditiveBlending,
+  })
+  const outerRing = new THREE.Mesh(new THREE.RingGeometry(1.5, 1.75, 6), ringMat)
+  outerRing.position.y = 2.0
+  group.add(outerRing)
+
+  const innerGlow = new THREE.Mesh(
+    new THREE.CircleGeometry(1.45, 6),
+    new THREE.MeshBasicMaterial({
+      color: 0x6622cc, transparent: true, opacity: 0.22, depthWrite: false, blending: THREE.AdditiveBlending,
+    })
+  )
+  innerGlow.position.y = 2.0
+  group.add(innerGlow)
+
+  // Six standing prisms tracing the hexagon's points — the "portal frame"
+  const frameMat = new THREE.MeshPhongMaterial({ color: 0x4a2a6a, shininess: 20 })
+  const FRAME_COUNT = 6
+  for (let i = 0; i < FRAME_COUNT; i++) {
+    const a = (i / FRAME_COUNT) * Math.PI * 2
+    const prism = new THREE.Mesh(new THREE.BoxGeometry(0.14, 3.6, 0.14), frameMat)
+    prism.position.set(Math.cos(a) * 1.6, 1.8, Math.sin(a) * 1.6)
+    group.add(prism)
+  }
+
+  const light = new THREE.PointLight(0xaa66ff, 0.6, 8)
+  light.position.set(0, 2.5, 0)
+  group.add(light)
+
+  const floorGlow = new THREE.Mesh(
+    new THREE.RingGeometry(1.2, 1.9, 6),
+    new THREE.MeshBasicMaterial({ color: 0xaa66ff, side: THREE.DoubleSide, transparent: true, opacity: 0.22, depthWrite: false, blending: THREE.AdditiveBlending })
+  )
+  floorGlow.rotation.x = -Math.PI / 2
+  floorGlow.position.y = 0.05
+  group.add(floorGlow)
+
+  const angle  = Math.PI / 2
+  const radius = GALLERY_INTERIOR_RADIUS * 0.55
+  group.position.set(Math.cos(angle) * radius, 0, Math.sin(angle) * radius)
+  group.lookAt(0, 2.0, 0)
+
+  scene!.add(group)
+
+  portalMeshes = []
+  group.traverse(o => { if ((o as THREE.Mesh).isMesh) portalMeshes.push(o) })
+}
+
 function buildLights() {
   scene!.add(new THREE.AmbientLight(0x2a1808, 1.4))
   scene!.add(new THREE.HemisphereLight(new THREE.Color(0x3a2810), new THREE.Color(0x0a0602), 0.7))
@@ -279,6 +384,7 @@ function buildScene() {
   buildLights()
   buildShell()
   buildFileCabinet()
+  buildParallelDimensionsPortal()
 
   raycaster = new THREE.Raycaster()
 
@@ -341,10 +447,14 @@ function onMouseMove(e: MouseEvent) {
 }
 
 function onCanvasClick() {
-  if (!camera || !raycaster || cabinetMeshes.length === 0) return
+  if (!camera || !raycaster) return
   raycaster.setFromCamera(mouseNDC, camera)
-  if (raycaster.intersectObjects(cabinetMeshes, false).length) {
+  if (cabinetMeshes.length && raycaster.intersectObjects(cabinetMeshes, false).length) {
     fileCabinetOpen.value = true
+    return
+  }
+  if (portalMeshes.length && raycaster.intersectObjects(portalMeshes, false).length) {
+    parallelDimensionsOpen.value = true
   }
 }
 
@@ -379,6 +489,7 @@ onBeforeUnmount(() => {
   renderer?.dispose()
   renderer = null; scene = null; camera = null; controls = null
   cabinetMeshes = []
+  portalMeshes = []
 })
 </script>
 
@@ -396,6 +507,8 @@ onBeforeUnmount(() => {
 .gi-title    { font-family: 'Courier New', monospace; font-size: 11px; letter-spacing: 0.14em; color: rgba(255, 200, 130, 0.85); }
 .gi-hostname { font-family: 'Courier New', monospace; font-size: 10px; color: rgba(255, 180, 110, 0.55); }
 .gi-exoloc   { font-family: 'Courier New', monospace; font-size: 9px; color: rgba(200, 150, 100, 0.45); }
+.gi-item-count { color: rgba(180, 140, 255, 0.55); }
+.gi-branch-chip { font-family: 'Courier New', monospace; letter-spacing: 0.04em; }
 
 .gi-loading { position: absolute; inset: 0; z-index: 20; background: rgba(10, 6, 2, 0.92); }
 
