@@ -1,8 +1,11 @@
 /* eslint-env node */
-const { configure } = require('quasar/wrappers')
-const { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync } = require('fs')
-const { join, extname } = require('path')
-const { spawnSync } = require('child_process')
+import { configure } from 'quasar/wrappers'
+import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync } from 'fs'
+import { join, extname, dirname } from 'path'
+import { spawnSync } from 'child_process'
+import { fileURLToPath } from 'url'
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
 
 /**
  * Vite plugin: transform .md files into ES modules that export the raw text.
@@ -161,7 +164,7 @@ function ecoLibrarySavePlugin () {
   }
 }
 
-module.exports = configure(function (/* ctx */) {
+export default configure(function (/* ctx */) {
   return {
     // Boot files run before the app component is mounted
     boot: ['pinia', 'member', 'error-reporting'],
@@ -237,7 +240,7 @@ module.exports = configure(function (/* ctx */) {
     animations: ['fadeIn', 'fadeOut'],
 
     pwa: {
-      workboxMode: 'generateSW',
+      workboxMode: 'GenerateSW',
       injectPwaMetaTags: true,
       swFilename: 'sw.js',
       manifestFilename: 'manifest.json',

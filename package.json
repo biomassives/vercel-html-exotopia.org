@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.62.1",
-    "@quasar/app-vite": "^1.10.3",
+    "@quasar/app-vite": "^2.6.2",
     "@types/node": "^20.12.7",
     "@types/three": "^0.164.0",
     "@vue/eslint-config-typescript": "^13.0.0",
@@ -37,13 +37,13 @@
     "sass": "^1.77.0",
     "supabase": "^2.111.0",
     "typescript": "^5.4.5",
-    "workbox-build": "7.0.x",
-    "workbox-cacheable-response": "7.0.x",
-    "workbox-core": "7.0.x",
-    "workbox-expiration": "7.0.x",
-    "workbox-precaching": "7.0.x",
-    "workbox-routing": "7.0.x",
-    "workbox-strategies": "7.0.x"
+    "workbox-build": "7.4.x",
+    "workbox-cacheable-response": "7.4.x",
+    "workbox-core": "7.4.x",
+    "workbox-expiration": "7.4.x",
+    "workbox-precaching": "7.4.x",
+    "workbox-routing": "7.4.x",
+    "workbox-strategies": "7.4.x"
   },
   "engines": {
     "node": "20.x"
