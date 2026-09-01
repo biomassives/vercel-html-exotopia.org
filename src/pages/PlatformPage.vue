@@ -158,6 +158,42 @@
           </div>
         </section>
 
+        <!-- ── UX health ─────────────────────────────────────────────────── -->
+        <section id="ux" class="pl-section">
+          <div class="pl-section-eyebrow">TRANSPARENCY</div>
+          <h1 class="pl-h1">UX health by user journey</h1>
+          <p class="pl-p">
+            We don't have live workflow telemetry yet — no per-role funnel instrumentation exists
+            in the app today (see "Real per-role workflow + agent-interaction instrumentation" in
+            the near-term roadmap). What we do have is a manual, hand-driven audit of the platform's
+            core journeys, walked end-to-end in a real browser. It's a snapshot, not a dashboard —
+            published anyway because "no data" shouldn't read as "no problems."
+          </p>
+
+          <div class="pl-callout pl-callout--note">
+            <strong>Source:</strong> manual Playwright-driven walkthrough, 2026-08-29, five journeys
+            at desktop (1440px) and mobile (390px) widths. Not automated, not continuously refreshed —
+            treat as a dated snapshot until real instrumentation lands.
+          </div>
+
+          <div v-for="group in UX_FINDINGS" :key="group.journey" class="pl-feat-group">
+            <h2 class="pl-h2">{{ group.journey }} <span class="pl-ux-role">— {{ group.role }}</span></h2>
+            <div v-for="f in group.items" :key="f.id" class="pl-bug-row">
+              <div class="pl-bug-header">
+                <span class="pl-nav-dot" :class="UX_STATUS_DOT[f.status as keyof typeof UX_STATUS_DOT]"></span>
+                <code class="pl-bug-id">{{ f.id }}</code>
+                <span class="pl-bug-title">{{ f.title }}</span>
+                <span class="pl-badge" :class="UX_SEVERITY_BADGE[f.severity as keyof typeof UX_SEVERITY_BADGE]">{{ f.severity.toUpperCase() }}</span>
+                <span class="pl-badge pl-badge--status">{{ UX_STATUS_LABEL[f.status as keyof typeof UX_STATUS_LABEL] }}</span>
+              </div>
+              <p class="pl-bug-desc">{{ f.desc }}</p>
+              <div v-if="f.affects" class="pl-bug-affects">
+                Affects: <span v-for="a in f.affects" :key="a" class="pl-bug-path">{{ a }}</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <!-- ── Near-term ─────────────────────────────────────────────────── -->
         <section id="near" class="pl-section">
           <div class="pl-section-eyebrow">NEXT 3–6 MONTHS</div>
@@ -257,17 +293,19 @@ const SECTIONS = [
   { id: 'live',    label: '2. Live & Working',  color: 'green'  },
   { id: 'building',label: '3. Building Now',    color: 'amber'  },
   { id: 'bugs',    label: '4. Known Issues',    color: 'red'    },
-  { id: 'near',    label: '5. Near-Term',       color: 'cyan'   },
-  { id: 'horizon', label: '6. Long-Term',       color: 'purple' },
-  { id: 'url-api', label: '7. URL API',         color: 'blue'   },
+  { id: 'ux',      label: '5. UX Health',       color: 'pink'   },
+  { id: 'near',    label: '6. Near-Term',       color: 'cyan'   },
+  { id: 'horizon', label: '7. Long-Term',       color: 'purple' },
+  { id: 'url-api', label: '8. URL API',         color: 'blue'   },
 ]
 
 const STATUS_SUMMARY = [
-  { label: 'live features', count: 25, color: 'green'  },
-  { label: 'in progress',   count: 10, color: 'amber'  },
-  { label: 'known bugs',    count:  6, color: 'red'    },
-  { label: 'planned',       count: 12, color: 'cyan'   },
-  { label: 'vision items',  count:  9, color: 'purple' },
+  { label: 'live features',    count: 25, color: 'green'  },
+  { label: 'in progress',      count: 10, color: 'amber'  },
+  { label: 'known bugs',       count:  6, color: 'red'    },
+  { label: 'open ux findings', count:  7, color: 'pink'   },
+  { label: 'planned',          count: 13, color: 'cyan'   },
+  { label: 'vision items',     count: 10, color: 'purple' },
 ]
 
 // ── Timeline ──────────────────────────────────────────────────────────────
@@ -533,6 +571,121 @@ const BUILDING = [
   },
 ]
 
+// ── UX health ─────────────────────────────────────────────────────────────
+// No live workflow telemetry exists yet (no role model, no events/funnel
+// table — see the 'Real workflow instrumentation' near-term item below).
+// This is a manual, hand-driven audit snapshot, grouped by journey/role,
+// not a live dashboard. Source: docs/ux-flow-review-2026-08-29.md.
+
+const UX_STATUS_DOT = {
+  open:          'pl-dot--red',
+  partial:       'pl-dot--amber',
+  fixed:         'pl-dot--green',
+  'confirmed-ok':'pl-dot--green',
+} as const
+
+const UX_SEVERITY_BADGE = {
+  critical: 'pl-badge--critical',
+  high:     'pl-badge--high',
+  medium:   'pl-badge--medium',
+  low:      'pl-badge--low',
+  info:     'pl-badge--info',
+} as const
+
+const UX_STATUS_LABEL = {
+  open:          'OPEN',
+  partial:       'PARTIAL FIX',
+  fixed:         'FIXED',
+  'confirmed-ok':'CONFIRMED OK',
+} as const
+
+const UX_FINDINGS = [
+  {
+    journey: 'First-time landing',
+    role: 'New visitor',
+    items: [
+      {
+        id: 'F8', severity: 'info', status: 'open',
+        title: 'The first thing every visitor sees is a full legal-consent gate',
+        desc: 'DemoConsentOverlay blocks every route except the legal pages until consent is given — a genuinely new visitor’s first content is dense legal template text (Terms of Service runs 16 sections + 10 regional notices), not "what is this and what do I do first." The consent flow itself is well-built (unbundled checkboxes, timestamp logging), this is purely a first-impression sequencing issue.',
+        affects: ['/ (blocks all routes until consent)'],
+      },
+      {
+        id: 'F9', severity: 'low', status: 'open',
+        title: 'Top nav auto-collapses to unlabeled icons after ~5 seconds',
+        desc: 'MainLayout hides the labeled EXPLORE / PARTICIPATE / DOCS / BLOG bar down to three unlabeled icons after 5s of no interaction on non-settlement routes. A new visitor who spends a few seconds just looking at the cosmic view — a reasonable first move — loses the labeled nav before reading it.',
+        affects: ['MainLayout top nav'],
+      },
+    ],
+  },
+  {
+    journey: 'Claiming a settlement',
+    role: 'Settlement claimer',
+    items: [
+      {
+        id: 'F1', severity: 'critical', status: 'open',
+        title: 'Every shallow "claim a planet" CTA lands on the wrong product',
+        desc: 'MintPage has two personalities picked by URL query params: a real "surface-deed" claim flow, and an unrelated NFT collector-card shop ("general" mode). Every prominent claim CTA in the app — mega-menu, mobile drawer, CosmicPage’s "Claim World" panel, GalaxyPage’s "Reserve for Settlement" — links to plain /mint with no params, which lands on the card shop, not the claim flow. The real flow is only reachable by already knowing to go Galaxy → star → planet → surface → plot first.',
+        affects: ['MainLayout mega-menu', 'MainLayout mobile drawer', 'CosmicPage', 'GalaxyPage', 'GalleryPage', 'PlanetSystemsPage', 'WelcomeOverlay'],
+      },
+      {
+        id: 'F2', severity: 'high', status: 'open',
+        title: 'Leftover mint/NFT skin contradicts the free/no-wallet framing right next to it',
+        desc: 'MintPage’s surface-deed/moon-orbital/cluster-world heroes still show "FREE TO MINT · 0 USDC" badges and gold-rush "LETTERS PATENT" styling, a few hundred lines above a consent checkbox that correctly says "no wallet, no blockchain transaction, no investment." The mechanics are already fixed — this is a copy-only sweep still owed.',
+        affects: ['/mint'],
+      },
+      {
+        id: 'F3', severity: 'low', status: 'open',
+        title: 'RealmFunnel.vue is styled as part of the claim funnel but is dead, unwired code',
+        desc: 'Not imported by any page, layout, or component in src/ — it was unhooked when a since-removed NFT-marketplace pitch was pulled and never re-wired. Copy fixes to it have zero effect on what any real user sees. Needs a decision: re-wire it or delete it.',
+        affects: ['RealmFunnel.vue (unused)'],
+      },
+    ],
+  },
+  {
+    journey: 'Docs discovery',
+    role: 'Docs reader / integrator',
+    items: [
+      {
+        id: 'F4', severity: 'high', status: 'partial',
+        title: 'Docs’ own Glossary excerpt contradicted the page’s own opening paragraph',
+        desc: 'DocPage’s "Getting Started" intro correctly says settlements are local-first, no wallet/blockchain required — but its own hardcoded, duplicate KEY_TERMS glossary array (instead of sourcing GLOSSARY.md) still described exolocation and PON INK as on-chain, a scroll away from the correct text. Two contradicting lines were fixed directly; three more spots describing core mechanics as NFT-default are still open, plus the longer-term fix of sourcing from GLOSSARY.md instead of duplicating it.',
+        affects: ['/docs'],
+      },
+      {
+        id: 'F5', severity: 'info', status: 'confirmed-ok',
+        title: 'Sidebar structure and /api-surface discoverability within /docs',
+        desc: 'Checked, not just assumed: the ten-section sidebar reads as one coherent manual, and /api-surface has its own section, intro blurb, and explicit link. No fix needed here — the real discoverability gap is cross-viewport (see F7).',
+        affects: ['/docs'],
+      },
+    ],
+  },
+  {
+    journey: 'Rewards / education loop',
+    role: 'Learner / rewards seeker',
+    items: [
+      {
+        id: 'F6', severity: 'high', status: 'open',
+        title: 'The reward stays invisible until the learner goes looking for it',
+        desc: 'A quiz completion dialog shows only the badge emoji, name, and score — no link to /rewards or what the badge unlocks. /rewards itself, in the default signed-out state every first-time visitor is in, renders almost nothing and gates all explanation behind a magic-link sign-in wall. The one page that explains this well, /rewards-guide, is reachable only via one small link and isn’t linked from the completion dialog at all.',
+        affects: ['/rewards', '/rewards-guide', 'LearnPage quiz completion dialog'],
+      },
+    ],
+  },
+  {
+    journey: 'Nav consistency',
+    role: 'Cross-role (all)',
+    items: [
+      {
+        id: 'F7', severity: 'medium', status: 'open',
+        title: '/api-surface has a one-tap mobile shortcut but no desktop equivalent',
+        desc: 'The mobile hamburger drawer links directly to /api-surface; the desktop mega-menu does not (DOCS is a deliberate plain link with no dropdown). A real asymmetry for a page whose audience — self-hosters, integrators — skews toward desktop.',
+        affects: ['/api-surface'],
+      },
+    ],
+  },
+]
+
 // ── Known bugs ────────────────────────────────────────────────────────────
 
 const BUGS = [
@@ -635,6 +788,12 @@ const NEAR_TERM = [
     effort: '1 week',
     desc: 'src/lib/local-step-portal.ts already implements the full portal object (circum-polar orbit, Gerstner-wave shader driven by real planet physics, hover + approach states) — it just isn\'t instantiated anywhere. Remaining work: construct a LocalStepPortal per settled planet in ClusterSystemPage\'s tick loop, add an \'inversion\' TransitionMode to scene-transition.ts, and swap the "Descend to surface" button\'s plain wipe for the approach-then-inversion sequence SPEC_ZOOM_DESCENT.md §6.6–7.2 already specifies. See SPEC.md §25 for the full status audit.',
   },
+  {
+    title: 'Real per-role workflow + agent-interaction instrumentation',
+    effort: '3–4 weeks',
+    desc: 'The UX Health section above is a one-time manual audit, not live data, because no workflow telemetry exists yet. Next: define an actual role model (today\'s code has three inconsistent, partial stand-ins — a free-string selectedRole, ParticipationMode, and RewardTrack), add a lightweight events/funnel table for key browser workflows (settlement claim, gift-code redemption, reward-track completion), and start capturing agent-interaction metrics (successful vs. abandoned automated/agent-driven sessions against the site) alongside the human funnel data.',
+    blockedBy: 'Role model definition — SPEC.md §2 lists 10 aspirational roles never implemented in code',
+  },
 ]
 
 // ── Long-term horizon ─────────────────────────────────────────────────────
@@ -684,6 +843,11 @@ const HORIZON = [
     title: 'Exotopia mobile app (PWA)',
     tag: 'PLATFORM',
     desc: 'The eco-ops offline queue and monitoring wizard are already mobile-first. Wrapping the full app as a PWA (Quasar already supports this) with push notifications for Sgr A* flare alerts, field monitoring reminders, and green-light connection requests.',
+  },
+  {
+    title: 'External ops panopticon: Cloudflare, Vercel, Supabase metrics',
+    tag: 'INFRASTRUCTURE',
+    desc: 'A detection/review portal surfacing real infrastructure metrics — starting Cloudflare-first (edge/CDN, Workers, cache), then Vercel (build/deploy status) and Supabase (DB/auth/storage health) — and eventually open caching protocols we adopt (memcached, Redis). Requires a secrets-holding backend proxy that does not exist yet; this is a separate, harder problem than the client-side UX Health section above, and is not designed yet. The local exotopia_adminpanel CLI is the current stopgap for this data outside the deployed web app.',
   },
 ]
 
@@ -874,6 +1038,7 @@ onMounted(() => {
 .pl-dot--cyan   { background: #22ddcc; box-shadow: 0 0 5px #22ddcc; }
 .pl-dot--purple { background: #9966ee; box-shadow: 0 0 5px #9966ee; }
 .pl-dot--blue   { background: #4488ff; box-shadow: 0 0 5px #4488ff; }
+.pl-dot--pink   { background: #ee55aa; box-shadow: 0 0 5px #ee55aa; }
 
 /* ── Main content ──────────────────────────────────────────────────────── */
 .pl-main {
@@ -1055,11 +1220,24 @@ onMounted(() => {
   padding: 2px 6px;
   border-radius: 3px;
 }
-.pl-badge--shipped { background: rgba(34,204,102,0.15); color: #22cc66; }
-.pl-badge--wip     { background: rgba(255,170,34,0.12); color: #ffaa22; }
-.pl-badge--fixed   { background: rgba(34,204,102,0.12); color: #22cc66; }
-.pl-badge--high    { background: rgba(238,68,68,0.12);  color: #ee4444; }
-.pl-badge--low     { background: rgba(100,140,200,0.12);color: #6699bb; }
+.pl-badge--shipped  { background: rgba(34,204,102,0.15); color: #22cc66; }
+.pl-badge--wip      { background: rgba(255,170,34,0.12); color: #ffaa22; }
+.pl-badge--fixed    { background: rgba(34,204,102,0.12); color: #22cc66; }
+.pl-badge--high     { background: rgba(238,68,68,0.12);  color: #ee4444; }
+.pl-badge--low      { background: rgba(100,140,200,0.12);color: #6699bb; }
+.pl-badge--critical { background: rgba(238,68,68,0.22);  color: #ff6666; }
+.pl-badge--medium   { background: rgba(255,170,34,0.12); color: #ffaa22; }
+.pl-badge--info     { background: rgba(34,204,102,0.10); color: #55bb99; }
+.pl-badge--status   { background: rgba(100,140,200,0.08);color: #5577aa; font-weight: 600; }
+
+/* ── UX health ─────────────────────────────────────────────────────────── */
+.pl-ux-role {
+  font-size: 10px;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  color: #556688;
+}
 
 /* ── Bug rows ──────────────────────────────────────────────────────────── */
 .pl-bug-row {
